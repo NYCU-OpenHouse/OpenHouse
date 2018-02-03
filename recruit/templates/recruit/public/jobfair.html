@@ -22,10 +22,13 @@
 {%for jobfair_info in recruit_jobfair_info%}
      {{jobfair_info.content|safe}}
 {%endfor%}
-<h2 class="ui dividing header">就博會攤位圖</h2>
-{% for img in jobfair_imgs %}
-    <img class="ui image" src="{{img.upload_file.url}}">
+
+<h1 class="ui dividing header">就博會攤位圖</h1>
+{% for place_map in place_maps %}
+<h3 class="ui dividing header">{{ place_map.title }}</h3>
+<img class="ui image" src="{{place_map.upload_file.url}}" alt="就博會攤位圖">
 {% endfor %}
+
 
 <div class="ui segment">
     <h3 class="ui dividing header">資訊軟體</h3>
