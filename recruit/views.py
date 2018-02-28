@@ -1,10 +1,10 @@
 from django.core import urlresolvers
 from django.shortcuts import render,redirect
-from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm,StudentForm,ExchangeForm
+from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm
 from .models import RecruitConfigs, SponsorItem, Files,ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo
-from .models import JobfairSlot, JobfairOrder, JobfairInfo,StuAttendance,Student
+from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -596,14 +596,14 @@ def public(request):
     return render(request,'recruit/public/public.html',locals())
 
 @staff_member_required
-def reg_card(request):
-    if(request.POST):
-        student = Student.objects.get(card_num=request.POST['card_num'])
-        form = StudentForm(data=request.POST,instance=student)
+def RegisterCard(request):
+    if request.method == "POST":
+        data = request.POST.copy()
+        instance = recruit.models.Student.objects.filter(card_num = data['card_num']).first()
+        form = StudentForm(data, instance = instance)
         if form.is_valid():
             form.save()
             ui_message = {"type": "green","msg": "註冊成功"}
-            print(ui_message)
         else:
             ui_message = {"type": "error","msg": "註冊失敗"}
 
