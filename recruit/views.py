@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm
 from .models import RecruitConfigs, SponsorItem, Files,ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
-from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo
+from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo , RecruitJobfairInfo
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -580,6 +580,7 @@ def seminar(request):
     return render(request,'recruit/public/seminar.html',locals())
 
 def jobfair(request):
+    recruit_jobfair_info = RecruitJobfairInfo.objects.all() 
     place_maps = Files.objects.filter(category='就博會攤位圖')
     jobfair_slots = JobfairSlot.objects.all().order_by('serial_no')
     elc_slots =  JobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
