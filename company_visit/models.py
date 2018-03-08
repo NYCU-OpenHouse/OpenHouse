@@ -27,6 +27,8 @@ class CompanyVisit(models.Model):
         
     class Meta:
         managed = True
+        verbose_name = u'企業資訊'
+        verbose_name_plural = u'企業資訊'
     
     def __str__(self):
         return self.title
@@ -48,3 +50,7 @@ class StudentApply(models.Model):
     mobile = models.CharField(u'手機', max_length=15)
     email = models.EmailField(u'email')
     country = models.CharField(u'國籍', max_length=20, blank=True, null=True)
+    class Meta:
+        managed = True
+        verbose_name = u'學生資訊'
+        verbose_name_plural = u'學生資訊'
