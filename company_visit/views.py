@@ -3,7 +3,7 @@ from .models import CompanyVisit
 from .forms import StudentApplyForm
 from datetime import datetime
 def company_visit_index(request):
-    events = CompanyVisit.objects.all()
+    events = CompanyVisit.objects.all().order_by('date')
     events = [event for event in events if event.date > datetime.today().date()]
 
     return render(request, "visit/company_visit_index.html", locals())
