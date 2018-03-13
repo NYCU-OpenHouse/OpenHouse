@@ -619,15 +619,19 @@ def collect_points(request):
     config = RecruitConfigs.objects.all()[0]
     now = (datetime.datetime.now() - timedelta(minutes=35)).time()
     if now <config.session_1_end:
-        current_session = "noon"
+        current_session = 'other1'
     elif  now > config.session_1_end and now < config.session_2_end:
-        current_session = "night1"
+        current_session = 'noon2'
     elif now > config.session_2_end and now < config.session_3_end:
-        current_session = "night2"
+        current_session = 'other2'
+    elif now > config.session_3_end and now < config.session_4_end:
+        current_session = 'other3'
+    elif now > config.session_4_end and now < config.session_5_end:
+        current_session = 'other4'
     else:
-        current_session = "night3"
+        current_session = 'other5'
     current_seminar = SeminarSlot.objects.filter(date=today,session=current_session).first()
-    seminars = SeminarSlot.objects.all()
+    seminars = SeminarSlot.objects.filter(date=today)
     if(request.POST):
         card_num = request.POST['card_num']
         seminar_id = request.POST['seminar_id']
