@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Participant,Vote
+from .models import Participant,Vote, VoteInfo
 from ipware.ip import get_real_ip,get_ip
 from django.db import IntegrityError
 import datetime
@@ -18,4 +18,5 @@ def vote(request):
     return render(request,'vote.html',locals())
                 
 def index(request):
+    vote_info = VoteInfo.objects.all()
     return render(request,'index.html',locals())
