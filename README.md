@@ -16,15 +16,19 @@
 
 ### Settings.py
 
-Make sure your database username and password settings are correct
+Make sure two things:
+
+1. There is a file named `settings.py` in `OpenHouse` folder.
+2. The database username and password settings are correct. 
+<br/>(There is a sample setting.py in `dev_tools/settings.py.sample`)
 
 ### Database Migration
 
 + `python manage.py makemigrations`
 + `python manage.py migrate`
-+ `python manage.py migrate --database=2017`
++ `python manage.py migrate --database=oh_2017`
 
 ### Run the development server
 
-`python manage.py runserver [IP] [PORT]
+`python manage.py runserver [IP]:[PORT]`
 
