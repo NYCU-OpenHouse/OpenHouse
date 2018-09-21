@@ -16,9 +16,6 @@
     <a class="item" href="{%url 'info' %}">
       公司資料
     </a>
-    <a class="{{nav_rdss}} item" href="{% url 'rdss_company_index' %}">
-      研發替代役
-    </a>
     <a class="item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
       校園徵才
     </a>
@@ -31,39 +28,6 @@
 
     <!--一般使用者(學生)!-->
     {% else %}
-    <!--
-    <a class="item" href="/">
-      首頁
-    </a>
-    -->
-    <div class="ui dropdown item" id="rdss_navtop_dropdown">
-      研發替代役
-      <i class="dropdown inverted icon"></i>
-      <div class="menu">
-        <a class="item" href="{% url 'rdss_index' %}">
-          活動資訊
-        </a>
-        <!--
-        <a class="item" href="{% url 'rdss_jobs' %}">
-          職缺列表
-        </a>
-        -->
-        <a class="item" href="{% url 'seminar_public' %}">
-          說明會
-        </a>
-        <a class="item" href="{% url 'jobfair_public' %}">
-          就博會
-        </a>
-        <a class="item" href="{% url 'rdss_querypts' %}">
-          查集點
-        </a>
-      </div>
-    </div>
-    <!--
-    <a class="item navtop_rdss_popup" href="{% url 'public' %}">
-      校園徵才
-    </a>
-    -->
     <div class="ui dropdown item" id="recruit_navtop_dropdown">
       校園徵才
       <i class="dropdown inverted icon"></i>
