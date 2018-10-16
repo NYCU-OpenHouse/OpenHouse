@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^admin/recruit/', include('recruit.admin_urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^company/', include('company.urls')),  # add '' on the include path!!!
-    # url(r'^company/rdss/', include('rdss.internal_urls')),  # add '' on the include path!!!
+    url(r'^company/rdss/', include('rdss.internal_urls')),  # add '' on the include path!!!
     url(r'^company/recruit/', include('recruit.internal_urls')),  # add '' on the include path!!!
     url(r'^staff/', include('staff.urls')),  # add '' on the include path!!!
     url(r'^admin/staff/', include('staff.admin_urls')),
