@@ -86,15 +86,14 @@ def seminar_select_form_gen(request):
     configs=RecruitConfigs.objects.all()[0]
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
-    seminar_days = (seminar_end_date - seminar_start_date).days
     table_start_date = seminar_start_date
     # find the nearest Monday
     while(table_start_date.weekday() != 0 ):
         table_start_date -= datetime.timedelta(days=1)
     # make the length to 5 multiples
-    table_days = seminar_days + (seminar_days % 7) + 7
     dates_in_week = list()
-    for week in range(0, int(table_days/7)):
+    weeks = seminar_end_date.isocalendar()[1] - seminar_start_date.isocalendar()[1] + 1
+    for week in range(0, weeks):
         # separate into 5 in each list (there are 5 days in a week)
         dates_in_week.append( [(table_start_date + datetime.timedelta(days=day+week*7))\
                 for day in range(0,5)])
