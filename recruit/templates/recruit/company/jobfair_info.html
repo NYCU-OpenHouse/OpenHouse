@@ -2,6 +2,7 @@
 {% block 'content' %}
     <form method="post" class="ui form" action=".">
         {% csrf_token %}
+        <h3 style="color:red">請企業於 1/24（四）前完成「就博會資訊」填寫，以進行行政施工等準備作業</h3>
         <div class="field">
             <label>{{form.sign_name.label}}</label>
             {{form.sign_name}}
@@ -43,9 +44,6 @@
         <div class="field">
             <label>{{form.send_obj.label}}</label>
             {{form.send_obj}}
-            <p>提早寄送展示物品與及DM刊物，請註記寄送品項與數量，並協調物流公司於活動前兩日送達交
-                大就輔組(勿過早或過晚)。大型、過重(無法以小型電梯運載者)及貴重物品請勿寄送。
-            </p>
         </div>
         
         <div class="field">

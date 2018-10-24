@@ -207,7 +207,7 @@ class JobfairInfo(models.Model):
     contact_mobile = models.CharField(u'聯絡人手機', max_length=32)
     contact_email = models.EmailField(u'聯絡人Email', max_length=128)
     packing_tickets = models.IntegerField(u'停車證數量')
-    job_number = models.SmallIntegerField(u'2018職缺數', default=0)
+    job_number = models.SmallIntegerField(u'2019職缺數', default=0)
     general_lunch_box = models.SmallIntegerField(u'葷食便當數量', default=0)
     veget_lunch_box = models.IntegerField(u'素食便當')
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
