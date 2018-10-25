@@ -6,11 +6,10 @@
         <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
-
 {% block 'content' %}
 <form class="ui info form" method="POST" action="{% url 'recruit_seminar_info' %}" >
-	<h1 class="ui dividing header">說明會資訊</h1>
 	{% csrf_token %}
+	<h1 class="ui dividing header">說明會資訊</h1>
 	{% if seminar_info %}
         <div class="ui teal compact message">
             說明會資訊填寫已完成，您也可以修改資訊，再次送出。
