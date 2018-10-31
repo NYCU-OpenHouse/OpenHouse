@@ -71,6 +71,7 @@
     <tbody>
 
       {% for session in session_list %} <!--一週中的場次-->
+      {% if session.valid %}
       <tr>
         <td>{{session.start_time}}~{{session.end_time}}</td>
         {% for day in week %}
@@ -98,6 +99,7 @@
         </td>
         {% endfor %}
       </tr>
+      {% endif %}
       {% endfor %}
 
     </tbody>

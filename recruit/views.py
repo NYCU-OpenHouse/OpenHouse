@@ -107,6 +107,13 @@ def seminar_select_form_gen(request):
         {"name":"other4", "start_time":configs.session_5_start, "end_time":configs.session_5_end},
         {"name":"other5", "start_time":configs.session_6_start, "end_time":configs.session_6_end},
     ]
+    for session in session_list:
+        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
+                    datetime.datetime.combine(datetime.date.today(), session["start_time"])
+        if delta > timedelta(minutes=30):
+            session["valid"] = True
+        else:
+            session["valid"] = False
     return render(request,'recruit/company/seminar_select.html',locals())
 
 @login_required(login_url='/company/login/')
