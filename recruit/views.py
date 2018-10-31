@@ -692,7 +692,7 @@ def Status(request):
     # get the dates from the configs
     configs=recruit.models.RecruitConfigs.objects.all()[0]
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
-    
+
     pay_info_file = Files.objects.filter(category = "繳費資訊").first() 
 
 
@@ -745,6 +745,7 @@ def Status(request):
             fee += configs.session_4_fee
         fee += signup_data.jobfair*configs.jobfair_booth_fee
     except AttributeError:
+        #Company has not sign up
         pass
     # Sponsor fee display
     sponsor_amount = 0
@@ -757,14 +758,18 @@ def Status(request):
     all_fee = fee + sponsor_amount
         
     # Seminar and Jobfair info status
-    company = RecruitSignup.objects.get(cid=request.user.cid)
-    try:
-        seminar_info = recruit.models.SeminarInfo.objects.get(company = request.user.cid)
-    except ObjectDoesNotExist:
+    if signup_data:
+        company = RecruitSignup.objects.get(cid=request.user.cid)
+        try:
+            seminar_info = recruit.models.SeminarInfo.objects.get(company = request.user.cid)
+        except ObjectDoesNotExist:
+            seminar_info = None
+        try:
+            jobfair_info = JobfairInfo.objects.get(company = company)
+        except ObjectDoesNotExist:
+            jobfair_info = None
+    else:
         seminar_info = None
-    try:
-        jobfair_info = JobfairInfo.objects.get(company = company)
-    except ObjectDoesNotExist:
         jobfair_info = None
         
     # control semantic ui class
