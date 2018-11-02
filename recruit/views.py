@@ -468,10 +468,13 @@ def Sponsor(request):
     #semantic ui
     sidebar_ui = {'sponsor':"active"}
     
-
-    if request.user.username != "77777777":
-        error_msg = "非贊助時間。如有問題請洽負責人員"
-        return render(request, 'recruit/error.html', locals())
+    configs = RecruitConfigs.objects.all()[0]
+    if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
+        if request.user.username != "77777777":
+            error_msg = "非贊助時間。期間為 {} 至 {}".format(
+            timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
+            timezone.localtime(configs.recruit_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
+            return render(request, 'recruit/error.html', locals())
     # get form post
     try:
         sponsor = RecruitSignup.objects.get(cid=request.user.cid)
