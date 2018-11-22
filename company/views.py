@@ -58,11 +58,15 @@ def CompanyEdit(request):
     if request.POST:
         form = CompanyEditForm(request.POST,request.FILES,instance=user)
         if form.is_valid():
+            if user and (form.data["cid"] != user.cid or form.data["category"] != user.category):
+                if not user.is_staff:
+                    # only staff can change cid & category
+                    form = CompanyEditForm(instance=user)
             user = form.save()
-    #        messages.success(request, _("User '{0}' created.").format(user))
+            # messages.success(request, _("User '{0}' created.").format(user))
             return redirect(CompanyInfo)
         else:
-            #messages.error(request, ("The user could not be created due to errors.") )
+            # messages.error(request, ("The user could not be created due to errors.") )
             return render(request,'company_edit_form.html',locals())
     form = CompanyEditForm(instance=user);
     company_info = company.models.Company.objects.get(cid=request.user.cid)
