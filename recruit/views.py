@@ -329,6 +329,9 @@ def jobfair_select_control(request):
         {"slot_type":"綜合", "display":"綜合(綜合、集團、機構、人力銀行)"
          ,"category":["綜合","集團","機構","人力銀行"],
          "slot_list":list(), "is_mygroup":False, "color":"purple"},
+
+        {"slot_type":"新創", "display":"新創", "category": ["新創"], "slot_list":list(),
+        "is_mygroup":False, "color":"brown"},
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
