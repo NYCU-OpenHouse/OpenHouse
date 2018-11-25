@@ -7,13 +7,13 @@
 {% block 'body' %}
 <title>簡報大賽 - 投票系統</title>
 <div id="vote_seg">
-{% if error_msg %}
+    {% if error_msg %}
     <div class="ui negative message">
         <div class="header">
             {{error_msg}}
         </div>
     </div>
-{% else %}
+    {% endif %}
     <div class="ui two column grid">
         {% for participant in participants %}
             <div class="center aligned column">
@@ -27,12 +27,12 @@
                 <form action="." method="post">
                 {% csrf_token %}
                 <input type="hidden" name="participant" value="{{participant.id}}">
-                <button class="ui disabled button" type="submit">投票</button>
+                <button class="ui button" type="submit">投票</button>
                 </form>
             </div>
         {% endfor %}
     </div>
-{% endif %}
+
 </div>
 {% endblock %}
 
