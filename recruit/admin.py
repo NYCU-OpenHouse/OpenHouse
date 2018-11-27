@@ -80,7 +80,8 @@ class SlotColorAdmin(admin.ModelAdmin):
 
 @admin.register(JobfairOrder)
 class JobfairOrderAdmin(admin.ModelAdmin):
-    list_display=('company', 'time')
+    list_display=('company', 'time', "updated")
+    raw_id_fields = ("company",)
 
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no','category','company','updated')
