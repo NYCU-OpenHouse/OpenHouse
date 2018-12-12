@@ -114,6 +114,20 @@
             {% endif %}
         {% endfor %}
     </div>
+</div>
+<div class="ui segment">
+    <h3 class="ui dividing header">新創</h3>
+    <div class="ui six column padded grid" >
+        {% for startup_slot in startup_slots %}
+            {% if startup_slot.company %}
+               <div class="column" style="padding:0.5rem" >
+                   <div class='ui purple center aligned segment'>
+                       <p>攤位{{startup_slot.serial_no}}: {{ startup_slot.company}}</p>
+                   </div>
+               </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>   
 
 {% endblock %}

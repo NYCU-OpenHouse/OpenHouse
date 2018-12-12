@@ -626,6 +626,7 @@ def jobfair(request):
     info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
     network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
     synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
+    startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
     return render(request,'recruit/public/jobfair.html',locals())
 
 def public(request):
