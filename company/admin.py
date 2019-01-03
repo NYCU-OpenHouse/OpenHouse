@@ -1,5 +1,6 @@
 from django.contrib import admin
 from company.models import Company
+from recruit.models import RecruitSignup
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.contrib import admin
@@ -54,6 +55,17 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
+    def save(self, commit=True):
+        user = super(UserChangeForm, self).save(commit=False)
+        old_cid = self.initial['cid']
+        new_cid = self.data['cid']
+        if old_cid != new_cid:
+            RecruitSignup.objects.filter(cid=old_cid).update(cid=new_cid)
+
+        if commit:
+            user.save()
+        return user
 
 
 class UserAdmin(BaseUserAdmin):
