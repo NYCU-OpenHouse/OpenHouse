@@ -32,7 +32,9 @@ def recruit_company_index(request):
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
         configs = RecruitConfigs.objects.all()[0]
-        if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
+        now_time = timezone.now()
+        if now_time < configs.recruit_signup_start \
+                or now_time > configs.recruit_signup_end:
             if request.user.username != "77777777":
                 error_msg = "非報名時間。期間為 {} 至 {}".format(
                 timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
@@ -229,10 +231,12 @@ def jobfair_info(request):
     except Exception as e:
         error_msg="貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
         return render(request,'recruit/error.html',locals())
+
     try:
         jobfair_info = JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
+
     if request.POST:
         data = request.POST.copy()
         form = JobfairInfoForm(data=data,instance=jobfair_info)
@@ -247,6 +251,8 @@ def jobfair_info(request):
     else:
         form = JobfairInfoForm(instance=jobfair_info)
     return render(request, 'recruit/company/jobfair_info.html', locals())
+
+
 @login_required(login_url='/company/login/')
 def seminar_info(request):
     try:
@@ -259,6 +265,7 @@ def seminar_info(request):
         seminar_info = SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         seminar_info = None
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
@@ -432,7 +439,6 @@ def jobfair_select_control(request):
             return JsonResponse({"success":False,"msg":"刪除就博會攤位失敗"})
     else:
         raise Http404("Invalid")
-
 
 
 def Add_SponsorShip(sponsor_items,post_data,sponsor):
@@ -630,7 +636,6 @@ def jobfair(request):
     return render(request,'recruit/public/jobfair.html',locals())
 
 def public(request):
-    
     recruit_info = recruit.models.RecruitInfo.objects.all()
     return render(request,'recruit/public/public.html',locals())
 
@@ -645,18 +650,21 @@ def RegisterCard(request):
             ui_message = {"type": "green","msg": "註冊成功"}
         else:
             ui_message = {"type": "error","msg": "註冊失敗"}
-
     else:
         form = StudentForm()
     return render(request,'recruit/admin/reg_card.html',locals())
 
 @staff_member_required
 def collect_points(request):
+    """
+    Select today session and place current session in first place
+    """
     students = Student.objects.all()
     today = datetime.datetime.now().date()
     config = RecruitConfigs.objects.all()[0]
-    now = datetime.datetime.now()
+
     # Find the suitable session
+    now = datetime.datetime.now()
     if (now - timedelta(minutes=20)).time() < config.session_1_end \
             and (now + timedelta(minutes=10)).time() > config.session_1_end:
         current_session = 'other1'
@@ -700,6 +708,7 @@ def exchange_prize(request):
             student = Student.objects.filter(card_num=request.GET['card_num']).first()
             form = StudentForm(instance=student)
             exchange_form = ExchangeForm()
+
     if(request.POST):
         student = Student.objects.filter(card_num=request.POST['card_num']).first()
         form = StudentForm(request.POST,instance=student)
@@ -715,7 +724,8 @@ def exchange_prize(request):
 def query_points(request):
     student = None
     if(request.POST):
-        student = Student.objects.filter(student_id = request.POST['student_id'],phone = request.POST['phone']).first()
+        student = Student.objects.filter(student_id = request.POST['student_id'],
+                                         phone = request.POST['phone']).first()
         records = StuAttendance.objects.filter(student=student)
     return render(request,'recruit/public/query_points.html',locals())
 
@@ -729,7 +739,6 @@ def Status(request):
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
 
     pay_info_file = Files.objects.filter(category = "繳費資訊").first() 
-
 
     slot_info = {
         "seminar_select_time":"選位時間正在排定中",
@@ -812,11 +821,9 @@ def Status(request):
     nav_recruit="active"
     sidebar_ui = {'status':"active"}
         
-        
     step_ui[0] = "completed" if signup_data else "active"
     step_ui[1] = "completed" if jobfair_slot or seminar_slot else "active"
     step_ui[2] = "completed" if jobfair_info or seminar_info else "active"
-
-    
     
     return render(request,'recruit/company/status.html',locals())
+
