@@ -40,7 +40,7 @@ def recruit_signup(request):
                 timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
                 timezone.localtime(configs.recruit_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
                 return render(request, 'recruit/error.html', locals())
-        signup_info_exist_exist = False
+        signup_info_exist = False
         recruit_configs = RecruitConfigs.objects.all()[0]
         try:
             signup_info = RecruitSignup.objects.get(cid=request.user.cid)
