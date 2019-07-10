@@ -28,8 +28,8 @@ CATEGORYS = (
 class RdssConfigs(models.Model):
     register_start = models.DateTimeField(u'廠商註冊開始時間')
     register_end = models.DateTimeField(u'廠商註冊結束時間')
-    rdss_signup_start = models.DateTimeField(u'研替報名開始時間')
-    rdss_signup_end = models.DateTimeField(u'研替報名結束時間')
+    rdss_signup_start = models.DateTimeField(u'秋季招募報名開始時間')
+    rdss_signup_end = models.DateTimeField(u'秋季招募報名結束時間')
 
     #問卷
     survey_start = models.DateTimeField(u'滿意度問卷開始填答')
@@ -58,8 +58,8 @@ class RdssConfigs(models.Model):
     class Meta:
         managed = True
 
-        verbose_name = u"1. 研替活動設定"
-        verbose_name_plural = u"1. 研替活動設定"
+        verbose_name = u"1. 秋季招募活動設定"
+        verbose_name_plural = u"1. 秋季招募活動設定"
 
 
 class Signup(models.Model):
@@ -567,8 +567,8 @@ class RdssInfo(models.Model):
 		return "Rdss_info"
 	class Meta:
 		managed = True
-		verbose_name = u"研替活動資訊"
-		verbose_name_plural =u"研替活動資訊"
+		verbose_name = u"秋季招募活動資訊"
+		verbose_name_plural =u"秋季招募活動資訊"
 class RdssCompanyInfo(models.Model):
 
 	title = models.CharField(u'標題',default='',max_length=10)
@@ -578,8 +578,8 @@ class RdssCompanyInfo(models.Model):
 		return "Rdss_Company_info"
 	class Meta:
 		managed = True
-		verbose_name = u"研替活動資訊(公司)"
-		verbose_name_plural =u"研替活動資訊(公司)"
+		verbose_name = u"秋季招募活動資訊(公司)"
+		verbose_name_plural =u"秋季招募活動資訊(公司)"
 class RdssSeminarInfo(models.Model):
 
 	title = models.CharField(u'標題',default='',max_length=10)

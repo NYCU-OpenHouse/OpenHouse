@@ -164,7 +164,7 @@ def SeminarInfo(request):
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
-        error_msg="貴公司尚未報名本次「研發替代役」活動，請於左方點選「填寫報名資料」"
+        error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
 
     try:
@@ -193,7 +193,7 @@ def JobfairInfo(request):
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
-        error_msg="貴公司尚未報名本次「研發替代役」活動，請於左方點選「填寫報名資料」"
+        error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
     # check whether the company job fair info is in the DB
     try:
@@ -225,10 +225,10 @@ def SeminarSelectFormGen(request):
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
         if my_signup.seminar == "":
-            error_msg="貴公司已報名本次研替活動，但並末勾選參加說明會選項。"
+            error_msg="貴公司已報名本次秋季招募活動，但並末勾選參加說明會選項。"
             return render(request,'error.html',locals())
     except Exception as e:
-        error_msg="貴公司尚未報名本次「研發替代役」活動，請於左方點選「填寫報名資料」"
+        error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
 
     #check the company have been assigned a slot select order and time
@@ -372,10 +372,10 @@ def JobfairSelectFormGen(request):
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
         if my_signup.jobfair== 0:
-            error_msg="貴公司已報名本次研替活動，但並末填寫就博會攤位。"
+            error_msg="貴公司已報名本次秋季招募活動，但並末填寫就博會攤位。"
             return render(request,'error.html',locals())
     except Exception as e:
-        error_msg="貴公司尚未報名本次「研發替代役」活動，請於左方點選「填寫報名資料」"
+        error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
     #check the company have been assigned a slot select order and time
     try:
@@ -484,7 +484,7 @@ def Sponsor(request):
     try:
         sponsor = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
-        error_msg="貴公司尚未報名本次「研發替代役」活動，請於左方點選「填寫報名資料」"
+        error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
 
     if request.POST:
