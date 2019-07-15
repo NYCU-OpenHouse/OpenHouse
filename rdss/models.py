@@ -65,14 +65,17 @@ class RdssConfigs(models.Model):
 class Signup(models.Model):
     SEMINAR_CHOICES = (
             (u'', u'不參加說明會'),
-            (u'noon', u'中午場'),
-            (u'night', u'晚上場'),
+            (u'noon', u'(OH)12:10'),
+            (u'night', u'(OH)其餘場'),
             #(u'company_day', u'專屬企業日'),
             )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='', blank=True)
+    ece = models.BooleanField(u'(ECE)電機', default=False)
+    ece_cn = models.BooleanField(u'(ECE)電控', default=False)
+    ece_cm = models.BooleanField(u'(ECE)電信', default=False)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0)
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')

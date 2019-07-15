@@ -87,6 +87,9 @@ def Status(request):
         elif signup_data.seminar == "night":
             fee += configs.session2_fee
         fee += signup_data.jobfair*configs.jobfair_booth_fee
+        fee += signup_data.ece * 5000
+        fee += signup_data.ece_cn * 5000
+        fee += signup_data.ece_cm * 5000
     except AttributeError:
         pass
 
