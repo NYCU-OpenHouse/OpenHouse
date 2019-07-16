@@ -51,6 +51,7 @@ def Status(request):
             "noon":"{}~{}".format(configs.session1_start,configs.session1_end),
             "night1":"{}~{}".format(configs.session2_start,configs.session2_end),
             "night2":"{}~{}".format(configs.session3_start,configs.session3_end),
+            "night3":"{}~{}".format(configs.session4_start,configs.session4_end),
             "extra":"補場",
             "jobfair":"就博會",
             }
@@ -581,8 +582,10 @@ def CollectPoints(request):
         current_session = "noon"
     elif now > configs.session2_start and now <configs.session3_start:
         current_session = "night1"
-    elif now > configs.session3_start:
+    elif now > configs.session3_start and now <configs.session4_start:
         current_session = "night2"
+    elif now > configs.session4_start:
+        current_session = "night3"
 
     seminar_list = rdss.models.SeminarSlot.objects.filter(date=today)
     current_seminar = seminar_list.filter(session = current_session).first()

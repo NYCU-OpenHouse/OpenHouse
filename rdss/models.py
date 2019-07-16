@@ -44,10 +44,13 @@ class RdssConfigs(models.Model):
     session2_end = models.TimeField(u'說明會場次2_結束時間')
     session3_start = models.TimeField(u'說明會場次3_開始時間')
     session3_end = models.TimeField(u'說明會場次3_結束時間')
+    session4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
+    session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
     # 費用
     session1_fee = models.IntegerField(u'說明會場次1_費用')
     session2_fee = models.IntegerField(u'說明會場次2_費用')
     session3_fee = models.IntegerField(u'說明會場次3_費用')
+    session4_fee = models.IntegerField(u'說明會場次4_費用', default=0)
 
     # 就博會相關
     jobfair_date = models.DateField(u'就博會日期')
@@ -114,6 +117,7 @@ class SeminarSlot(models.Model):
             ("noon", "中午場"),
             ("night1", "晚上場1"),
             ("night2", "晚上場2"),
+            ("night3", "晚上場3"),
             ("extra", "加(補)場"),
             ("jobfair", "就博會"), # 因為集點需要，公司留空
             )

@@ -59,6 +59,15 @@
 				{% endfor %}
 			</tr>
 
+			<tr>
+				<td>{{configs.session4_start}}~{{configs.session4_end}}</td>
+				{% for day in week %}
+        <td style="color:{{day.night3.place_color}}">
+          {{day.night3.company}}
+				</td>
+				{% endfor %}
+			</tr>
+
 		</tbody>
 		{% endfor %}
 	</table>

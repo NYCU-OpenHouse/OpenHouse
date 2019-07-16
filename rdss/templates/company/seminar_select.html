@@ -144,6 +144,31 @@
 				{% endfor %}
 			</tr>
 
+			<tr>
+				<td>{{configs.session4_start}}~{{configs.session4_end}}</td>
+				{% for day in week %}
+				<td>
+
+					<div class="ui radio checkbox" ng-if="ctrl.slot.night3_{{day|date:"Ymd"}}.cid=='None' &&
+						ctrl.slot.night3_{{day|date:"Ymd"}}.valid">
+						<input ng-model="ctrl.selected" value="night3_{{day|date:"Ymd"}}"  type="radio">
+						<label style="color:{$ ctrl.slot.night3_{{day|date:"Ymd"}}.place_color$}">可選時段</label>
+					</div>
+
+					<p ng-if="ctrl.slot.night3_{{day|date:"Ymd"}}.cid == 'None' &&
+					!ctrl.slot.night3_{{day|date:"Ymd"}}.valid">非貴公司時段</p>
+
+					<p ng-if="ctrl.slot.night3_{{day|date:"Ymd"}}.cid != 'None'"
+            style="color:{$ ctrl.slot.night3_{{day|date:"Ymd"}}.place_color$}">
+						{$ ctrl.slot.night3_{{day|date:"Ymd"}}.cid $}
+					</p>
+
+					<p ng-if="ctrl.slot.night3_{{day|date:"Ymd"}} == undefined">無活動安排</p>
+
+				</td>
+				{% endfor %}
+			</tr>
+
 		</tbody>
 		{% endfor %}
 	</table>
