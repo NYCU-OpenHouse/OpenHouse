@@ -38,8 +38,8 @@ class RdssConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
-    session1_start = models.TimeField(u'說明會場次1_開始時間')
-    session1_end = models.TimeField(u'說明會場次1_結束時間')
+    session1_start = models.TimeField(u'說明會場次1(中午)_開始時間')
+    session1_end = models.TimeField(u'說明會場次1(中午)_結束時間')
     session2_start = models.TimeField(u'說明會場次2_開始時間')
     session2_end = models.TimeField(u'說明會場次2_結束時間')
     session3_start = models.TimeField(u'說明會場次3_開始時間')
