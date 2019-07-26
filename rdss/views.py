@@ -26,11 +26,11 @@ collect_pts_logger = logging.getLogger('stu_attend')
 
 @login_required(login_url='/company/login/')
 def RDSSCompanyIndex(request):
-	sidebar_ui = {'index': 'active'}
-	configs=rdss.models.RdssConfigs.objects.all()[0]
-	rdss_company_info = rdss.models.RdssCompanyInfo.objects.all()
-	plan_file = rdss.models.Files.objects.filter(category = "企畫書").first()
-	return render(request,'company/rdss_company_entrance.html',locals())
+    sidebar_ui = {'index': 'active'}
+    configs=rdss.models.RdssConfigs.objects.all()[0]
+    rdss_company_info = rdss.models.RdssCompanyInfo.objects.all()
+    plan_file = rdss.models.Files.objects.filter(category = "企畫書").first()
+    return render(request,'company/rdss_company_entrance.html',locals())
 
 @login_required(login_url='/company/login/')
 def Status(request):
@@ -126,9 +126,11 @@ def Status(request):
 def SignupRdss(request):
     if request.user.is_staff:
         return redirect("/admin")
+
     #semanti ui control
     sidebar_ui = {'signup':"active"}
     configs=rdss.models.RdssConfigs.objects.all()[0]
+
     # use timezone now to get current time with GMT+8
     if timezone.now() > configs.rdss_signup_end or timezone.now() < configs.rdss_signup_start:
         if request.user.username!="77777777":
@@ -153,6 +155,7 @@ def SignupRdss(request):
             # for debug usage
             print(form.errors.items())
         return redirect(SignupRdss)
+
     # edit
     if edit_instance_list:
         form = rdss.forms.SignupCreationForm(instance=edit_instance_list[0])
@@ -160,7 +163,6 @@ def SignupRdss(request):
     else:
         form = rdss.forms.SignupCreationForm
     plan_file = rdss.models.Files.objects.filter(category = "企畫書").first()
-    print(locals())
     return render(request,'company/signup_form.html',locals())
 
 @login_required(login_url='/company/login/')
@@ -175,6 +177,7 @@ def SeminarInfo(request):
         seminar_info = rdss.models.SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         seminar_info = None
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
@@ -189,21 +192,22 @@ def SeminarInfo(request):
 
     #semantic ui
     sidebar_ui = {'seminar_info':"active"}
-    return render(request,'company/seminar_info_form.html',locals())
+    return render(request, 'company/seminar_info_form.html', locals())
 
 @login_required(login_url='/company/login/')
 def JobfairInfo(request):
-
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
         error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
+
     # check whether the company job fair info is in the DB
     try:
         jobfair_info = rdss.models.JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
@@ -381,6 +385,7 @@ def JobfairSelectFormGen(request):
     except Exception as e:
         error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request,'error.html',locals())
+
     #check the company have been assigned a slot select order and time
     try:
         jobfair_select_time = rdss.models.JobfairOrder.objects.filter(company=mycid).first().time
@@ -489,13 +494,12 @@ def Sponsor(request):
         sponsor = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
         error_msg="貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
-        return render(request,'error.html',locals())
+        return render(request, 'error.html', locals())
 
     if request.POST:
         sponsor_items = rdss.models.SponsorItems.objects.all()
         Add_SponsorShip(sponsor_items,request.POST,sponsor)
-        msg = {"display":True,"content":"儲存成功!"}
-
+        msg = {"display":True, "content":"儲存成功!"}
 
     #活動專刊的部份是變動不大，且版面特殊，採客製寫法
     monograph_main = rdss.models.SponsorItems.objects.filter(name="活動筆記本").first()
@@ -506,7 +510,7 @@ def Sponsor(request):
     sponsorship = rdss.models.Sponsorship.objects.filter(company=sponsor)
     my_sponsor_items = [s.item for s in sponsorship ]
     print(monograph_items)
-    return render(request,'company/sponsor.html',locals())
+    return render(request, 'company/sponsor.html', locals())
 
 @staff_member_required
 def SponsorAdmin(request):
@@ -678,15 +682,14 @@ def RegisterCard(request):
 
 # ========================RDSS public view=================
 def RDSSPublicIndex(request):
-	all_company = company.models.Company.objects.all()
-	rdss_company = rdss.models.Signup.objects.all()
-	rdss_info = rdss.models.RdssInfo.objects.all()
-	#rdss_history = rdss.models.RdssInfo.objects.using("oh_2016").all()
-	company_list = [
-		all_company.get(cid=c.cid) for c in rdss_company
-	]
-	company_list.sort(key=lambda item:getattr(item,'category'))
-	return render(request,'public/rdss_index.html',locals())
+    all_company = company.models.Company.objects.all()
+    rdss_company = rdss.models.Signup.objects.all()
+    rdss_info = rdss.models.RdssInfo.objects.all()
+    company_list = [
+        all_company.get(cid=company.cid) for company in rdss_company
+    ]
+    company_list.sort(key=lambda item: getattr(item, 'category'))
+    return render(request, 'public/rdss_index.html', locals())
 
 def SeminarPublic(request):
     #semanti ui control
@@ -739,7 +742,7 @@ def SeminarPublic(request):
         dates_in_week.append(week_slot_info)
 
     slot_colors = rdss.models.SlotColor.objects.all()
-    return render(request,'public/rdss_seminar.html',locals())
+    return render(request, 'public/rdss_seminar.html', locals())
 
 def JobfairPublic(request):
     place_map = rdss.models.Files.objects.filter(category='就博會攤位圖').first()
@@ -760,7 +763,6 @@ def QueryPoints(request):
 
 
 def ListJobs(request):
-
     all_company = company.models.Company.objects.all()
     rdss_company = rdss.models.Signup.objects.all()
     company_list = [

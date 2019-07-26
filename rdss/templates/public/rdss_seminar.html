@@ -6,11 +6,14 @@
 <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 
 {% endblock %}
+
 {% block 'content' %}
 <h1 class="ui header">企業徵才說明會</h2>
-{%for rdssseminar in rdss_seminar_info%}
+
+{% for rdssseminar in rdss_seminar_info %}
     {{rdssseminar.content|safe}}
-{%endfor%}
+{% endfor %}
+
 <h2 class="ui dividing header">場次時間表</h2>
 <ul class="ui list">
   <p>場地資訊</p>
@@ -20,55 +23,56 @@
   </li>
   {% endfor %}
 </ul>
-	<table class="ui celled striped table" style="text-align:center">
-		{% for week in dates_in_week %}
-		<thead>
-			<tr>
-				<th>時間</th>
-				{% for day in week %}
-				<th>{{day.date|date:"m/d (D)" }}</th>
-				{% endfor %}
-			</tr>
-		</thead>
-		<tbody>
 
-			<tr>
-				<td>{{configs.session1_start}}~{{configs.session1_end}}</td>
-				{% for day in week %}
-        <td style="color:{{day.noon.place_color}}">
-          {{day.noon.company}}
-				</td>
-				{% endfor %}
-			</tr>
+<table class="ui celled striped table" style="text-align:center">
+    {% for week in dates_in_week %}
+    <thead>
+        <tr>
+            <th>時間</th>
+            {% for day in week %}
+            <th>{{day.date|date:"m/d (D)" }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
 
-			<tr>
-				<td>{{configs.session2_start}}~{{configs.session2_end}}</td>
-				{% for day in week %}
-        <td style="color:{{day.night1.place_color}}">
-          {{day.night1.company}}
-				</td>
-				{% endfor %}
-			</tr>
+        <tr>
+            <td>{{configs.session1_start}}~{{configs.session1_end}}</td>
+            {% for day in week %}
+                <td style="color:{{day.noon.place_color}}">
+                  {{day.noon.company}}
+                </td>
+            {% endfor %}
+        </tr>
 
-			<tr>
-				<td>{{configs.session3_start}}~{{configs.session3_end}}</td>
-				{% for day in week %}
-        <td style="color:{{day.night2.place_color}}">
-          {{day.night2.company}}
-				</td>
-				{% endfor %}
-			</tr>
+        <tr>
+            <td>{{configs.session2_start}}~{{configs.session2_end}}</td>
+            {% for day in week %}
+                <td style="color:{{day.night1.place_color}}">
+                  {{day.night1.company}}
+                </td>
+            {% endfor %}
+        </tr>
 
-			<tr>
-				<td>{{configs.session4_start}}~{{configs.session4_end}}</td>
-				{% for day in week %}
-        <td style="color:{{day.night3.place_color}}">
-          {{day.night3.company}}
-				</td>
-				{% endfor %}
-			</tr>
+        <tr>
+            <td>{{configs.session3_start}}~{{configs.session3_end}}</td>
+            {% for day in week %}
+                <td style="color:{{day.night2.place_color}}">
+                  {{day.night2.company}}
+                </td>
+            {% endfor %}
+        </tr>
 
-		</tbody>
-		{% endfor %}
-	</table>
+        <tr>
+            <td>{{configs.session4_start}}~{{configs.session4_end}}</td>
+            {% for day in week %}
+                <td style="color:{{day.night3.place_color}}">
+                  {{day.night3.company}}
+                </td>
+            {% endfor %}
+        </tr>
+
+    </tbody>
+    {% endfor %}
+</table>
 {% endblock %}

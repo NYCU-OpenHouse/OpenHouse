@@ -6,6 +6,7 @@
 
 {% block 'content' %}
 
+<br>
 <div class="ui header">
 	交通大學OpenHouse 秋季招募 活動報名流程
 </div>
@@ -35,7 +36,7 @@
 	{{request.user.shortname}} 報名狀況總覽
 </div>
 
-{%if not signup_data %}
+{% if not signup_data %}
 
 <div class="ui warning icon message">
 	<i class="warning icon"></i>
@@ -43,10 +44,10 @@
 		<div class="header">
 			貴公司尚未報名本年度「秋季招募」徵才活動
 		</div>
-		<p><a href="{% url 'rdss_signup'%}">點此前往活動報名頁面</a>，活動將於{{configs.rdss_signup_end}}截止報名</p>
+		<p><a href="{% url 'rdss_signup' %}">點此前往活動報名頁面</a>，活動將於{{configs.rdss_signup_end}}截止報名</p>
 	</div>
 </div>
-{%endif%}
+{% endif %}
 
 <div class="ui two column grid">
 	<div class="column">
@@ -74,7 +75,7 @@
 				<tr>
 					<td>說明會場次</td>
 					<td>
-						{{ signup_data.get_seminar_display}}
+						{{ signup_data.get_seminar_display }}
 					</td>
 				</tr>
 				<tr>
