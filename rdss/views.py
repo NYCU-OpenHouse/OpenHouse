@@ -710,6 +710,7 @@ def SeminarPublic(request):
             noon_slot = rdss.models.SeminarSlot.objects.filter(date=today, session='noon').first()
             night1_slot= rdss.models.SeminarSlot.objects.filter(date=today, session='night1').first()
             night2_slot= rdss.models.SeminarSlot.objects.filter(date=today, session='night2').first()
+            night3_slot= rdss.models.SeminarSlot.objects.filter(date=today, session='night3').first()
             week_slot_info.append(
                 {
                     'date': today,
@@ -727,6 +728,11 @@ def SeminarPublic(request):
                     {
                         'company': night2_slot.company.get_company_name(),
                         'place_color': night2_slot.place.css_color
+                    },
+                    'night3': '' if not night3_slot or not night3_slot.company else
+                    {
+                        'company': night3_slot.company.get_company_name(),
+                        'place_color': night3_slot.place.css_color
                     },
                 }
             )
