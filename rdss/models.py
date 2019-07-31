@@ -243,7 +243,7 @@ class SeminarInfo(models.Model):
     speaker = models.CharField(u'主講人', max_length=30)
     speaker_title = models.CharField(u'主講人稱謂', max_length=30)
     speaker_email = models.EmailField(u'主講人Email', max_length=254)
-    attendees = models.SmallIntegerField(u'廠商到場人數')
+    attendees = models.SmallIntegerField(u'人資餐點數量')
     raffle_prize = models.CharField(u'抽獎獎品', max_length=254,
                                     null=True, blank=True)
     raffle_prize_amount = models.SmallIntegerField(u'抽獎獎品數量', default=0)
