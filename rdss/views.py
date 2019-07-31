@@ -41,6 +41,8 @@ def Status(request):
     configs=rdss.models.RdssConfigs.objects.all()[0]
     signup_data = rdss.models.Signup.objects.filter(cid=mycid).first()
 
+    pay_info_file = rdss.models.Files.objects.filter(category = "繳費資訊").first()
+
     slot_info = {
             "seminar_select_time":"選位時間正在排定中",
             "jobfair_select_time":"選位時間正在排定中",
