@@ -280,20 +280,20 @@ def SeminarSelectControl(request):
     if action == "query":
         slots = rdss.models.SeminarSlot.objects.all()
         return_data={}
-        for s in slots:
+        for slot in slots:
             #night1_20160707
-            index= "{}_{}".format(s.session,s.date.strftime("%Y%m%d"))
+            index= "{}_{}".format(slot.session, slot.date.strftime("%Y%m%d"))
             return_data[index] = {}
 
-            return_data[index]['place_color'] = None if not s.place else\
-                s.place.css_color
-            return_data[index]["cid"] = "None" if not s.company else\
-                s.company.get_company_name()
+            return_data[index]['place_color'] = None if not slot.place else\
+                slot.place.css_color
+            return_data[index]["cid"] = "None" if not slot.company else\
+                slot.company.get_company_name()
 
             my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
             #session wrong (signup noon but choose night)
             #and noon is not full yet
-            if (my_seminar_session not in s.session) and\
+            if (my_seminar_session not in slot.session) and\
                 (rdss.models.SeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists()):
             # 選別人的時段，而且自己的時段還沒滿
                 return_data[index]['valid'] = False
