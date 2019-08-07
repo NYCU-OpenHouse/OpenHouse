@@ -371,6 +371,7 @@ class Files(models.Model):
             ('報名說明書', '報名說明書'),
             ('選位相關', '選位相關'),
             ('就博會攤位圖', '就博會攤位圖'),
+            ('繳費資訊','繳費資訊'),
             ('其它', '其它'),
             )
     id = models.AutoField(primary_key=True)
