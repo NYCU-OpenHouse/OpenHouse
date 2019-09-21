@@ -10,6 +10,7 @@ import rdss.forms
 import company.models
 import rdss.models
 import datetime,json,csv
+from datetime import timedelta
 from company.models import Company
 from .forms import EmailPostForm
 from django.core.mail import send_mail
@@ -579,19 +580,26 @@ def CompanySurvey(request):
 def CollectPoints(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+
     configs=rdss.models.RdssConfigs.objects.all()[0]
     today = datetime.datetime.now().date()
-    now = datetime.datetime.now().time()
-    if now < configs.session1_start:
-        current_session = "noon"
-    elif now > configs.session1_start and now <configs.session2_start:
-        current_session = "noon"
-    elif now > configs.session2_start and now <configs.session3_start:
-        current_session = "night1"
-    elif now > configs.session3_start and now <configs.session4_start:
-        current_session = "night2"
-    elif now > configs.session4_start:
-        current_session = "night3"
+    now = datetime.datetime.now()
+
+    # Find the suitable session
+    if (now - timedelta(minutes=20)).time() < configs.session1_end \
+            and (now + timedelta(minutes=10)).time() > configs.session1_end:
+        current_session = 'noon'
+    elif (now - timedelta(minutes=20)).time() < configs.session2_end \
+            and (now + timedelta(minutes=10)).time() > configs.session2_end:
+        current_session = 'night1'
+    elif (now - timedelta(minutes=20)).time() < configs.session3_end \
+            and (now + timedelta(minutes=10)).time() > configs.session3_end:
+        current_session = 'night2'
+    elif (now - timedelta(minutes=20)).time() < configs.session4_end \
+            and (now + timedelta(minutes=10)).time() > configs.session4_end:
+        current_session = 'night3'
+    else:
+        current_session = ''
 
     seminar_list = rdss.models.SeminarSlot.objects.filter(date=today)
     current_seminar = seminar_list.filter(session = current_session).first()
