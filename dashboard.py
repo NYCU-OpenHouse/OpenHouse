@@ -12,7 +12,7 @@ class CustomDashboard(Dashboard):
         self.add_export_dashboard()
 
     def add_export_dashboard(self):
-        '''self.children.append(modules.LinkList(
+        self.children.append(modules.LinkList(
             _('其它匯出'),
             children=[
                 {
@@ -57,7 +57,6 @@ class CustomDashboard(Dashboard):
             column=2,
             order=1
         ))
-        '''
         self.children.append(modules.LinkList(
             _('校徵集點'),
             children=[
@@ -80,7 +79,6 @@ class CustomDashboard(Dashboard):
             column=2,
             order=1
         ))
-        '''
         self.children.append(modules.LinkList(
             _('研替匯出'),
             children=[
@@ -103,7 +101,6 @@ class CustomDashboard(Dashboard):
             column=2,
             order=1
         ))
-        '''
         self.children.append(modules.LinkList(
             _('研替集點'),
             children=[
