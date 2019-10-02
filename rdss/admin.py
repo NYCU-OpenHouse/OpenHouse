@@ -18,6 +18,10 @@ class StuAttendanceInline(admin.TabularInline):
     model = models.StuAttendance
     extra = 0
 
+class StuAttendanceAdmin(admin.ModelAdmin):
+    list_display=['seminar']
+admin.site.register(models.StuAttendance,StuAttendanceAdmin)
+
 
 @admin.register(models.Student)
 class StudentAdmin(admin.ModelAdmin):
