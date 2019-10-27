@@ -283,6 +283,17 @@ class CompanySurvey(models.Model):
             (u'劣', u'劣'),
             )
 
+    english_name = models.CharField(u'公司英文名稱', blank=True, null=True, max_length=255)
+    # os = overseas, osc = overseas chinese, cn = china
+    os_serve = models.BooleanField(u'境外生參與活動', default=False)
+    os_for_ftime = models.BooleanField(u'外籍生正職', default=False)
+    os_osc_ftime = models.BooleanField(u'僑生正職', default=False)
+    os_cn_ftime = models.BooleanField(u'陸生正職', default=False)
+    os_for_intern = models.BooleanField(u'外籍生實習', default=False)
+    os_osc_intern = models.BooleanField(u'僑生實習', default=False)
+    os_cn_intern = models.BooleanField(u'陸生實習', default=False)
+    os_other_required = models.CharField(u'境外生能力要求', blank=True, null=True, max_length=255)
+
     ee_bachelor     = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master       = models.IntegerField(u'電機學院-碩士人數', default=0)
     ee_phd          = models.IntegerField(u'電機學院-博士人數', default=0)
