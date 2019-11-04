@@ -211,6 +211,9 @@ class JobfairInfo(models.Model):
     general_lunch_box = models.SmallIntegerField(u'葷食便當數量', default=0)
     veget_lunch_box = models.IntegerField(u'素食便當')
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
+    long_table = models.IntegerField(u'長桌', default=2)
+    chair = models.IntegerField(u'椅子', default=5)
+    doily = models.IntegerField(u'紅桌巾', default=1)
     ps = models.CharField(u'備註', max_length=128, blank=True, null=True)
     class Meta:
         managed = True
