@@ -45,8 +45,11 @@
                 {{form.packing_tickets}}
             </div>
             <div class="four wide field">
-                <label>{{form.job_number.label}}</label>
-                {{form.job_number}}
+                {% now 'Y' as current_year %}
+                <label>{{ current_year|add:"1" }}{{form.job_number.label}}{{form.job_number.errors}}</label>
+				<div class="field">
+					{{form.job_number}}
+				</div>
             </div>
         </div>
         <div class="field">

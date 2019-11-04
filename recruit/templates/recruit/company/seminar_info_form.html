@@ -85,7 +85,8 @@
 				</div>
 		</div>
 		<div class="field">
-			<label>{{form.job_number.label}}{{form.job_number.errors}}</label>
+            {% now 'Y' as current_year %}
+			<label>{{ current_year|add:"1" }}{{form.job_number.label}}{{form.job_number.errors}}</label>
 				<div class="field">
 					{{form.job_number}}
 				</div>
