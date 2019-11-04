@@ -11,7 +11,7 @@
 
 
   {% csrf_token %}
-  <div class="ui segment" id="seminar">
+  <div class="ui blue inverted segment" id="seminar">
     <h1>企業說明會</h1>
     <table class="ui celled table">
       <tr>
@@ -57,7 +57,7 @@
       </tr>
     </table>
 
-    <div class="ui segment">
+    <div class="ui blue inverted segment">
 
       <h3 class="ui header">選取欲報名說明會時間</h3>
       <p>活動費用：12:10場：{{recruit_configs.session_2_fee}}，其餘場 {{recruit_configs.session_4_fee}} 元</p>
@@ -67,7 +67,7 @@
 
   </div>
 
-  <div class="ui segment">
+  <div class="ui green inverted segment">
     <h1>就業博覽會</h1>
     <table class="ui celled table">
       <tr>
@@ -101,11 +101,11 @@
         </td>
       </tr>
     </table>
-    <div class="ui segment">
+    <div class="ui green inverted segment">
       <h3 class="ui header">報名就博會</h3>
       <p>活動費用：攤位每單位 {{recruit_configs.jobfair_booth_fee}} 元，額滿為止。</p>
       <div class="ui labeled input">
-        <div class="ui teal label">
+        <div class="ui label">
           就博會攤位數量
         </div>
         {{form.jobfair}}
@@ -117,7 +117,7 @@
       -->
     </div>
   </div>
-  <div class="ui segment">
+  <div class="ui black inverted segment">
     <h1>企業職場導師</h1>
     <div class="ui celled table">
       <table>
@@ -140,7 +140,7 @@
         </tr>
       </table>
     </div>
-    <div class="ui segment">
+    <div class="ui black inverted segment">
       <h3>願意提供</h3>
       <div class="ui checked checkbox">
         {{form.career_tutor}}
@@ -148,7 +148,7 @@
       </div>
     </div>
   </div>
-  <div class="ui segment">
+  <div class="ui brown inverted segment">
       <h1>企業參訪</h1>
       <div class="ui celled table">
           <table>
@@ -171,7 +171,7 @@
 				</tr>
           </table>
       </div>
-      <div class="ui segment">
+      <div class="ui brown inverted segment">
         <h3>願意提供</h3>
         <div class="ui checked checkbox">
             {{form.company_visit}}
