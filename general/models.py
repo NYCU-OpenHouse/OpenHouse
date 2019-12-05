@@ -39,3 +39,13 @@ class PhotoSlide(models.Model):
     class Meta:
         verbose_name = "首頁相片動畫"
         verbose_name_plural = "首頁相片動畫"
+
+class NavbarConfigs(models.Model):
+    show_jobfair = models.BooleanField(u'顯示校園徵才就博會連結')
+    show_seminar = models.BooleanField(u'顯示校園徵才說明會連結')
+    show_rdss_jobfair = models.BooleanField(u'顯示秋季徵才就博會連結')
+    show_rdss_seminar = models.BooleanField(u'顯示秋季徵才說明會連結')
+
+    class Meta:
+        verbose_name = "公開頁面連結設定"
+        verbose_name_plural = "公開頁面連結設定"

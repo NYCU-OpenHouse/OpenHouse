@@ -11,4 +11,9 @@ class NewsAdmin(admin.ModelAdmin):
 class PhotoSlideAdmin(admin.ModelAdmin):
 	list_display=('title','order','photo', 'updated_time')
 
+@admin.register(models.NavbarConfigs)
+class NavbarConfigsAdmin(admin.ModelAdmin):
+    list_display=['title']
+    def title(self,obj):
+        return '連結設定'
 # Register your models here.
