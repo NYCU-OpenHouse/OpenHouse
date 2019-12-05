@@ -54,6 +54,7 @@ class RecruitConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)')
+    jobfair_place = models.CharField(u'就博會地點', max_length=150, default="")
 
     class Meta:
        managed = True
