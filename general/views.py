@@ -19,8 +19,6 @@ def Index(request):
 
     photo_slide_list = models.PhotoSlide.objects.all().order_by('order')
 
-    nav_configs = models.NavbarConfigs.objects.last()
-
     return render(request,'general/index.html',locals())
 
 
