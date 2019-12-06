@@ -339,6 +339,8 @@ def jobfair_select_control(request):
 
         {"slot_type":"新創", "display":"新創", "category": ["新創"], "slot_list":list(),
         "is_mygroup":False, "color":"brown"},
+        {"slot_type":"主辦保留", "display":"主辦保留", "category": ["主辦保留"], "slot_list":list(),
+        "is_mygroup":False, "color":"olive"},
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -634,6 +636,7 @@ def jobfair(request):
     network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
     synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
     startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
+    reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
     return render(request,'recruit/public/jobfair.html',locals())
 
 def public(request):

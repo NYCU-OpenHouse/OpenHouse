@@ -113,5 +113,19 @@
         {% endfor %}
     </div>
 </div>   
+<div class="ui segment">
+    <h3 class="ui dividing header">主辦保留</h3>
+    <div class="ui six column padded grid" >
+        {% for reserved_slot in reserved_slots %}
+            {% if reserved_slot.company %}
+               <div class="column" style="padding:0.5rem" >
+                   <div class='ui olive center aligned segment'>
+                       <p>攤位{{reserved_slot.serial_no}}: {{ reserved_slot.company}}</p>
+                   </div>
+               </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock %}
