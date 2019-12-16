@@ -172,6 +172,11 @@ def seminar_select_control(request):
             select_ctrl = dict()
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
+            today = timezone.now().date()
+            if configs.seminar_btn_start <= today and today <= configs.seminar_btn_end:
+                select_ctrl['btn_display'] = True
+            else:
+                select_ctrl['btn_display'] = False
 
         return JsonResponse({"success":True,"data":return_data,"select_ctrl":select_ctrl})
 
@@ -356,6 +361,7 @@ def jobfair_select_control(request):
     my_slot_group['is_mygroup'] = True
     slot_group.insert(0,my_slot_group)
 
+    configs = RecruitConfigs.objects.all()[0]
     if action == "query":
         for group in slot_group:
             slot_list = JobfairSlot.objects.filter(category=group['slot_type'])
@@ -377,10 +383,16 @@ def jobfair_select_control(request):
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
             select_ctrl['select_enable'] = False
+            select_ctrl['btn_display'] = False
         else:
             select_ctrl = dict()
             select_ctrl['display'] = False
             select_ctrl['select_enable'] = True
+            today = timezone.now().date()
+            if configs.jobfair_btn_start <= today and today <= configs.jobfair_btn_end:
+                select_ctrl['btn_display'] = True
+            else:
+                select_ctrl['btn_display'] = False
 
         return JsonResponse({"success":True,
                              "slot_group":slot_group,

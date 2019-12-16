@@ -321,6 +321,11 @@ def SeminarSelectControl(request):
             select_ctrl = dict()
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
+            today = timezone.now().date()
+            if configs.seminar_btn_start <= today and today <= configs.seminar_btn_end:
+                select_ctrl['btn_display'] = True
+            else:
+                select_ctrl['btn_display'] = False
 
         return JsonResponse({"success":True,"data":return_data,"select_ctrl":select_ctrl})
 
@@ -433,6 +438,11 @@ def JobfairSelectControl(request):
             select_ctrl = dict()
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
+            today = timezone.now().date()
+            if configs.jobfair_btn_start <= today and today <= configs.jobfair_btn_end:
+                select_ctrl['btn_display'] = True
+            else:
+                select_ctrl['btn_display'] = False
 
         return JsonResponse({"success":True,"data":slot_list_return,"my_slot_list":my_slot_list,"select_ctrl":select_ctrl})
 

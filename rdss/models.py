@@ -58,6 +58,11 @@ class RdssConfigs(models.Model):
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)')
 
+    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
+    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
+    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
+
     class Meta:
         managed = True
 
