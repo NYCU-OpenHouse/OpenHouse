@@ -13,3 +13,5 @@ static/*
 *.log
 *.sqlite3
 .idea/
+semantic/
+semantic.json
