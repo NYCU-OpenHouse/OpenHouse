@@ -213,7 +213,7 @@ class JobfairInfo(models.Model):
     contact_mobile = models.CharField(u'聯絡人手機', max_length=32)
     contact_email = models.EmailField(u'聯絡人Email', max_length=128)
     packing_tickets = models.IntegerField(u'停車證數量')
-    job_number = models.SmallIntegerField(u'職缺數', default=0)
+    job_number = models.SmallIntegerField(u'職缺人數', default=0)
     general_lunch_box = models.SmallIntegerField(u'葷食便當數量', default=0)
     veget_lunch_box = models.IntegerField(u'素食便當')
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
@@ -248,7 +248,7 @@ class SeminarInfo(models.Model):
     contact_mobile = models.CharField(u'聯絡人手機', max_length=16)
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     parking_cards = models.SmallIntegerField(u'汽車停車卡數量', default=0)
-    job_number = models.SmallIntegerField(u'職缺數', default=0)
+    job_number = models.SmallIntegerField(u'職缺人數', default=0)
     hr_food = models.CharField(u'人資餐點', max_length=30,null=True, blank=True,
                 help_text=" 提供免費2份餐點與飲水給企業人資或講者，如需素食或特殊飲食請於本欄備註說明")
     ps = models.TextField(u'其它需求', null=True, blank=True)
