@@ -1,23 +1,25 @@
-from django.shortcuts import render,redirect
-from django.http import  HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from company.forms import CompanyCreationForm,CompanyEditForm,CompanyPasswordResetForm
+from company.forms import CompanyCreationForm, CompanyEditForm, CompanyPasswordResetForm
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from .models import Company
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
-from company.forms import CompanyCreationForm,CompanyEditForm
+from company.forms import CompanyCreationForm, CompanyEditForm
 import rdss.models
 import recruit.models
 import company.models
+
+
 # Create your views here.
 
 @login_required(login_url='/company/login/')
 def CompanyIndex(request):
-    #semantic ui control
+    # semantic ui control
     nav_company_index = "active"
 
     # rdss files
@@ -25,10 +27,12 @@ def CompanyIndex(request):
     recruit_file_list = recruit.models.Files.objects.all().order_by('-updated')
     return render(request, 'company_index.html', locals())
 
+
 @login_required(login_url='/company/login/')
 def CompanyInfo(request):
     company_info = company.models.Company.objects.get(cid=request.user.cid)
     return render(request, 'company_info.html', locals())
+
 
 def CompanyCreation(request):
     submit_btn_name = "創建帳號"
@@ -43,18 +47,20 @@ def CompanyCreation(request):
             error_display = True
             error_msg = form.errors
             return render(request, 'company_create_form.html', locals())
-    form = CompanyCreationForm();
-    return render(request,'company_create_form.html',locals())
+    form = CompanyCreationForm()
+    return render(request, 'company_create_form.html', locals())
+
 
 @login_required(login_url='/company/login/')
 def CompanyEdit(request):
     submit_btn_name = "確認修改"
     if request.user and request.user.is_authenticated():
-        user=request.user
-    else: user=None
+        user = request.user
+    else:
+        user = None
 
     if request.POST:
-        form = CompanyEditForm(request.POST,request.FILES,instance=user)
+        form = CompanyEditForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             if user and (form.data["cid"] != user.cid or form.data["category"] != user.category):
                 if not user.is_staff:
@@ -65,15 +71,16 @@ def CompanyEdit(request):
             return redirect(CompanyInfo)
         else:
             # messages.error(request, ("The user could not be created due to errors.") )
-            return render(request,'company_edit_form.html',locals())
+            return render(request, 'company_edit_form.html', locals())
     form = CompanyEditForm(instance=user);
     company_info = company.models.Company.objects.get(cid=request.user.cid)
-    return render(request,'company_edit_form.html',locals())
+    return render(request, 'company_edit_form.html', locals())
+
 
 def CompanyLogin(request):
     if request.POST:
-        username=request.POST.get('username')
-        password=request.POST.get('password')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -89,9 +96,11 @@ def CompanyLogin(request):
 
     return render(request, 'login.html', locals())
 
+
 def CompanyLogout(request):
     logout(request)
     return redirect('/company/login/')
+
 
 def forget_password(request):
     send = None
@@ -105,9 +114,10 @@ def forget_password(request):
             return render(request, 'notify_password_reset.html', locals())
     else:
         form = CompanyPasswordResetForm()
-    return render(request, 'forget_password.html', {'form':form, 'send':send})
+    return render(request, 'forget_password.html', {'form': form, 'send': send})
 
-def password_reset_confirm(request,uidb64,token):
+
+def password_reset_confirm(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = Company.objects.get(pk=uid)
@@ -131,10 +141,11 @@ def password_reset_confirm(request,uidb64,token):
         validlink = False
     return redirect('/')
 
+
 def ResetPassword(request):
     user = Company.objects.get(cid=request.user.cid)
     if request.method == 'POST':
-        form = SetPasswordForm(user,request.POST)
+        form = SetPasswordForm(user, request.POST)
         if form.is_valid():
             form.save()
             return redirect(CompanyInfo)

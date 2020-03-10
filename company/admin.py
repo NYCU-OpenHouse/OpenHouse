@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.conf.urls import url,include
+from django.conf.urls import url, include
 from . import export
 
 
@@ -43,8 +43,8 @@ class UserChangeForm(forms.ModelForm):
     the user, but replaces the password field with admin's
     password hash display field.
     """
-    password = ReadOnlyPasswordHashField(label= ("Password"),
-            help_text= ( "<h3><a href=\"../password/\">變更廠商密碼</a></h3>"))
+    password = ReadOnlyPasswordHashField(label=("Password"),
+                                         help_text=("<h3><a href=\"../password/\">變更廠商密碼</a></h3>"))
 
     class Meta:
         model = Company
@@ -76,55 +76,57 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('cid','name', 'category','hr_name','hr_phone','hr_email','last_update')
+    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'last_update')
     list_filter = ()
     fieldsets = (
-            ("基本資料", {
-                'classes': ('wide',),
-                'fields': ('cid','password','name','shortname','category','phone',
-               'postal_code','address','website','brief','recruit_info','logo','recruit_url','business_project','relation_business','subsidiary','receipt_title','receipt_year')
-                }
-                ),
-            ("人資資料", {
-                'classes': ('wide',),
-                'fields': ('hr_name','hr_phone','hr_fax','hr_mobile','hr_email')
-                }
-                ),
-            ("第二位人資資料", {
-                'classes': ('wide',),
-                'fields': ('hr2_name','hr2_phone','hr2_fax','hr2_mobile','hr2_email','hr_ps')
-                }
-                ),
-            )
+        ("基本資料", {
+            'classes': ('wide',),
+            'fields': ('cid', 'password', 'name', 'shortname', 'category', 'phone',
+                       'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo', 'recruit_url',
+                       'business_project', 'relation_business', 'subsidiary', 'receipt_title', 'receipt_year')
+        }
+         ),
+        ("人資資料", {
+            'classes': ('wide',),
+            'fields': ('hr_name', 'hr_phone', 'hr_fax', 'hr_mobile', 'hr_email')
+        }
+         ),
+        ("第二位人資資料", {
+            'classes': ('wide',),
+            'fields': ('hr2_name', 'hr2_phone', 'hr2_fax', 'hr2_mobile', 'hr2_email', 'hr_ps')
+        }
+         ),
+    )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
-            ("基本資料", {
-                'classes': ('wide',),
-                'fields': ('cid','password1', 'password2','name','shortname',
-               'category','phone','postal_code','address','website','brief','recruit_info','logo','recruit_url','receipt_title', 'receipt_year')
-                }
-                ),
-            ("人資資料", {
-                'classes': ('wide',),
-                'fields': ('hr_name','hr_phone','hr_fax','hr_mobile','hr_email')
-                }
-                ),
-            ("第二位人資資料", {
-                'classes': ('wide',),
-                'fields': ('hr2_name','hr2_phone','hr2_fax','hr2_mobile','hr2_email','hr_ps')
-                }
-                ),
-            )
-    search_fields = ('cid','name','shortname')
+        ("基本資料", {
+            'classes': ('wide',),
+            'fields': ('cid', 'password1', 'password2', 'name', 'shortname',
+                       'category', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
+                       'recruit_url', 'receipt_title', 'receipt_year')
+        }
+         ),
+        ("人資資料", {
+            'classes': ('wide',),
+            'fields': ('hr_name', 'hr_phone', 'hr_fax', 'hr_mobile', 'hr_email')
+        }
+         ),
+        ("第二位人資資料", {
+            'classes': ('wide',),
+            'fields': ('hr2_name', 'hr2_phone', 'hr2_fax', 'hr2_mobile', 'hr2_email', 'hr_ps')
+        }
+         ),
+    )
+    search_fields = ('cid', 'name', 'shortname')
     ordering = ('cid',)
     filter_horizontal = ()
 
     def get_urls(self):
         urls = super(UserAdmin, self).get_urls()
         my_urls = [
-                url(r'^export/$', export.Export_Company),
-                ]
+            url(r'^export/$', export.Export_Company),
+        ]
         return my_urls + urls
 
 
@@ -132,4 +134,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(Company, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
-#admin.site.unregister(Group)
+# admin.site.unregister(Group)
