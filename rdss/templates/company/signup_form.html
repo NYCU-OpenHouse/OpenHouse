@@ -2,208 +2,208 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-<title>OpenHouse 廠商介面</title>
-<script src={% static "js/rdss/signup_form.js" %}></script>
+    <title>OpenHouse 廠商介面</title>
+    <script src={% static "js/rdss/signup_form.js" %}></script>
 {% endblock %}
 
 {% block 'content' %}
-<form class="ui form" method="POST" action="{% url 'rdss_signup' %}" >
-	{% csrf_token %}
-	{% if signup_edit_ui %}
-	<div class="ui compact teal message">
-		報名已完成，您也可以修改報名資料，再次送出。
-	</div>
-	{% endif %}
+    <form class="ui form" method="POST" action="{% url 'rdss_signup' %}">
+        {% csrf_token %}
+        {% if signup_edit_ui %}
+            <div class="ui compact teal message">
+                報名已完成，您也可以修改報名資料，再次送出。
+            </div>
+        {% endif %}
 
-	<div class="ui message">
-		<h1 id="intro" class="ui header">活動企畫書</h1>
-		<p style="color:red">活動詳細內容及規範皆載於企畫書，請務必詳細閱讀</p>
-		<a class="ui teal button" href={{plan_file.upload_file.url}} target="_blank">{{plan_file.title}}</a>
-	</div>
+        <div class="ui message">
+            <h1 id="intro" class="ui header">活動企畫書</h1>
+            <p style="color:red">活動詳細內容及規範皆載於企畫書，請務必詳細閱讀</p>
+            <a class="ui teal button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
+        </div>
 
-	<div class="ui blue inverted segment">
-		<h1 class="ui inverted header">
-			<i class="info circle icon" style="color:white"></i>
-			<div class="content" style="color:white">
-				企業說明會
-			</div>
-		</h1>
-		<p>週一至週四舉辦公司說明會，每日舉辦4場；週五開放專屬企業日(企業可進行公司和職缺介紹，另搭配現場面試活動)，當日舉辦一場。</br>
-		交大保留專屬企業日之公司審核權，具較多職缺與完整職缺資訊者優先錄取，意者請與本校就業輔導組聯繫。</p>
+        <div class="ui blue inverted segment">
+            <h1 class="ui inverted header">
+                <i class="info circle icon" style="color:white"></i>
+                <div class="content" style="color:white">
+                    企業說明會
+                </div>
+            </h1>
+            <p>週一至週四舉辦公司說明會，每日舉辦4場；週五開放專屬企業日(企業可進行公司和職缺介紹，另搭配現場面試活動)，當日舉辦一場。</br>
+                交大保留專屬企業日之公司審核權，具較多職缺與完整職缺資訊者優先錄取，意者請與本校就業輔導組聯繫。</p>
 
-		<table class="ui celled table">
-			<tr>
-				<td style="width:8em">活動日期</td>
-				<td>{{configs.seminar_start_date}} ~ {{configs.seminar_end_date}}</td>
-			</tr>
-			<tr>
-				<td>活動地點</td>
-				<td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
-			</tr>
-			<tr>
-				<td>活動內容</td>
-				<td>透過說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
-			</tr>
-			<tr>
-				<td>提供設備</td>
-				<td>
-					<ol>
-						<li>可容納100至200人之國際會議廳</li>
-						<li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
-					</ol>
-				</td>
-			</tr>
-			<tr>
-                <td><p style="color:red">(OH說明會)</p>提供服務</td>
-				<td>
-					<ol>
-						<li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照等事宜，並協助場內活動進行及突發狀況處理。
-						</li>
-						<li>提供企業人資至多2份餐點與飲水、2張免費校內停車證。</li>
-						<li>提供40份餐點給參與同學(費用已含在報名活動費中，企業可加碼付費提供餐點數量)。</li>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>{{ configs.seminar_start_date }} ~ {{ configs.seminar_end_date }}</td>
+                </tr>
+                <tr>
+                    <td>活動地點</td>
+                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>透過說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                </tr>
+                <tr>
+                    <td>提供設備</td>
+                    <td>
+                        <ol>
+                            <li>可容納100至200人之國際會議廳</li>
+                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p style="color:red">(OH說明會)</p>提供服務</td>
+                    <td>
+                        <ol>
+                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照等事宜，並協助場內活動進行及突發狀況處理。
+                            </li>
+                            <li>提供企業人資至多2份餐點與飲水、2張免費校內停車證。</li>
+                            <li>提供40份餐點給參與同學(費用已含在報名活動費中，企業可加碼付費提供餐點數量)。</li>
 
-					</ol>
-				</td>
-			</tr>
-		</table>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
 
-		<div class="ui segment">
-			<h3 class="ui header">選取欲報名(OH)說明會時段</h3>
-			<p>活動費用：中午場： {{configs.session1_fee}} 元，晚上場 {{configs.session2_fee}} 元</p>
-			{{ form.seminar}}
-			<div class="ui red button seminar_clear">清除</div>
-			<div class="ui yellow message">
-				交大保留專屬企業日之公司審核權，具較多職缺與完整職缺資訊者優先錄取。意者請與交通大學就業輔導組聯繫。
-			</div>
-		</div>
-		<div class="ui segment">
-			<h3 class="ui header">選取欲報名的電機說明會場次</h3>
-            <p style="color:red">備註：欲報名電機說明會必須搭配參加就業博覽會(電機產學聯盟付費會員除外)</p>
-            <p>活動費用：5000 元/場</p>
-            {{ form.ece }} (ECE) 電機<br>
-            {{ form.ece_cn }} (ECE) 電控<br>
-            {{ form.ece_cm }} (ECE) 電信<br>
-		</div>
-	</div>
+            <div class="ui segment">
+                <h3 class="ui header">選取欲報名(OH)說明會時段</h3>
+                <p>活動費用：中午場： {{ configs.session1_fee }} 元，晚上場 {{ configs.session2_fee }} 元</p>
+                {{ form.seminar }}
+                <div class="ui red button seminar_clear">清除</div>
+                <div class="ui yellow message">
+                    交大保留專屬企業日之公司審核權，具較多職缺與完整職缺資訊者優先錄取。意者請與交通大學就業輔導組聯繫。
+                </div>
+            </div>
+            <div class="ui segment">
+                <h3 class="ui header">選取欲報名的電機說明會場次</h3>
+                <p style="color:red">備註：欲報名電機說明會必須搭配參加就業博覽會(電機產學聯盟付費會員除外)</p>
+                <p>活動費用：5000 元/場</p>
+                {{ form.ece }} (ECE) 電機<br>
+                {{ form.ece_cn }} (ECE) 電控<br>
+                {{ form.ece_cm }} (ECE) 電信<br>
+            </div>
+        </div>
 
-	<div class="ui divider"></div>
+        <div class="ui divider"></div>
 
-	<div class="ui green inverted segment">
-		<h1 class="ui header">
-			<i class="student icon"></i>
-			<div class="content">
-				就業博覽會
-			</div>
-		</h1>
+        <div class="ui green inverted segment">
+            <h1 class="ui header">
+                <i class="student icon"></i>
+                <div class="content">
+                    就業博覽會
+                </div>
+            </h1>
 
-		<table class="ui celled table">
-			<tr>
-				<td style="width:8em">活動日期</td>
-				<td>{{configs.jobfair_date}}</td>
-			</tr>
-			<tr>
-				<td style="width:8em">活動時間</td>
-				<td>{{configs.jobfair_start}} ~ {{configs.jobfair_end}}</td>
-			</tr>
-			<tr>
-				<td>活動地點</td>
-				<td>交映樓中庭</td>
-			</tr>
-			<tr>
-				<td>活動內容</td>
-				<td>
-					秋季招募以展示會方式呈現，邀請多家企業廠商到學校設點，展示公司的產品或職務內容，提供研替同學未來就業的參考依據。徵才企業廠商亦可進行一對一面試方式，詢問學生興趣經歷等相關問題，藉此篩選出符合公司文化及經營理念的替代役人選。
-					<p style="color:blue">※若報名廠商未達15家，則以協助借用場地進行面試為宜。</p>
-			</tr>
-			<tr>
-				<td>提供服務</td>
-				<td>
-					<ol>
-						<li>本校工作人員協助報到及處理隨機突發狀況。</li>
-						<li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供5份；素食餐點請事先告知。</li>
-					</ol>
-				</td>
-			</tr>
-			<tr>
-				<td>注意事項</td>
-				<td>
-					<ol>
-						<li>場地布置時間：活動當日8:30後開放企業到場布置，貴重器材與物品請企業自行保管，本校不負保管之責。</li>
-						<li>當天請於8:30~10:00期間向服務台辦理報到</li>
-					</ol>
-				</td>
-			</tr>
-		</table>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>{{ configs.jobfair_date }}</td>
+                </tr>
+                <tr>
+                    <td style="width:8em">活動時間</td>
+                    <td>{{ configs.jobfair_start }} ~ {{ configs.jobfair_end }}</td>
+                </tr>
+                <tr>
+                    <td>活動地點</td>
+                    <td>交映樓中庭</td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        秋季招募以展示會方式呈現，邀請多家企業廠商到學校設點，展示公司的產品或職務內容，提供研替同學未來就業的參考依據。徵才企業廠商亦可進行一對一面試方式，詢問學生興趣經歷等相關問題，藉此篩選出符合公司文化及經營理念的替代役人選。
+                        <p style="color:blue">※若報名廠商未達15家，則以協助借用場地進行面試為宜。</p>
+                </tr>
+                <tr>
+                    <td>提供服務</td>
+                    <td>
+                        <ol>
+                            <li>本校工作人員協助報到及處理隨機突發狀況。</li>
+                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供5份；素食餐點請事先告知。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>注意事項</td>
+                    <td>
+                        <ol>
+                            <li>場地布置時間：活動當日8:30後開放企業到場布置，貴重器材與物品請企業自行保管，本校不負保管之責。</li>
+                            <li>當天請於8:30~10:00期間向服務台辦理報到</li>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
 
-		<div class="ui segment">
-			<h3 class="ui header">報名就博會</h3>
-				<p>活動費用：攤位每單位 {{configs.jobfair_booth_fee}} 元，額滿為止。</p>
-			<div class="ui labeled input">
-				<div class="ui label">
-					就博會攤位數量
-				</div>
-				{{form.jobfair}}
-			</div>
-			<div class="ui yellow message">
-				若報名廠商未達 15 家,則以協助借用場地進行面試為宜
-			</div>
-		</div>
-	</div>
+            <div class="ui segment">
+                <h3 class="ui header">報名就博會</h3>
+                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <div class="ui labeled input">
+                    <div class="ui label">
+                        就博會攤位數量
+                    </div>
+                    {{ form.jobfair }}
+                </div>
+                <div class="ui yellow message">
+                    若報名廠商未達 15 家,則以協助借用場地進行面試為宜
+                </div>
+            </div>
+        </div>
 
-	<div class="ui divider"></div>
+        <div class="ui divider"></div>
 
-	<div class="ui inverted segment">
-		<h1 class="ui header">
-			<i class="users icon"style="color:white"></i>
-			<div class="content" style="color:white">
-				企業職場導師
-			</div>
-		</h1>
+        <div class="ui inverted segment">
+            <h1 class="ui header">
+                <i class="users icon" style="color:white"></i>
+                <div class="content" style="color:white">
+                    企業職場導師
+                </div>
+            </h1>
 
-		<table class="ui celled table">
-			<tr>
-				<td style="width:8em">活動日期</td>
-				<td>2019 年 10 月</td>
-			</tr>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>2019 年 10 月</td>
+                </tr>
 
-			<tr>
-				<td>活動內容</td>
-				<td>
-					本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
-			</tr>
-			<tr>
-				<td>活動說明</td>
-				<td>
-					<ul>
-						<li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。</li>
-						<li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>
-					</ul>
-				</td>
-			</tr>
-			<tr>
-				<td>活動對象</td>
-				<td>
-					交大全體學生，以具秋季招募申請資格之學生優先。
-				</td>
-			</tr>
-			<tr>
-				<td>回饋方案</td>
-				<td>
-                    企業於報名系統上勾選此項服務，可增加選位積分10分。
-				</td>
-			</tr>
-		</table>
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ul>
+                            <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。</li>
+                            <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>活動對象</td>
+                    <td>
+                        交大全體學生，以具秋季招募申請資格之學生優先。
+                    </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>
+                        企業於報名系統上勾選此項服務，可增加選位積分10分。
+                    </td>
+                </tr>
+            </table>
 
-		<div class="ui segment">
-			<h3 class="ui header">願意提供</h3>
-			<div class="ui checkbox">
-				{{form.career_tutor}}
-				<label style="color:black">{{form.career_tutor.label}}</label>
-			</div>
-		</div>
-	</div>
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
+                <div class="ui checkbox">
+                    {{ form.career_tutor }}
+                    <label style="color:black">{{ form.career_tutor.label }}</label>
+                </div>
+            </div>
+        </div>
 
-	<button class="ui teal button" type="submit">送出資料</button>
-</form>
+        <button class="ui teal button" type="submit">送出資料</button>
+    </form>
 
 {% endblock %}
