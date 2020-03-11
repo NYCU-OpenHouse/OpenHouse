@@ -48,6 +48,8 @@ def recruit_signup(request):
         except ObjectDoesNotExist:
             signup_info = None
 
+        need_year = True if not Company.objects.get(cid=request.user.cid).receipt_year else None
+
         if request.method == 'POST':
             form = RecruitSignupForm(data=request.POST, instance=signup_info)
             if form.is_valid():
