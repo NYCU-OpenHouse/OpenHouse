@@ -83,7 +83,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('cid', 'password', 'name', 'shortname', 'category', 'phone',
                        'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo', 'recruit_url',
-                       'business_project', 'relation_business', 'subsidiary', 'receipt_title', 'receipt_year')
+                       'business_project', 'relation_business', 'subsidiary', 'receipt_title')
         }
          ),
         ("人資資料", {
@@ -104,7 +104,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('cid', 'password1', 'password2', 'name', 'shortname',
                        'category', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
-                       'recruit_url', 'receipt_title', 'receipt_year')
+                       'recruit_url', 'receipt_title')
         }
          ),
         ("人資資料", {

@@ -8,12 +8,6 @@
         </div>
     {% endif %}
 
-    {% if need_year %}
-        <div class="ui red message">
-            您尚未填寫或更新收據年分(<a href="{% url 'company_edit' %}">前往填寫</a>)
-        </div>
-    {% endif %}
-
     <form class="ui form" action="." method="post">
 
 
@@ -192,6 +186,17 @@
                 </div>
             </div>
         </div>
+
+        <!--
+        <div class="ui orange inverted segment">
+            <h1>公司收據</h1>
+            <label>{{ form.receipt_year.label }}</label>
+            {{ form.receipt_year.errors }}
+            {{ form.receipt_year }}
+            {{ form.receipt_year.help_text }}
+        </div>
+        -->
+
         <!--
   <div class="ui segment">
       <h1>就業力講座</h1>

@@ -81,6 +81,7 @@ class RecruitSignup(models.Model):
     lecture = models.BooleanField(u'就業力講座')
     payment = models.BooleanField(u'完成付款', default=False)
     receipt_no = models.CharField(u'收據號碼', blank=True, null=True, max_length=50)
+    receipt_year = models.CharField(u'收據年分', max_length=4, default="", blank=True, help_text="例如: 2020或109")
     ps = models.TextField(u'備註', blank=True, null=True)
     added = models.TimeField(u'報名時間', auto_now_add=True)
     updated = models.TimeField(u'更新時間', auto_now=True)
