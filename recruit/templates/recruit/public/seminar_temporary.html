@@ -1,0 +1,28 @@
+{% extends 'recruit_public.html' %}
+{% block 'content' %}
+    <title>校園徵才 - 說明會</title>
+    <h1 class="ui header">說明會</h1>
+    {% for seminar_info in recruit_seminar_info %}
+        {{ seminar_info.content|safe }}
+    {% endfor %}
+    <h1 class="ui dividing header">場次時間表</h1>
+    <ul>
+        <p> 場地資訊</p>
+        {% for location in locations %}
+            <li style="color:{{ location.css_color }}"> {{ location.place }} </li>
+        {% endfor %}
+    </ul>
+
+    <h1 class="ui dividing header">公司簡介</h1>
+    <div class="ui two column grid">
+        {% for session in session_info %}
+            <div class="center aligned column">
+                <!--<div class="ui embed" data-source="youtube" data-id="">
+                </div>-->
+                <p>{{ session.company }}</p>
+                <p>{{ session.date }}</p>
+                <p style="color:{{ session.place.css_color }}">{{ session.place }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
