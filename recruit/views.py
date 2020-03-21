@@ -653,7 +653,7 @@ def seminar_temporary(request):
     start_date = recruit_config.seminar_start_date
     end_date = recruit_config.seminar_end_date
     week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
-    session_info = []
+    session_all_info = []
     for week in week_num:
         for weekday in range(5):
             today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
@@ -665,20 +665,32 @@ def seminar_temporary(request):
             other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
 
             if other1:
-                session_info.append(other1)
+                session_all_info.append(other1)
             if noon2:
-                session_info.append(noon2)
+                session_all_info.append(noon2)
             if other2:
-                session_info.append(other2)
+                session_all_info.append(other2)
             if other3:
-                session_info.append(other3)
+                session_all_info.append(other3)
             if other4:
-                session_info.append(other4)
+                session_all_info.append(other4)
             if other5:
-                session_info.append(other5)
+                session_all_info.append(other5)
 
     locations = SlotColor.objects.all()
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
+
+    paginator = Paginator(session_all_info, 8)
+    page_number = request.GET.get('page')
+
+    try:
+        session_info = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_number = 1
+        session_info = paginator.page(page_number)
+    except EmptyPage:
+        page_number = paginator.num_pages
+        session_info = paginator.page(page_number)
 
     return render(request, 'recruit/public/seminar_temporary.html', locals())
 
