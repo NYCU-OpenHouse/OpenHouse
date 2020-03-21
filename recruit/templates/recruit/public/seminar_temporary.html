@@ -13,7 +13,7 @@
         {% endfor %}
     </ul>
 
-    <h1 class="ui dividing header">公司簡介</h1>
+    <h1 id="companyIntro" class="ui dividing header">公司簡介</h1>
     <div class="ui two column grid">
         {% for session in session_info %}
             <div class="center aligned column">
@@ -25,21 +25,27 @@
             </div>
         {% endfor %}
     </div>
+
     {% block pagination %}
-        {% if is_paginated %}
-            <div class="ui pagination menu">
-                {% if session_info.has_previous %}
-                    <a class="item" href="{{ request.path }}?page=1">First Page</a>
-                    <a class="item"
-                       href="{{ request.path }}?page={{ session_info.previous_page_number }}">{{ session_info.previous_page_number }}</a>
-                {% endif %}
-                <a class="active item"
-                   href="{{ request.path }}?page={{ session_info.number }}">{{ session_info.number }}</a>
-                {% if session_info.has_next %}
-                    <a class="item"
-                       href="{{ request.path }}?page={{ session_info.next_page_number }}">{{ session_info.next_page_number }}</a>
-                    <a class="item" href="{{ request.path }}?page={{ session_info.paginator.num_pages }}">Last Page</a>
-                {% endif %}
+        {% if session_info.paginator.num_pages > 1 %}
+            <br>
+            <div class="ui center aligned container">
+                <div class="ui pagination menu">
+                    {% if session_info.has_previous %}
+                        <a class="item" href="{{ request.path }}?page=1#companyIntro">First Page</a>
+                        <a class="item"
+                           href="{{ request.path }}?page={{ session_info.previous_page_number }}#companyIntro">{{ session_info.previous_page_number }}</a>
+                    {% endif %}
+                    <a class="active item"
+                       href="{{ request.path }}?page={{ session_info.number }}#companyIntro">{{ session_info.number }}</a>
+                    {% if session_info.has_next %}
+                        <a class="item"
+                           href="{{ request.path }}?page={{ session_info.next_page_number }}#companyIntro">{{ session_info.next_page_number }}</a>
+                        <a class="item"
+                           href="{{ request.path }}?page={{ session_info.paginator.num_pages }}#companyIntro">Last
+                            Page</a>
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
     {% endblock %}
