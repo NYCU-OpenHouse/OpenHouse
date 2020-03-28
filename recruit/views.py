@@ -1,10 +1,11 @@
 from django.core import urlresolvers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
-from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm
+from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
+    SeminarInfoTemporaryCreationForm
 from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
-from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo
+from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -133,6 +134,7 @@ def seminar_select_control(request):
         raise Http404("What are u looking for?")
 
     # action query
+    configs = RecruitConfigs.objects.all()[0]
     if action == "query":
         slots = SeminarSlot.objects.all()
         return_data = {}
@@ -292,6 +294,36 @@ def seminar_info(request):
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
     return render(request, 'recruit/company/seminar_info_form.html', locals())
+
+
+@login_required(login_url='/company/login/')
+def seminar_info_temporary(request):
+    try:
+        company = RecruitSignup.objects.get(cid=request.user.cid)
+    except Exception as e:
+        error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    try:
+        seminar_info = SeminarInfoTemporary.objects.get(company=company)
+    except ObjectDoesNotExist:
+        seminar_info = None
+
+    if request.POST:
+        data = request.POST.copy()
+        data['company'] = company.cid
+        form = SeminarInfoTemporaryCreationForm(data=data, instance=seminar_info)
+        if form.is_valid():
+            form.save()
+            return render(request, 'recruit/company/success.html', locals())
+        else:
+            print(form.errors)
+    else:
+        form = SeminarInfoTemporaryCreationForm(instance=seminar_info)
+
+    # semantic ui
+    sidebar_ui = {'seminar_info': "active"}
+    return render(request, 'recruit/company/seminar_info_form_temporary.html', locals())
 
 
 @login_required(login_url='/company/login/')
@@ -654,28 +686,48 @@ def seminar_temporary(request):
     end_date = recruit_config.seminar_end_date
     week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
     session_all_info = []
+    session_name = ['other1', 'noon2', 'other2', 'other3', 'other4', 'other5']
+    time_table = [
+        {'start': recruit_config.session_1_start, 'end': recruit_config.session_1_end},
+        {'start': recruit_config.session_2_start, 'end': recruit_config.session_2_end},
+        {'start': recruit_config.session_3_start, 'end': recruit_config.session_3_end},
+        {'start': recruit_config.session_4_start, 'end': recruit_config.session_4_end},
+        {'start': recruit_config.session_5_start, 'end': recruit_config.session_5_end},
+        {'start': recruit_config.session_6_start, 'end': recruit_config.session_6_end},
+    ]
     for week in week_num:
         for weekday in range(5):
             today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
-            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
-            noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
-            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
-            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
-            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
-            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
-
-            if other1:
-                session_all_info.append(other1)
-            if noon2:
-                session_all_info.append(noon2)
-            if other2:
-                session_all_info.append(other2)
-            if other3:
-                session_all_info.append(other3)
-            if other4:
-                session_all_info.append(other4)
-            if other5:
-                session_all_info.append(other5)
+            for idx, name in enumerate(session_name):
+                slot = SeminarSlot.objects.filter(date=today, session=name).first()
+                if slot:
+                    info = SeminarInfoTemporary.objects.filter(company=slot.company).first()
+                    company = Company.objects.get(cid=slot.company.cid)
+                    if info:
+                        if info.live:
+                            session_all_info.insert(0, {'slot': slot,
+                                                        'logo': company.logo.url,
+                                                        'info': info,
+                                                        'start_time': time_table[idx]['start'],
+                                                        'end_time': time_table[idx]['end'],
+                                                        })
+                        else:
+                            session_all_info.append(
+                                {'slot': slot,
+                                 'logo': company.logo.url,
+                                 'info': info,
+                                 'start_time': time_table[idx]['start'],
+                                 'end_time': time_table[idx]['end'],
+                                 }
+                            )
+                    else:
+                        session_all_info.append(
+                            {'slot': slot,
+                             'logo': company.logo.url,
+                             'start_time': time_table[idx]['start'],
+                             'end_time': time_table[idx]['end'],
+                             }
+                        )
 
     locations = SlotColor.objects.all()
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
@@ -885,7 +937,8 @@ def Status(request):
     if signup_data:
         company = RecruitSignup.objects.get(cid=request.user.cid)
         try:
-            seminar_info = recruit.models.SeminarInfo.objects.get(company=request.user.cid)
+            # seminar_info = recruit.models.SeminarInfo.objects.get(company=request.user.cid)
+            seminar_info = recruit.models.SeminarInfoTemporary.objects.get(company=request.user.cid)
         except ObjectDoesNotExist:
             seminar_info = None
         try:

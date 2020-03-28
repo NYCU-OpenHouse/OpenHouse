@@ -1,5 +1,5 @@
 from django import forms
-from .models import RecruitSignup, JobfairInfo, CompanySurvey, SeminarInfo, Student, ExchangePrize
+from .models import RecruitSignup, JobfairInfo, CompanySurvey, SeminarInfo, Student, ExchangePrize, SeminarInfoTemporary
 from django.forms import ModelForm
 
 
@@ -24,6 +24,25 @@ class SeminarInfoCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         record = super(SeminarInfoCreationForm, self).save(commit=False)
+        if commit:
+            record.save()
+        return record
+
+
+class SeminarInfoTemporaryCreationForm(forms.ModelForm):
+    class Meta:
+        model = SeminarInfoTemporary
+        fields = '__all__'
+        exclude = ['cid']
+
+    def __init__(self, *args, **kwargs):
+        super(SeminarInfoTemporaryCreationForm, self).__init__(*args, **kwargs)
+        self.fields['contact_mobile'].widget.attrs.update({
+            'placeholder': '格式：0912-345678',
+        })
+
+    def save(self, commit=True):
+        record = super(SeminarInfoTemporaryCreationForm, self).save(commit=False)
         if commit:
             record.save()
         return record

@@ -1,4 +1,9 @@
 {% extends 'recruit_public.html' %}
+{% load staticfiles %}
+{% block 'custom_head'%}
+    <script src={% static "js/vote/vote.js" %}></script>
+    <link href={% static "css/vote/vote.css" %} rel="stylesheet">
+{% endblock %}
 {% block 'content' %}
     <title>校園徵才 - 說明會</title>
     <h1 class="ui header">說明會</h1>
@@ -13,15 +18,26 @@
         {% endfor %}
     </ul>
 
-    <h1 id="companyIntro" class="ui dividing header">公司簡介</h1>
+    <h1 id="companyIntro" class="ui dividing header"> 場次</h1>
     <div class="ui two column grid">
         {% for session in session_info %}
             <div class="center aligned column">
-                <!--<div class="ui embed" data-source="youtube" data-id="">
-                </div>-->
-                <p>{{ session.company }}</p>
-                <p>{{ session.date }}</p>
-                <p style="color:{{ session.place.css_color }}">{{ session.place }}</p>
+                {% if session.info.video %}
+                    <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
+                    </div>
+                {% else %}
+                    <div class="image">
+                        <img class="ui fluid image" src="{{ session.logo }}">
+                    </div>
+                {% endif %}
+                <h3>{{ session.slot.company }}</h3>
+                <p>{{ session.slot.date }} {{ session.start_time }} ~ {{ session.end_time }}</p>
+                <p style="color:{{ session.slot.place.css_color }}">{{ session.slot.place }}</p>
+                {% if session.info %}
+                    <p>說明會主題: {{ session.info.topic }}</p>
+                    <p>主講人: {{ session.info.speaker }} {{ session.info.speaker_title }}</p>
+                    <p>說明會簡介: {{ session.info.intro }}</p>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
