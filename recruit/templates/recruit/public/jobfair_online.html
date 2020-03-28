@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block 'custom_head' %}
+    <script src={% static "js/vote/vote.js" %}></script>
+    <link href={% static "css/vote/vote.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'body' %}
+
+<div class="ui segment" style="margin:auto;width:60%;">
+    <br>
+	<div style="text-align:center">
+		<h2 class="ui header">{{company_name}}</h2>
+        <p style="text-align:right">修改時間：{{jobfair_info.updated_time}} </p>
+	</div>
+    <div class="ui embed" data-source="youtube" data-id="{{jobfair_info.video}}">
+    </div>
+
+		<div class="ui divider"></div>
+		{{jobfair_info.content|safe}}
+</div>
+<div style="margin:auto;width:60%; margin-top:2rem">
+	<a class="ui button" href="/">回首頁</a>
+	<a class="ui button" href="{% url 'jobfair' %}">就博會</a>
+</div>
+{% endblock %}

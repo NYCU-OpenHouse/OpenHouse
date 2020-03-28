@@ -3,7 +3,7 @@ from company.models import Company
 from django.db.models import Q
 from django.db.models import Count, Sum
 from ckeditor.fields import RichTextField
-
+from ckeditor_uploader.fields import RichTextUploadingField
 CATEGORYS = (
     (u'半導體', u'半導體'),
     (u'消費電子', u'消費電子'),
@@ -234,6 +234,18 @@ class JobfairInfo(models.Model):
         managed = True
         verbose_name = u'就博會資訊'
         verbose_name_plural = u'就博會資訊'
+
+
+class JobfairInfoTemp(models.Model):
+    id = models.AutoField(primary_key=True)
+    company = models.OneToOneField(RecruitSignup, verbose_name=u'公司')
+    video = models.CharField(u'影片', max_length=100)
+    content = RichTextUploadingField(u'招募內容')
+    updated_time = models.DateTimeField(u'更新時間', auto_now=True)
+    class Meta:
+        managed = True
+        verbose_name = u'線上就博會資訊'
+        verbose_name_plural = u'線上就博會資訊'
 
 
 class SeminarInfo(models.Model):

@@ -1,12 +1,12 @@
 from django.core import urlresolvers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render, redirect
+from django.shortcuts import render,redirect
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
-    SeminarInfoTemporaryCreationForm
-from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
+    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm
+from .models import RecruitConfigs, SponsorItem, Files,ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
-from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
-from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student
+from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo , RecruitJobfairInfo, SeminarInfoTemporary
+from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -246,23 +246,23 @@ def jobfair_info(request):
         return render(request, 'recruit/error.html', locals())
 
     try:
-        jobfair_info = JobfairInfo.objects.get(company=company)
+        jobfair_info = JobfairInfoTemp.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
 
     if request.POST:
         data = request.POST.copy()
-        form = JobfairInfoForm(data=data, instance=jobfair_info)
+        form = JobfairInfoTempForm(data=data, instance=jobfair_info)
         if form.is_valid():
             new_info = form.save(commit=False)
             company = RecruitSignup.objects.get(cid=request.user.cid)
             new_info.company = company
             new_info.save()
-            return render(request, 'recruit/company/success.html', locals())
+            return redirect('jobfair_online', company_cid=request.user.cid)
         else:
             print(form.errors)
     else:
-        form = JobfairInfoForm(instance=jobfair_info)
+        form = JobfairInfoTempForm(instance=jobfair_info)
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
 
@@ -761,6 +761,16 @@ def jobfair(request):
     reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
     return render(request, 'recruit/public/jobfair.html', locals())
 
+
+def jobfair_online(request, company_cid):
+    try:
+        comp_signup = RecruitSignup.objects.get(cid=company_cid)
+        jobfair_info = JobfairInfoTemp.objects.get(company=comp_signup)
+        company = Company.objects.get(cid=company_cid)
+        company_name = company.get_full_name()
+        return render(request, 'recruit/public/jobfair_online.html', locals())
+    except:
+        return redirect('jobfair')
 
 def public(request):
     recruit_info = recruit.models.RecruitInfo.objects.all()
