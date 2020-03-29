@@ -1,5 +1,12 @@
 from django import forms
-from .models import RecruitSignup, JobfairInfo, CompanySurvey, SeminarInfo, Student, ExchangePrize, SeminarInfoTemporary
+from .models import (RecruitSignup,
+                     JobfairInfo,
+                     CompanySurvey,
+                     SeminarInfo,
+                     Student,
+                     ExchangePrize,
+                     SeminarInfoTemporary,
+                     JobfairInfoTemp)
 from django.forms import ModelForm
 
 
@@ -54,6 +61,15 @@ class JobfairInfoForm(ModelForm):
         fields = '__all__'
         exclude = ['company']
 
+class JobfairInfoTempForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['video'].label = u'請輸入 YouTube 影片 ID ( 網址列 https://www.youtube.com/v={ID} )'
+
+    class Meta:
+        model = JobfairInfoTemp
+        fields = '__all__'
+        exclude = ['company']
 
 class SurveyForm(forms.ModelForm):
     # def __init__(self, *args, **kwargs):
