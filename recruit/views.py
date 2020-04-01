@@ -681,55 +681,33 @@ def seminar(request):
 
 
 def seminar_temporary(request):
-    recruit_config = RecruitConfigs.objects.all()[0]
-    start_date = recruit_config.seminar_start_date
-    end_date = recruit_config.seminar_end_date
-    week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
     session_all_info = []
-    session_name = ['other1', 'noon2', 'other2', 'other3', 'other4', 'other5']
-    time_table = [
-        {'start': recruit_config.session_1_start, 'end': recruit_config.session_1_end},
-        {'start': recruit_config.session_2_start, 'end': recruit_config.session_2_end},
-        {'start': recruit_config.session_3_start, 'end': recruit_config.session_3_end},
-        {'start': recruit_config.session_4_start, 'end': recruit_config.session_4_end},
-        {'start': recruit_config.session_5_start, 'end': recruit_config.session_5_end},
-        {'start': recruit_config.session_6_start, 'end': recruit_config.session_6_end},
-    ]
-    for week in week_num:
-        for weekday in range(5):
-            today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
-            for idx, name in enumerate(session_name):
-                slot = SeminarSlot.objects.filter(date=today, session=name).first()
-                if slot:
-                    info = SeminarInfoTemporary.objects.filter(company=slot.company).first()
-                    company = Company.objects.get(cid=slot.company.cid)
-                    if info:
-                        if info.live:
-                            session_all_info.insert(0, {'slot': slot,
-                                                        'logo': company.logo.url,
-                                                        'info': info,
-                                                        'start_time': time_table[idx]['start'],
-                                                        'end_time': time_table[idx]['end'],
-                                                        })
-                        else:
-                            session_all_info.append(
-                                {'slot': slot,
-                                 'logo': company.logo.url,
-                                 'info': info,
-                                 'start_time': time_table[idx]['start'],
-                                 'end_time': time_table[idx]['end'],
-                                 }
-                            )
-                    else:
-                        session_all_info.append(
-                            {'slot': slot,
-                             'logo': company.logo.url,
-                             'start_time': time_table[idx]['start'],
-                             'end_time': time_table[idx]['end'],
-                             }
-                        )
+    for company in RecruitSignup.objects.all():
+        info = SeminarInfoTemporary.objects.get(company=company)
+        company_info = Company.objects.get(cid=company.cid)
+        if info:
+            if info.live:
+                session_all_info.insert(0, {'name': company_info.get_short_name(),
+                                            'logo': company_info.logo.url,
+                                            'website': company_info.website,
+                                            'info': info,
+                                            })
+            else:
+                session_all_info.append(
+                    {'name': company_info.get_short_name(),
+                     'logo': company_info.logo.url,
+                     'website': company_info.website,
+                     'info': info,
+                     }
+                )
+        else:
+            session_all_info.append(
+                {'name': company_info.get_short_name(),
+                 'logo': company_info.logo.url,
+                 'website': company_info.website,
+                 }
+            )
 
-    locations = SlotColor.objects.all()
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
 
     paginator = Paginator(session_all_info, 8)

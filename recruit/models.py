@@ -287,38 +287,20 @@ class SeminarInfoTemporary(models.Model):
     company = models.OneToOneField(RecruitSignup, to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE)
-    topic = models.CharField(u'說明會主題', max_length=30)
-    speaker = models.CharField(u'主講人', max_length=30)
-    speaker_title = models.CharField(u'主講人稱謂', max_length=30)
-    speaker_email = models.EmailField(u'主講人Email', max_length=254)
-    raffle_prize = models.CharField(u'抽獎獎品', max_length=254,
-                                    null=True, blank=True)
-    raffle_prize_amount = models.SmallIntegerField(u'抽獎獎品數量', default=0)
-    qa_prize = models.CharField(u'QA獎獎品', max_length=254, null=True, blank=True)
-    qa_prize_amount = models.SmallIntegerField(u'QA獎獎品數量', default=0)
-    attend_prize = models.CharField(u'參加獎獎品', max_length=254,
-                                    null=True, blank=True)
-    attend_prize_amount = models.SmallIntegerField(u'參加獎獎品數量', default=0)
-    snack_box = models.SmallIntegerField(u'加碼餐盒數量', default=0)
-    contact = models.CharField(u'聯絡人', max_length=30)
-    contact_mobile = models.CharField(u'聯絡人手機', max_length=16)
-    contact_email = models.EmailField(u'聯絡人Email', max_length=254)
-    parking_cards = models.SmallIntegerField(u'汽車停車卡數量', default=0)
-    job_number = models.SmallIntegerField(u'職缺人數', default=0)
-    hr_food = models.CharField(u'人資餐點', max_length=30, null=True, blank=True,
-                               help_text=" 提供免費2份餐點與飲水給企業人資或講者，如需素食或特殊飲食請於本欄備註說明")
-    ps = models.TextField(u'其它需求', null=True, blank=True)
+    contact_mobile = models.CharField(u'聯絡電話', max_length=16, null=True, blank=True)
+    contact_email = models.EmailField(u'聯絡Email', max_length=254, null=True, blank=True)
+    application = models.TextField(u'應徵方式', max_length=200, null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     live = models.BooleanField(u'直播', default=False)
     video = models.CharField(u'影片', max_length=100, null=True, blank=True,
                              help_text="請複製youtube網址'v='後的字串，ex: youtube.com/watch?v=123的'123'")
-    intro = models.TextField(u'說明會簡介', max_length=200)
+    intro = models.TextField(u'說明會簡介', max_length=260)
 
     class Meta:
         managed = True
-        verbose_name = u"說明會資訊(暫時)"
-        verbose_name_plural = u"說明會資訊(暫時)"
+        verbose_name = u"說明會資訊(線上暫時)"
+        verbose_name_plural = u"說明會資訊(線上暫時)"
 
 
 class SponsorItem(models.Model):

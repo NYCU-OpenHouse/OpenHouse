@@ -4,7 +4,7 @@ from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, Spo
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary
 from .models import JobfairInfoTemp
-from .models import JobfairOrder,ExchangePrize
+from .models import JobfairOrder, ExchangePrize
 from company.models import Company
 from recruit import export
 import recruit.models as models
@@ -95,8 +95,7 @@ class SeminarInfoAdmin(admin.ModelAdmin):
 
 @admin.register(SeminarInfoTemporary)
 class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
-    list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
-                    'contact_email', 'contact_mobile', 'updated')
+    list_display = ('company', 'contact_email', 'contact_mobile', 'live', 'updated')
 
 
 @admin.register(SlotColor)
@@ -123,9 +122,13 @@ class JobfairInfoAdmin(admin.ModelAdmin):
 
 admin.site.register(JobfairInfo, JobfairInfoAdmin)
 
+
 class JobfairInfoTempAdmin(admin.ModelAdmin):
     list_display = ('company',)
+
+
 admin.site.register(JobfairInfoTemp, JobfairInfoTempAdmin)
+
 
 class SponsorItemAdmin(admin.ModelAdmin):
     inlines = (SponsorshipInline,)

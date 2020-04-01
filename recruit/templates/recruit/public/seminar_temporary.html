@@ -1,6 +1,6 @@
 {% extends 'recruit_public.html' %}
 {% load staticfiles %}
-{% block 'custom_head'%}
+{% block 'custom_head' %}
     <script src={% static "js/vote/vote.js" %}></script>
     <link href={% static "css/vote/vote.css" %} rel="stylesheet">
 {% endblock %}
@@ -15,22 +15,55 @@
     <div class="ui two column grid">
         {% for session in session_info %}
             <div class="center aligned column">
-                {% if session.info.video %}
-                    <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
-                    </div>
-                {% else %}
-                    <div class="image">
-                        <img class="ui fluid image" src="{{ session.logo }}">
-                    </div>
-                {% endif %}
-                <h3>{{ session.slot.company }}</h3>
-                <p>{{ session.slot.date }} {{ session.start_time }} ~ {{ session.end_time }}</p>
-                <p style="color:{{ session.slot.place.css_color }}">{{ session.slot.place }}</p>
                 {% if session.info %}
-                    <p>說明會主題: {{ session.info.topic }}</p>
-                    <p>主講人: {{ session.info.speaker }} {{ session.info.speaker_title }}</p>
-                    <p>說明會簡介: {{ session.info.intro }}</p>
+                    {% if session.info.video %}
+                        <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
+                        </div>
+                    {% else %}
+                        <div class="image">
+                            <img class="ui fluid image" src="{{ session.logo }}">
+                        </div>
+                    {% endif %}
                 {% endif %}
+                <h3>{{ session.name }}</h3>
+                <div class="ui list">
+                    <div class="item">
+                        <div class="content">
+                            <i class="marker icon"></i>
+                            <strong>公司網址:</strong> <a target="_blank"
+                                                      href="{{ session.website }}">{{ session.website }}</a>
+                        </div>
+                    </div>
+                    {% if session.info %}
+                        {% if session.info.contact_email %}
+                            <div class="item">
+                                <div class="content">
+                                    <i class="mail icon"></i>
+                                    <strong>聯絡信箱:</strong> <a
+                                        href="mailto:{{ session.info.contact_email }}">{{ session.info.contact_email }}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if session.info.contact_mobile %}
+                            <div class="item">
+                                <div class="content">
+                                    <i class="text telephone icon"></i>
+                                    <strong>聯絡電話:</strong> {{ session.info.contact_mobile }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if session.info.application %}
+                            <div class="item">
+                                <p><strong>應徵方式:</strong></p>
+                                <p>{{ session.info.application }}</p>
+                            </div>
+                        {% endif %}
+                        <div class="item">
+                            <p><strong>簡介:</strong></p>
+                            <p>{{ session.info.intro|linebreaksbr }}</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         {% endfor %}
     </div>
