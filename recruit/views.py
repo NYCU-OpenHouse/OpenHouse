@@ -701,7 +701,13 @@ def seminar_temporary(request):
                      }
                 )
         except SeminarInfoTemporary.DoesNotExist:
-            pass
+            company_info = Company.objects.get(cid=company.cid)
+            session_all_info.append(
+                {'name': company_info.get_short_name(),
+                 'logo': company_info.logo.url,
+                 'website': company_info.website,
+                 }
+            )
 
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
 

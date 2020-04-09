@@ -24,6 +24,10 @@
                             <img class="ui fluid image" src="{{ session.logo }}">
                         </div>
                     {% endif %}
+                {% else %}
+                    <div class="image">
+                        <img class="ui fluid image" src="{{ session.logo }}">
+                    </div>
                 {% endif %}
                 <h3>{{ session.name }}</h3>
                 <div class="ui list">
