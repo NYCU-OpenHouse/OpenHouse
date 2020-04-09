@@ -1,6 +1,6 @@
 from django.core import urlresolvers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
     SeminarInfoTemporaryCreationForm, JobfairInfoTempForm
 from .models import RecruitConfigs, SponsorItem, Files,ExchangePrize
@@ -683,9 +683,9 @@ def seminar(request):
 def seminar_temporary(request):
     session_all_info = []
     for company in RecruitSignup.objects.all():
-        info = SeminarInfoTemporary.objects.get(company=company)
-        company_info = Company.objects.get(cid=company.cid)
-        if info:
+        try:
+            info = SeminarInfoTemporary.objects.get(company=company)
+            company_info = Company.objects.get(cid=company.cid)
             if info.live:
                 session_all_info.insert(0, {'name': company_info.get_short_name(),
                                             'logo': company_info.logo.url,
@@ -700,13 +700,8 @@ def seminar_temporary(request):
                      'info': info,
                      }
                 )
-        else:
-            session_all_info.append(
-                {'name': company_info.get_short_name(),
-                 'logo': company_info.logo.url,
-                 'website': company_info.website,
-                 }
-            )
+        except SeminarInfoTemporary.DoesNotExist:
+            pass
 
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
 
