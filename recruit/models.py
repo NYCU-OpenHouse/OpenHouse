@@ -296,9 +296,11 @@ class SeminarInfoTemporary(models.Model):
     video = models.CharField(u'影片', max_length=100, null=True, blank=True,
                              help_text="請複製youtube網址'v='後的字串，ex: youtube.com/watch?v=123的'123'")
     intro = models.TextField(u'說明會簡介', max_length=260)
+    order = models.PositiveSmallIntegerField(u'順序', default=1, help_text='數字愈大放在愈前面')
 
     class Meta:
         managed = True
+        ordering = ['-live', '-order']
         verbose_name = u"說明會資訊(線上暫時)"
         verbose_name_plural = u"說明會資訊(線上暫時)"
 

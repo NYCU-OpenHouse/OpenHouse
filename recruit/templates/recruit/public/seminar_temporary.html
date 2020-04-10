@@ -30,6 +30,7 @@
                     </div>
                 {% endif %}
                 <h3>{{ session.name }}</h3>
+                <div class="ui divider"></div>
                 <div class="ui list">
                     <div class="item">
                         <div class="content">
@@ -56,18 +57,22 @@
                                 </div>
                             </div>
                         {% endif %}
-                        {% if session.info.application %}
-                            <div class="item">
-                                <p><strong>應徵方式:</strong></p>
-                                <p>{{ session.info.application }}</p>
-                            </div>
-                        {% endif %}
-                        <div class="item">
-                            <p><strong>簡介:</strong></p>
-                            <p>{{ session.info.intro|linebreaksbr }}</p>
-                        </div>
                     {% endif %}
                 </div>
+                {% if session.info %}
+                    {% if session.info.application %}
+                        <div class="ui divider"></div>
+                        <p><strong>應徵方式:</strong></p>
+                        <div class="ui left aligned basic segment">
+                            <p>{{ session.info.application|linebreaksbr }}</p>
+                        </div>
+                    {% endif %}
+                    <div class="ui divider"></div>
+                    <p><strong>簡介:</strong></p>
+                    <div class="ui left aligned basic segment">
+                        <p>{{ session.info.intro|linebreaksbr }}</p>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

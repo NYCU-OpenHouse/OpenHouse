@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.conf.urls import url
+from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary
@@ -95,7 +96,57 @@ class SeminarInfoAdmin(admin.ModelAdmin):
 
 @admin.register(SeminarInfoTemporary)
 class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
-    list_display = ('company', 'contact_email', 'contact_mobile', 'live', 'updated')
+    list_display = ('company', 'contact_email', 'contact_mobile', 'live', 'order', 'updated')
+    actions = ['increase_priority_by_1', 'increase_priority_by_2', 'increase_priority_by_3', 'decrease_priority_by_1',
+               'decrease_priority_by_2', 'decrease_priority_by_3']
+
+    def increase_priority_by_1(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') + 1 if obj.order < 32767 else 32767
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被提升1')
+
+    increase_priority_by_1.short_description = '優先度提升1'
+
+    def increase_priority_by_2(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') + 2 if obj.order < 32766 else 32767
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被提升2')
+
+    increase_priority_by_2.short_description = '優先度提升2'
+
+    def increase_priority_by_3(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') + 3 if obj.order < 32765 else 32767
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被提升3')
+
+    increase_priority_by_3.short_description = '優先度提升3'
+
+    def decrease_priority_by_1(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') - 1 if obj.order > 1 else 1
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被降低1')
+
+    decrease_priority_by_1.short_description = '優先度降低1'
+
+    def decrease_priority_by_2(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') - 2 if obj.order > 2 else 1
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被降低2')
+
+    decrease_priority_by_2.short_description = '優先度降低2'
+
+    def decrease_priority_by_3(self, request, queryset):
+        for obj in queryset:
+            obj.order = F('order') - 3 if obj.order > 3 else 1
+            obj.save()
+        self.message_user(request, f'{len(queryset)}個廠商優先度被降低3')
+
+    decrease_priority_by_3.short_description = '優先度降低3'
 
 
 @admin.register(SlotColor)

@@ -3,9 +3,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
     SeminarInfoTemporaryCreationForm, JobfairInfoTempForm
-from .models import RecruitConfigs, SponsorItem, Files,ExchangePrize
+from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
-from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo , RecruitJobfairInfo, SeminarInfoTemporary
+from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -681,33 +681,43 @@ def seminar(request):
 
 
 def seminar_temporary(request):
-    session_all_info = []
+    is_live = []
+    not_live = []
+    wo_info = []
     for company in RecruitSignup.objects.all():
         try:
-            info = SeminarInfoTemporary.objects.get(company=company)
             company_info = Company.objects.get(cid=company.cid)
+            info = SeminarInfoTemporary.objects.get(company=company)
+        except Company.DoesNotExist:
+            pass
+        except SeminarInfoTemporary.DoesNotExist:
+            company_info = Company.objects.get(cid=company.cid)
+            wo_info.append(
+                {'name': company_info.get_short_name(),
+                 'logo': company_info.logo.url,
+                 'website': company_info.website,
+                 }
+            )
+        else:
             if info.live:
-                session_all_info.insert(0, {'name': company_info.get_short_name(),
-                                            'logo': company_info.logo.url,
-                                            'website': company_info.website,
-                                            'info': info,
-                                            })
+                is_live.append(
+                    {'name': company_info.get_short_name(),
+                     'logo': company_info.logo.url,
+                     'website': company_info.website,
+                     'info': info,
+                     })
             else:
-                session_all_info.append(
+                not_live.append(
                     {'name': company_info.get_short_name(),
                      'logo': company_info.logo.url,
                      'website': company_info.website,
                      'info': info,
                      }
                 )
-        except SeminarInfoTemporary.DoesNotExist:
-            company_info = Company.objects.get(cid=company.cid)
-            session_all_info.append(
-                {'name': company_info.get_short_name(),
-                 'logo': company_info.logo.url,
-                 'website': company_info.website,
-                 }
-            )
+
+    is_live.sort(key=lambda x: x['info'].order, reverse=True)
+    not_live.sort(key=lambda x: x['info'].order, reverse=True)
+    session_all_info = is_live + not_live + wo_info
 
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
 
@@ -750,6 +760,7 @@ def jobfair_online(request, company_cid):
         return render(request, 'recruit/public/jobfair_online.html', locals())
     except:
         return redirect('jobfair')
+
 
 def public(request):
     recruit_info = recruit.models.RecruitInfo.objects.all()
