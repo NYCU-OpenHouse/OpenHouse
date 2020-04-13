@@ -15,64 +15,68 @@
     <div class="ui two column grid">
         {% for session in session_info %}
             <div class="center aligned column">
-                {% if session.info %}
-                    {% if session.info.video %}
-                        <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
-                        </div>
+                <div class="ui fluid teal card">
+                    {% if session.info %}
+                        {% if session.info.video %}
+                            <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
+                            </div>
+                        {% else %}
+                            <div class="image">
+                                <img class="ui fluid image" src="{{ session.logo }}">
+                            </div>
+                        {% endif %}
                     {% else %}
                         <div class="image">
                             <img class="ui fluid image" src="{{ session.logo }}">
                         </div>
                     {% endif %}
-                {% else %}
-                    <div class="image">
-                        <img class="ui fluid image" src="{{ session.logo }}">
-                    </div>
-                {% endif %}
-                <h3>{{ session.name }}</h3>
-                <div class="ui divider"></div>
-                <div class="ui list">
-                    <div class="item">
-                        <div class="content">
-                            <i class="marker icon"></i>
-                            <strong>公司網址:</strong> <a target="_blank"
-                                                      href="{{ session.website }}">{{ session.website }}</a>
-                        </div>
-                    </div>
-                    {% if session.info %}
-                        {% if session.info.contact_email %}
-                            <div class="item">
-                                <div class="content">
-                                    <i class="mail icon"></i>
-                                    <strong>聯絡信箱:</strong> <a
-                                        href="mailto:{{ session.info.contact_email }}">{{ session.info.contact_email }}</a>
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if session.info.contact_mobile %}
-                            <div class="item">
-                                <div class="content">
-                                    <i class="text telephone icon"></i>
-                                    <strong>聯絡電話:</strong> {{ session.info.contact_mobile }}
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endif %}
-                </div>
-                {% if session.info %}
-                    {% if session.info.application %}
+                    <div class="content">
+                        <div class="header">{{ session.name }}</div>
                         <div class="ui divider"></div>
-                        <p><strong>應徵方式:</strong></p>
-                        <div class="ui left aligned basic segment">
-                            <p>{{ session.info.application|linebreaksbr }}</p>
+                        <div class="ui list">
+                            <div class="item">
+                                <div class="content">
+                                    <i class="marker icon"></i>
+                                    <strong>公司網址:</strong> <a target="_blank"
+                                                              href="{{ session.website }}">{{ session.website }}</a>
+                                </div>
+                            </div>
+                            {% if session.info %}
+                                {% if session.info.contact_email %}
+                                    <div class="item">
+                                        <div class="content">
+                                            <i class="mail icon"></i>
+                                            <strong>聯絡信箱:</strong> <a
+                                                href="mailto:{{ session.info.contact_email }}">{{ session.info.contact_email }}</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if session.info.contact_mobile %}
+                                    <div class="item">
+                                        <div class="content">
+                                            <i class="text telephone icon"></i>
+                                            <strong>聯絡電話:</strong> {{ session.info.contact_mobile }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
                         </div>
-                    {% endif %}
-                    <div class="ui divider"></div>
-                    <p><strong>簡介:</strong></p>
-                    <div class="ui left aligned basic segment">
-                        <p>{{ session.info.intro|linebreaksbr }}</p>
+                        {% if session.info %}
+                            {% if session.info.application %}
+                                <div class="ui divider"></div>
+                                <p><strong>應徵方式:</strong></p>
+                                <div class="ui left aligned basic segment">
+                                    <p>{{ session.info.application|linebreaksbr }}</p>
+                                </div>
+                            {% endif %}
+                            <div class="ui divider"></div>
+                            <p><strong>簡介:</strong></p>
+                            <div class="ui left aligned basic segment">
+                                <p>{{ session.info.intro|linebreaksbr }}</p>
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             </div>
         {% endfor %}
     </div>
