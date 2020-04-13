@@ -21,6 +21,7 @@ from ipware.ip import get_real_ip
 from company.models import Company
 from datetime import timedelta
 import recruit.models
+from urllib.parse import urlparse, parse_qs
 
 logger = logging.getLogger('recruit')
 
@@ -699,10 +700,26 @@ def seminar_temporary(request):
                  }
             )
         else:
+            query = urlparse(info.video)
+            if query.hostname == 'youtu.be':
+                video = query.path[1:]
+            elif query.hostname in ('www.youtube.com', 'youtube.com'):
+                if query.path == '/watch':
+                    p = parse_qs(query.query)
+                    video = p['v'][0]
+                elif query.path[:7] == '/embed/':
+                    video = query.path.split('/')[2]
+                elif query.path[:3] == '/v/':
+                    video = query.path.split('/')[2]
+                else:
+                    video = None
+            else:
+                video = None
             if info.live:
                 is_live.append(
                     {'name': company_info.get_short_name(),
                      'logo': company_info.logo.url,
+                     'video': video,
                      'website': company_info.website,
                      'info': info,
                      })
@@ -710,6 +727,7 @@ def seminar_temporary(request):
                 not_live.append(
                     {'name': company_info.get_short_name(),
                      'logo': company_info.logo.url,
+                     'video': video,
                      'website': company_info.website,
                      'info': info,
                      }

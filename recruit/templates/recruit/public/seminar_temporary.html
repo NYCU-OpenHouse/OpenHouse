@@ -16,15 +16,9 @@
         {% for session in session_info %}
             <div class="center aligned column">
                 <div class="ui fluid teal card">
-                    {% if session.info %}
-                        {% if session.info.video %}
-                            <div class="ui embed active" data-source="youtube" data-id="{{ session.info.video }}">
-                            </div>
-                        {% else %}
-                            <div class="image">
-                                <img class="ui fluid image" src="{{ session.logo }}">
-                            </div>
-                        {% endif %}
+                    {% if session.video %}
+                        <div class="ui embed active" data-source="youtube" data-id="{{ session.video }}">
+                        </div>
                     {% else %}
                         <div class="image">
                             <img class="ui fluid image" src="{{ session.logo }}">

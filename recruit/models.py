@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.db.models import Count, Sum
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+
 CATEGORYS = (
     (u'半導體', u'半導體'),
     (u'消費電子', u'消費電子'),
@@ -242,6 +243,7 @@ class JobfairInfoTemp(models.Model):
     video = models.CharField(u'影片', max_length=100)
     content = RichTextUploadingField(u'招募內容')
     updated_time = models.DateTimeField(u'更新時間', auto_now=True)
+
     class Meta:
         managed = True
         verbose_name = u'線上就博會資訊'
@@ -294,7 +296,7 @@ class SeminarInfoTemporary(models.Model):
 
     live = models.BooleanField(u'直播', default=False)
     video = models.CharField(u'影片', max_length=100, null=True, blank=True,
-                             help_text="請複製影片的分享中的ID，ex: https://youtu.be/CLbcRAW_Zf8的'CLbcRAW_Zf8'")
+                             help_text="請複製youtube影片網址")
     intro = models.TextField(u'說明會簡介', max_length=260)
     order = models.PositiveSmallIntegerField(u'順序', default=1, help_text='數字愈大放在愈前面')
 
