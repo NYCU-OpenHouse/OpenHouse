@@ -25,6 +25,24 @@ from urllib.parse import urlparse, parse_qs
 
 logger = logging.getLogger('recruit')
 
+def parse_YT_video(url):
+    """ Parse video ID from the given url """
+    query = urlparse(url)
+    if query.hostname == 'youtu.be':
+        video = query.path[1:]
+    elif query.hostname in ('www.youtube.com', 'youtube.com'):
+        if query.path == '/watch':
+            p = parse_qs(query.query)
+            video = p['v'][0]
+        elif query.path[:7] == '/embed/':
+            video = query.path.split('/')[2]
+        elif query.path[:3] == '/v/':
+            video = query.path.split('/')[2]
+        else:
+            video = None
+    else:
+        video = None
+    return video
 
 @login_required(login_url='/company/login/')
 def recruit_company_index(request):
@@ -700,21 +718,7 @@ def seminar_temporary(request):
                  }
             )
         else:
-            query = urlparse(info.video)
-            if query.hostname == 'youtu.be':
-                video = query.path[1:]
-            elif query.hostname in ('www.youtube.com', 'youtube.com'):
-                if query.path == '/watch':
-                    p = parse_qs(query.query)
-                    video = p['v'][0]
-                elif query.path[:7] == '/embed/':
-                    video = query.path.split('/')[2]
-                elif query.path[:3] == '/v/':
-                    video = query.path.split('/')[2]
-                else:
-                    video = None
-            else:
-                video = None
+            video = parse_YT_video(info.video)
             if info.live:
                 is_live.append(
                     {'name': company_info.get_short_name(),
@@ -773,6 +777,8 @@ def jobfair_online(request, company_cid):
     try:
         comp_signup = RecruitSignup.objects.get(cid=company_cid)
         jobfair_info = JobfairInfoTemp.objects.get(company=comp_signup)
+
+        video = parse_YT_video(jobfair_info.video)
         company = Company.objects.get(cid=company_cid)
         company_name = company.get_full_name()
         return render(request, 'recruit/public/jobfair_online.html', locals())

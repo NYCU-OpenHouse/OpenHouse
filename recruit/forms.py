@@ -64,7 +64,7 @@ class JobfairInfoForm(ModelForm):
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['video'].label = u'請輸入 YouTube 影片 ID ( 網址列 https://www.youtube.com/v={ID} )'
+        self.fields['video'].label = u'影片 (請貼上 YouTube 影片網址)'
 
     class Meta:
         model = JobfairInfoTemp
