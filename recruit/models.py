@@ -294,7 +294,7 @@ class SeminarInfoTemporary(models.Model):
 
     live = models.BooleanField(u'直播', default=False)
     video = models.CharField(u'影片', max_length=100, null=True, blank=True,
-                             help_text="請複製youtube網址'v='後的字串，ex: youtube.com/watch?v=123的'123'")
+                             help_text="請複製影片的分享中的ID，ex: https://youtu.be/CLbcRAW_Zf8的'CLbcRAW_Zf8'")
     intro = models.TextField(u'說明會簡介', max_length=260)
     order = models.PositiveSmallIntegerField(u'順序', default=1, help_text='數字愈大放在愈前面')
 
