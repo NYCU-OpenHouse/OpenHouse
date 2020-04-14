@@ -104,7 +104,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') + 1 if obj.order < 32767 else 32767
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被提升1')
+        self.message_user(request, '{}個廠商優先度被提升1'.format(len(queryset)))
 
     increase_priority_by_1.short_description = '優先度提升1'
 
@@ -112,7 +112,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') + 2 if obj.order < 32766 else 32767
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被提升2')
+        self.message_user(request, '{}個廠商優先度被提升2'.format(len(queryset)))
 
     increase_priority_by_2.short_description = '優先度提升2'
 
@@ -120,7 +120,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') + 3 if obj.order < 32765 else 32767
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被提升3')
+        self.message_user(request, '{}個廠商優先度被提升3'.format(len(queryset)))
 
     increase_priority_by_3.short_description = '優先度提升3'
 
@@ -128,7 +128,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') - 1 if obj.order > 1 else 1
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被降低1')
+        self.message_user(request, '{}個廠商優先度被降低1'.format(len(queryset)))
 
     decrease_priority_by_1.short_description = '優先度降低1'
 
@@ -136,7 +136,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') - 2 if obj.order > 2 else 1
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被降低2')
+        self.message_user(request, '{}個廠商優先度被降低2'.format(len(queryset)))
 
     decrease_priority_by_2.short_description = '優先度降低2'
 
@@ -144,7 +144,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.order = F('order') - 3 if obj.order > 3 else 1
             obj.save()
-        self.message_user(request, f'{len(queryset)}個廠商優先度被降低3')
+        self.message_user(request, '{}個廠商優先度被降低3'.format(len(queryset)))
 
     decrease_priority_by_3.short_description = '優先度降低3'
 
