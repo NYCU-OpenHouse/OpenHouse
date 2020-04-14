@@ -13,7 +13,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from . import forms
-from django.db.models import Count
+from django.db.models import Count, Q
 import datetime
 import json
 import logging
@@ -703,7 +703,7 @@ def seminar_temporary(request):
     is_live = []
     not_live = []
     wo_info = []
-    for company in RecruitSignup.objects.all():
+    for company in RecruitSignup.objects.filter(~Q(seminar='none')):
         try:
             company_info = Company.objects.get(cid=company.cid)
             info = SeminarInfoTemporary.objects.get(company=company)
