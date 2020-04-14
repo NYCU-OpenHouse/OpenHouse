@@ -10,6 +10,9 @@
 
 		<div class="ui divider"></div>
 		{{news.content|safe}}
+        {% for file in files %}
+        <p>附件: <a href={{file.upload_file.url}} target="_blank">{{file.name}}</a></p>
+        {% endfor %}
 </div>
 <div style="margin:auto;width:60%; margin-top:2rem">
 	<a class="ui button" href="/">回首頁</a>

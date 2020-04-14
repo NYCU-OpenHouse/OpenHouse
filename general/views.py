@@ -27,6 +27,7 @@ def ReadNews(request,news_id):
     news = models.News.objects.filter(id = news_id).first()
     if not news:
         raise Http404("Not found")
+    files = models.NewsFile.objects.filter(news_id=news_id)
     return render(request,'general/read_news.html',locals())
 
 def GeneralNewsListing(request):
