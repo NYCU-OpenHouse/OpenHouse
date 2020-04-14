@@ -743,7 +743,7 @@ def seminar_temporary(request):
 
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
 
-    paginator = Paginator(session_all_info, 8)
+    paginator = Paginator(session_all_info, 4)
     page_number = request.GET.get('page')
 
     try:
