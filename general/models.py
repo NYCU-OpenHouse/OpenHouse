@@ -27,6 +27,19 @@ class News(models.Model):
         verbose_name_plural = "公告系統"
 
 
+class NewsFile(models.Model):
+    id = models.AutoField(primary_key=True)
+    news_id = models.ForeignKey(News, to_field='id',
+                        on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(u'檔名', max_length=50)
+    upload_file = models.FileField(u'檔案',
+                                    upload_to='news_files', null=False)
+    updated_time = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        verbose_name = "公告附件檔案"
+        verbose_name_plural = "公告附件檔案"
+
 class PhotoSlide(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', max_length=50)
