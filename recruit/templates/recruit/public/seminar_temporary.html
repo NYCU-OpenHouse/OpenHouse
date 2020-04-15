@@ -80,20 +80,35 @@
             <br>
             <div class="ui center aligned container">
                 <div class="ui pagination menu">
+                    <a class="item" href="{{ request.path }}?page=1#companyIntro"><i class="angle double left icon"></i></a>
                     {% if session_info.has_previous %}
-                        <a class="item" href="{{ request.path }}?page=1#companyIntro">First Page</a>
+                        <a class="item"
+                           href="{{ request.path }}?page={{ session_info.previous_page_number }}#companyIntro"><i
+                                class="chevron left icon"></i></a>
+                        {% if session_info.previous_page_number != 1 %}
+                            <a class="item" href="{{ request.path }}?page=1#companyIntro">1</a>
+                            <div class="disabled item">...</div>
+                        {% endif %}
                         <a class="item"
                            href="{{ request.path }}?page={{ session_info.previous_page_number }}#companyIntro">{{ session_info.previous_page_number }}</a>
                     {% endif %}
                     <a class="active item"
                        href="{{ request.path }}?page={{ session_info.number }}#companyIntro">{{ session_info.number }}</a>
                     {% if session_info.has_next %}
+                        {% if session_info.next_page_number != session_info.paginator.num_pages %}
+                            <a class="item"
+                               href="{{ request.path }}?page={{ session_info.next_page_number }}#companyIntro">{{ session_info.next_page_number }}</a>
+                            <div class="disabled item">...</div>
+                        {% endif %}
                         <a class="item"
-                           href="{{ request.path }}?page={{ session_info.next_page_number }}#companyIntro">{{ session_info.next_page_number }}</a>
+                           href="{{ request.path }}?page={{ session_info.paginator.num_pages }}#companyIntro">{{ session_info.paginator.num_pages }}</a>
                         <a class="item"
-                           href="{{ request.path }}?page={{ session_info.paginator.num_pages }}#companyIntro">Last
-                            Page</a>
+                           href="{{ request.path }}?page={{ session_info.next_page_number }}#companyIntro"><i
+                                class="chevron right icon"></i></a>
                     {% endif %}
+                    <a class="item"
+                       href="{{ request.path }}?page={{ session_info.paginator.num_pages }}#companyIntro"><i
+                            class="angle double right icon"></i></a>
                 </div>
             </div>
         {% endif %}
