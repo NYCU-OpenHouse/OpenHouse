@@ -33,7 +33,7 @@ class NewsFile(models.Model):
                         on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(u'檔名', max_length=50)
     upload_file = models.FileField(u'檔案',
-                                    upload_to='news_files', null=False)
+                                    upload_to='news_files', null=True, blank=True)
     updated_time = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
