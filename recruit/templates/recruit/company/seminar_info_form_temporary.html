@@ -15,8 +15,8 @@
                 說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h3 style="color:red">請企業於 1/20 前完成「說明會資訊填寫」，以利活動宣傳</h3>
         <h4 class="ui dividing header">說明會資訊</h4>
+        {{ form.errors }}
         <div class="fields">
             <div class="eight wide field">
                 <label>{{ form.contact_mobile.label }}{{ form.contact_mobile.errors }}</label>

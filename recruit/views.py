@@ -25,6 +25,7 @@ from urllib.parse import urlparse, parse_qs
 
 logger = logging.getLogger('recruit')
 
+
 def parse_YT_video(url):
     """ Parse video ID from the given url """
     query = urlparse(url)
@@ -43,6 +44,7 @@ def parse_YT_video(url):
     else:
         video = None
     return video
+
 
 @login_required(login_url='/company/login/')
 def recruit_company_index(request):

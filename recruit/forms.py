@@ -40,7 +40,7 @@ class SeminarInfoTemporaryCreationForm(forms.ModelForm):
     class Meta:
         model = SeminarInfoTemporary
         fields = '__all__'
-        exclude = ['cid']
+        exclude = ['cid', 'live', 'order']
 
     def __init__(self, *args, **kwargs):
         super(SeminarInfoTemporaryCreationForm, self).__init__(*args, **kwargs)
