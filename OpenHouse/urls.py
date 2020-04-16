@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 import rdss.views
 import general.views
+from ckeditor_uploader import views as ckeditor_views
 
 urlpatterns = [
 	#custom sponsorship admin url and view
@@ -33,6 +36,9 @@ urlpatterns = [
     url(r'^admin/staff/', include('staff.admin_urls')),
 
     url(r'^rdss/', include('rdss.public_urls')),  # add '' on the include path!!!
+    #url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^mentor/', include('careermentor.urls')),
     url(r'^recruit/',include('recruit.public_urls')),
