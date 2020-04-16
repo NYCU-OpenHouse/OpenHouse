@@ -291,7 +291,6 @@ class SeminarInfoTemporary(models.Model):
                                    on_delete=models.CASCADE)
     contact_mobile = models.CharField(u'聯絡電話', max_length=16, null=True, blank=True)
     contact_email = models.EmailField(u'聯絡Email', max_length=254, null=True, blank=True)
-    application = models.TextField(u'應徵方式', max_length=200, null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     live = models.BooleanField(u'直播', default=False)
