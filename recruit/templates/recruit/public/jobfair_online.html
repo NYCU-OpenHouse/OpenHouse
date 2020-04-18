@@ -14,8 +14,10 @@
 		<h2 class="ui header">{{company_name}}</h2>
         <p style="text-align:right">修改時間：{{jobfair_info.updated_time}} </p>
 	</div>
+    {% if video and video != "N/A" %}
     <div class="ui embed" data-source="youtube" data-id="{{video}}">
     </div>
+    {% endif %}
 
 		<div class="ui divider"></div>
 		{{jobfair_info.content|safe}}
