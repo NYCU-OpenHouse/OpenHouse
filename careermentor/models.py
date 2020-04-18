@@ -11,7 +11,7 @@ class Mentor(models.Model):
     cid = models.CharField(u'公司統一編號', max_length=8, default='', blank=True)
     category = models.CharField(u'類型', max_length=10, choices=MENTOR_CAT)
     title = models.CharField(u'標題', max_length=100)
-    abstract = models.TextField(u'大鋼')
+    abstract = models.TextField(u'大綱')
     date = models.DateField(u'日期')
     start_time = models.TimeField(u'開始時間')
     end_time = models.TimeField(u'結束時間')

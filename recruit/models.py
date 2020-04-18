@@ -240,7 +240,7 @@ class JobfairInfo(models.Model):
 class JobfairInfoTemp(models.Model):
     id = models.AutoField(primary_key=True)
     company = models.OneToOneField(RecruitSignup, verbose_name=u'公司')
-    video = models.CharField(u'影片', max_length=100)
+    video = models.CharField(u'影片', max_length=100, blank=True, null=True)
     content = RichTextUploadingField(u'招募內容')
     updated_time = models.DateTimeField(u'更新時間', auto_now=True)
 
