@@ -22,7 +22,7 @@
             <div class="field">
                 {{ form.content }}
                 {% if form.content.help_text %}
-                    <span class="helptext" style="color: red">{{ form.content.help_text|safe }}</span>
+                    <p class="helptext" style="color: red">{{ form.content.help_text|safe }}</p>
                 {% endif %}
             </div>
         </div>
