@@ -41,6 +41,9 @@
             <label>{{ form.intro.label }}{{ form.intro.errors }}</label>
             <div class="field">
                 {{ form.intro }}
+                {% if form.intro.help_text %}
+                    <span class="helptext" style="color: red">{{ form.intro.help_text|safe }}</span>
+                {% endif %}
             </div>
         </div>
         <button class="ui blue button" type="submit">送出</button>

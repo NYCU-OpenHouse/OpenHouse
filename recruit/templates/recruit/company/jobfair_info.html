@@ -2,15 +2,30 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-		<title>就博會資訊-OpenHouse</title>
-        <link href={% static "css/recruit/info.css" %} rel="stylesheet">
+    <title>就博會資訊-OpenHouse</title>
+    <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form method="post" class="ui info form" action=".">
         {% csrf_token %}
         {{ form.media }}
-        {{ form.as_p }}
+        <!--{{ form.as_p }}-->
+        <div class="field">
+            <label>{{ form.video.label }}{{ form.video.errors }}</label>
+            <div class="field">
+                {{ form.video }}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{ form.content.label }}{{ form.intro.errors }}</label>
+            <div class="field">
+                {{ form.content }}
+                {% if form.content.help_text %}
+                    <span class="helptext" style="color: red">{{ form.content.help_text|safe }}</span>
+                {% endif %}
+            </div>
+        </div>
         <button class="ui teal button">送出</button>
     </form>
 {% endblock %}

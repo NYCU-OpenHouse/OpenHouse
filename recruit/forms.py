@@ -41,6 +41,9 @@ class SeminarInfoTemporaryCreationForm(forms.ModelForm):
         model = SeminarInfoTemporary
         fields = '__all__'
         exclude = ['cid', 'live', 'order']
+        help_texts = {
+            'intro': '請勿使用網路特殊與表情符號，以免資訊無法送出'
+        }
 
     def __init__(self, *args, **kwargs):
         super(SeminarInfoTemporaryCreationForm, self).__init__(*args, **kwargs)
@@ -61,6 +64,7 @@ class JobfairInfoForm(ModelForm):
         fields = '__all__'
         exclude = ['company']
 
+
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -70,6 +74,10 @@ class JobfairInfoTempForm(ModelForm):
         model = JobfairInfoTemp
         fields = '__all__'
         exclude = ['company']
+        help_texts = {
+            'content': '請勿使用網路特殊與表情符號，以免資訊無法送出'
+        }
+
 
 class SurveyForm(forms.ModelForm):
     # def __init__(self, *args, **kwargs):
