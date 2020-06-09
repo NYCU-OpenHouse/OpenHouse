@@ -1,6 +1,7 @@
 from django.contrib import admin
 from company.models import Company
-from recruit.models import RecruitSignup
+from recruit.models import RecruitSignup, SeminarInfo, SeminarOrder, SeminarSlot, SeminarInfoTemporary, JobfairInfo, \
+    JobfairInfoTemp, JobfairOrder, JobfairSlot, SponsorShip
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.contrib import admin
@@ -61,7 +62,73 @@ class UserChangeForm(forms.ModelForm):
         old_cid = self.initial['cid']
         new_cid = self.data['cid']
         if old_cid != new_cid:
-            RecruitSignup.objects.filter(cid=old_cid).update(cid=new_cid)
+            # RecruitSignup.objects.filter(cid=old_cid).update(cid=new_cid)
+            try:
+                # Clone object with old cid and insert it back to table with new cid
+                obj = RecruitSignup.objects.get(cid=old_cid)
+                obj.pk = None
+                obj.cid = new_cid
+                obj.save()
+                obj = RecruitSignup.objects.get(cid=new_cid)
+            except Exception as e:
+                obj = None
+
+            if obj is not None:
+                # Update all foreign keys of related models
+                try:
+                    seminar_info = SeminarInfo.objects.get(company__cid=old_cid)
+                    seminar_info.company = obj
+                    seminar_info.save()
+                except SeminarInfo.DoesNotExist:
+                    pass
+                try:
+                    seminar_order = SeminarOrder.objects.get(company__cid=old_cid)
+                    seminar_order.company = obj
+                    seminar_order.save()
+                except SeminarOrder.DoesNotExist:
+                    pass
+                try:
+                    seminar_slot = SeminarSlot.objects.get(company__cid=old_cid)
+                    seminar_slot.company = obj
+                    seminar_slot.save()
+                except SeminarSlot.DoesNotExist:
+                    pass
+                try:
+                    seminar_info_temp = SeminarInfoTemporary.objects.get(company__cid=old_cid)
+                    seminar_info_temp.company = obj
+                    seminar_info_temp.save()
+                except SeminarInfoTemporary.DoesNotExist:
+                    pass
+                try:
+                    jobfair_info = JobfairInfo.objects.get(company__cid=old_cid)
+                    jobfair_info.company = obj
+                    jobfair_info.save()
+                except JobfairInfo.DoesNotExist:
+                    pass
+                try:
+                    jobfair_info_temp = JobfairInfoTemp.objects.get(company__cid=old_cid)
+                    jobfair_info_temp.company = obj
+                    jobfair_info_temp.save()
+                except JobfairInfoTemp.DoesNotExist:
+                    pass
+                try:
+                    jobfair_order = JobfairOrder.objects.get(company__cid=old_cid)
+                    jobfair_order.company = obj
+                    jobfair_order.save()
+                except JobfairOrder.DoesNotExist:
+                    pass
+                jobfair_slot = JobfairSlot.objects.filter(company__cid=old_cid)
+                if jobfair_slot.exists():
+                    for x in jobfair_slot:
+                        x.company = obj
+                        x.save()
+                sponsorship = SponsorShip.objects.filter(company__cid=old_cid)
+                if sponsorship.exists():
+                    for x in sponsorship:
+                        x.company = obj
+                        x.save()
+            # Remove object with old cid from table
+            RecruitSignup.objects.get(cid=old_cid).delete()
 
         if commit:
             user.save()
