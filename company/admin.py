@@ -1,7 +1,8 @@
 from django.contrib import admin
 from company.models import Company
-from recruit.models import RecruitSignup, SeminarInfo, SeminarOrder, SeminarSlot, SeminarInfoTemporary, JobfairInfo, \
-    JobfairInfoTemp, JobfairOrder, JobfairSlot, SponsorShip
+from recruit import models as recruit_model
+from careermentor.models import Mentor
+from rdss import models as rdss_model
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.contrib import admin
@@ -63,76 +64,164 @@ class UserChangeForm(forms.ModelForm):
         new_cid = self.data['cid']
         if old_cid != new_cid:
             # RecruitSignup.objects.filter(cid=old_cid).update(cid=new_cid)
-            try:
-                # Clone object with old cid and insert it back to table with new cid
-                obj = RecruitSignup.objects.get(cid=old_cid)
-                obj.pk = None
-                obj.cid = new_cid
-                obj.save()
-                obj = RecruitSignup.objects.get(cid=new_cid)
-            except Exception as e:
-                obj = None
+            # Update related models in recruit
+            self.update_recruit(old_cid, new_cid)
 
-            if obj is not None:
-                # Update all foreign keys of related models
-                try:
-                    seminar_info = SeminarInfo.objects.get(company__cid=old_cid)
-                    seminar_info.company = obj
-                    seminar_info.save()
-                except SeminarInfo.DoesNotExist:
-                    pass
-                try:
-                    seminar_order = SeminarOrder.objects.get(company__cid=old_cid)
-                    seminar_order.company = obj
-                    seminar_order.save()
-                except SeminarOrder.DoesNotExist:
-                    pass
-                try:
-                    seminar_slot = SeminarSlot.objects.get(company__cid=old_cid)
-                    seminar_slot.company = obj
-                    seminar_slot.save()
-                except SeminarSlot.DoesNotExist:
-                    pass
-                try:
-                    seminar_info_temp = SeminarInfoTemporary.objects.get(company__cid=old_cid)
-                    seminar_info_temp.company = obj
-                    seminar_info_temp.save()
-                except SeminarInfoTemporary.DoesNotExist:
-                    pass
-                try:
-                    jobfair_info = JobfairInfo.objects.get(company__cid=old_cid)
-                    jobfair_info.company = obj
-                    jobfair_info.save()
-                except JobfairInfo.DoesNotExist:
-                    pass
-                try:
-                    jobfair_info_temp = JobfairInfoTemp.objects.get(company__cid=old_cid)
-                    jobfair_info_temp.company = obj
-                    jobfair_info_temp.save()
-                except JobfairInfoTemp.DoesNotExist:
-                    pass
-                try:
-                    jobfair_order = JobfairOrder.objects.get(company__cid=old_cid)
-                    jobfair_order.company = obj
-                    jobfair_order.save()
-                except JobfairOrder.DoesNotExist:
-                    pass
-                jobfair_slot = JobfairSlot.objects.filter(company__cid=old_cid)
-                if jobfair_slot.exists():
-                    for x in jobfair_slot:
-                        x.company = obj
-                        x.save()
-                sponsorship = SponsorShip.objects.filter(company__cid=old_cid)
-                if sponsorship.exists():
-                    for x in sponsorship:
-                        x.company = obj
-                        x.save()
-            # Remove object with old cid from table
-            RecruitSignup.objects.get(cid=old_cid).delete()
+            # Update related models in careermentor
+            mentors = Mentor.objects.filter(cid=old_cid)
+            if mentors.exists():
+                for x in mentors:
+                    x.cid = new_cid
+                    x.save()
+
+            # Update related models in rdss
+            self.update_rdss(old_cid, new_cid)
 
         if commit:
             user.save()
         return user
+
+    def update_recruit(self, old_cid, new_cid):
+        """
+        Update all related models in recruit
+        """
+        try:
+            # Clone object with old cid and insert it back to table with new cid
+            obj = recruit_model.RecruitSignup.objects.get(cid=old_cid)
+            obj.pk = None
+            obj.cid = new_cid
+            obj.save()
+            obj = recruit_model.RecruitSignup.objects.get(cid=new_cid)
+        except Exception as e:
+            obj = None
+        if obj is not None:
+            # Update all foreign keys of related models
+            try:
+                seminar_info = recruit_model.SeminarInfo.objects.get(company__cid=old_cid)
+                seminar_info.company = obj
+                seminar_info.save()
+            except recruit_model.SeminarInfo.DoesNotExist:
+                pass
+            try:
+                seminar_order = recruit_model.SeminarOrder.objects.get(company__cid=old_cid)
+                seminar_order.company = obj
+                seminar_order.save()
+            except recruit_model.SeminarOrder.DoesNotExist:
+                pass
+            try:
+                seminar_slot = recruit_model.SeminarSlot.objects.get(company__cid=old_cid)
+                seminar_slot.company = obj
+                seminar_slot.save()
+            except recruit_model.SeminarSlot.DoesNotExist:
+                pass
+            try:
+                seminar_info_temp = recruit_model.SeminarInfoTemporary.objects.get(company__cid=old_cid)
+                seminar_info_temp.company = obj
+                seminar_info_temp.save()
+            except recruit_model.SeminarInfoTemporary.DoesNotExist:
+                pass
+            try:
+                jobfair_info = recruit_model.JobfairInfo.objects.get(company__cid=old_cid)
+                jobfair_info.company = obj
+                jobfair_info.save()
+            except recruit_model.JobfairInfo.DoesNotExist:
+                pass
+            try:
+                jobfair_info_temp = recruit_model.JobfairInfoTemp.objects.get(company__cid=old_cid)
+                jobfair_info_temp.company = obj
+                jobfair_info_temp.save()
+            except recruit_model.JobfairInfoTemp.DoesNotExist:
+                pass
+            try:
+                jobfair_order = recruit_model.JobfairOrder.objects.get(company__cid=old_cid)
+                jobfair_order.company = obj
+                jobfair_order.save()
+            except recruit_model.JobfairOrder.DoesNotExist:
+                pass
+            jobfair_slot = recruit_model.JobfairSlot.objects.filter(company__cid=old_cid)
+            if jobfair_slot.exists():
+                for x in jobfair_slot:
+                    x.company = obj
+                    x.save()
+            sponsorship = recruit_model.SponsorShip.objects.filter(company__cid=old_cid)
+            if sponsorship.exists():
+                for x in sponsorship:
+                    x.company = obj
+                    x.save()
+            # Update cid of other models
+            try:
+                survey = recruit_model.CompanySurvey.objects.get(cid=old_cid)
+                survey.cid = new_cid
+                survey.save()
+            except recruit_model.CompanySurvey.DoesNotExist:
+                pass
+            # Remove object with old cid from table
+            recruit_model.RecruitSignup.objects.get(cid=old_cid).delete()
+
+    def update_rdss(self, old_cid, new_cid):
+        """
+        Update all related models in rdss
+        """
+        try:
+            # Clone object with old cid and insert it back to table with new cid
+            obj = rdss_model.Signup.objects.get(cid=old_cid)
+            obj.pk = None
+            obj.cid = new_cid
+            obj.save()
+            obj = rdss_model.Signup.objects.get(cid=new_cid)
+        except Exception as e:
+            obj = None
+        if obj is not None:
+            # Update all foreign keys of related models
+            try:
+                seminar_info = rdss_model.SeminarInfo.objects.get(company__cid=old_cid)
+                seminar_info.company = obj
+                seminar_info.save()
+            except rdss_model.SeminarInfo.DoesNotExist:
+                pass
+            try:
+                seminar_order = rdss_model.SeminarOrder.objects.get(company__cid=old_cid)
+                seminar_order.company = obj
+                seminar_order.save()
+            except rdss_model.SeminarOrder.DoesNotExist:
+                pass
+            try:
+                seminar_slot = rdss_model.SeminarSlot.objects.get(company__cid=old_cid)
+                seminar_slot.company = obj
+                seminar_slot.save()
+            except rdss_model.SeminarSlot.DoesNotExist:
+                pass
+            try:
+                jobfair_info = rdss_model.JobfairInfo.objects.get(company__cid=old_cid)
+                jobfair_info.company = obj
+                jobfair_info.save()
+            except rdss_model.JobfairInfo.DoesNotExist:
+                pass
+            try:
+                jobfair_order = rdss_model.JobfairOrder.objects.get(company__cid=old_cid)
+                jobfair_order.company = obj
+                jobfair_order.save()
+            except rdss_model.JobfairOrder.DoesNotExist:
+                pass
+            jobfair_slot = rdss_model.JobfairSlot.objects.filter(company__cid=old_cid)
+            if jobfair_slot.exists():
+                for x in jobfair_slot:
+                    x.company = obj
+                    x.save()
+            sponsorship = rdss_model.Sponsorship.objects.filter(company__cid=old_cid)
+            if sponsorship.exists():
+                for x in sponsorship:
+                    x.company = obj
+                    x.save()
+            # Update cid of other models
+            try:
+                survey = rdss_model.CompanySurvey.objects.get(cid=old_cid)
+                survey.cid = new_cid
+                survey.save()
+            except rdss_model.CompanySurvey.DoesNotExist:
+                pass
+            # Remove object with old cid from table
+            rdss_model.Signup.objects.get(cid=old_cid).delete()
 
 
 class UserAdmin(BaseUserAdmin):

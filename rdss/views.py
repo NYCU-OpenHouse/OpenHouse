@@ -285,6 +285,7 @@ def SeminarSelectControl(request):
         raise Http404("What are u looking for?")
 
     # action query
+    configs = rdss.models.RdssConfigs.objects.all()[0]
     if action == "query":
         slots = rdss.models.SeminarSlot.objects.all()
         return_data = {}
@@ -424,6 +425,7 @@ def JobfairSelectControl(request):
     else:
         raise Http404("What are u looking for?")
 
+    configs = rdss.models.RdssConfigs.objects.all()[0]
     if action == "query":
         slot_list = rdss.models.JobfairSlot.objects.all()
         slot_list_return = list()
