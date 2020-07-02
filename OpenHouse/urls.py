@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url,include
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -22,7 +22,7 @@ import general.views
 from ckeditor_uploader import views as ckeditor_views
 
 urlpatterns = [
-	#custom sponsorship admin url and view
+    # custom sponsorship admin url and view
     url(r'', include('general.urls')),  # add '' on the include path!!!
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URL
@@ -36,12 +36,13 @@ urlpatterns = [
     url(r'^admin/staff/', include('staff.admin_urls')),
 
     url(r'^rdss/', include('rdss.public_urls')),  # add '' on the include path!!!
-    #url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    # url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
     url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^mentor/', include('careermentor.urls')),
-    url(r'^recruit/',include('recruit.public_urls')),
-    url(r'^visit/',include('company_visit.urls')),
-    url(r'^vote/',include('vote.urls')),
+    url(r'^recruit/', include('recruit.public_urls')),
+    url(r'^visit/', include('company_visit.urls')),
+    url(r'^vote/', include('vote.urls')),
+    url(r'^monograph/', include('monograph.urls'))
 ]
