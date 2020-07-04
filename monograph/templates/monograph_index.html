@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block 'custom_head' %}
+    <title>Open House 專刊</title>
+    <link href={% static "css/vote/index.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'body' %}
+    {% if mono_info %}
+        <div id="vote_index">
+            <h2>{{ mono_info.title }}</h2>
+            {% if mono_info.content %}
+                <p>{{ mono_info.content|safe }}</p>
+            {% endif %}
+            <h4 id="bookshelf" class="ui horizontal divider header">
+                <i class="book icon"></i>
+                專刊書架
+            </h4>
+            <div class="ui raised link four stackable cards">
+                {% for m in mono %}
+                    <div class="teal card">
+                        <a class="image" href="{{ m.get_absolute_url }}">
+                            {% if m.cover %}
+                                <img class="ui rounded image" src="{{ m.cover.url }}">
+                            {% else %}
+                                <img class="ui rounded image"
+                                     src="https://img.icons8.com/cute-clipart/512/000000/no-image.png">
+                            {% endif %}
+                        </a>
+                        <div class="content">
+                            <a class="bottom aligned header" href="{{ m.get_absolute_url }}">
+                                {{ m.title }}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% block pagination %}
+        {% if mono.paginator.num_pages > 1 %}
+            <br>
+            <div class="ui center aligned container">
+                <div class="ui pagination menu">
+                    <a class="item" href="{{ request.path }}?page=1#bookshelf"><i
+                            class="angle double left icon"></i></a>
+                    {% if mono.has_previous %}
+                        <a class="item"
+                           href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf"><i
+                                class="chevron left icon"></i></a>
+                        {% if mono.previous_page_number != 1 %}
+                            <a class="item" href="{{ request.path }}?page=1#bookshelf">1</a>
+                            <div class="disabled item">...</div>
+                        {% endif %}
+                        <a class="item"
+                           href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">{{ mono.previous_page_number }}</a>
+                    {% endif %}
+                    <a class="active item"
+                       href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}</a>
+                    {% if mono.has_next %}
+                        {% if mono.next_page_number != mono.paginator.num_pages %}
+                            <a class="item"
+                               href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">{{ mono.next_page_number }}</a>
+                            <div class="disabled item">...</div>
+                        {% endif %}
+                        <a class="item"
+                           href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">{{ mono.paginator.num_pages }}</a>
+                        <a class="item"
+                           href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf"><i
+                                class="chevron right icon"></i></a>
+                    {% endif %}
+                    <a class="item"
+                       href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf"><i
+                            class="angle double right icon"></i></a>
+                </div>
+            </div>
+        {% endif %}
+    {% endblock %}
+{% endblock %}
