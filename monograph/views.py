@@ -14,7 +14,7 @@ def index(request):
     except MonographInfo.DoesNotExist:
         mono_info = None
 
-    paginator = Paginator(Monograph.objects.all(), 1)
+    paginator = Paginator(Monograph.objects.all(), 16)
     page_number = request.GET.get('page')
 
     try:
