@@ -1,10 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load staticfiles %}
 
-</body>
-</html>
+{% block 'custom_head' %}
+    <title>Open House 專刊 | {{ mono.title }}</title>
+{% endblock %}
+
+{% block 'body' %}
+    <br>
+    <div class="ui segment" style="margin:auto;width:60%;">
+        <div style="text-align:center">
+            <h2 class="ui header">{{ mono.title }}</h2>
+            <p style="text-align:right">修改時間：{{ mono.updated }} </p>
+        </div>
+
+        <h4 class="ui horizontal divider header">
+            <i class="book icon"></i>
+            內容
+        </h4>
+    </div>
+
+    <!-- computer and tablet only buttons -->
+    <div class="ui grid">
+        <div class="computer only tablet only column">
+            <div class="ui basic segment" style="margin:auto;width:60%;">
+                <a class="ui teal left floated button" href="/">回首頁</a>
+                <a class="ui teal left floated button" href="{% url 'monograph_index' %}">專刊</a>
+                {% if next %}
+                    <a class="ui teal right floated right labeled icon button" href="{{ next.get_absolute_url }}">
+                        <i class="angle right icon"></i>
+                        {{ next.title }}
+                    </a>
+                {% endif %}
+                {% if previous %}
+                    <a class="ui teal right floated left labeled icon button" href="{{ previous.get_absolute_url }}">
+                        <i class="angle left icon"></i>
+                        {{ previous.title }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- mobile only buttons -->
+    <div class="ui grid">
+        <div class="mobile only column">
+            <div class="ui basic segment" style="margin:auto;width:60%;">
+                <a class="ui teal left floated icon button" href="/">
+                    <i class="home icon"></i>
+                </a>
+                <a class="ui teal left floated icon button" href="{% url 'monograph_index' %}">
+                    <i class="archive icon"></i>
+                </a>
+                {% if next %}
+                    <a class="ui teal right floated icon button" href="{{ next.get_absolute_url }}">
+                        <i class="angle right icon"></i>
+                    </a>
+                {% endif %}
+                {% if previous %}
+                    <a class="ui teal right floated icon button" href="{{ previous.get_absolute_url }}">
+                        <i class="angle left icon"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
