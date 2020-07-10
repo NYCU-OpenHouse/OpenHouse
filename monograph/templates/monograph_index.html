@@ -19,21 +19,24 @@
             </h4>
             <div class="ui raised link four stackable cards">
                 {% for m in mono %}
-                    <div class="teal card">
-                        <a class="image" href="{{ m.get_absolute_url }}">
+                    <a class="ui teal card" href="{{ m.get_absolute_url }}">
+                        <div class="image">
                             {% if m.cover %}
                                 <img class="ui rounded image" src="{{ m.cover.url }}">
                             {% else %}
                                 <img class="ui rounded image"
-                                     src="https://img.icons8.com/cute-clipart/512/000000/no-image.png">
+                                     src="https://img.icons8.com/color/480/000000/image.png">
                             {% endif %}
-                        </a>
-                        <div class="content">
-                            <a class="bottom aligned header" href="{{ m.get_absolute_url }}">
-                                {{ m.title }}
-                            </a>
                         </div>
-                    </div>
+                        <div class="content">
+                            <div class="header">
+                                {{ m.title }}
+                            </div>
+                            <div class="meta">
+                                <span>{{ m.updated }}</span>
+                            </div>
+                        </div>
+                    </a>
                 {% endfor %}
             </div>
         </div>
@@ -42,38 +45,78 @@
     {% block pagination %}
         {% if mono.paginator.num_pages > 1 %}
             <br>
-            <div class="ui center aligned container">
-                <div class="ui pagination menu">
-                    <a class="item" href="{{ request.path }}?page=1#bookshelf"><i
-                            class="angle double left icon"></i></a>
-                    {% if mono.has_previous %}
-                        <a class="item"
-                           href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf"><i
-                                class="chevron left icon"></i></a>
-                        {% if mono.previous_page_number != 1 %}
-                            <a class="item" href="{{ request.path }}?page=1#bookshelf">1</a>
-                            <div class="disabled item">...</div>
-                        {% endif %}
-                        <a class="item"
-                           href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">{{ mono.previous_page_number }}</a>
-                    {% endif %}
-                    <a class="active item"
-                       href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}</a>
-                    {% if mono.has_next %}
-                        {% if mono.next_page_number != mono.paginator.num_pages %}
+            <!-- computer and tablet only pagination -->
+            <div class="ui grid">
+                <div class="computer only tablet only column">
+                    <div class="ui center aligned container">
+                        <div class="ui pagination menu">
+                            <a class="item" href="{{ request.path }}?page=1#bookshelf">
+                                <i class="angle double left icon"></i>
+                            </a>
+                            {% if mono.has_previous %}
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
+                                    <i class="chevron left icon"></i>
+                                </a>
+                                {% if mono.previous_page_number != 1 %}
+                                    <a class="item" href="{{ request.path }}?page=1#bookshelf">1</a>
+                                    <div class="disabled item">...</div>
+                                {% endif %}
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">{{ mono.previous_page_number }}</a>
+                            {% endif %}
+                            <a class="active item"
+                               href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}</a>
+                            {% if mono.has_next %}
+                                {% if mono.next_page_number != mono.paginator.num_pages %}
+                                    <a class="item"
+                                       href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">{{ mono.next_page_number }}</a>
+                                    <div class="disabled item">...</div>
+                                {% endif %}
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">{{ mono.paginator.num_pages }}</a>
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
+                                    <i class="chevron right icon"></i>
+                                </a>
+                            {% endif %}
                             <a class="item"
-                               href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">{{ mono.next_page_number }}</a>
-                            <div class="disabled item">...</div>
-                        {% endif %}
-                        <a class="item"
-                           href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">{{ mono.paginator.num_pages }}</a>
-                        <a class="item"
-                           href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf"><i
-                                class="chevron right icon"></i></a>
-                    {% endif %}
-                    <a class="item"
-                       href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf"><i
-                            class="angle double right icon"></i></a>
+                               href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
+                                <i class="angle double right icon"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- mobile only pagination -->
+            <div class="ui grid">
+                <div class="mobile only column">
+                    <div class="ui center aligned container">
+                        <div class="ui pagination menu">
+                            <a class="item" href="{{ request.path }}?page=1#bookshelf"><i
+                                    class="angle double left icon"></i>
+                            </a>
+                            {% if mono.has_previous %}
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
+                                    <i class="chevron left icon"></i>
+                                </a>
+                            {% endif %}
+                            <a class="active item"
+                               href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}/{{ mono.paginator.num_pages }}</a>
+                            {% if mono.has_next %}
+                                <a class="item"
+                                   href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
+                                    <i class="chevron right icon"></i>
+                                </a>
+                            {% endif %}
+                            <a class="item"
+                               href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
+                                <i class="angle double right icon"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endif %}
