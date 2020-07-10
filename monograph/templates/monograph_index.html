@@ -19,8 +19,13 @@
             </h4>
             <div class="ui raised link four stackable cards">
                 {% for m in mono %}
-                    <a class="ui teal card" href="{{ m.get_absolute_url }}">
-                        <div class="image">
+                    <a class="ui teal card" style="overflow: hidden;" href="{{ m.get_absolute_url }}">
+                        <div class="ui fluid image">
+                            {% if m.priority %}
+                                <div class="ui red left corner label">
+                                    <i class="star icon"></i>
+                                </div>
+                            {% endif %}
                             {% if m.cover %}
                                 <img class="ui rounded image" src="{{ m.cover.url }}">
                             {% else %}

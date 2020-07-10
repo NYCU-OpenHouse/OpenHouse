@@ -5,7 +5,7 @@ from . import models
 # Register your models here.
 @admin.register(models.Monograph)
 class MonographAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'updated',)
+    list_display = ('id', 'title', 'priority', 'updated',)
 
 
 @admin.register(models.MonographInfo)

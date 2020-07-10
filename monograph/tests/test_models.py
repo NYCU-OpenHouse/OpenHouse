@@ -8,7 +8,7 @@ import os
 class MonographIntroTest(TestCase):
     """
     Class testing model of MonographIntro
-    There are 8 tests
+    There are 7 tests
     """
 
     @classmethod
@@ -32,11 +32,6 @@ class MonographIntroTest(TestCase):
         mono = MonographInfo.objects.get(title='MonographIntroTest')
         label = mono._meta.get_field('content').verbose_name
         self.assertEqual(label, u'內容')
-
-    def test_content_max_length(self):
-        mono = MonographInfo.objects.get(title='MonographIntroTest')
-        length = mono._meta.get_field('content').max_length
-        self.assertEqual(length, 200)
 
     def test_content_null_and_blank(self):
         mono = MonographInfo.objects.get(title='MonographIntroTest')
@@ -114,11 +109,6 @@ class MonographTest(TestCase):
         label = mono._meta.get_field('content_1').verbose_name
         self.assertEqual(label, u'主內容')
 
-    def test_content_1_max_length(self):
-        mono = Monograph.objects.get(title='MonographTest')
-        length = mono._meta.get_field('content_1').max_length
-        self.assertEqual(length, 200)
-
     def test_content_1_help_text(self):
         mono = Monograph.objects.get(title='MonographTest')
         help = mono._meta.get_field('content_1').help_text
@@ -129,11 +119,6 @@ class MonographTest(TestCase):
         mono = Monograph.objects.get(title='MonographTest')
         label = mono._meta.get_field('content_2').verbose_name
         self.assertEqual(label, u'附加內容')
-
-    def test_content_2_max_length(self):
-        mono = Monograph.objects.get(title='MonographTest')
-        length = mono._meta.get_field('content_2').max_length
-        self.assertEqual(length, 200)
 
     def test_content_2_help_text(self):
         mono = Monograph.objects.get(title='MonographTest')
@@ -182,6 +167,17 @@ class MonographTest(TestCase):
         blank = mono._meta.get_field('image_2').blank
         self.assertTrue(null)
         self.assertTrue(blank)
+
+    # Priority
+    def test_priority_name_label(self):
+        mono = Monograph.objects.get(title='MonographTest')
+        label = mono._meta.get_field('priority').verbose_name
+        self.assertEqual(label, u'優先')
+
+    def test_priority_default(self):
+        mono = Monograph.objects.get(title='MonographTest')
+        default = mono._meta.get_field('priority').default
+        self.assertFalse(default)
 
     # Updated
     def test_updated_name_label(self):

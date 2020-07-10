@@ -37,7 +37,15 @@ def monograph_detail(request, monograph_id):
     except Monograph.DoesNotExist:
         raise Http404('Monograph does not exist')
 
-    previous = Monograph.objects.filter(updated__gt=mono.updated).last()
-    next = Monograph.objects.filter(updated__lt=mono.updated).first()
+    if mono.priority:
+        previous = Monograph.objects.filter(priority=True, updated__gt=mono.updated).last()
+        next_mono = Monograph.objects.filter(priority=True, updated__lt=mono.updated).first()
+        if not next_mono:
+            next_mono = Monograph.objects.filter(priority=False).first()
+    else:
+        previous = Monograph.objects.filter(priority=False, updated__gt=mono.updated).last()
+        next_mono = Monograph.objects.filter(priority=False, updated__lt=mono.updated).first()
+        if not previous:
+            previous = Monograph.objects.filter(priority=True).last()
 
     return render(request, 'monograph_detail.html', locals())

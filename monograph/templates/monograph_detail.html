@@ -17,6 +17,76 @@
             <i class="book icon"></i>
             內容
         </h4>
+
+        <!-- computer and tablet only content -->
+        <div class="ui grid">
+            {% if mono.content_2 and mono.image_1 and mono.image_2 %}
+                <div class="computer only tablet only ten wide column">
+                    {{ mono.content_1|safe }}
+                </div>
+                <div class="computer only tablet only six wide column">
+                    <img class="ui image" src="{{ mono.image_1.url }}">
+                </div>
+                <div class="computer only tablet only six wide column">
+                    <img class="ui image" src="{{ mono.image_2.url }}">
+                </div>
+                <div class="computer only tablet only ten wide column">
+                    {{ mono.content_2|safe }}
+                </div>
+            {% elif mono.content_2 %}
+                <div class="computer only tablet only column">
+                    {{ mono.content_1|safe }}
+                    {{ mono.content_2|safe }}
+                </div>
+            {% elif mono.image_1 or mono.image_2 %}
+                <div class="computer only tablet only column">
+                    {% if mono.image_1 and mono.image_2 %}
+                        <img class="ui image" src="{{ mono.image_1.url }}">
+                        {{ mono.content_1|safe }}
+                        <img class="ui image" src="{{ mono.image_2.url }}">
+                    {% elif mono.image_1 %}
+                        <img class="ui image" src="{{ mono.image_1.url }}">
+                        {{ mono.content_1|safe }}
+                    {% else %}
+                        <img class="ui image" src="{{ mono.image_2.url }}">
+                        {{ mono.content_1|safe }}
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="computer only tablet only column">
+                    {{ mono.content_1|safe }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- mobile only content -->
+        <div class="ui grid">
+            <div class="mobile only column">
+                {% if mono.content_2 and mono.image_1 and mono.image_2 %}
+                    {{ mono.content_1|safe }}
+                    <img class="ui image" src="{{ mono.image_1.url }}">
+                    {{ mono.content_2|safe }}
+                    <img class="ui image" src="{{ mono.image_2.url }}">
+                {% elif mono.content_2 %}
+                    {{ mono.content_1|safe }}
+                    {{ mono.content_2|safe }}
+                {% elif mono.image_1 or mono.image_2 %}
+                    {% if mono.image_1 and mono.image_2 %}
+                        <img class="ui image" src="{{ mono.image_1.url }}">
+                        {{ mono.content_1|safe }}
+                        <img class="ui image" src="{{ mono.image_2.url }}">
+                    {% elif mono.image_1 %}
+                        <img class="ui image" src="{{ mono.image_1.url }}">
+                        {{ mono.content_1|safe }}
+                    {% else %}
+                        <img class="ui image" src="{{ mono.image_2.url }}">
+                        {{ mono.content_1|safe }}
+                    {% endif %}
+                {% else %}
+                    {{ mono.content_1|safe }}
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <!-- computer and tablet only buttons -->
@@ -25,10 +95,10 @@
             <div class="ui basic segment" style="margin:auto;width:60%;">
                 <a class="ui teal left floated button" href="/">回首頁</a>
                 <a class="ui teal left floated button" href="{% url 'monograph_index' %}">專刊</a>
-                {% if next %}
-                    <a class="ui teal right floated right labeled icon button" href="{{ next.get_absolute_url }}">
+                {% if next_mono %}
+                    <a class="ui teal right floated right labeled icon button" href="{{ next_mono.get_absolute_url }}">
                         <i class="angle right icon"></i>
-                        {{ next.title }}
+                        {{ next_mono.title }}
                     </a>
                 {% endif %}
                 {% if previous %}
@@ -51,8 +121,8 @@
                 <a class="ui teal left floated icon button" href="{% url 'monograph_index' %}">
                     <i class="archive icon"></i>
                 </a>
-                {% if next %}
-                    <a class="ui teal right floated icon button" href="{{ next.get_absolute_url }}">
+                {% if next_mono %}
+                    <a class="ui teal right floated icon button" href="{{ next_mono.get_absolute_url }}">
                         <i class="angle right icon"></i>
                     </a>
                 {% endif %}
