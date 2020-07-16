@@ -532,7 +532,7 @@ def Sponsor(request):
 
     # 活動專刊的部份是變動不大，且版面特殊，採客製寫法
     monograph_main = rdss.models.SponsorItems.objects.filter(name="活動專刊").first()
-    monograph_items = rdss.models.SponsorItems.objects.filter(name__contains="活動專刊") \
+    monograph_items = rdss.models.SponsorItems.objects.filter(name__contains="活動專刊").exclude(name="活動專刊") \
         .annotate(num_sponsor=Count('sponsorship'))
     other_items = rdss.models.SponsorItems.objects.all().exclude(name__contains="活動專刊") \
         .annotate(num_sponsor=Count('sponsorship'))
