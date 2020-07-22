@@ -354,6 +354,7 @@ class CompanySurvey(models.Model):
     os_osc_intern = models.BooleanField(u'僑生實習', default=False)
     os_cn_intern = models.BooleanField(u'陸生實習', default=False)
     os_other_required = models.CharField(u'境外生能力要求', blank=True, null=True, max_length=255)
+    os_seminar = models.BooleanField(u'外籍生說明會', default=False)
 
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
