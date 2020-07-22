@@ -601,10 +601,11 @@ def CompanySurvey(request):
     sidebar_ui = {'survey': "active"}
 
     if timezone.now() > configs.survey_end or timezone.now() < configs.survey_start:
-        error_msg = "問卷填答已結束。期間為 {} 至 {}".format(
-            timezone.localtime(configs.survey_start).strftime("%Y/%m/%d %H:%M:%S"),
-            timezone.localtime(configs.survey_end).strftime("%Y/%m/%d %H:%M:%S"))
-        return render(request, 'error.html', locals())
+        if request.user.username != "77777777":
+            error_msg = "問卷填答已結束。期間為 {} 至 {}".format(
+                timezone.localtime(configs.survey_start).strftime("%Y/%m/%d %H:%M:%S"),
+                timezone.localtime(configs.survey_end).strftime("%Y/%m/%d %H:%M:%S"))
+            return render(request, 'error.html', locals())
 
     try:
         my_survey = rdss.models.CompanySurvey.objects.get(cid=request.user.cid)

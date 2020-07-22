@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator
 from django.db.models.signals import pre_save
 from django.db.models import Q
 from django.db.models import Count, Sum
@@ -86,7 +86,7 @@ class Signup(models.Model):
     ece = models.BooleanField(u'(ECE)電機', default=False)
     ece_cn = models.BooleanField(u'(ECE)電控', default=False)
     ece_cm = models.BooleanField(u'(ECE)電信', default=False)
-    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0)
+    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MaxValueValidator(2)])
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')
     lecture = models.BooleanField(u'就業力講座')
