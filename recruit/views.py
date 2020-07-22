@@ -578,7 +578,7 @@ def Sponsor(request):
 
     # 活動專刊的部份是變動不大，且版面特殊，採客製寫法
     monograph_main = SponsorItem.objects.filter(name="活動專刊").first()
-    monograph_items = SponsorItem.objects.filter(name__contains="活動專刊") \
+    monograph_items = SponsorItem.objects.filter(name__contains="活動專刊").exclude(name="活動專刊") \
         .annotate(num_sponsor=Count('sponsors'))
     other_items = SponsorItem.objects.all().exclude(name__contains="活動專刊") \
         .annotate(num_sponsor=Count('sponsors'))

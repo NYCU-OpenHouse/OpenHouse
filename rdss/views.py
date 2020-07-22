@@ -504,13 +504,32 @@ def JobfairSelectControl(request):
 
 def Add_SponsorShip(sponsor_items, post_data, sponsor):
     # clear sponsor ships objects
+    success_item = list()
+    fail_item = list()
     old_sponsorships = rdss.models.Sponsorship.objects.filter(company=sponsor)
-    for i in old_sponsorships:
-        i.delete()
+    for item in old_sponsorships:
+        item.delete()
     for item in sponsor_items:
-        if item.name in post_data and \
-                rdss.models.Sponsorship.objects.filter(item=item).count() < item.limit:
-            rdss.models.Sponsorship.objects.create(company=sponsor, item=item)
+        obj = None
+        if item.name in post_data:
+            if rdss.models.Sponsorship.objects.filter(item=item).count() < item.limit:
+                obj = rdss.models.Sponsorship.objects.create(company=sponsor, item=item)
+            if obj:
+                success_item.append(item.name)
+            else:
+                fail_item.append(item.name)
+
+    if success_item:
+        success_msg = "贊助成功物品: {}".format(", ".join(success_item))
+    else:
+        success_msg = None
+
+    if fail_item:
+        fail_msg = "贊助失敗物品: {}".format(", ".join(fail_item))
+    else:
+        fail_msg = None
+
+    return success_msg, fail_msg
 
 
 @login_required(login_url='/company/login/')
@@ -527,8 +546,13 @@ def Sponsor(request):
 
     if request.POST:
         sponsor_items = rdss.models.SponsorItems.objects.all()
-        Add_SponsorShip(sponsor_items, request.POST, sponsor)
-        msg = {"display": True, "content": "儲存成功!"}
+        succ_msg, fail_msg = Add_SponsorShip(sponsor_items, request.POST, sponsor)
+        msg = {
+            "display": True,
+            "content": "儲存成功!",
+            "succ_msg": succ_msg,
+            "fail_msg": fail_msg
+        }
 
     # 活動專刊的部份是變動不大，且版面特殊，採客製寫法
     monograph_main = rdss.models.SponsorItems.objects.filter(name="活動專刊").first()

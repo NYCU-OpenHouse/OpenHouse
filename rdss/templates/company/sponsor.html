@@ -14,6 +14,16 @@
         <div class="ui compact green message">
             {{ msg.content }}
         </div>
+        {% if msg.succ_msg %}
+            <div class="ui compact blue message">
+                {{ msg.succ_msg }}
+            </div>
+        {% endif %}
+        {% if msg.fail_msg %}
+            <div class="ui compact red message">
+                {{ msg.fail_msg }}
+            </div>
+        {% endif %}
     {% endif %}
     <form class="ui form" method="POST" action="{% url 'rdss_sponsor' %}">
         <!--專刊贊助品群客製區-->
