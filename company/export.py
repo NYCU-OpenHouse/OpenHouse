@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.core import serializers
@@ -11,9 +11,15 @@ import json
 import datetime
 import company.models
 
+
 @staff_member_required
 def Export_Company(request):
     # Create the HttpResponse object with the appropriate Excel header.
+    if request.user and request.user.is_authenticated():
+        if not request.user.is_superuser:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=403)
     filename = "all_company_{}.xlsx".format(
         timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
     response = HttpResponse(content_type='application/ms-excel')
@@ -38,7 +44,7 @@ def Export_Company(request):
 
     for row_count, company_obj in enumerate(company_list):
         for col_count, fieldname in enumerate(fieldname_list):
-            worksheet.write(row_count+1, col_count,  getattr(company_obj, fieldname))
+            worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
 
     workbook.close()
     return response
