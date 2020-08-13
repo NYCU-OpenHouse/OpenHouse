@@ -83,6 +83,12 @@ class JobfairInfoCreationForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['cid']
 
+    def __init__(self, *args, **kwargs):
+        super(JobfairInfoCreationForm, self).__init__(*args, **kwargs)
+        self.fields['contact_mobile'].widget.attrs.update({
+            'placeholder': '格式：0912-345678',
+        })
+
     # def clean_cid(self):
     #       raise forms.ValidationError(
     #               self.error_messages['cid_error'],

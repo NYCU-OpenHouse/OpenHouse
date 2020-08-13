@@ -8,35 +8,53 @@
 
 
 {% block 'content' %}
-    <form class="ui info form" method="POST" action="{% url 'rdss_seminar_info' %}">
+    <form class="ui info form error" method="POST" action="{% url 'rdss_seminar_info' %}">
         <h1 class="ui dividing header">說明會資訊</h1>
         {% csrf_token %}
-        {% if seminar_info %}
+        {% if form.errors or formset.errors %}
+            <div class="ui error message">
+                <div class="header">請修正以下錯誤</div>
+                <ul class="ui ordered list">
+                    {% for field in form %}
+                        {% for e in field.errors %}
+                            <div class="item">{{ e }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for dict in formset.errors %}
+                        {% for field in dict.values %}
+                            {% for e in field %}
+                                <div class="item">{{ e }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% elif seminar_info %}
             <div class="ui teal compact message">
                 說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h4 class="ui dividing header">主題資訊</h4>
-        <div class="field">
+        <h3 class="ui dividing header">主題資訊</h3>
+        <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>
             <div class="field">
                 {{ form.topic }}
             </div>
         </div>
         <div class="fields">
-            <div class="four wide field">
+            <div class="four wide field required">
                 <label>{{ form.speaker.label }}{{ form.speaker.errors }}</label>
                 <div class="field">
                     {{ form.speaker }}
                 </div>
             </div>
-            <div class="four wide field">
+            <div class="four wide field required">
                 <label>{{ form.speaker_title.label }}{{ form.speaker_title.errors }}</label>
                 <div class="field">
                     {{ form.speaker_title }}
                 </div>
             </div>
-            <div class="eight wide field">
+            <div class="eight wide field required">
                 <label>{{ form.speaker_email.label }}{{ form.speaker_email.errors }}</label>
                 <div class="field">
                     {{ form.speaker_email }}
@@ -44,19 +62,19 @@
             </div>
         </div>
         <div class="fields">
-            <div class="four wide field">
+            <div class="four wide field required">
                 <label>{{ form.contact.label }}{{ form.contact.errors }}</label>
                 <div class="field">
                     {{ form.contact }}
                 </div>
             </div>
-            <div class="four wide field">
+            <div class="four wide field required">
                 <label>{{ form.contact_mobile.label }}{{ form.contact_mobile.errors }}</label>
                 <div class="field">
                     {{ form.contact_mobile }}
                 </div>
             </div>
-            <div class="eight wide field">
+            <div class="eight wide field required">
                 <label>{{ form.contact_email.label }}{{ form.contact_email.errors }}</label>
                 <div class="field">
                     {{ form.contact_email }}
@@ -80,20 +98,37 @@
             </div>
         </div>
         <div class="field">
-            <label>{{ form.carcard_number.label }}{{ form.carcard_number.errors }}</label>
-            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>
-            <p>說明(2)：每間企業至多提供5部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
-            <div class="field">
-                {{ form.carcard_number }}
-            </div>
-        </div>
-        <div class="field">
             <label>{{ form.ps.label }}{{ form.ps.errors }}</label>
             <div class="field">
                 {{ form.ps }}
             </div>
         </div>
-        <h4 class="ui dividing header">抽獎獎品</h4>
+        <h3 class="ui dividing header">入校之汽車車號</h3>
+        <div class="field">
+            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>
+            <p>說明(2)：每間企業至多提供2部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
+            {{ formset.management_form }}
+            {% for f in formset %}
+                {{ f.id }}
+                {{ f.info }}
+                <label>
+                    {{ f.license_plate_number.label }}{{ forloop.counter }}{{ f.license_plate_number.errors }}</label>
+                <div class="fields">
+                    <div class="fourteen wide field">
+                        {{ f.license_plate_number }}
+                    </div>
+                    {% if formset.can_delete %}
+                        <div class="two wide field">
+                            <div class="ui checkbox">
+                                {{ f.DELETE }}
+                                <label>刪除</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <h3 class="ui dividing header">抽獎獎品</h3>
         <div class="fields">
             <div class="ten wide field">
                 <label>{{ form.qa_prize.label }}{{ form.qa_prize.errors }}</label>

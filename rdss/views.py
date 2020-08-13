@@ -7,6 +7,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core import serializers
 from django.utils import timezone
 import rdss.forms
+from django.forms import modelformset_factory, inlineformset_factory
+from django import forms
 import company.models
 import rdss.models
 import datetime, json, csv
@@ -185,17 +187,24 @@ def SeminarInfo(request):
     except ObjectDoesNotExist:
         seminar_info = None
 
+    parking_form_set = inlineformset_factory(rdss.models.SeminarInfo, rdss.models.SeminarParking, max_num=2, extra=2,
+                                             fields=('id', 'license_plate_number', 'info'),
+                                             widgets={'license_plate_number': forms.TextInput(
+                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
         form = rdss.forms.SeminarInfoCreationForm(data=data, instance=seminar_info)
-        if form.is_valid():
+        formset = parking_form_set(data=data, instance=seminar_info)
+        if form.is_valid() and formset.is_valid():
             form.save()
+            formset.save()
             return redirect(SeminarInfo)
         else:
             print(form.errors)
     else:
         form = rdss.forms.SeminarInfoCreationForm(instance=seminar_info)
+        formset = parking_form_set(instance=seminar_info)
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
@@ -216,15 +225,22 @@ def JobfairInfo(request):
     except ObjectDoesNotExist:
         jobfair_info = None
 
+    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=5, extra=5,
+                                             fields=('id', 'license_plate_number', 'info'),
+                                             widgets={'license_plate_number': forms.TextInput(
+                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
         form = rdss.forms.JobfairInfoCreationForm(data=data, instance=jobfair_info)
-        if form.is_valid():
+        formset = parking_form_set(data=data, instance=jobfair_info)
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return redirect('rdss_jobfair_info')
+            formset.save()
+            return redirect(JobfairInfo)
     else:
         form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info)
+        formset = parking_form_set(instance=jobfair_info)
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}

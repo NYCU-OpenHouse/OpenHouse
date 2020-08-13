@@ -1,15 +1,30 @@
 from django.db import models
 from django.core.validators import RegexValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_save
 from django.db.models import Q
 from django.db.models import Count, Sum
 from ckeditor.fields import RichTextField
 import company.models
-import rdss.models
 
 
 def validate_mobile(string):
     RegexValidator(regex='^\d{4}-\d{6}$', message='手機格式為：0987-654321')(string)
+
+
+def validate_license_plate_number(string):
+    validators = [
+        RegexValidator(regex='^[0-9]{2,4}-[A-Z]{2,4}$', message='車牌格式為：2至4數字符號-2至4大寫英文符號'),
+        RegexValidator(regex='^[A-Z]{2,4}-[0-9]{2,4}$', message='車牌格式為：2至4大寫英文符號-2至4數字符號')
+    ]
+    err = None
+    for validator in validators:
+        try:
+            validator(string)
+            return string
+        except ValidationError as e:
+            err = e
+    raise err
 
 
 CATEGORYS = (
@@ -168,12 +183,12 @@ class Student(models.Model):
 
     def get_points(self):
         points = sum([i.points for i in self.attendance.all()])
-        redeem_records = rdss.models.RedeemPrize.objects.filter(student=self)
+        redeem_records = RedeemPrize.objects.filter(student=self)
         redeemed = sum([i.points for i in redeem_records])
         return points - redeemed
 
     def get_redeemed(self):
-        redeem_records = rdss.models.RedeemPrize.objects.filter(student=self)
+        redeem_records = RedeemPrize.objects.filter(student=self)
         redeemed = sum([i.points for i in redeem_records])
         return redeemed
 
@@ -249,7 +264,7 @@ class SeminarInfo(models.Model):
     speaker = models.CharField(u'主講人', max_length=30)
     speaker_title = models.CharField(u'主講人稱謂', max_length=30)
     speaker_email = models.EmailField(u'主講人Email', max_length=254)
-    attendees = models.SmallIntegerField(u'人資餐點數量')
+    attendees = models.SmallIntegerField(u'人資餐點數量', default=0)
     raffle_prize = models.CharField(u'抽獎獎品', max_length=254,
                                     null=True, blank=True)
     raffle_prize_amount = models.SmallIntegerField(u'抽獎獎品數量', default=0)
@@ -265,12 +280,27 @@ class SeminarInfo(models.Model):
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     ps = models.TextField(u'其它需求', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
-    carcard_number = models.SmallIntegerField(u'汽車停車卡數量', default=0)
+
+    def __str__(self):
+        return self.company.cid
 
     class Meta:
         managed = True
         verbose_name = u"說明會資訊"
         verbose_name_plural = u"說明會資訊"
+
+
+class SeminarParking(models.Model):
+    id = models.AutoField(primary_key=True)
+    license_plate_number = models.CharField(u'車牌號碼', max_length=8, validators=[validate_license_plate_number])
+    info = models.ForeignKey(SeminarInfo, verbose_name=u'公司', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.license_plate_number
+
+    class Meta:
+        verbose_name = u"說明會車牌號碼"
+        verbose_name_plural = u"說明會車牌號碼"
 
 
 # 以下為就博會
@@ -322,16 +352,31 @@ class JobfairInfo(models.Model):
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     meat_lunchbox = models.SmallIntegerField(u'葷食便當數量', default=0)
     vege_lunchbox = models.SmallIntegerField(u'素食便當數量', default=0)
-    parking_tickets = models.SmallIntegerField(u'停車證數量')
     power_req = models.CharField(u'用電需求', max_length=256,
                                  help_text="請填寫當天會使用的用電設備")
     ps = models.TextField(u'其它需求', blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
+    def __str__(self):
+        return self.company.cid
+
     class Meta:
         managed = True
         verbose_name = u"就博會資訊"
         verbose_name_plural = u"就博會資訊"
+
+
+class JobfairParking(models.Model):
+    id = models.AutoField(primary_key=True)
+    license_plate_number = models.CharField(u'車牌號碼', max_length=8, validators=[validate_license_plate_number])
+    info = models.ForeignKey(JobfairInfo, verbose_name=u'公司', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.license_plate_number
+
+    class Meta:
+        verbose_name = u"就博會車牌號碼"
+        verbose_name_plural = u"就博會車牌號碼"
 
 
 class SponsorItems(models.Model):
