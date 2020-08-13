@@ -2,76 +2,79 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-        <title>就博會資訊</title>
-        <link href={% static "css/rdss/info.css" %} rel="stylesheet">
+    <title>就博會資訊</title>
+    <link href={% static "css/rdss/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-<form class="ui form" method="POST" action="{% url 'rdss_jobfair_info' %}" >
-    {% csrf_token %}
-	{% if jobfair_info %}
-        <div class="ui teal message">
-            就博會資訊填寫已完成，您也可以修改資訊，再次送出。
+    <form class="ui form" method="POST" action="{% url 'rdss_jobfair_info' %}">
+        {% csrf_token %}
+        {% if jobfair_info %}
+            <div class="ui teal message">
+                就博會資訊填寫已完成，您也可以修改資訊，再次送出。
+            </div>
+        {% endif %}
+        <div class="field">
+            <label>{{ form.signname.label }}</label>
+            {{ form.signname }}
+            {{ form.signname.errors }}
         </div>
-    {% endif %}
-    <div class="field">
-		<label>{{form.signname.label}}</label>
-            {{form.signname}}
-		    {{form.signname.errors}}
-	</div>
-    <div class="fields">
-        <div class="four wide field">
-            <label>{{ form.contact.label}}</label>
-            <div class="field">
-                {{form.contact}}
-		        {{form.contact.errors}}
+        <div class="fields">
+            <div class="four wide field">
+                <label>{{ form.contact.label }}</label>
+                <div class="field">
+                    {{ form.contact }}
+                    {{ form.contact.errors }}
+                </div>
+            </div>
+            <div class="four wide field">
+                <label>{{ form.contact_mobile.label }}</label>
+                {{ form.contact_mobile }}
+                {{ form.contact_mobile.errors }}
+            </div>
+            <div class="eight wide field">
+                <label>{{ form.contact_email.label }}</label>
+                {{ form.contact_email }}
+                {{ form.contact_email.errors }}
             </div>
         </div>
-        <div class="four wide field">
-            <label>{{ form.contact_mobile.label}}</label>
-            {{form.contact_mobile}}
-            {{form.contact_mobile.errors}}
-        </div>
-        <div class="eight wide field">
-            <label>{{ form.contact_email.label}}</label>
-            {{form.contact_email}}
-            {{form.contact_email.errors}}
-        </div>
-    </div> <div class="fields">
-        <div class="four wide field">
-            <label>{{ form.meat_lunchbox.label}}</label>
-            {{form.meat_lunchbox}}
-            {{form.meat_lunchbox.errors}}
-        </div>
-        <div class="four wide field">
-            <label>{{ form.vege_lunchbox.label}}</label>
-            {{form.vege_lunchbox}}
-            {{form.vege_lunchbox.errors}}
-        </div>
-        <div class="two wide field">
-            <label>{{form.parking_tickets.label}}</label>
-            <div class="field">
-                {{form.parking_tickets}}
-                {{form.parking_tickets.errors}}
+        <div class="fields">
+            <div class="four wide field">
+                <label>{{ form.meat_lunchbox.label }}</label>
+                {{ form.meat_lunchbox }}
+                {{ form.meat_lunchbox.errors }}
+            </div>
+            <div class="four wide field">
+                <label>{{ form.vege_lunchbox.label }}</label>
+                {{ form.vege_lunchbox }}
+                {{ form.vege_lunchbox.errors }}
             </div>
         </div>
-    </div>
-    <div class="fields">
-        <div class="fourteen wide field">
-          <label>{{form.power_req.label}}</label>
-          <p>{{form.power_req.help_text}}</p>
-            {{form.power_req}}
-            {{form.power_req.errors}}
+        <div class="field">
+            <label>{{ form.parking_tickets.label }}</label>
+            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>
+            <p>說明(2)：每間企業至多提供5部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
+            <div class="field">
+                {{ form.parking_tickets }}
+                {{ form.parking_tickets.errors }}
+            </div>
         </div>
+        <div class="fields">
+            <div class="fourteen wide field">
+                <label>{{ form.power_req.label }}</label>
+                <p>{{ form.power_req.help_text }}</p>
+                {{ form.power_req }}
+                {{ form.power_req.errors }}
+            </div>
 
-    </div>
-    <div class="field">
-        <label>{{form.ps.label}}</label>
-        {{form.ps}}
-        {{form.ps.errors}}
-    </div>
-    <button class="ui blue button" type="submit">送出</button>
-</form>
+        </div>
+        <div class="field">
+            <label>{{ form.ps.label }}</label>
+            {{ form.ps }}
+            {{ form.ps.errors }}
+        </div>
+        <button class="ui blue button" type="submit">送出</button>
+    </form>
 
 {% endblock %}
 
