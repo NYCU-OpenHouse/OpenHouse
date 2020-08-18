@@ -14,8 +14,7 @@ def validate_mobile(string):
 
 def validate_license_plate_number(string):
     validators = [
-        RegexValidator(regex='^[0-9]{2,4}-[A-Z]{2,4}$', message='車牌格式為：2至4數字符號-2至4大寫英文符號'),
-        RegexValidator(regex='^[A-Z]{2,4}-[0-9]{2,4}$', message='車牌格式為：2至4大寫英文符號-2至4數字符號')
+        RegexValidator(regex='^[0-9A-Z]{2,4}-[0-9A-Z]{2,4}$', message='車牌格式為：2至4個數字或大寫英文符號-2至4個數字或大寫英文符號')
     ]
     err = None
     for validator in validators:
