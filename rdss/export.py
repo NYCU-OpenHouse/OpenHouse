@@ -250,7 +250,7 @@ def ExportSeminar(request):
                 seminar_worksheet.write(0, index, field.verbose_name)
         license_start_loc = len(fields)
         for index in range(2):
-            seminar_worksheet.write(0, license_start_loc + index, f'車牌號碼{index + 1}')
+            seminar_worksheet.write(0, license_start_loc + index, '車牌號碼{}'.format(index + 1))
         seminar_list = rdss.models.SeminarInfo.objects.all()
 
         for row_count, seminar in enumerate(seminar_list, 1):
@@ -293,7 +293,7 @@ def ExportJobfair(request):
                 jobfair_worksheet.write(0, index, field.verbose_name)
         license_start_loc = len(fields)
         for index in range(5):
-            jobfair_worksheet.write(0, license_start_loc + index, f'車牌號碼{index + 1}')
+            jobfair_worksheet.write(0, license_start_loc + index, '車牌號碼{}'.format(index + 1))
         jobfair_list = rdss.models.JobfairInfo.objects.all()
 
         for row_count, jobfair in enumerate(jobfair_list, 1):
