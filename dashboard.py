@@ -6,7 +6,6 @@ from jet.dashboard.dashboard import Dashboard, AppIndexDashboard
 class CustomDashboard(Dashboard):
     columns = 3
 
-
     def init_with_context(self, context):
         self.available_children.append(modules.LinkList)
         self.add_export_dashboard()
@@ -33,12 +32,12 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title':_('匯出說明會資訊'),
+                    'title': _('匯出說明會資訊'),
                     'url': '/admin/recruit/export_seminar_info/',
                     'external': False,
                 },
                 {
-                    'title':_('匯出就博會資訊'),
+                    'title': _('匯出就博會資訊'),
                     'url': '/admin/recruit/export_jobfair_info/',
                     'external': False,
                 },
@@ -71,7 +70,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title':_('兌換獎品'),
+                    'title': _('兌換獎品'),
                     'url': '/admin/recruit/exchange_prize',
                     'external': False,
                 },
@@ -95,6 +94,16 @@ class CustomDashboard(Dashboard):
                 {
                     'title': _('廠商滿意度問卷'),
                     'url': '/admin/rdss/companysurvey/export/',
+                    'external': False,
+                },
+                {
+                    'title': _('說明會資料匯出'),
+                    'url': '/admin/rdss/export_seminar/',
+                    'external': False,
+                },
+                {
+                    'title': _('就博會資料匯出'),
+                    'url': '/admin/rdss/export_jobfair/',
                     'external': False,
                 },
             ],

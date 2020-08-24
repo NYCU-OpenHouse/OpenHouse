@@ -244,16 +244,19 @@ def ExportSeminar(request):
         seminar_worksheet = workbook.add_worksheet("說明會資訊")  # set the excel sheet
         seminar_worksheet.write(0, 0, "廠商")  # The excel at (0,0) name is "廠商"
         fields = rdss.models.SeminarInfo._meta.get_fields()[2:]
-        for index, field in enumerate(fields, 1):
-            seminar_worksheet.write(0, index, field.verbose_name)  # set the title for each colume
+        for index, field in enumerate(fields):
+            if index != 0:
+                seminar_worksheet.write(0, index, field.verbose_name)  # set the title for each column
         seminar_list = rdss.models.SeminarInfo.objects.all()
 
         for row_count, seminar in enumerate(seminar_list, 1):
-            seminar_worksheet.write(row_count, 0, str(
-                seminar.company))  # the jobfair.company is type of rdss.models.Signup, so we change to str
-            for col_count, field in enumerate(fields, 1):
+            for col_count, field in enumerate(fields):
                 try:
-                    seminar_worksheet.write(row_count, col_count, getattr(seminar, field.name))
+                    attribute = getattr(seminar, field.name)
+                    if isinstance(attribute, rdss.models.Signup):
+                        seminar_worksheet.write(row_count, col_count, str(attribute))
+                    else:
+                        seminar_worksheet.write(row_count, col_count, attribute)
                 except TypeError as e:
                     # xlsxwriter do not accept django timzeone aware time, so use
                     # except, to write string
@@ -278,15 +281,19 @@ def ExportJobfair(request):
         jobfair_worksheet = workbook.add_worksheet("就博會資訊")  # set the excel sheet
         jobfair_worksheet.write(0, 0, "廠商")  # The excel at (0,0) name is "廠商"
         fields = rdss.models.JobfairInfo._meta.get_fields()[2:]
-        for index, field in enumerate(fields, 1):
-            jobfair_worksheet.write(0, index, field.verbose_name)  # set the title for each colume
+        for index, field in enumerate(fields):
+            if index != 0:
+                jobfair_worksheet.write(0, index, field.verbose_name)  # set the title for each column
         jobfair_list = rdss.models.JobfairInfo.objects.all()
-        # We need to remove company beacuse it's type is rdss.models.Signup, and it just a id
+
         for row_count, jobfair in enumerate(jobfair_list, 1):
-            jobfair_worksheet.write(row_count, 0, jobfair.signname)
-            for col_count, field in enumerate(fields, 1):
+            for col_count, field in enumerate(fields):
                 try:
-                    jobfair_worksheet.write(row_count, col_count, getattr(jobfair, field.name))
+                    attribute = getattr(jobfair, field.name)
+                    if isinstance(attribute, rdss.models.Signup):
+                        jobfair_worksheet.write(row_count, col_count, str(attribute))
+                    else:
+                        jobfair_worksheet.write(row_count, col_count, attribute)
                 except TypeError as e:
                     # xlsxwriter do not accept django timzeone aware time, so use
                     # except, to write string
