@@ -244,9 +244,13 @@ def ExportSeminar(request):
         seminar_worksheet = workbook.add_worksheet("說明會資訊")  # set the excel sheet
         seminar_worksheet.write(0, 0, "廠商")  # The excel at (0,0) name is "廠商"
         fields = rdss.models.SeminarInfo._meta.get_fields()[2:]
+        # set the title for each column
         for index, field in enumerate(fields):
             if index != 0:
-                seminar_worksheet.write(0, index, field.verbose_name)  # set the title for each column
+                seminar_worksheet.write(0, index, field.verbose_name)
+        license_start_loc = len(fields)
+        for index in range(2):
+            seminar_worksheet.write(0, license_start_loc + index, f'車牌號碼{index + 1}')
         seminar_list = rdss.models.SeminarInfo.objects.all()
 
         for row_count, seminar in enumerate(seminar_list, 1):
@@ -263,6 +267,8 @@ def ExportSeminar(request):
                     seminar_worksheet.write(row_count, col_count,
                                             timezone.localtime(getattr(seminar, field.name)).strftime(
                                                 "%Y-%m-%d %H:%M:%S"))
+            for index, lic in enumerate(rdss.models.SeminarParking.objects.filter(info=seminar)[:2]):
+                seminar_worksheet.write(row_count, license_start_loc + index, lic.license_plate_number)
     return response
 
 
@@ -281,9 +287,13 @@ def ExportJobfair(request):
         jobfair_worksheet = workbook.add_worksheet("就博會資訊")  # set the excel sheet
         jobfair_worksheet.write(0, 0, "廠商")  # The excel at (0,0) name is "廠商"
         fields = rdss.models.JobfairInfo._meta.get_fields()[2:]
+        # set the title for each column
         for index, field in enumerate(fields):
             if index != 0:
-                jobfair_worksheet.write(0, index, field.verbose_name)  # set the title for each column
+                jobfair_worksheet.write(0, index, field.verbose_name)
+        license_start_loc = len(fields)
+        for index in range(5):
+            jobfair_worksheet.write(0, license_start_loc + index, f'車牌號碼{index + 1}')
         jobfair_list = rdss.models.JobfairInfo.objects.all()
 
         for row_count, jobfair in enumerate(jobfair_list, 1):
@@ -300,6 +310,8 @@ def ExportJobfair(request):
                     jobfair_worksheet.write(row_count, col_count,
                                             timezone.localtime(getattr(jobfair, field.name)).strftime(
                                                 "%Y-%m-%d %H:%M:%S"))
+            for index, lic in enumerate(rdss.models.JobfairParking.objects.filter(info=jobfair)[:2]):
+                jobfair_worksheet.write(row_count, license_start_loc + index, lic.license_plate_number)
     return response
 
 
