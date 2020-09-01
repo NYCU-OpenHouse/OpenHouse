@@ -648,23 +648,20 @@ def CompanySurvey(request):
 def CollectPoints(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+    title = "說明會集點"
 
     configs = rdss.models.RdssConfigs.objects.all()[0]
     today = datetime.datetime.now().date()
     now = datetime.datetime.now()
 
     # Find the suitable session
-    if (now - timedelta(minutes=20)).time() < configs.session1_end \
-            and (now + timedelta(minutes=10)).time() > configs.session1_end:
+    if (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=10)).time():
         current_session = 'noon'
-    elif (now - timedelta(minutes=20)).time() < configs.session2_end \
-            and (now + timedelta(minutes=10)).time() > configs.session2_end:
+    elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=10)).time():
         current_session = 'night1'
-    elif (now - timedelta(minutes=20)).time() < configs.session3_end \
-            and (now + timedelta(minutes=10)).time() > configs.session3_end:
+    elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=10)).time():
         current_session = 'night2'
-    elif (now - timedelta(minutes=20)).time() < configs.session4_end \
-            and (now + timedelta(minutes=10)).time() > configs.session4_end:
+    elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=10)).time():
         current_session = 'night3'
     else:
         current_session = ''
@@ -703,6 +700,8 @@ def CollectPoints(request):
 def RedeemPrize(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+    title = "集點兌換"
+
     if request.method == "GET":
         idcard_no = request.GET.get('idcard_no', '')
         if idcard_no:
@@ -743,6 +742,10 @@ def RedeemPrize(request):
 
 @staff_member_required
 def RegisterCard(request):
+    site_header = "OpenHouse 管理後台"
+    site_title = "OpenHouse"
+    title = "學生證註冊"
+
     if request.method == "POST":
         data = request.POST.copy()
         instance = rdss.models.Student.objects.filter(idcard_no=data['idcard_no']).first()
