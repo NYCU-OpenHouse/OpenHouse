@@ -310,7 +310,7 @@ def ExportJobfair(request):
                     jobfair_worksheet.write(row_count, col_count,
                                             timezone.localtime(getattr(jobfair, field.name)).strftime(
                                                 "%Y-%m-%d %H:%M:%S"))
-            for index, lic in enumerate(rdss.models.JobfairParking.objects.filter(info=jobfair)[:2]):
+            for index, lic in enumerate(rdss.models.JobfairParking.objects.filter(info=jobfair)[:5]):
                 jobfair_worksheet.write(row_count, license_start_loc + index, lic.license_plate_number)
     return response
 
