@@ -164,9 +164,9 @@ class SeminarSlot(models.Model):
 
 
 class Student(models.Model):
-    idcard_no = models.CharField(u'學生證卡號', max_length=10, primary_key=True)
+    idcard_no = models.CharField(u'學生證卡號', max_length=20, primary_key=True)
     attendance = models.ManyToManyField(SeminarSlot, through='StuAttendance')
-    student_id = models.CharField(u'學號', max_length=7, blank=True)
+    student_id = models.CharField(u'學號', max_length=10, blank=True)
     phone = models.CharField(u'手機', max_length=20, blank=True,
                              help_text='格式：0987654321')
     name = models.CharField(u'姓名', max_length=64, blank=True)
