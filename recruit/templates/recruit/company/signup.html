@@ -1,19 +1,25 @@
 {% extends 'recruit_base.html' %}
 {% load staticfiles %}
 
+{% block 'custom_head' %}
+    <title>OpenHouse 廠商介面</title>
+    <script src={% static "js/rdss/signup_form.js" %}></script>
+{% endblock %}
+
 {% block 'content' %}
-    {% if signup_info_exist %}
-        <div class="ui green message">
-            報名已完成，您也可以修改報名資料，再次送出。
-        </div>
-    {% endif %}
-
     <form class="ui form" action="." method="post">
-
-
         {% csrf_token %}
+        {% if signup_info_exist %}
+            <div class="ui compact teal message">
+                報名已完成，您也可以修改報名資料，再次送出。
+            </div>
+        {% endif %}
+
         <div class="ui blue inverted segment" id="seminar">
-            <h1>企業說明會</h1>
+            <h1 class="ui inverted header">
+                <i class="info circle icon" style="color:white"></i>
+                企業說明會
+            </h1>
             <table class="ui celled table">
                 <tr>
                     <td>活動日期</td>
@@ -60,18 +66,21 @@
                 </tr>
             </table>
 
-            <div class="ui blue inverted segment">
-
+            <div class="ui segment">
                 <h3 class="ui header">選取欲報名說明會時間</h3>
                 <p>活動費用：12:10場：{{ recruit_configs.session_2_fee }}，其餘場 {{ recruit_configs.session_4_fee }} 元</p>
                 {{ form.seminar }}
-
+                <div class="ui red button seminar_clear">清除</div>
             </div>
-
         </div>
 
+        <div class="ui divider"></div>
+
         <div class="ui green inverted segment">
-            <h1>就業博覽會</h1>
+            <h1 class="ui header">
+                <i class="student icon"></i>
+                就業博覽會
+            </h1>
             <table class="ui celled table">
                 <tr>
                     <td style="width:8em">活動日期</td>
@@ -104,7 +113,7 @@
                     </td>
                 </tr>
             </table>
-            <div class="ui green inverted segment">
+            <div class="ui segment">
                 <h3 class="ui header">報名就博會</h3>
                 <p>活動費用：攤位每單位 {{ recruit_configs.jobfair_booth_fee }} 元，額滿為止。</p>
                 <div class="ui labeled input">
@@ -120,69 +129,78 @@
                 -->
             </div>
         </div>
+
+        <div class="ui divider"></div>
+
         <div class="ui black inverted segment">
-            <h1>企業職場導師</h1>
-            <div class="ui celled table">
-                <table>
-                    <tr>
-                        <td>活動內容</td>
-                        <td>
-                            本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>活動說明</td>
-                        <td>
-                            <ol class="ui list">
-                                <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。
-                                </li>
-                                <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>
-                            </ol>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>回饋方案</td>
-                        <td>企業參與本次活動可增加選位積分5分</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="ui black inverted segment">
-                <h3>願意提供</h3>
+            <h1 class="ui header">
+                <i class="users icon" style="color:white"></i>
+                企業職場導師
+            </h1>
+            <table class="ui celled table">
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
+                    </td>
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。
+                            </li>
+                            <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>企業參與本次活動可增加選位積分5分</td>
+                </tr>
+            </table>
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
                 <div class="ui checked checkbox">
                     {{ form.career_tutor }}
-                    <label>{{ form.career_tutor.label }}</label>
+                    <label style="color:black">{{ form.career_tutor.label }}</label>
                 </div>
             </div>
         </div>
+
+        <div class="ui divider"></div>
+
         <div class="ui brown inverted segment">
-            <h1>企業參訪</h1>
-            <div class="ui celled table">
-                <table>
-                    <tr>
-                        <td>活動內容</td>
-                        <td>藉由參觀企業來提升交大同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
-                    </tr>
-                    <tr>
-                        <td>活動說明</td>
-                        <td>
-                            <ul class="ui list">
-                                <li>企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓交大學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
-                                </li>
-                                <li>企業參訪人數至少可接受35人以上之同學進行參訪，單趟車程不超過1.5小時為宜。</li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>回饋方案</td>
-                        <td>企業參與本次活動可增加選位積分5分</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="ui brown inverted segment">
-                <h3>願意提供</h3>
+            <h1 class="ui header">
+                <i class="briefcase icon" style="color:white"></i>
+                企業參訪
+            </h1>
+            <table class="ui celled table">
+                <tr>
+                    <td>活動內容</td>
+                    <td>藉由參觀企業來提升交大同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>
+                                企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓交大學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
+                            </li>
+                            <li>企業參訪人數至少可接受35人以上之同學進行參訪，單趟車程不超過1.5小時為宜。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>企業參與本次活動可增加選位積分5分</td>
+                </tr>
+            </table>
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
                 <div class="ui checked checkbox">
                     {{ form.company_visit }}
-                    <label>{{ form.company_visit.label }}</label>
+                    <label style="color:black">{{ form.company_visit.label }}</label>
                 </div>
             </div>
         </div>
