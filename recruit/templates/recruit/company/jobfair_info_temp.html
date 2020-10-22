@@ -1,0 +1,31 @@
+{% extends 'recruit_base.html' %}
+{% load staticfiles %}
+
+{% block 'custom_head' %}
+    <title>就博會資訊-OpenHouse</title>
+    <link href={% static "css/recruit/info.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'content' %}
+    <form method="post" class="ui info form" action=".">
+        {% csrf_token %}
+        {{ form.media }}
+        <!--{{ form.as_p }}-->
+        <div class="field">
+            <label>{{ form.video.label }}{{ form.video.errors }}</label>
+            <div class="field">
+                {{ form.video }}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{ form.content.label }}{{ form.intro.errors }}</label>
+            <div class="field">
+                {{ form.content }}
+                {% if form.content.help_text %}
+                    <p class="helptext" style="color: red">{{ form.content.help_text|safe }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <button class="ui blue button">送出</button>
+    </form>
+{% endblock %}

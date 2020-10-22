@@ -11,6 +11,12 @@ from django.forms import ModelForm
 
 
 class RecruitSignupForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RecruitSignupForm, self).__init__(*args, **kwargs)
+        self.fields['seminar'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
+
     class Meta:
         model = RecruitSignup
         fields = '__all__'

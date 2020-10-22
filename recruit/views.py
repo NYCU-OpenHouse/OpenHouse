@@ -267,6 +267,35 @@ def jobfair_info(request):
         return render(request, 'recruit/error.html', locals())
 
     try:
+        jobfair_info = JobfairInfo.objects.get(company=company)
+    except ObjectDoesNotExist:
+        jobfair_info = None
+
+    if request.POST:
+        data = request.POST.copy()
+        form = JobfairInfoForm(data=data, instance=jobfair_info)
+        if form.is_valid():
+            new_info = form.save(commit=False)
+            company = RecruitSignup.objects.get(cid=request.user.cid)
+            new_info.company = company
+            new_info.save()
+            return render(request, 'recruit/company/success.html', locals())
+        else:
+            print(form.errors)
+    else:
+        form = JobfairInfoForm(instance=jobfair_info)
+    return render(request, 'recruit/company/jobfair_info.html', locals())
+
+
+@login_required(login_url='/company/login/')
+def jobfair_info_temp(request):
+    try:
+        company = RecruitSignup.objects.get(cid=request.user.cid)
+    except Exception as e:
+        error_msg = "貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    try:
         jobfair_info = JobfairInfoTemp.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
@@ -284,7 +313,7 @@ def jobfair_info(request):
             print(form.errors)
     else:
         form = JobfairInfoTempForm(instance=jobfair_info)
-    return render(request, 'recruit/company/jobfair_info.html', locals())
+    return render(request, 'recruit/company/jobfair_info_temp.html', locals())
 
 
 @login_required(login_url='/company/login/')
@@ -772,6 +801,7 @@ def jobfair(request):
     synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
     startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
     reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
+    # return render(request, 'recruit/public/jobfair_temp.html', locals())
     return render(request, 'recruit/public/jobfair.html', locals())
 
 

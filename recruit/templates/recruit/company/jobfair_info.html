@@ -9,23 +9,78 @@
 {% block 'content' %}
     <form method="post" class="ui info form" action=".">
         {% csrf_token %}
-        {{ form.media }}
-        <!--{{ form.as_p }}-->
+        <h1 class="ui dividing header">就博會資訊</h1>
+        <h3 style="color:red">請企業於 1/20 前完成「就博會資訊」填寫，以進行行政施工等準備作業</h3>
         <div class="field">
-            <label>{{ form.video.label }}{{ form.video.errors }}</label>
-            <div class="field">
-                {{ form.video }}
+            <label>{{ form.sign_name.label }}</label>
+            {{ form.sign_name }}
+            <p>建議為公司簡稱</p>
+        </div>
+        <div class="fields">
+            <div class="four wide field">
+                <label>{{ form.contact_person.label }}</label>
+                {{ form.contact_person }}
+            </div>
+            <div class="four wide field">
+                <label>{{ form.contact_mobile.label }}</label>
+                {{ form.contact_mobile }}
+            </div>
+            <div class="eight wide field">
+                <label>{{ form.contact_email.label }}</label>
+                {{ form.contact_email }}
+            </div>
+        </div>
+        <div class="fields">
+            <div class="four wide field">
+                <label>{{ form.general_lunch_box.label }}</label>
+                {{ form.general_lunch_box }}
+                <p>每攤位至多提供5份餐點</p>
+            </div>
+            <div class="four wide field">
+                <label>{{ form.veget_lunch_box.label }}</label>
+                {{ form.veget_lunch_box }}
+            </div>
+            <div class="four wide field">
+                <label>{{ form.packing_tickets.label }}</label>
+                {{ form.packing_tickets }}
+            </div>
+            <div class="four wide field">
+                {% now 'Y' as current_year %}
+                <label>{{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                <div class="field">
+                    {{ form.job_number }}
+                </div>
             </div>
         </div>
         <div class="field">
-            <label>{{ form.content.label }}{{ form.intro.errors }}</label>
-            <div class="field">
-                {{ form.content }}
-                {% if form.content.help_text %}
-                    <p class="helptext" style="color: red">{{ form.content.help_text|safe }}</p>
-                {% endif %}
+            <label>{{ form.send_obj.label }}</label>
+            {{ form.send_obj }}
+        </div>
+        <div class="field">
+            <label>{{ form.power_req.label }}</label>
+            {{ form.power_req }}
+            <p>攤位用電建議500瓦以內，請填寫預計使用電器(如筆電、音響等)，如有模擬機、爆米花機、可樂機等耗電設備，請務必填寫並須由企業自行負擔小型發電機費用</p>
+        </div>
+        <div class="ui field">
+            <label class="ui">攤位實際需求桌椅數</label>
+            <div class="ui teal segment">
+                <label>{{ form.long_table.label }}</label>
+                {{ form.long_table }}
+                <label>{{ form.chair.label }}</label>
+                {{ form.chair }}
+                <label>{{ form.doily.label }}</label>
+                {{ form.doily }}
+                <p>
+                    每個攤位基本提供2長桌5椅1桌巾，為讓實際使用數量貼近企業需求，免去搬運勞務之苦，請協助填寫。如超過原定數量，會議桌每張加收250元/張、椅子50元/張、紅桌巾100元/件，由企業自備現金於現場繳納給施工廠商並領取發票。</p>
             </div>
         </div>
-        <button class="ui teal button">送出</button>
+        <div class="field">
+            <label>{{ form.ps.label }}</label>
+            {{ form.ps }}
+            <p>
+                如企業攤位需請交大施工廠商進行【加價-客製化修改】(例如改為隔間攤位、攤位招牌架高、增加照明燈具與插座數量等等，請於本欄位說明，後續將由施工廠商評估是否可施作，並提供進一步報價，費用亦由企業逕付交大施工廠商(非匯給交大)。</p>
+        </div>
+
+        <button class="ui blue button">送出</button>
     </form>
 {% endblock %}

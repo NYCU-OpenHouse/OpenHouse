@@ -21,7 +21,9 @@
                 {% if info_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui blue center aligned segment'>
-                            <p>攤位{{ info_slot.serial_no }}: {{ info_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' info_slot.company.cid %}">攤位{{ info_slot.serial_no }}: {{ info_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -35,7 +37,9 @@
                 {% if elc_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui yellow center aligned segment'>
-                            <p>攤位{{ elc_slot.serial_no }}: {{ elc_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' elc_slot.company.cid %}">攤位{{ elc_slot.serial_no }}: {{ elc_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -49,7 +53,9 @@
                 {% if semi_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui pink center aligned segment'>
-                            <p>攤位{{ semi_slot.serial_no }}: {{ semi_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' semi_slot.company.cid %}">攤位{{ semi_slot.serial_no }}: {{ semi_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -63,7 +69,9 @@
                 {% if photo_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui grey center aligned segment'>
-                            <p>攤位{{ photo_slot.serial_no }}: {{ photo_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' photo_slot.company.cid %}">攤位{{ photo_slot.serial_no }}: {{ photo_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -78,7 +86,9 @@
                 {% if network_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui teal center aligned segment'>
-                            <p>攤位{{ network_slot.serial_no }}: {{ network_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' network_slot.company.cid %}">攤位{{ network_slot.serial_no }}: {{ network_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -92,7 +102,9 @@
                 {% if synthesis_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui purple center aligned segment'>
-                            <p>攤位{{ synthesis_slot.serial_no }}: {{ synthesis_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' synthesis_slot.company.cid %}">攤位{{ synthesis_slot.serial_no }}: {{ synthesis_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -106,7 +118,9 @@
                 {% if startup_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui purple center aligned segment'>
-                            <p>攤位{{ startup_slot.serial_no }}: {{ startup_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' startup_slot.company.cid %}">攤位{{ startup_slot.serial_no }}: {{ startup_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
@@ -120,7 +134,9 @@
                 {% if reserved_slot.company %}
                     <div class="column" style="padding:0.5rem">
                         <div class='ui olive center aligned segment'>
-                            <p>攤位{{ reserved_slot.serial_no }}: {{ reserved_slot.company }}</p>
+                            <p>
+                                <a href="{% url 'jobfair_online' reserved_slot.company.cid %}">攤位{{ reserved_slot.serial_no }}: {{ reserved_slot.company }}</a>
+                            </p>
                         </div>
                     </div>
                 {% endif %}
