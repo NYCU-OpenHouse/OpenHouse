@@ -337,7 +337,8 @@ def SeminarSelectControl(request):
         except AttributeError:
             my_select_time = None
 
-        if not my_select_time or timezone.now() < my_select_time:
+        # Open button for 77777777
+        if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
             select_ctrl = dict()
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
@@ -347,7 +348,7 @@ def SeminarSelectControl(request):
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
             today = timezone.now().date()
-            if configs.seminar_btn_start <= today and today <= configs.seminar_btn_end:
+            if (configs.seminar_btn_start <= today <= configs.seminar_btn_end) or request.user.username == "77777777":
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
@@ -357,9 +358,11 @@ def SeminarSelectControl(request):
     # action select
     elif action == "select":
         mycid = request.user.cid
-        my_select_time = rdss.models.SeminarOrder.objects.filter(company=mycid).first().time
-        if not my_select_time or timezone.now() < my_select_time:
-            return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
+        # Open selection for 77777777
+        if request.user.username != '77777777':
+            my_select_time = rdss.models.SeminarOrder.objects.filter(company=mycid).first().time
+            if not my_select_time or timezone.now() < my_select_time:
+                return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
         slot_session, slot_date_str = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
@@ -458,7 +461,9 @@ def JobfairSelectControl(request):
             my_select_time = rdss.models.JobfairOrder.objects.filter(company=request.user.cid).first().time
         except AttributeError:
             my_select_time = None
-        if not my_select_time or timezone.now() < my_select_time:
+
+        # Open button for 77777777
+        if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
             select_ctrl = dict()
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
@@ -468,7 +473,7 @@ def JobfairSelectControl(request):
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
             today = timezone.now().date()
-            if configs.jobfair_btn_start <= today and today <= configs.jobfair_btn_end:
+            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
@@ -488,9 +493,11 @@ def JobfairSelectControl(request):
         if slot.company != None:
             return JsonResponse({"success": False, 'msg': '選位失敗，該攤位已被選定'})
 
-        my_select_time = rdss.models.JobfairOrder.objects.filter(company=request.user.cid).first().time
-        if timezone.now() < my_select_time:
-            return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
+        # Open selection for 77777777
+        if request.user.username != '77777777':
+            my_select_time = rdss.models.JobfairOrder.objects.filter(company=request.user.cid).first().time
+            if timezone.now() < my_select_time:
+                return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
         my_slot_list = rdss.models.JobfairSlot.objects.filter(company__cid=request.user.cid)
         if my_slot_list.count() >= my_signup.jobfair:
@@ -553,6 +560,13 @@ def Sponsor(request):
     # semantic ui
     sidebar_ui = {'sponsor': "active"}
 
+    configs = rdss.models.RdssConfigs.objects.all()[0]
+    if timezone.now() < configs.rdss_signup_start or timezone.now() > configs.rdss_signup_end:
+        if request.user.username != "77777777":
+            error_msg = "非贊助時間。期間為 {} 至 {}".format(
+                timezone.localtime(configs.rdss_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
+                timezone.localtime(configs.rdss_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
+            return render(request, 'error.html', locals())
     # get form post
     try:
         sponsor = rdss.models.Signup.objects.get(cid=request.user.cid)

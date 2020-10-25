@@ -70,6 +70,12 @@ class JobfairInfoForm(ModelForm):
         fields = '__all__'
         exclude = ['company']
 
+    def __init__(self, *args, **kwargs):
+        super(JobfairInfoForm, self).__init__(*args, **kwargs)
+        self.fields['contact_mobile'].widget.attrs.update({
+            'placeholder': '格式：0912-345678',
+        })
+
 
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):

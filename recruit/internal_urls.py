@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views
+
 urlpatterns = [
     url(r'^$', views.recruit_company_index, name='recruit_company_index'),
     url(r'^signup/$', views.recruit_signup, name='recruit_signup'),
@@ -12,7 +13,7 @@ urlpatterns = [
     url(r'^jobfair/select/$', views.jobfair_select_form_gen, name='recruit_jobfair_select'),
     url(r'^jobfair/select_ctrl/$', views.jobfair_select_control, name='recruit_jobfair_select_ctrl'),
     url(r'^sponsor/$', views.Sponsor, name='recruit_sponsor'),
-    url(r'^survey/$', views.company_servey, name='recruit_survey'),
-    url(r'^status$',views.Status,name="recruit_status"),
+    url(r'^survey/$', views.company_survey, name='recruit_survey'),
+    url(r'^status$', views.Status, name="recruit_status"),
 
 ]

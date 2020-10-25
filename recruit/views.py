@@ -58,9 +58,7 @@ def recruit_company_index(request):
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
     configs = RecruitConfigs.objects.all()[0]
-    now_time = timezone.now()
-    if now_time < configs.recruit_signup_start \
-            or now_time > configs.recruit_signup_end:
+    if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
                 timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
@@ -192,7 +190,8 @@ def seminar_select_control(request):
         except AttributeError:
             my_select_time = None
 
-        if not my_select_time or timezone.now() < my_select_time:
+        # Open button for 77777777
+        if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
             select_ctrl = dict()
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
@@ -202,7 +201,7 @@ def seminar_select_control(request):
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
             today = timezone.now().date()
-            if configs.seminar_btn_start <= today and today <= configs.seminar_btn_end:
+            if (configs.seminar_btn_start <= today <= configs.seminar_btn_end) or request.user.username == "77777777":
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
@@ -212,9 +211,11 @@ def seminar_select_control(request):
     # action select
     elif action == "select":
         mycid = request.user.cid
-        my_select_time = SeminarOrder.objects.filter(company=mycid).first().time
-        if not my_select_time or timezone.now() < my_select_time:
-            return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
+        # Open selection for 77777777
+        if request.user.username != '77777777':
+            my_select_time = SeminarOrder.objects.filter(company=mycid).first().time
+            if not my_select_time or timezone.now() < my_select_time:
+                return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
         slot_session, slot_date_str = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
@@ -445,8 +446,7 @@ def jobfair_select_control(request):
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
     # 把自己的group enable並放到最前面顯示
-    my_slot_group = next(group for group in slot_group \
-                         if my_signup.get_company().category in group['category'])
+    my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
     slot_group.remove(my_slot_group)
     my_slot_group['is_mygroup'] = True
     slot_group.insert(0, my_slot_group)
@@ -468,7 +468,9 @@ def jobfair_select_control(request):
             my_select_time = JobfairOrder.objects.filter(company=request.user.cid).first().time
         except AttributeError:
             my_select_time = None
-        if not my_select_time or timezone.now() < my_select_time:
+
+        # Open button for 77777777
+        if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
             select_ctrl = dict()
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
@@ -479,7 +481,7 @@ def jobfair_select_control(request):
             select_ctrl['display'] = False
             select_ctrl['select_enable'] = True
             today = timezone.now().date()
-            if configs.jobfair_btn_start <= today and today <= configs.jobfair_btn_end:
+            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
@@ -500,16 +502,17 @@ def jobfair_select_control(request):
         if slot.company != None:
             return JsonResponse({"success": False, 'msg': '選位失敗，該攤位已被選定'})
 
-        my_select_time = JobfairOrder.objects.filter(company=request.user.cid).first().time
-        if timezone.now() < my_select_time:
-            return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
+        # Open selection for 77777777
+        if request.user.username != '77777777':
+            my_select_time = JobfairOrder.objects.filter(company=request.user.cid).first().time
+            if timezone.now() < my_select_time:
+                return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
         my_slot_list = JobfairSlot.objects.filter(company__cid=request.user.cid)
         if my_slot_list.count() >= my_signup.jobfair:
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
 
-        my_slot_group = next(group for group in slot_group \
-                             if my_signup.get_company().category in group['category'])
+        my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
         if my_slot_group['slot_type'] != slot.category:
             return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
 
@@ -645,7 +648,7 @@ def SponsorAdmin(request):
 
 
 @login_required(login_url='/company/login/')
-def company_servey(request):
+def company_survey(request):
     # semantic ui
     sidebar_ui = {'survey': "active"}
     configs = RecruitConfigs.objects.all()[0]
