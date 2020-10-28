@@ -137,7 +137,7 @@ def seminar_select_form_gen(request):
     for session in session_list:
         delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
                 datetime.datetime.combine(datetime.date.today(), session["start_time"])
-        if delta > timedelta(minutes=30):
+        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
             session["valid"] = True
         else:
             session["valid"] = False
@@ -707,6 +707,20 @@ def seminar(request):
     end_date = recruit_config.seminar_end_date
     week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
     week_info = []
+
+    # Get all session with valid time
+    seminar_session_display = dict()
+    for idx in range(1, 7):
+        field_value = getattr(recruit_config, 'session_{}_start'.format(idx))
+        if field_value:
+            if datetime.time(6, 0, 0) < field_value < datetime.time(21, 0, 0):
+                start = getattr(recruit_config, 'session_{}_start'.format(idx))
+                end = getattr(recruit_config, 'session_{}_end'.format(idx))
+                seminar_session_display['session_{}'.format(idx)] = "{:d}:{:02d}~{:d}:{:02d}".format(start.hour,
+                                                                                                     start.minute,
+                                                                                                     end.hour,
+                                                                                                     end.minute)
+
     for week in week_num:
         weekday_info = []
         for weekday in range(5):
