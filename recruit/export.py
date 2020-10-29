@@ -137,10 +137,15 @@ def export_seminar_info(request):
     response['Content-Disposition'] = 'attachment; filename=' + filename
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("說明會資訊")
+
     fields = recruit.models.SeminarInfo._meta.get_fields()[1:-1]
     for index, field in enumerate(fields):
         worksheet.write(0, index, field.verbose_name)
+    license_start_loc = len(fields)
+    for index in range(2):
+        worksheet.write(0, license_start_loc + index, '車牌號碼{}'.format(index + 1))
     company_list = recruit.models.SeminarInfo.objects.all()
+
     for i, info in enumerate(company_list):
         for j, field in enumerate(fields):
             if (field.name != 'company' and field.name != 'updated'):
@@ -149,6 +154,8 @@ def export_seminar_info(request):
                 cid = getattr(getattr(info, field.name), 'cid')
                 company_name = company.models.Company.objects.get(cid=cid).name
                 worksheet.write(i + 1, j, company_name)
+        for index, lic in enumerate(recruit.models.SeminarParking.objects.filter(info=info)[:2]):
+            worksheet.write(i + 1, license_start_loc + index, lic.license_plate_number)
     workbook.close()
     return response
 
@@ -165,10 +172,15 @@ def export_jobfair_info(request):
     response['Content-Disposition'] = 'attachment; filename=' + filename
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("就博會資訊")
+
     fields = recruit.models.JobfairInfo._meta.get_fields()[1:]
     for index, field in enumerate(fields):
         worksheet.write(0, index, field.verbose_name)
+    license_start_loc = len(fields)
+    for index in range(3):
+        worksheet.write(0, license_start_loc + index, '車牌號碼{}'.format(index + 1))
     company_list = recruit.models.JobfairInfo.objects.all()
+
     for i, info in enumerate(company_list):
         for j, field in enumerate(fields):
             if (field.name != 'company' and field.name != 'updated'):
@@ -177,6 +189,8 @@ def export_jobfair_info(request):
                 cid = getattr(getattr(info, field.name), 'cid')
                 company_name = company.models.Company.objects.get(cid=cid).name
                 worksheet.write(i + 1, j, company_name)
+        for index, lic in enumerate(recruit.models.JobfairParking.objects.filter(info=info)[:3]):
+            worksheet.write(i + 1, license_start_loc + index, lic.license_plate_number)
     workbook.close()
     return response
 

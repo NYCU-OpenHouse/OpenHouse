@@ -2,17 +2,19 @@ from django.core import urlresolvers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
-    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm
+    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm
 from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
+from .models import SeminarParking, JobfairParking
+from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
-from . import forms
+from django import forms
 from django.db.models import Count, Q
 import datetime
 import json
@@ -268,23 +270,32 @@ def jobfair_info(request):
         return render(request, 'recruit/error.html', locals())
 
     try:
-        jobfair_info = JobfairInfo.objects.get(company=company)
+        jobfair_info_object = JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
-        jobfair_info = None
+        jobfair_info_object = None
+
+    parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=3, extra=3,
+                                             fields=('id', 'license_plate_number', 'info'),
+                                             widgets={'license_plate_number': forms.TextInput(
+                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
 
     if request.POST:
         data = request.POST.copy()
-        form = JobfairInfoForm(data=data, instance=jobfair_info)
-        if form.is_valid():
+        form = JobfairInfoForm(data=data, instance=jobfair_info_object)
+        formset = parking_form_set(data=data, instance=jobfair_info_object)
+        if form.is_valid() and formset.is_valid():
             new_info = form.save(commit=False)
             company = RecruitSignup.objects.get(cid=request.user.cid)
             new_info.company = company
             new_info.save()
-            return render(request, 'recruit/company/success.html', locals())
+            formset.save()
+            # return render(request, 'recruit/company/success.html', locals())
+            return redirect(jobfair_info)
         else:
             print(form.errors)
     else:
-        form = JobfairInfoForm(instance=jobfair_info)
+        form = JobfairInfoForm(instance=jobfair_info_object)
+        formset = parking_form_set(instance=jobfair_info_object)
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
 
@@ -326,21 +337,30 @@ def seminar_info(request):
         return render(request, 'recruit/error.html', locals())
 
     try:
-        seminar_info = SeminarInfo.objects.get(company=company)
+        seminar_info_object = SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
-        seminar_info = None
+        seminar_info_object = None
+
+    parking_form_set = inlineformset_factory(SeminarInfo, SeminarParking, max_num=2, extra=2,
+                                             fields=('id', 'license_plate_number', 'info'),
+                                             widgets={'license_plate_number': forms.TextInput(
+                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
 
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
-        form = SeminarInfoCreationForm(data=data, instance=seminar_info)
-        if form.is_valid():
+        form = SeminarInfoCreationForm(data=data, instance=seminar_info_object)
+        formset = parking_form_set(data=data, instance=seminar_info_object)
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return render(request, 'recruit/company/success.html', locals())
+            formset.save()
+            # return render(request, 'recruit/company/success.html', locals())
+            return redirect(seminar_info)
         else:
             print(form.errors)
     else:
-        form = SeminarInfoCreationForm(instance=seminar_info)
+        form = SeminarInfoCreationForm(instance=seminar_info_object)
+        formset = parking_form_set(instance=seminar_info_object)
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
@@ -668,7 +688,7 @@ def company_survey(request):
         data = request.POST.copy()
         # decide cid in the form
         data['cid'] = request.user.cid
-        form = forms.SurveyForm(data=data, instance=my_survey)
+        form = SurveyForm(data=data, instance=my_survey)
         if form.is_valid():
             form.save()
             (msg_display, msg_type, msg_content) = (True, "green", "問卷填寫完成，感謝您")
@@ -676,7 +696,7 @@ def company_survey(request):
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)
     else:
-        form = forms.SurveyForm(instance=my_survey)
+        form = SurveyForm(instance=my_survey)
 
     return render(request, 'recruit/company/survey_form.html', locals())
 

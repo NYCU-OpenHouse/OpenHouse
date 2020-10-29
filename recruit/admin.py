@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
-    StuAttendance, SeminarInfoTemporary
+    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -11,11 +11,9 @@ from recruit import export
 import recruit.models as models
 
 
+@admin.register(ExchangePrize)
 class ExchangePrizeAdmin(admin.ModelAdmin):
     list_display = ['student', 'prize', 'points']
-
-
-admin.site.register(ExchangePrize, ExchangePrizeAdmin)
 
 
 class SponsorshipInline(admin.TabularInline):
@@ -23,6 +21,7 @@ class SponsorshipInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(RecruitConfigs)
 class RecruitConfigAdmin(admin.ModelAdmin):
     list_display = ['title']
 
@@ -30,29 +29,23 @@ class RecruitConfigAdmin(admin.ModelAdmin):
         return '活動設定'
 
 
-admin.site.register(RecruitConfigs, RecruitConfigAdmin)
-
-
 class StuAttendanceInline(admin.TabularInline):
     model = StuAttendance
     extra = 0
 
 
+@admin.register(StuAttendance)
 class StuAttendanceAdmin(admin.ModelAdmin):
     list_display = ['seminar']
 
 
-admin.site.register(StuAttendance, StuAttendanceAdmin)
-
-
+@admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     inlines = (StuAttendanceInline,)
     list_display = ('card_num', 'student_id', 'name', 'phone')
 
 
-admin.site.register(Student, StudentAdmin)
-
-
+@admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'seminar',)
     list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'company_visit', 'lecture', 'payment')
@@ -73,9 +66,6 @@ class RecruitSignupAdmin(admin.ModelAdmin):
         return obj.get_company_name()
 
 
-admin.site.register(RecruitSignup, RecruitSignupAdmin)
-
-
 @admin.register(SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
     list_display = ('date', 'session', 'company', 'place')
@@ -88,10 +78,22 @@ class SeminarOrderAdmin(admin.ModelAdmin):
     raw_id_fields = ("company",)
 
 
+class SeminarParkingInline(admin.StackedInline):
+    model = models.SeminarParking
+    extra = 1
+    max_num = 2
+
+
 @admin.register(SeminarInfo)
 class SeminarInfoAdmin(admin.ModelAdmin):
+    inlines = [SeminarParkingInline]
     list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
                     'contact_email', 'contact_mobile', 'updated')
+
+
+@admin.register(SeminarParking)
+class SeminarParkingAdmin(admin.ModelAdmin):
+    list_display = ('license_plate_number', 'info')
 
 
 @admin.register(SeminarInfoTemporary)
@@ -160,27 +162,34 @@ class JobfairOrderAdmin(admin.ModelAdmin):
     raw_id_fields = ("company",)
 
 
+@admin.register(JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'category', 'company', 'updated')
 
 
-admin.site.register(JobfairSlot, JobfairSlotAdmin)
+class JobfairParkingInline(admin.StackedInline):
+    model = models.JobfairParking
+    extra = 1
+    max_num = 3
 
 
+@admin.register(JobfairInfo)
 class JobfairInfoAdmin(admin.ModelAdmin):
+    inlines = [JobfairParkingInline]
     list_display = ('company',)
 
 
-admin.site.register(JobfairInfo, JobfairInfoAdmin)
+@admin.register(JobfairParking)
+class JobfairParkingAdmin(admin.ModelAdmin):
+    list_display = ('license_plate_number', 'info')
 
 
+@admin.register(JobfairInfoTemp)
 class JobfairInfoTempAdmin(admin.ModelAdmin):
     list_display = ('company',)
 
 
-admin.site.register(JobfairInfoTemp, JobfairInfoTempAdmin)
-
-
+@admin.register(SponsorItem)
 class SponsorItemAdmin(admin.ModelAdmin):
     inlines = (SponsorshipInline,)
     list_display = ('name', 'description', 'price', 'number_limit', 'current_amount')
@@ -191,14 +200,9 @@ class SponsorItemAdmin(admin.ModelAdmin):
     current_amount.short_description = '目前贊助數'
 
 
-admin.site.register(SponsorItem, SponsorItemAdmin)
-
-
+@admin.register(SponsorShip)
 class SponsorShipAdmin(admin.ModelAdmin):
     pass
-
-
-admin.site.register(SponsorShip, SponsorShipAdmin)
 
 
 @admin.register(CompanySurvey)

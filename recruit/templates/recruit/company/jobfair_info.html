@@ -10,48 +10,45 @@
     <form method="post" class="ui info form" action=".">
         {% csrf_token %}
         <h1 class="ui dividing header">就博會資訊</h1>
-        {% if jobfair_info %}
+        {% if jobfair_info_object %}
             <div class="ui teal compact message">
                 就博會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h3 style="color:red">請企業於 1/20 前完成「就博會資訊」填寫，以進行行政施工等準備作業</h3>
-        <div class="field">
+        <h2 style="color:red">請企業於 1/21 前完成「就博會資訊」填寫，以進行行政施工等準備作業</h2>
+        <h3 class="ui dividing header">攤位資訊</h3>
+        <div class="field required">
             <label>{{ form.sign_name.label }}</label>
             {{ form.sign_name }}
             <p>建議為公司簡稱</p>
         </div>
-        <div class="fields">
-            <div class="four wide field">
+        <div class="three fields">
+            <div class="field required">
                 <label>{{ form.contact_person.label }}</label>
                 {{ form.contact_person }}
             </div>
-            <div class="four wide field">
+            <div class="field required">
                 <label>{{ form.contact_mobile.label }}</label>
                 {{ form.contact_mobile }}
             </div>
-            <div class="eight wide field">
+            <div class="field required">
                 <label>{{ form.contact_email.label }}</label>
                 {{ form.contact_email }}
             </div>
         </div>
-        <div class="fields">
-            <div class="four wide field">
+        <div class="three fields">
+            <div class="field">
                 <label>{{ form.general_lunch_box.label }}</label>
                 {{ form.general_lunch_box }}
-                <p>每攤位至多提供5份餐點</p>
+                <p>每攤位至多提供3份餐點</p>
             </div>
-            <div class="four wide field">
+            <div class="field">
                 <label>{{ form.veget_lunch_box.label }}</label>
                 {{ form.veget_lunch_box }}
             </div>
-            <div class="four wide field">
-                <label>{{ form.packing_tickets.label }}</label>
-                {{ form.packing_tickets }}
-            </div>
-            <div class="four wide field">
+            <div class="field">
                 {% now 'Y' as current_year %}
-                <label>{{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                <label>{{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
                 <div class="field">
                     {{ form.job_number }}
                 </div>
@@ -84,6 +81,37 @@
             {{ form.ps }}
             <p>
                 如企業攤位需請交大施工廠商進行【加價-客製化修改】(例如改為隔間攤位、攤位招牌架高、增加照明燈具與插座數量等等，請於本欄位說明，後續將由施工廠商評估是否可施作，並提供進一步報價，費用亦由企業逕付交大施工廠商(非匯給交大)。</p>
+        </div>
+        <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
+        <p>說明(1)：參加說明會之企業，至多提供2部汽車入校停車費抵免；企業可選擇「提供車牌號碼」與「索取紙本停車抵用券」兩種並行。如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
+        <p>說明(2)：本校進出車輛自2020年1月已改用車號辨識系統，可加速企業同仁離校速度與簡化繳費流程，如選擇此項之車輛須提供完整車號(例AA-1234、4321-BB)；若無法事先確認入校車輛之車牌號碼，請選擇索取紙本汽車抵用券。</p>
+        <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
+        <div class="field">
+            <label>(紙本)汽車停車抵用券</label>
+            {{ form.packing_tickets.errors }}
+            {{ form.packing_tickets }}
+        </div>
+        <div class="field">
+            {{ formset.management_form }}
+            {% for f in formset %}
+                {{ f.id }}
+                {{ f.info }}
+                <label>
+                    {{ f.license_plate_number.label }}{{ forloop.counter }}{{ f.license_plate_number.errors }}</label>
+                <div class="fields">
+                    <div class="fourteen wide field">
+                        {{ f.license_plate_number }}
+                    </div>
+                    {% if formset.can_delete %}
+                        <div class="two wide field">
+                            <div class="ui checkbox">
+                                {{ f.DELETE }}
+                                <label>刪除</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
 
         <button class="ui blue button">送出</button>

@@ -2,8 +2,23 @@ from django.db import models
 from company.models import Company
 from django.db.models import Q
 from django.db.models import Count, Sum
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+
+def validate_license_plate_number(string):
+    validators = [
+        RegexValidator(regex='^[0-9A-Z]{2,4}-[0-9A-Z]{2,4}$', message='車牌格式為：2至4個數字或大寫英文符號-2至4個數字或大寫英文符號')
+    ]
+    err = None
+    for validator in validators:
+        try:
+            validator(string)
+            return string
+        except ValidationError as e:
+            err = e
+    raise err
 
 CATEGORYS = (
     (u'半導體', u'半導體'),
@@ -82,7 +97,7 @@ class RecruitSignup(models.Model):
     lecture = models.BooleanField(u'就業力講座')
     payment = models.BooleanField(u'完成付款', default=False)
     receipt_no = models.CharField(u'收據號碼', blank=True, null=True, max_length=50)
-    receipt_year = models.CharField(u'收據年分', max_length=4, default="", blank=True, help_text="例如: 2020或109")
+    receipt_year = models.CharField(u'收據年份', max_length=4, default="", help_text="例如: 2020或109，須先完成繳費方可開立收據")
     ps = models.TextField(u'備註', blank=True, null=True)
     added = models.TimeField(u'報名時間', auto_now_add=True)
     updated = models.TimeField(u'更新時間', auto_now=True)
@@ -236,6 +251,18 @@ class JobfairInfo(models.Model):
         verbose_name = u'就博會資訊'
         verbose_name_plural = u'就博會資訊'
 
+class JobfairParking(models.Model):
+    id = models.AutoField(primary_key=True)
+    license_plate_number = models.CharField(u'車牌號碼', max_length=8, validators=[validate_license_plate_number])
+    info = models.ForeignKey(JobfairInfo, verbose_name=u'公司', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.license_plate_number
+
+    class Meta:
+        verbose_name = u"就博會車牌號碼"
+        verbose_name_plural = u"就博會車牌號碼"
+
 
 class JobfairInfoTemp(models.Model):
     id = models.AutoField(primary_key=True)
@@ -282,6 +309,19 @@ class SeminarInfo(models.Model):
         managed = True
         verbose_name = u"說明會資訊"
         verbose_name_plural = u"說明會資訊"
+
+
+class SeminarParking(models.Model):
+    id = models.AutoField(primary_key=True)
+    license_plate_number = models.CharField(u'車牌號碼', max_length=8, validators=[validate_license_plate_number])
+    info = models.ForeignKey(SeminarInfo, verbose_name=u'公司', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.license_plate_number
+
+    class Meta:
+        verbose_name = u"說明會車牌號碼"
+        verbose_name_plural = u"說明會車牌號碼"
 
 
 class SeminarInfoTemporary(models.Model):

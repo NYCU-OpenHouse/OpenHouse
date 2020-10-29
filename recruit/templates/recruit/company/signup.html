@@ -33,7 +33,7 @@
                     <td>
                         <ul>
                             <li>中午場次 12:10~13:00</li>
-                            <li>其餘場次 13:20、16:30、17:40、18:50 (每場 50 分鐘)</li>
+                            <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>
                     </td>
 
                 </tr>
@@ -108,7 +108,7 @@
                     <td>
                         <ol class="ui list">
                             <li>本校工作人員協助報到及處理隨機突發狀況。</li>
-                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供5份；素食餐點請事先告知。</li>
+                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供3份；素食餐點請事先告知。</li>
                         </ol>
                     </td>
                 </tr>
@@ -205,15 +205,19 @@
             </div>
         </div>
 
-        <!--
+
         <div class="ui orange inverted segment">
-            <h1>公司收據</h1>
-            <label>{{ form.receipt_year.label }}</label>
-            {{ form.receipt_year.errors }}
-            {{ form.receipt_year }}
-            {{ form.receipt_year.help_text }}
+            <h1 class="ui header">
+                <i class="ticket alternate icon" style="color:white"></i>
+                公司收據
+            </h1>
+            <div class="ui segment">
+                <h3 class="ui header">{{ form.receipt_year.label }}</h3>
+                {{ form.receipt_year.help_text }}
+                {{ form.receipt_year.errors }}
+                {{ form.receipt_year }}
+            </div>
         </div>
-        -->
 
         <!--
   <div class="ui segment">
