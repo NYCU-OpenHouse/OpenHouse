@@ -75,6 +75,7 @@ def ExportAll(request):
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
         {'fieldname': 'lecture', 'title': '提供就業力講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
+        {'fieldname': 'receipt_year', 'title': '收據年份'},
         {'fieldname': 'updated', 'title': '更新時間'},
     ]
 
