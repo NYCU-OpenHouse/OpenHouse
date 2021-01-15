@@ -48,7 +48,14 @@
             </div>
             <div class="field">
                 {% now 'Y' as current_year %}
-                <label>{{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                {% now 'm' as current_month %}
+                {% if current_month > 6 %}
+                    <label>
+                        {{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                {% else %}
+                    <label>
+                        {{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                {% endif %}
                 <div class="field">
                     {{ form.job_number }}
                 </div>
