@@ -2,7 +2,7 @@
 
 <div class="ui inverted teal segment" id="navtop_outer">
     <div class="ui inverted teal stackable secondary menu" id="navtop">
-        <h3 class="header item"><a href="/">OpenHouse 交通大學 企業校園徵才</a></h3>
+        <h3 class="header item"><a href="/">Open House 陽明交通大學 企業校園徵才</a></h3>
         <!--公司部份!-->
         {% if user.is_authenticated and user.is_company %}
             <!--
@@ -101,9 +101,6 @@
             </div>-->
             <a class="item" href="{% url 'monograph_index' %}">
                 專刊
-            </a>
-            <a class="item" href="https://ejob.nctu.edu.tw/">
-                交大哈職網
             </a>
 
             {% if user.is_authenticated and user.is_staff %}
