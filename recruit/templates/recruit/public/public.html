@@ -1,10 +1,10 @@
 {% extends 'recruit_public.html' %}
 {% block 'content' %}
-<title>校園徵才 - 活動資訊</title>
-<h1 class="ui header">校園徵才 活動資訊</h1>
-<div class="ui segment">
-{%for recruitinfo in recruit_info%}
-    {{recruitinfo.content|safe}}
-{%endfor%}
-</div>
+    <title>Open House 校園徵才 - 活動資訊</title>
+    <h1 class="ui dividing header">Open House 校園徵才 活動資訊</h1>
+    <div class="ui segment">
+        {% for recruitinfo in recruit_info %}
+            {{ recruitinfo.content|safe }}
+        {% endfor %}
+    </div>
 {% endblock %}

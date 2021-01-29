@@ -2,40 +2,38 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-<title>秋季招募 - 活動資訊</title>
-<link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
-
+    <title>Open House 秋季招募 - 活動資訊</title>
+    <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-<h1 class="ui header">秋季招募 活動資訊及參加廠商</h1>
-<div class="ui segment">
-{%for rdss in rdss_info%}
-{{rdss.content |safe}}
-{%endfor%}
-  <h2 class="ui dividing header">徵才廠商</h2>
-  <div class="ui stackable four column stakable grid">
-    {% for company in company_list %}
-    <div class="column">
-      <div class="ui card">
-        <div class="image">
-          <img class="ui image logo" src="{{company.logo.url}}">
+    <h1 class="ui dividing header">Open House 秋季招募 活動資訊</h1>
+    <div class="ui segment">
+        {% for rdss in rdss_info %}
+            {{ rdss.content |safe }}
+        {% endfor %}
+        <h2 class="ui dividing header">徵才廠商</h2>
+        <div class="ui stackable four column stakable grid">
+            {% for company in company_list %}
+                <div class="column">
+                    <div class="ui card">
+                        <div class="image">
+                            <img class="ui image logo" src="{{ company.logo.url }}">
+                        </div>
+                        <div class="content">
+                            <a class="header">{{ company.name }}</a>
+                            <div class="meta">
+                                <span>{{ company.category }}</span>
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a href="{{ company.website }}" target="_blank">
+                                {{ company.website }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        <div class="content">
-          <a class="header">{{company.name}}</a>
-          <div class="meta">
-            <span>{{company.category}}</span>
-          </div>
-        </div>
-        <div class="extra content">
-          <a href="{{company.website}}" target="_blank">
-            {{company.website}}
-          </a>
-        </div>
-      </div>
     </div>
-    {% endfor %}
-  </div>
-
-</div>
 {% endblock %}

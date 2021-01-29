@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 
 {% block 'body' %}
+    <title>Open House 最新消息</title>
 
-<div class="ui segment" style="margin:auto;width:60%;">
-	<div style="text-align:center">
-		<h2 class="ui header">{{news.title}}</h2>
-		<p style="text-align:right">修改時間：{{news.created_time}} </p>
-	</div>
+    <div class="ui segment" style="margin:auto;width:60%;">
+        <div style="text-align:center">
+            <h2 class="ui header">{{ news.title }}</h2>
+            <p style="text-align:right">修改時間：{{ news.created_time }} </p>
+        </div>
 
-		<div class="ui divider"></div>
-		{{news.content|safe}}
+        <div class="ui divider"></div>
+        {{ news.content|safe }}
         {% for file in files %}
-        <p>附件: <a href={{file.upload_file.url}} target="_blank">{{file.name}}</a></p>
+            <p>附件: <a href={{ file.upload_file.url }} target="_blank">{{ file.name }}</a></p>
         {% endfor %}
-</div>
-<div style="margin:auto;width:60%; margin-top:2rem">
-	<a class="ui button" href="/">回首頁</a>
-	<a class="ui button" href="{% url 'general_news_list' %}">最新消息</a>
-	<a class="ui button" href="{% url 'recruit_news_list' %}">企業徵才資訊</a>
-</div>
+    </div>
+    <div style="margin:auto;width:60%; margin-top:2rem">
+        <a class="ui button" href="/">回首頁</a>
+        <a class="ui button" href="{% url 'general_news_list' %}">最新消息</a>
+        <a class="ui button" href="{% url 'recruit_news_list' %}">企業徵才資訊</a>
+    </div>
 {% endblock %}

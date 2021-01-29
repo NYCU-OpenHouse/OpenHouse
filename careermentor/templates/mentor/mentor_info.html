@@ -1,63 +1,62 @@
 {% extends 'general_base.html' %}
 {% load staticfiles %}
 {% block 'custom_head' %}
-<title>Open House 企業職場導師</title>
-
+    <title>Open House 企業職場導師</title>
 {% endblock %}
 
 {% block 'content' %}
-<div class="ui compact segment" style="margin:auto; width:80%">
-  <h2 class="ui centered header">場次詳細資訊</h2>
-  <table class="ui stripped celled table">
-    <tbody>
-      <tr>
-        <td>標題 (Title)</td>
-        <td>{{event.title}}</td>
-      </tr>
-      <tr>
-        <td>企業 (Company)</td>
-        <td>{{event.company}}</td>
-      </tr>
-      <tr>
-        <td>導師 (Mentor)</td>
-        <td>{{event.mentor}} {{event.mentor_title}}</td>
-      </tr>
-      <tr>
-        <td>導師簡介 (Mentor Intro)</td>
-        <td>{{event.mentor_brief}}</td>
-      </tr>
-      <tr>
-        <td>日期 (Date)</td>
-        <td>{{event.date}} {{event.start_time}} - {{event.end_time}}</td>
-      </tr>
-      <tr>
-        <td>進行方式 (Mode)</td>
-        <td>{{event.mode}}</td>
-      </tr>
-      <tr>
-        <td>大綱 (Abstract)</td>
-        <td>{{event.abstract}}</td>
-      </tr>
-      <tr>
-        <td>狀態 (Status)</td>
-        <td>{{event.status}}</td>
-      </tr>
-      <tr>
-        <td>人數限制 (Limit)</td>
-        <td>{{event.limit}}</td>
-      </tr>
-      <tr>
-        <td>地點 (Place)</td>
-        <td>{{event.place}}</td>
-      </tr>
+    <div class="ui compact segment" style="margin:auto; width:80%">
+        <h2 class="ui centered header">場次詳細資訊</h2>
+        <table class="ui stripped celled table">
+            <tbody>
+            <tr>
+                <td>標題 (Title)</td>
+                <td>{{ event.title }}</td>
+            </tr>
+            <tr>
+                <td>企業 (Company)</td>
+                <td>{{ event.company }}</td>
+            </tr>
+            <tr>
+                <td>導師 (Mentor)</td>
+                <td>{{ event.mentor }} {{ event.mentor_title }}</td>
+            </tr>
+            <tr>
+                <td>導師簡介 (Mentor Intro)</td>
+                <td>{{ event.mentor_brief }}</td>
+            </tr>
+            <tr>
+                <td>日期 (Date)</td>
+                <td>{{ event.date }} {{ event.start_time }} - {{ event.end_time }}</td>
+            </tr>
+            <tr>
+                <td>進行方式 (Mode)</td>
+                <td>{{ event.mode }}</td>
+            </tr>
+            <tr>
+                <td>大綱 (Abstract)</td>
+                <td>{{ event.abstract }}</td>
+            </tr>
+            <tr>
+                <td>狀態 (Status)</td>
+                <td>{{ event.status }}</td>
+            </tr>
+            <tr>
+                <td>人數限制 (Limit)</td>
+                <td>{{ event.limit }}</td>
+            </tr>
+            <tr>
+                <td>地點 (Place)</td>
+                <td>{{ event.place }}</td>
+            </tr>
 
-      <tr>
-        <td>備註 (Remark)</td>
-        <td>{{event.remark}}</td>
-      </tr>
+            <tr>
+                <td>備註 (Remark)</td>
+                <td>{{ event.remark }}</td>
+            </tr>
 
-    </tbody>
-  </table>
-  <a class="ui button" href={% url 'mentor_index' %}>回列表</a>
-</div>
+            </tbody>
+        </table>
+        <a class="ui button" href={% url 'mentor_index' %}>回列表</a>
+    </div>
 {% endblock %}

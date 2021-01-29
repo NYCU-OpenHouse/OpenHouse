@@ -9,7 +9,7 @@
 {% block 'body' %}
     {% if mono_info %}
         <div id="vote_index">
-            <h2>{{ mono_info.title }}</h2>
+            <h2 class="ui dividing header">{{ mono_info.title }}</h2>
             {% if mono_info.content %}
                 <p>{{ mono_info.content|safe }}</p>
             {% endif %}

@@ -2,24 +2,24 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-<title>秋季招募 - 就業博覽會</title>
-<link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
+    <title>Open House 秋季招募 - 就業博覽會</title>
+    <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-<h1 class="ui header">秋季招募就業博覽會</h1>
-{%for rdssjobfair in rdss_jobfair_info%}
-    {{rdssjobfair.content|safe}}
-{%endfor%}
-<h2 class="ui dividing header">就博會攤位圖</h2>
-<img class="ui image" src="{{place_map.upload_file.url}}" alt="就博會攤位圖">
-	<div class="ui six column padded grid">
-    {% for slot in slots %}
-		<div class="column" style="padding:0.5rem" >
-      <div class='ui blue center aligned segment'>
-        <p>攤位{{slot.serial_no}}: {{ slot.company}}</p>
-			</div>
-		</div>
+    <h1 class="ui dividing header">Open House 秋季招募 就業博覽會</h1>
+    {% for rdssjobfair in rdss_jobfair_info %}
+        {{ rdssjobfair.content|safe }}
     {% endfor %}
-	</div>
+    <h2 class="ui dividing header">就博會攤位圖</h2>
+    <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就博會攤位圖">
+    <div class="ui six column padded grid">
+        {% for slot in slots %}
+            <div class="column" style="padding:0.5rem">
+                <div class='ui blue center aligned segment'>
+                    <p>攤位{{ slot.serial_no }}: {{ slot.company }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -4,58 +4,59 @@
     <link href={% static "css/visit/visit_form.css" %} rel="stylesheet">
 {% endblock %}
 {% block 'body' %}
-<form class="ui form" action="." method="post">
-    {%csrf_token%}
-    {% if message %}
-        <div class="ui red message">報名已額滿，目前排入候補</div>
-    {% endif %}
-    <div class="disabled field">
-        <label>活動</label>
-        {{form.event}}
-    </div>
-    <div class="field">
-            <label>{{form.name.label}}</label>
-            {{form.name}}
-    </div>
-    <div class="two fields">
-        <div class="field">
-            <label>{{form.date.label}} (格式:2017/02/28)(辦理旅行平安保險)</label>
-            {{form.date}}
+    <title>Open House 企業參訪</title>
+    <form class="ui form" action="." method="post">
+        {% csrf_token %}
+        {% if message %}
+            <div class="ui red message">報名已額滿，目前排入候補</div>
+        {% endif %}
+        <div class="disabled field">
+            <label>活動</label>
+            {{ form.event }}
         </div>
         <div class="field">
-            <label>{{form.SSN.label}} (辦理旅行平安保險)</label>
-            {{form.SSN}}
+            <label>{{ form.name.label }}</label>
+            {{ form.name }}
         </div>
-    </div>
-    <div class="two fields">
+        <div class="two fields">
+            <div class="field">
+                <label>{{ form.date.label }} (格式:2017/02/28)(辦理旅行平安保險)</label>
+                {{ form.date }}
+            </div>
+            <div class="field">
+                <label>{{ form.SSN.label }} (辦理旅行平安保險)</label>
+                {{ form.SSN }}
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>{{ form.mobile.label }}</label>
+                {{ form.mobile }}
+            </div>
+            <div class="field">
+                <label>{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+        </div>
+        <div class="fields">
+            <div class="six wide field">
+                <label>{{ form.department.label }}</label>
+                {{ form.department }}
+            </div>
+            <div class="six wide field">
+                <label>{{ form.student_id.label }}</label>
+                {{ form.student_id }}
+            </div>
+            <div class="two wide field">
+                <label>{{ form.gender.label }}</label>
+                {{ form.gender }}
+            </div>
+        </div>
         <div class="field">
-            <label>{{form.mobile.label}}</label>
-            {{form.mobile}}
+            <label>{{ form.country.label }} (外籍生填寫)</label>
+            {{ form.country }}
         </div>
-        <div class="field">
-            <label>{{form.email.label}}</label>
-            {{form.email}}
-        </div>
-    </div>
-    <div class="fields">
-        <div class="six wide field">
-            <label>{{form.department.label}}</label>
-            {{form.department}}
-        </div>
-        <div class="six wide field">
-            <label>{{form.student_id.label}}</label>
-            {{form.student_id}}
-        </div>
-        <div class="two wide field">
-            <label>{{form.gender.label}}</label>
-            {{form.gender}}
-        </div>
-    </div>
-    <div class="field">
-        <label>{{form.country.label}} (外籍生填寫)</label>
-        {{form.country}}
-    </div>
-    <button class="ui teal button" type="submit">送出</button>
+        <button class="ui teal button" type="submit">送出</button>
 
-</form>
+    </form>
 {% endblock %}
