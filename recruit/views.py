@@ -710,14 +710,21 @@ def sponsorship_admin(request):
 
 
 def list_jobs(request):
-    recruit_companys = RecruitSignup.objects.all()
-    companys = []
-    company_err = []  # for err
-    for company in recruit_companys:
-        try:
-            companys.append(Company.objects.get(cid=company.cid))
-        except:
-            company_err.append(company.cid)
+    categories = [category[0] for category in Company.CATEGORYS]
+    companies = []
+    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+    if category_filtered and category_filtered != 'all':
+        for company in RecruitSignup.objects.all():
+            try:
+                companies.append(Company.objects.get(cid=company.cid, category=category_filtered))
+            except:
+                pass
+    else:
+        for company in RecruitSignup.objects.all():
+            try:
+                companies.append(Company.objects.get(cid=company.cid))
+            except:
+                pass
     return render(request, 'recruit/public/list_jobs.html', locals())
 
 

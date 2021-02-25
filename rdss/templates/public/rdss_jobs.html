@@ -3,40 +3,53 @@
 {% block 'content' %}
     <title>Open House 秋季招募 - 職缺列表</title>
     <h1 class="ui dividing header" id="title">Open House 秋季招募 職缺列表</h1>
-    <div class="ui segment">
-        <table class="ui stripped celled table">
-            <thead>
-            <tr>
-                <th>Logo</th>
-                <th>企業名</th>
-                <th>類別</th>
-                <th>簡介</th>
-                <th>職缺</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for company in company_list %}
-                <tr>
-                    <td>
-                        <h4 class="ui image header">
-                            <img src="{{ company.logo.url }}" class="ui medium image">
-                        </h4></td>
-                    <td>
-                        {{ company.name }}
-                    </td>
-                    <td>
-                        {{ company.category }}
-                    </td>
-                    <td>
-                        {{ company.brief }}
-                    </td>
-                    <td>
-                        {{ company.recruit_info }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="ui right floated basic segment">
+        <form action="{% url 'list_jobs' %}" method="get" class="ui form">
+            <div class="inline four width field">
+                <label for="categories">Filter</label>
+                <select name="categories" class="ui dropdown" onchange="this.form.submit()">
+                    <option value="all">All</option>
+                    {% for category in categories %}
+                        {% if category_filtered and category == category_filtered %}
+                            <option value="{{ category }}" selected>{{ category }}</option>
+                        {% else %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
     </div>
+    <table class="ui celled table" style="table-layout: fixed">
+        <thead>
+        <tr>
+            <th style="width: 15%">Logo</th>
+            <th style="width: 15%">企業名</th>
+            <th style="width: 10%">類別</th>
+            <th style="width: 20%">簡介</th>
+            <th style="width: 20%">職缺</th>
+            <th style="width: 20%">聯絡方式</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for company in company_list %}
+            <tr>
+                <td><img class="ui small image" src="{{ company.logo.url }}"/></td>
+                <td>{{ company.name }}</td>
+                <td>{{ company.category }}</td>
+                <td>{{ company.brief }}</td>
+                <td>{{ company.recruit_info }}</td>
+                <td>
+                    <ul class="ui list">
+                        <li>公司地址: {{ company.address }}</li>
+                        <li>公司電話: {{ company.phone }}</li>
+                        <li>公司網址: <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></li>
+                        <li>應徵方式: {{ company.recruit_url }}</li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 

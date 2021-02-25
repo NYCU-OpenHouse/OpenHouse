@@ -863,11 +863,20 @@ def QueryPoints(request):
 
 
 def ListJobs(request):
-    all_company = company.models.Company.objects.all()
-    rdss_company = rdss.models.Signup.objects.all()
-    company_list = [
-        all_company.get(cid=c.cid) for c in rdss_company
-    ]
-    company_list.sort(key=lambda item: getattr(item, 'category'))
+    categories = [category[0] for category in Company.CATEGORYS]
+    companies = []
+    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+    if category_filtered and category_filtered != 'all':
+        for signup in rdss.models.Signup.objects.all():
+            try:
+                companies.append(company.models.Company.objects.get(cid=signup.cid, category=category_filtered))
+            except:
+                pass
+    else:
+        for signup in rdss.models.Signup.objects.all():
+            try:
+                companies.append(company.models.Company.objects.get(cid=signup.cid))
+            except:
+                pass
 
     return render(request, 'public/rdss_jobs.html', locals())

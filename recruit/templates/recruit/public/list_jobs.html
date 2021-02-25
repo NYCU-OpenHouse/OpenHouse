@@ -3,6 +3,23 @@
 {% block 'content' %}
     <title>Open House 校園徵才 - 職缺列表</title>
     <h1 class="ui dividing header">Open House 校園徵才 職缺列表</h1>
+    <div class="ui right floated basic segment">
+        <form action="{% url 'list_jobs' %}" method="get" class="ui form">
+            <div class="inline four width field">
+                <label for="categories">Filter</label>
+                <select name="categories" class="ui dropdown" onchange="this.form.submit()">
+                    <option value="all">All</option>
+                    {% for category in categories %}
+                        {% if category_filtered and category == category_filtered %}
+                            <option value="{{ category }}" selected>{{ category }}</option>
+                        {% else %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
     <table class="ui celled table" style="table-layout: fixed">
         <thead>
         <tr>
@@ -15,15 +32,15 @@
         </tr>
         </thead>
         <tbody>
-        {% for company in companys %}
+        {% for company in companies %}
             <tr>
-                <td><img class="ui small image" src="{{ company.logo.url }}"></td>
-                <td> {{ company.name }}</td>
-                <td> {{ company.category }} </td>
-                <td> {{ company.brief }} </td>
-                <td> {{ company.recruit_info }}</td>
+                <td><img class="ui small image" src="{{ company.logo.url }}"/></td>
+                <td>{{ company.name }}</td>
+                <td>{{ company.category }}</td>
+                <td>{{ company.brief }}</td>
+                <td>{{ company.recruit_info }}</td>
                 <td>
-                    <ul>
+                    <ul class="ui list">
                         <li>公司地址: {{ company.address }}</li>
                         <li>公司電話: {{ company.phone }}</li>
                         <li>公司網址: <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></li>
