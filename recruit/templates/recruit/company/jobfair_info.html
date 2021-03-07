@@ -2,14 +2,14 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>就博會資訊-OpenHouse</title>
+    <title>就博會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form method="post" class="ui info form" action=".">
         {% csrf_token %}
-        <h1 class="ui dividing header">就博會資訊</h1>
+        <h1 class="ui dividing header">Open House 校園徵才 - 就博會資訊</h1>
         {% if jobfair_info_object %}
             <div class="ui teal compact message">
                 就博會資訊填寫已完成，您也可以修改資訊，再次送出。
@@ -120,7 +120,6 @@
                 </div>
             {% endfor %}
         </div>
-
-        <button class="ui blue button">送出</button>
+        <button class="ui blue button" style="float: right;" type="submit">送出</button>
     </form>
 {% endblock %}

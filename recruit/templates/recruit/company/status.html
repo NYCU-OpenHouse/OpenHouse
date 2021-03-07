@@ -1,14 +1,14 @@
 {% extends 'recruit_base.html' %}
 
 {% block 'custom_head' %}
-    <title>報名狀況-OpenHouse</title>
+    <title>報名狀況 | OpenHouse 企業校園徵才</title>
 {% endblock %}
 
 {% block 'content' %}
-    </br>
-    <h1 class="ui header">
+    <h1 class="ui dividing header">Open House 校園徵才 - 報名狀況</h1>
+    <h3 class="ui dividing header">
         交通大學OpenHouse 校園徵才 活動報名流程
-    </h1>
+    </h3>
 
     <div class="ui ordered steps">
         <div class="{{ step_ui.0 }} step">
@@ -30,19 +30,20 @@
             </div>
         </div>
     </div>
-    <div class="ui header">
+
+    <h3 class="ui dividing header">
         {{ request.user.shortname }} 報名狀況總覽
         <div align="right" style="height:30px;">
             <a>
-                <button class="ui blue button" style="float: right,height:30px;" onclick="window.print();">列印繳費金額
+                <button class="ui blue button" style="float: right; height:30px;" onclick="window.print();">列印繳費金額
                 </button>
             </a>
 
             <a href={{ pay_info_file.upload_file.url }}>
-                <button class="ui teal button" style="float: right,height:30px;">下載繳費資訊</button>
+                <button class="ui teal button" style="float: right; height:30px;">下載繳費資訊</button>
             </a>
         </div>
-    </div>
+    </h3>
 
     {% if not signup_data %}
 
@@ -183,11 +184,7 @@
         </div>
 
         <div class="ui piled segment">
-            <font size="6">總金額: {{ all_fee }}</font>
+            <p style="font-size: 30px">總金額: {{ all_fee }}</p>
         </div>
-
-
     </div>
-
-
 {% endblock %}

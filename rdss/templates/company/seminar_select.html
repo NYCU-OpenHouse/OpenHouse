@@ -2,12 +2,12 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>說明會選位-OpenHouse</title>
+    <title>說明會選位 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/rdss/Controller.js" %}></script>
 {% endblock %}
 
 {% block 'content' %}
-    <br>
+    <h1 class="ui dividing header">Open House 秋季招募 - 說明會選位</h1>
     <h2 class="ui dividing header">選位注意事項</h2>
     <div class="ui message">
         <div class="ui bulleted list">
@@ -175,8 +175,12 @@
         </table>
         <div ng-if="ctrl.select_ctrl.select_btn">
             <div ng-if="ctrl.select_ctrl.btn_display">
-                <div class="ui teal button" ng-if="!ctrl.slot.my_slot" ng-click="ctrl.submit()">送出選位</div>
-                <div class="ui red button" ng-if="ctrl.slot.my_slot" ng-click="ctrl.cancel()">刪除已選位置</div>
+                <div class="ui blue button" style="float: right;" ng-if="!ctrl.slot.my_slot" ng-click="ctrl.submit()">
+                    送出選位
+                </div>
+                <div class="ui red button" style="float: right;" ng-if="ctrl.slot.my_slot" ng-click="ctrl.cancel()">
+                    刪除已選位置
+                </div>
             </div>
         </div>
         <p ng-if="!ctrl.select_ctrl.select_btn" style="color:red">目前並非貴公司時段，「選位」按鍵將在貴公司時段內出現</p>

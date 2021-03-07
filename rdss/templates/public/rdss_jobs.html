@@ -1,7 +1,10 @@
 {% extends 'rdss_base.html' %}
 
-{% block 'content' %}
+{% block 'custom_head' %}
     <title>Open House 秋季招募 - 職缺列表</title>
+{% endblock %}
+
+{% block 'content' %}
     <h1 class="ui dividing header" id="title">Open House 秋季招募 職缺列表</h1>
     <div class="ui right floated basic segment">
         <form action="{% url 'rdss_jobs' %}" method="get" class="ui form">

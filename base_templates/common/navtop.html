@@ -10,16 +10,16 @@
               首頁
             </a>
             -->
-            <a class="{{ nav_company_index }} item" href="{% url 'company_index' %}">
+            <a class="{{ menu_ui.index }} item" href="{% url 'company_index' %}">
                 廠商入口
             </a>
-            <a class="item" href="{% url 'info' %}">
+            <a class="{{ menu_ui.info }} item" href="{% url 'info' %}">
                 公司資料
             </a>
-            <a class="{{ nav_rdss }} item" href="{% url 'rdss_company_index' %}">
+            <a class="{{ menu_ui.rdss }} item" href="{% url 'rdss_company_index' %}">
                 秋季招募
             </a>
-            <a class="item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
+            <a class="{{ menu_ui.recruit }} item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
                 校園徵才
             </a>
             <a class="item" id="navtop_rdss_btn" data-content="籌備中，11月初與大家相見">

@@ -31,7 +31,10 @@ collect_pts_logger = logging.getLogger('stu_attend')
 
 @login_required(login_url='/company/login/')
 def RDSSCompanyIndex(request):
-    sidebar_ui = {'index': 'active'}
+    # semantic ui control
+    menu_ui = {'rdss': "active"}
+    sidebar_ui = {'index': "active"}
+
     configs = rdss.models.RdssConfigs.objects.all()[0]
     rdss_company_info = rdss.models.RdssCompanyInfo.objects.all()
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
@@ -122,6 +125,7 @@ def Status(request):
     step_ui = ["", "", ""]  # for step ui in template
     nav_rdss = "active"
     sidebar_ui = {'status': "active"}
+    menu_ui = {'rdss': "active"}
 
     step_ui[0] = "completed" if signup_data else "active"
     step_ui[1] = "completed" if jobfair_slot or seminar_slot else "active"
@@ -137,6 +141,8 @@ def SignupRdss(request):
 
     # semanti ui control
     sidebar_ui = {'signup': "active"}
+    menu_ui = {'rdss': "active"}
+
     configs = rdss.models.RdssConfigs.objects.all()[0]
 
     # use timezone now to get current time with GMT+8
@@ -208,6 +214,8 @@ def SeminarInfo(request):
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
+    menu_ui = {'rdss': "active"}
+
     return render(request, 'company/seminar_info_form.html', locals())
 
 
@@ -244,13 +252,16 @@ def JobfairInfo(request):
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}
+    menu_ui = {'rdss': "active"}
+
     return render(request, 'company/jobfair_info_form.html', locals())
 
 
 @login_required(login_url='/company/login/')
 def SeminarSelectFormGen(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'seminar_select': "active"}
+    menu_ui = {'rdss': "active"}
 
     mycid = request.user.cid
     # check the company have signup rdss
@@ -408,8 +419,9 @@ def SeminarSelectControl(request):
 
 @login_required(login_url='/company/login/')
 def JobfairSelectFormGen(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'jobfair_select': "active"}
+    menu_ui = {'rdss': "active"}
 
     mycid = request.user.cid
     # check the company have signup rdss
@@ -559,6 +571,7 @@ def Add_SponsorShip(sponsor_items, post_data, sponsor):
 def Sponsor(request):
     # semantic ui
     sidebar_ui = {'sponsor': "active"}
+    menu_ui = {'rdss': "active"}
 
     configs = rdss.models.RdssConfigs.objects.all()[0]
     if timezone.now() < configs.rdss_signup_start or timezone.now() > configs.rdss_signup_end:
@@ -629,6 +642,7 @@ def CompanySurvey(request):
 
     # semantic ui
     sidebar_ui = {'survey': "active"}
+    menu_ui = {'rdss': "active"}
 
     if timezone.now() > configs.survey_end or timezone.now() < configs.survey_start:
         if request.user.username != "77777777":
@@ -778,8 +792,10 @@ def RegisterCard(request):
 
 
 # ========================RDSS public view=================
+
+
 def RDSSPublicIndex(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'index': "active"}
 
     all_company = company.models.Company.objects.all()
@@ -793,7 +809,7 @@ def RDSSPublicIndex(request):
 
 
 def SeminarPublic(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'seminar': "active"}
 
     configs = rdss.models.RdssConfigs.objects.all()[0]
@@ -849,7 +865,7 @@ def SeminarPublic(request):
 
 
 def JobfairPublic(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'jobfair': "active"}
 
     place_map = rdss.models.Files.objects.filter(category='就博會攤位圖').first()
@@ -859,7 +875,7 @@ def JobfairPublic(request):
 
 
 def QueryPoints(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'query_points': "active"}
 
     if request.method == 'POST':
@@ -874,7 +890,7 @@ def QueryPoints(request):
 
 
 def ListJobs(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'list_jobs': "active"}
 
     categories = [category[0] for category in Company.CATEGORYS]

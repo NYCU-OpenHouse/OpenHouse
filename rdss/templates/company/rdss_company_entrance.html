@@ -1,20 +1,25 @@
 {% extends 'rdss_base.html' %}
 
+{% block 'custom_head' %}
+    <title>秋季招募 | OpenHouse 企業校園徵才</title>
+{% endblock %}
+
 {% block 'content' %}
-<div class="ui segment">
-	{%for rdsscompany in rdss_company_info%}
-		{{rdsscompany.content|safe}}
-	{% endfor %}
-	<h2 id="intro" class="ui dividing header">活動企畫書</h2>
-	<p style="color:red">活動詳細內容及規範皆載於企畫書，請務必詳細閱讀</p>
-	<a class="ui blue button" href={{plan_file.upload_file.url}} target="_blank">{{plan_file.title}}</a>
+    <h1 class="ui dividing header">Open House 秋季招募</h1>
+    <div class="ui segment">
+        {% for rdsscompany in rdss_company_info %}
+            {{ rdsscompany.content|safe }}
+        {% endfor %}
+        <h2 id="intro" class="ui dividing header">活動企畫書</h2>
+        <p style="color:red">活動詳細內容及規範皆載於企畫書，請務必詳細閱讀</p>
+        <a class="ui blue button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
 
-	<h2 id="register" class="ui dividing header">廠商報名</h2>
+        <h2 id="register" class="ui dividing header">廠商報名</h2>
 
-	<p>本活動統一採網路報名的方式，請填寫報名資料(左方導覽列或下方按鈕)。</p><p style="color:red">報名時間為 {{configs.rdss_signup_start}} 到 {{configs.rdss_signup_end}}</p>
-	<p style="color:red">活動詳細內容及規範皆載於企畫書，報名前請務必詳細閱讀</p>
-	<a class="ui blue button" href={{plan_file.upload_file.url}} target="_blank">{{plan_file.title}}</a>
-	<a class="ui teal button" href={%url 'rdss_signup'%}>填寫報名資料</a>
-
-</div>
+        <p>本活動統一採網路報名的方式，請填寫報名資料(左方導覽列或下方按鈕)。</p>
+        <p style="color:red">報名時間為 {{ configs.rdss_signup_start }} 到 {{ configs.rdss_signup_end }}</p>
+        <p style="color:red">活動詳細內容及規範皆載於企畫書，報名前請務必詳細閱讀</p>
+        <a class="ui blue button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
+        <a class="ui teal button" href={% url 'rdss_signup' %}>填寫報名資料</a>
+    </div>
 {% endblock %}

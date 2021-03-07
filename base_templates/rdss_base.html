@@ -5,7 +5,8 @@
     <link href={% static "css/rdss/sidebar.css" %} rel="stylesheet">
     <div class="ui stackable grid" style="margin-top: 5px">
         <div class="three wide column" style="margin-left:1em">
-            <div class="ui secondary vertical pointing menu" style="width:90%">
+            <br>
+            <div class="ui secondary vertical stackable pointing menu" style="width:90%">
                 {% if request.user.is_authenticated and request.user.is_company %}
                     <a class="{{ sidebar_ui.index }} item" href="{% url 'rdss_company_index' %}">
                         活動首頁
@@ -31,7 +32,7 @@
                         說明會選位
                     </a>
                     <a class="{{ sidebar_ui.seminar_info }} item" href="{% url 'rdss_seminar_info' %}">
-                        OH說明會資訊填寫
+                        說明會資訊填寫
                     </a>
                     <a class="{{ sidebar_ui.jobfair_select }} item" href="{% url 'rdss_jobfair_select' %}">
                         就博會選位
@@ -64,6 +65,7 @@
             </div>
         </div>
         <div class="twelve wide column">
+            <br>
             {% block 'content' %}
 
             {% endblock %}

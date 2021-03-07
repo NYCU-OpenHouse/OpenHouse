@@ -20,7 +20,7 @@ import company.models
 @login_required(login_url='/company/login/')
 def CompanyIndex(request):
     # semantic ui control
-    nav_company_index = "active"
+    menu_ui = {'index': "active"}
 
     # rdss files
     rdss_file_list = rdss.models.Files.objects.all().order_by('-updated')
@@ -30,6 +30,9 @@ def CompanyIndex(request):
 
 @login_required(login_url='/company/login/')
 def CompanyInfo(request):
+    # semantic ui control
+    menu_ui = {'info': "active"}
+
     company_info = company.models.Company.objects.get(cid=request.user.cid)
     return render(request, 'company_info.html', locals())
 

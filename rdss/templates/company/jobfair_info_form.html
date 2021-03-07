@@ -2,14 +2,14 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>就博會資訊</title>
+    <title>就博會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/rdss/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form class="ui info form error" method="POST" action="{% url 'rdss_jobfair_info' %}">
-        <h1 class="ui dividing header">就博會資訊</h1>
         {% csrf_token %}
+        <h1 class="ui dividing header">Open House 秋季招募 - 就博會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
@@ -110,7 +110,7 @@
                 </div>
             {% endfor %}
         </div>
-        <button class="ui blue button" type="submit">送出</button>
+        <button class="ui blue button" style="float: right;" type="submit">送出</button>
     </form>
 
 {% endblock %}

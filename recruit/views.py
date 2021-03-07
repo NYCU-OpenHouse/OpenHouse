@@ -54,6 +54,10 @@ def recruit_company_index(request):
     configs = RecruitConfigs.objects.all()[0]
     plan_file = Files.objects.filter(category="企畫書").first()
     recruit_company_info = recruit.models.RecruitCompanyInfo.objects.all()
+
+    # semantic ui control
+    sidebar_ui = {'index': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/index.html', locals())
 
 
@@ -85,13 +89,18 @@ def recruit_signup(request):
 
     else:
         form = RecruitSignupForm(instance=signup_info)
+
+    # semantic ui control
+    sidebar_ui = {'signup': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/signup.html', locals())
 
 
 @login_required(login_url='/company/login/')
 def seminar_select_form_gen(request):
-    # semanti ui control
+    # semantic ui control
     sidebar_ui = {'seminar_select': "active"}
+    menu_ui = {'recruit': "active"}
 
     mycid = request.user.cid
     try:
@@ -296,6 +305,10 @@ def jobfair_info(request):
     else:
         form = JobfairInfoForm(instance=jobfair_info_object)
         formset = parking_form_set(instance=jobfair_info_object)
+
+    # semantic ui
+    sidebar_ui = {'jobfair_info': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
 
@@ -325,6 +338,10 @@ def jobfair_info_temp(request):
             print(form.errors)
     else:
         form = JobfairInfoTempForm(instance=jobfair_info)
+
+    # semantic ui
+    sidebar_ui = {'jobfair_info': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/jobfair_info_temp.html', locals())
 
 
@@ -364,6 +381,7 @@ def seminar_info(request):
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/seminar_info_form.html', locals())
 
 
@@ -394,6 +412,7 @@ def seminar_info_temporary(request):
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
+    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/seminar_info_form_temporary.html', locals())
 
 
@@ -401,6 +420,7 @@ def seminar_info_temporary(request):
 def jobfair_select_form_gen(request):
     # semanti ui control
     sidebar_ui = {'jobfair_select': "active"}
+    menu_ui = {'recruit': "active"}
 
     mycid = request.user.cid
     # check the company have signup recruit
@@ -603,6 +623,7 @@ def Add_SponsorShip(sponsor_items, post_data, sponsor):
 def Sponsor(request):
     # semantic ui
     sidebar_ui = {'sponsor': "active"}
+    menu_ui = {'recruit': "active"}
 
     configs = RecruitConfigs.objects.all()[0]
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
@@ -671,6 +692,7 @@ def SponsorAdmin(request):
 def company_survey(request):
     # semantic ui
     sidebar_ui = {'survey': "active"}
+    menu_ui = {'recruit': "active"}
     configs = RecruitConfigs.objects.all()[0]
 
     if timezone.now() > configs.survey_end or timezone.now() < configs.survey_start:
@@ -886,6 +908,7 @@ def Status(request):
     step_ui = ["", "", ""]  # for step ui in template
     nav_recruit = "active"
     sidebar_ui = {'status': "active"}
+    menu_ui = {'recruit': "active"}
 
     step_ui[0] = "completed" if signup_data else "active"
     step_ui[1] = "completed" if jobfair_slot or seminar_slot else "active"
@@ -894,9 +917,7 @@ def Status(request):
     return render(request, 'recruit/company/status.html', locals())
 
 
-'''
-Public View
-'''
+# ======================== Recruit public view =======================
 
 
 def public(request):

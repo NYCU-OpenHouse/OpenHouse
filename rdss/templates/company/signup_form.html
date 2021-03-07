@@ -2,13 +2,16 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>OpenHouse 廠商介面</title>
+    <title>活動報名 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/rdss/signup_form.js" %}></script>
 {% endblock %}
 
 {% block 'content' %}
     <form class="ui form" method="POST" action="{% url 'rdss_signup' %}">
         {% csrf_token %}
+
+        <h1 class="ui dividing header">Open House 秋季招募 - 活動報名</h1>
+
         {% if signup_edit_ui %}
             <div class="ui compact teal message">
                 報名已完成，您也可以修改報名資料，再次送出。
@@ -20,6 +23,8 @@
             <p style="color:red">活動詳細內容及規範皆載於企畫書，請務必詳細閱讀</p>
             <a class="ui teal button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
         </div>
+
+        <div class="ui divider"></div>
 
         <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
@@ -195,7 +200,7 @@
             </div>
         </div>
 
-        <button class="ui teal button" type="submit">送出資料</button>
+        <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
     </form>
 
 {% endblock %}
