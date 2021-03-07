@@ -5,9 +5,8 @@
     <link href={% static "css/rdss/sidebar.css" %} rel="stylesheet">
     <div class="ui stackable grid" style="margin-top: 5px">
         <div class="three wide column" style="margin-left:1em">
-            <div class="ui vertical stackable menu" style="width:90%">
+            <div class="ui secondary vertical pointing menu" style="width:90%">
                 {% if request.user.is_authenticated and request.user.is_company %}
-
                     <a class="{{ sidebar_ui.index }} item" href="{% url 'rdss_company_index' %}">
                         活動首頁
                     </a>
@@ -42,23 +41,35 @@
                     </a>
                 {% else %}
                     <!-- public view -->
-                    <a class="item" href="{% url 'rdss_index' %}">
+                    {% url 'rdss_index' as rdss_index_url %}
+                    <a href="{{ rdss_index_url }}" {% if request.path == rdss_index_url %}class="active item"
+                       {% else %}class="item"{% endif %}>
                         活動資訊
                     </a>
-                    <a class="item" href="{% url 'rdss_jobs' %}">
+                    {% url 'rdss_jobs' as rdss_jobs_url %}
+                    <a href="{{ rdss_jobs_url }}" {% if request.path == rdss_jobs_url %}class="active item"
+                       {% else %}class="item"{% endif %}>
                         職缺列表
                     </a>
                     {% if nav_configs.show_rdss_seminar %}
-                        <a class="item" href="{% url 'seminar_public' %}">
+                        {% url 'seminar_public' as seminar_public_url %}
+                        <a href="{{ seminar_public_url }}"
+                           {% if request.path == seminar_public_url %}class="active item"
+                           {% else %}class="item"{% endif %}>
                             說明會
                         </a>
                     {% endif %}
                     {% if nav_configs.show_rdss_jobfair %}
-                        <a class="item" href="{% url 'jobfair_public' %}">
+                        {% url 'jobfair_public' as jobfair_public_url %}
+                        <a href="{{ jobfair_public_url }}"
+                           {% if request.path == jobfair_public_url %}class="active item"
+                           {% else %}class="item"{% endif %}>
                             就博會
                         </a>
                     {% endif %}
-                    <a class="item" href="{% url 'rdss_querypts' %}">
+                    {% url 'rdss_querypts' as rdss_querypts_url %}
+                    <a href="{{ rdss_querypts_url }}" {% if request.path == rdss_querypts_url %}class="active item"
+                       {% else %}class="item"{% endif %}>
                         查集點
                     </a>
                 {% endif %}

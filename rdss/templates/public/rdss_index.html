@@ -2,11 +2,11 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>Open House 秋季招募 - 活動資訊</title>
     <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
+    <title>Open House 秋季招募 - 活動資訊</title>
     <h1 class="ui dividing header">Open House 秋季招募 活動資訊</h1>
     <div class="ui segment">
         {% for rdss in rdss_info %}

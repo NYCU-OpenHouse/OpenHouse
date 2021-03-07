@@ -5,24 +5,34 @@
     <link href={% static "css/rdss/sidebar.css" %} rel="stylesheet">
     <div class="ui stackable grid" style="margin-top: 5px">
         <div class="three wide column" style="margin-left:1em">
-            <div class="ui vertical stackable menu" style="width:85%">
-                <a class="item" href="{% url 'public' %}">
+            <div class="ui secondary vertical pointing menu" style="width:90%">
+                {% url 'public' as public_url %}
+                <a href="{{ public_url }}" {% if request.path == public_url %}class="active item"
+                   {% else %}class="item"{% endif %}>
                     活動資訊
                 </a>
-                <a class="item" href="{% url 'list_jobs' %}">
+                {% url 'list_jobs' as list_jobs_url %}
+                <a href="{{ list_jobs_url }}" {% if request.path == list_jobs_url %}class="active item"
+                   {% else %}class="item"{% endif %}>
                     職缺列表
                 </a>
                 {% if nav_configs.show_seminar %}
-                    <a class="item" href="{% url 'seminar' %}">
+                    {% url 'seminar' as seminar_url %}
+                    <a href="{{ seminar_url }}" {% if request.path == seminar_url %}class="active item"
+                       {% else %}class="item"{% endif %}>
                         說明會
                     </a>
                 {% endif %}
                 {% if nav_configs.show_jobfair %}
-                    <a class="item" href="{% url 'jobfair' %}">
+                    {% url 'jobfair' as jobfair_url %}
+                    <a href="{{ jobfair_url }}" {% if request.path == jobfair_url %}class="active item"
+                       {% else %}class="item"{% endif %}>
                         就博會
                     </a>
                 {% endif %}
-                <a class="item" href="{% url 'query_points' %}">
+                {% url 'query_points' as query_points_url %}
+                <a href="{{ query_points_url }}" {% if request.path == query_points_url %}class="active item"
+                   {% else %}class="item"{% endif %}>
                     查集點
                 </a>
             </div>
