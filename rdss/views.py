@@ -779,6 +779,9 @@ def RegisterCard(request):
 
 # ========================RDSS public view=================
 def RDSSPublicIndex(request):
+    # semanti ui control
+    sidebar_ui = {'index': "active"}
+
     all_company = company.models.Company.objects.all()
     rdss_company = rdss.models.Signup.objects.all()
     rdss_info = rdss.models.RdssInfo.objects.all()
@@ -791,6 +794,8 @@ def RDSSPublicIndex(request):
 
 def SeminarPublic(request):
     # semanti ui control
+    sidebar_ui = {'seminar': "active"}
+
     configs = rdss.models.RdssConfigs.objects.all()[0]
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
@@ -844,6 +849,9 @@ def SeminarPublic(request):
 
 
 def JobfairPublic(request):
+    # semanti ui control
+    sidebar_ui = {'jobfair': "active"}
+
     place_map = rdss.models.Files.objects.filter(category='就博會攤位圖').first()
     slots = rdss.models.JobfairSlot.objects.all()
     rdss_jobfair_info = rdss.models.RdssJobfairInfo.objects.all()
@@ -851,6 +859,9 @@ def JobfairPublic(request):
 
 
 def QueryPoints(request):
+    # semanti ui control
+    sidebar_ui = {'query_points': "active"}
+
     if request.method == 'POST':
         data = request.POST.copy()
         student_id = data.get('student_id')
@@ -863,6 +874,9 @@ def QueryPoints(request):
 
 
 def ListJobs(request):
+    # semanti ui control
+    sidebar_ui = {'list_jobs': "active"}
+
     categories = [category[0] for category in Company.CATEGORYS]
     companies = []
     category_filtered = request.GET.get('categories') if request.GET.get('categories') else None

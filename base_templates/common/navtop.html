@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <div class="ui inverted teal segment" id="navtop_outer">
-    <div class="ui inverted teal stackable secondary menu" id="navtop">
+    <div class="ui inverted teal stackable borderless fixed menu">
         <h3 class="header item"><a href="/">Open House 陽明交通大學 企業校園徵才</a></h3>
         <!--公司部份!-->
         {% if user.is_authenticated and user.is_company %}
@@ -119,5 +119,6 @@
 
         {% endif %}
     </div>
+    <br><br>
 </div>
 

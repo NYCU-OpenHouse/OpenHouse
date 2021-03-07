@@ -709,164 +709,6 @@ def sponsorship_admin(request):
     return render(request, 'recruit/admin/sponsorship.html', locals())
 
 
-def list_jobs(request):
-    categories = [category[0] for category in Company.CATEGORYS]
-    companies = []
-    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
-    if category_filtered and category_filtered != 'all':
-        for company in RecruitSignup.objects.all():
-            try:
-                companies.append(Company.objects.get(cid=company.cid, category=category_filtered))
-            except:
-                pass
-    else:
-        for company in RecruitSignup.objects.all():
-            try:
-                companies.append(Company.objects.get(cid=company.cid))
-            except:
-                pass
-    return render(request, 'recruit/public/list_jobs.html', locals())
-
-
-def seminar(request):
-    recruit_config = RecruitConfigs.objects.all()[0]
-    start_date = recruit_config.seminar_start_date
-    end_date = recruit_config.seminar_end_date
-    week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
-    week_info = []
-
-    # Get all session with valid time
-    seminar_session_display = dict()
-    for idx in range(1, 7):
-        field_value = getattr(recruit_config, 'session_{}_start'.format(idx))
-        if field_value:
-            if datetime.time(6, 0, 0) < field_value < datetime.time(21, 0, 0):
-                start = getattr(recruit_config, 'session_{}_start'.format(idx))
-                end = getattr(recruit_config, 'session_{}_end'.format(idx))
-                seminar_session_display['session_{}'.format(idx)] = "{:d}:{:02d}~{:d}:{:02d}".format(start.hour,
-                                                                                                     start.minute,
-                                                                                                     end.hour,
-                                                                                                     end.minute)
-
-    for week in week_num:
-        weekday_info = []
-        for weekday in range(5):
-            today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
-            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
-            noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
-            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
-            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
-            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
-            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
-            slot_info = {
-                'date': today,
-                'other1': other1,
-                'noon': noon2,
-                'other2': other2,
-                'other3': other3,
-                'other4': other4,
-                'other5': other5,
-            }
-            weekday_info.append(slot_info)
-        week_info.append(weekday_info)
-    locations = SlotColor.objects.all()
-    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
-    return render(request, 'recruit/public/seminar.html', locals())
-
-
-def seminar_temporary(request):
-    is_live = []
-    not_live = []
-    wo_info = []
-    for company in RecruitSignup.objects.filter(~Q(seminar='none')):
-        try:
-            company_info = Company.objects.get(cid=company.cid)
-            info = SeminarInfoTemporary.objects.get(company=company)
-        except Company.DoesNotExist:
-            pass
-        except SeminarInfoTemporary.DoesNotExist:
-            company_info = Company.objects.get(cid=company.cid)
-            wo_info.append(
-                {'name': company_info.get_short_name(),
-                 'logo': company_info.logo.url,
-                 'website': company_info.website,
-                 }
-            )
-        else:
-            video = parse_YT_video(info.video)
-            if info.live:
-                is_live.append(
-                    {'name': company_info.get_short_name(),
-                     'logo': company_info.logo.url,
-                     'video': video,
-                     'website': company_info.website,
-                     'info': info,
-                     })
-            else:
-                not_live.append(
-                    {'name': company_info.get_short_name(),
-                     'logo': company_info.logo.url,
-                     'video': video,
-                     'website': company_info.website,
-                     'info': info,
-                     }
-                )
-
-    is_live.sort(key=lambda x: x['info'].order, reverse=True)
-    not_live.sort(key=lambda x: x['info'].order, reverse=True)
-    session_all_info = is_live + not_live + wo_info
-
-    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
-
-    paginator = Paginator(session_all_info, 4)
-    page_number = request.GET.get('page')
-
-    try:
-        session_info = paginator.page(page_number)
-    except PageNotAnInteger:
-        page_number = 1
-        session_info = paginator.page(page_number)
-    except EmptyPage:
-        page_number = paginator.num_pages
-        session_info = paginator.page(page_number)
-
-    return render(request, 'recruit/public/seminar_temporary.html', locals())
-
-
-def jobfair(request):
-    recruit_jobfair_info = RecruitJobfairInfo.objects.all()
-    place_maps = Files.objects.filter(category='就博會攤位圖')
-    jobfair_slots = JobfairSlot.objects.all().order_by('serial_no')
-    elc_slots = JobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
-    semi_slots = JobfairSlot.objects.filter(category="半導體").order_by('serial_no')
-    photo_slots = JobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
-    info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
-    network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
-    synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
-    startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
-    reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
-    # return render(request, 'recruit/public/jobfair_temp.html', locals())
-    return render(request, 'recruit/public/jobfair.html', locals())
-
-
-def jobfair_online(request, company_cid):
-    try:
-        comp_signup = RecruitSignup.objects.get(cid=company_cid)
-        jobfair_info = JobfairInfoTemp.objects.get(company=comp_signup)
-
-        video = parse_YT_video(jobfair_info.video)
-        company = Company.objects.get(cid=company_cid)
-        company_name = company.get_full_name()
-        return render(request, 'recruit/public/jobfair_online.html', locals())
-    except:
-        return redirect('jobfair')
-
-
-def public(request):
-    recruit_info = recruit.models.RecruitInfo.objects.all()
-    return render(request, 'recruit/public/public.html', locals())
-
-
 @staff_member_required
 def RegisterCard(request):
     if request.method == "POST":
@@ -950,15 +792,6 @@ def exchange_prize(request):
         if exchange_form.is_valid():
             exchange_form.save()
     return render(request, 'recruit/admin/exchange_prize.html', locals())
-
-
-def query_points(request):
-    student = None
-    if (request.POST):
-        student = Student.objects.filter(student_id=request.POST['student_id'],
-                                         phone=request.POST['phone']).first()
-        records = StuAttendance.objects.filter(student=student)
-    return render(request, 'recruit/public/query_points.html', locals())
 
 
 @login_required(login_url='/company/login/')
@@ -1059,3 +892,196 @@ def Status(request):
     step_ui[2] = "completed" if jobfair_info or seminar_info else "active"
 
     return render(request, 'recruit/company/status.html', locals())
+
+
+'''
+Public View
+'''
+
+
+def public(request):
+    # semantic ui control
+    sidebar_ui = {'index': "active"}
+
+    recruit_info = recruit.models.RecruitInfo.objects.all()
+    return render(request, 'recruit/public/public.html', locals())
+
+
+def list_jobs(request):
+    # semantic ui control
+    sidebar_ui = {'list_jobs': "active"}
+
+    categories = [category[0] for category in Company.CATEGORYS]
+    companies = []
+    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+    if category_filtered and category_filtered != 'all':
+        for company in RecruitSignup.objects.all():
+            try:
+                companies.append(Company.objects.get(cid=company.cid, category=category_filtered))
+            except:
+                pass
+    else:
+        for company in RecruitSignup.objects.all():
+            try:
+                companies.append(Company.objects.get(cid=company.cid))
+            except:
+                pass
+    return render(request, 'recruit/public/list_jobs.html', locals())
+
+
+def seminar(request):
+    # semantic ui control
+    sidebar_ui = {'seminar': "active"}
+
+    recruit_config = RecruitConfigs.objects.all()[0]
+    start_date = recruit_config.seminar_start_date
+    end_date = recruit_config.seminar_end_date
+    week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
+    week_info = []
+
+    # Get all session with valid time
+    seminar_session_display = dict()
+    for idx in range(1, 7):
+        field_value = getattr(recruit_config, 'session_{}_start'.format(idx))
+        if field_value:
+            if datetime.time(6, 0, 0) < field_value < datetime.time(21, 0, 0):
+                start = getattr(recruit_config, 'session_{}_start'.format(idx))
+                end = getattr(recruit_config, 'session_{}_end'.format(idx))
+                seminar_session_display['session_{}'.format(idx)] = "{:d}:{:02d}~{:d}:{:02d}".format(start.hour,
+                                                                                                     start.minute,
+                                                                                                     end.hour,
+                                                                                                     end.minute)
+
+    for week in week_num:
+        weekday_info = []
+        for weekday in range(5):
+            today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
+            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
+            noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
+            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
+            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
+            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
+            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
+            slot_info = {
+                'date': today,
+                'other1': other1,
+                'noon': noon2,
+                'other2': other2,
+                'other3': other3,
+                'other4': other4,
+                'other5': other5,
+            }
+            weekday_info.append(slot_info)
+        week_info.append(weekday_info)
+    locations = SlotColor.objects.all()
+    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
+    return render(request, 'recruit/public/seminar.html', locals())
+
+
+def seminar_temporary(request):
+    # semantic ui control
+    sidebar_ui = {'seminar': "active"}
+
+    is_live = []
+    not_live = []
+    wo_info = []
+    for company in RecruitSignup.objects.filter(~Q(seminar='none')):
+        try:
+            company_info = Company.objects.get(cid=company.cid)
+            info = SeminarInfoTemporary.objects.get(company=company)
+        except Company.DoesNotExist:
+            pass
+        except SeminarInfoTemporary.DoesNotExist:
+            company_info = Company.objects.get(cid=company.cid)
+            wo_info.append(
+                {'name': company_info.get_short_name(),
+                 'logo': company_info.logo.url,
+                 'website': company_info.website,
+                 }
+            )
+        else:
+            video = parse_YT_video(info.video)
+            if info.live:
+                is_live.append(
+                    {'name': company_info.get_short_name(),
+                     'logo': company_info.logo.url,
+                     'video': video,
+                     'website': company_info.website,
+                     'info': info,
+                     })
+            else:
+                not_live.append(
+                    {'name': company_info.get_short_name(),
+                     'logo': company_info.logo.url,
+                     'video': video,
+                     'website': company_info.website,
+                     'info': info,
+                     }
+                )
+
+    is_live.sort(key=lambda x: x['info'].order, reverse=True)
+    not_live.sort(key=lambda x: x['info'].order, reverse=True)
+    session_all_info = is_live + not_live + wo_info
+
+    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
+
+    paginator = Paginator(session_all_info, 4)
+    page_number = request.GET.get('page')
+
+    try:
+        session_info = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_number = 1
+        session_info = paginator.page(page_number)
+    except EmptyPage:
+        page_number = paginator.num_pages
+        session_info = paginator.page(page_number)
+
+    return render(request, 'recruit/public/seminar_temporary.html', locals())
+
+
+def jobfair(request):
+    # semantic ui control
+    sidebar_ui = {'jobfair': "active"}
+
+    recruit_jobfair_info = RecruitJobfairInfo.objects.all()
+    place_maps = Files.objects.filter(category='就博會攤位圖')
+    jobfair_slots = JobfairSlot.objects.all().order_by('serial_no')
+    elc_slots = JobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
+    semi_slots = JobfairSlot.objects.filter(category="半導體").order_by('serial_no')
+    photo_slots = JobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
+    info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
+    network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
+    synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
+    startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
+    reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
+    # return render(request, 'recruit/public/jobfair_temp.html', locals())
+    return render(request, 'recruit/public/jobfair.html', locals())
+
+
+def jobfair_online(request, company_cid):
+    try:
+        # semantic ui control
+        sidebar_ui = {'jobfair': "active"}
+
+        comp_signup = RecruitSignup.objects.get(cid=company_cid)
+        jobfair_info = JobfairInfoTemp.objects.get(company=comp_signup)
+
+        video = parse_YT_video(jobfair_info.video)
+        company = Company.objects.get(cid=company_cid)
+        company_name = company.get_full_name()
+        return render(request, 'recruit/public/jobfair_online.html', locals())
+    except:
+        return redirect('jobfair')
+
+
+def query_points(request):
+    # semantic ui control
+    sidebar_ui = {'query_points': "active"}
+
+    student = None
+    if (request.POST):
+        student = Student.objects.filter(student_id=request.POST['student_id'],
+                                         phone=request.POST['phone']).first()
+        records = StuAttendance.objects.filter(student=student)
+    return render(request, 'recruit/public/query_points.html', locals())
