@@ -4,7 +4,7 @@
     <title>Open House 秋季招募 - 職缺列表</title>
     <h1 class="ui dividing header" id="title">Open House 秋季招募 職缺列表</h1>
     <div class="ui right floated basic segment">
-        <form action="{% url 'list_jobs' %}" method="get" class="ui form">
+        <form action="{% url 'rdss_jobs' %}" method="get" class="ui form">
             <div class="inline four width field">
                 <label for="categories">Filter</label>
                 <select name="categories" class="ui dropdown" onchange="this.form.submit()">
@@ -32,7 +32,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for company in company_list %}
+        {% for company in companies %}
             <tr>
                 <td><img class="ui small image" src="{{ company.logo.url }}"/></td>
                 <td>{{ company.name }}</td>
