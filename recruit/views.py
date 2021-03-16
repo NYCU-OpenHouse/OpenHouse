@@ -758,23 +758,17 @@ def collect_points(request):
 
     # Find the suitable session
     now = datetime.datetime.now()
-    if (now - timedelta(minutes=20)).time() < config.session_1_end \
-            and (now + timedelta(minutes=10)).time() > config.session_1_end:
+    if (now - timedelta(minutes=20)).time() < config.session_1_end < (now + timedelta(minutes=20)).time():
         current_session = 'other1'
-    elif (now - timedelta(minutes=20)).time() < config.session_2_end \
-            and (now + timedelta(minutes=10)).time() > config.session_2_end:
+    elif (now - timedelta(minutes=20)).time() < config.session_2_end < (now + timedelta(minutes=20)).time():
         current_session = 'noon2'
-    elif (now - timedelta(minutes=20)).time() < config.session_3_end \
-            and (now + timedelta(minutes=10)).time() > config.session_3_end:
+    elif (now - timedelta(minutes=20)).time() < config.session_3_end < (now + timedelta(minutes=20)).time():
         current_session = 'other2'
-    elif (now - timedelta(minutes=20)).time() < config.session_4_end \
-            and (now + timedelta(minutes=10)).time() > config.session_4_end:
+    elif (now - timedelta(minutes=20)).time() < config.session_4_end < (now + timedelta(minutes=20)).time():
         current_session = 'other3'
-    elif (now - timedelta(minutes=20)).time() < config.session_5_end \
-            and (now + timedelta(minutes=10)).time() > config.session_5_end:
+    elif (now - timedelta(minutes=20)).time() < config.session_5_end < (now + timedelta(minutes=20)).time():
         current_session = 'other4'
-    elif (now - timedelta(minutes=20)).time() < config.session_6_end \
-            and (now + timedelta(minutes=10)).time() > config.session_6_end:
+    elif (now - timedelta(minutes=20)).time() < config.session_6_end < (now + timedelta(minutes=20)).time():
         current_session = 'other5'
     else:
         current_session = ''

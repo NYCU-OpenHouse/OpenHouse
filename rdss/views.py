@@ -683,13 +683,13 @@ def CollectPoints(request):
     now = datetime.datetime.now()
 
     # Find the suitable session
-    if (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=10)).time():
+    if (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
         current_session = 'noon'
-    elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=10)).time():
+    elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
         current_session = 'night1'
-    elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=10)).time():
+    elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
         current_session = 'night2'
-    elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=10)).time():
+    elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
         current_session = 'night3'
     else:
         current_session = ''
