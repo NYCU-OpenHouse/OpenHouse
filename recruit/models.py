@@ -107,7 +107,7 @@ class RecruitSignup(models.Model):
             company = Company.objects.get(cid=self.cid)
         except:
             return "資料庫不同步，請連絡資訊組"
-        return company.name
+        return company.shortname
 
     def get_company_name(self):
         com = Company.objects.filter(cid=self.cid).first()
