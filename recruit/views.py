@@ -930,6 +930,8 @@ def list_jobs(request):
     companies = []
     category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
     if category_filtered and category_filtered != 'all':
+        if category_filtered not in categories:
+            raise Http404("What are u looking for?")
         for company in RecruitSignup.objects.all():
             try:
                 companies.append(Company.objects.get(cid=company.cid, category=category_filtered))
