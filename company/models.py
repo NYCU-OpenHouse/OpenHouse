@@ -65,6 +65,10 @@ class Company(AbstractBaseUser):
     hr_ps = models.TextField(u'人員相關備註', default="", blank=True)
     logo = models.ImageField(u"公司LOGO", upload_to='company_logos', null=True,
                              help_text='''網站展示、筆記本內頁公司介紹使用，僅接受 jpg, png, gif 格式。建議解析度為 300 dpi以上，以達到最佳效果。''')
+
+    payment_ps = models.TextField(u'款項備註', default="", blank=True)
+    other_ps = models.TextField(u'其他備註', default="", blank=True)
+
     last_update = models.DateTimeField(u'更新時間', auto_now=True, null=True)
     date_join = models.DateTimeField(u'date joined', auto_now_add=True, null=True)
     objects = UserManager()

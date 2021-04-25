@@ -252,6 +252,11 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('hr2_name', 'hr2_phone', 'hr2_fax', 'hr2_mobile', 'hr2_email', 'hr_ps')
         }
          ),
+        ("其他備註資料", {
+            'classes': ('wide',),
+            'fields': ('payment_ps', 'other_ps')
+        }
+         ),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -271,6 +276,11 @@ class UserAdmin(BaseUserAdmin):
         ("第二位人資資料", {
             'classes': ('wide',),
             'fields': ('hr2_name', 'hr2_phone', 'hr2_fax', 'hr2_mobile', 'hr2_email', 'hr_ps')
+        }
+         ),
+        ("其他備註資料", {
+            'classes': ('wide',),
+            'fields': ('payment_ps', 'other_ps')
         }
          ),
     )
