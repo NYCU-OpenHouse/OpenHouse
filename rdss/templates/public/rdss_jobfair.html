@@ -2,16 +2,16 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>Open House 秋季招募 - 就業博覽會</title>
+    <title>Open House 秋季招募 - 實體就業博覽會</title>
     <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 秋季招募 就業博覽會</h1>
+    <h1 class="ui dividing header">Open House 秋季招募 實體就業博覽會</h1>
     {% for rdssjobfair in rdss_jobfair_info %}
         {{ rdssjobfair.content|safe }}
     {% endfor %}
-    <h2 class="ui dividing header">就博會攤位圖</h2>
+    <h2 class="ui dividing header">實體就博會攤位圖</h2>
     <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就博會攤位圖">
     <div class="ui six column padded grid">
         {% for slot in slots %}

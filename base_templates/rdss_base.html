@@ -29,16 +29,16 @@
                         </div>
                     </div>
                     <a class="{{ sidebar_ui.seminar_select }} item" href="{% url 'rdss_seminar_select' %}">
-                        說明會選位
+                        線上說明會選位
                     </a>
                     <a class="{{ sidebar_ui.seminar_info }} item" href="{% url 'rdss_seminar_info' %}">
-                        說明會資訊填寫
+                        線上說明會資訊填寫
                     </a>
                     <a class="{{ sidebar_ui.jobfair_select }} item" href="{% url 'rdss_jobfair_select' %}">
-                        就博會選位
+                        實體就博會選位
                     </a>
                     <a class="{{ sidebar_ui.jobfair_info }} item" href="{% url 'rdss_jobfair_info' %}">
-                        就博會資訊填寫
+                        實體就博會資訊填寫
                     </a>
                 {% else %}
                     <!-- public view -->
@@ -50,12 +50,12 @@
                     </a>
                     {% if nav_configs.show_rdss_seminar %}
                         <a class="{{ sidebar_ui.seminar }} item" href="{% url 'seminar_public' %}">
-                            說明會
+                            線上說明會
                         </a>
                     {% endif %}
                     {% if nav_configs.show_rdss_jobfair %}
                         <a class="{{ sidebar_ui.jobfair }} item" href="{% url 'jobfair_public' %}">
-                            就博會
+                            實體就博會
                         </a>
                     {% endif %}
                     <a class="{{ sidebar_ui.query_points }} item" href="{% url 'rdss_querypts' %}">

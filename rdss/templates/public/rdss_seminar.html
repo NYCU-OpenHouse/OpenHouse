@@ -2,12 +2,12 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>Open House 秋季招募 - 說明會</title>
+    <title>Open House 秋季招募 - 線上說明會</title>
     <link href={% static "css/rdss/rdss_public.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 秋季招募 說明會</h1>
+    <h1 class="ui dividing header">Open House 秋季招募 線上說明會</h1>
 
     {% for rdssseminar in rdss_seminar_info %}
         {{ rdssseminar.content|safe }}
@@ -34,6 +34,15 @@
             </tr>
             </thead>
             <tbody>
+
+            <tr>
+                <td>{{ configs.session0_start }}~{{ configs.session0_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.forenoon.place_color }}">
+                        {{ day.forenoon.company }}
+                    </td>
+                {% endfor %}
+            </tr>
 
             <tr>
                 <td>{{ configs.session1_start }}~{{ configs.session1_end }}</td>

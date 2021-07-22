@@ -1,11 +1,10 @@
 from django.db import models
 from django.core.validators import RegexValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_save
 from django.db.models import Q
-from django.db.models import Count, Sum
 from ckeditor.fields import RichTextField
 import company.models
+import datetime
 
 
 def validate_mobile(string):
@@ -54,25 +53,29 @@ class RdssConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
-    session1_start = models.TimeField(u'說明會場次1(中午)_開始時間')
-    session1_end = models.TimeField(u'說明會場次1(中午)_結束時間')
-    session2_start = models.TimeField(u'說明會場次2_開始時間')
-    session2_end = models.TimeField(u'說明會場次2_結束時間')
-    session3_start = models.TimeField(u'說明會場次3_開始時間')
-    session3_end = models.TimeField(u'說明會場次3_結束時間')
+    session0_start = models.TimeField(u'說明會場次0_開始時間', default='00:00')
+    session0_end = models.TimeField(u'說明會場次0_結束時間', default='00:00')
+    session1_start = models.TimeField(u'說明會場次1(中午)_開始時間', default='00:00')
+    session1_end = models.TimeField(u'說明會場次1(中午)_結束時間', default='00:00')
+    session2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
+    session2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
+    session3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
+    session3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
     session4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
     session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
     # 費用
-    session1_fee = models.IntegerField(u'說明會場次1_費用')
-    session2_fee = models.IntegerField(u'說明會場次2_費用')
-    session3_fee = models.IntegerField(u'說明會場次3_費用')
-    session4_fee = models.IntegerField(u'說明會場次4_費用', default=0)
+    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
 
     # 就博會相關
     jobfair_date = models.DateField(u'就博會日期')
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
-    jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)')
+    jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
+    jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
+    jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
+    jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
+    jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
+    jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
 
     seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
@@ -88,19 +91,15 @@ class RdssConfigs(models.Model):
 
 class Signup(models.Model):
     SEMINAR_CHOICES = (
-        (u'', u'不參加說明會'),
-        (u'noon', u'(OH)12:10'),
-        (u'night', u'(OH)其餘場'),
-        # (u'company_day', u'專屬企業日'),
+        (u'', u'不參加'),
+        (u'noon_night', u'參加'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='', blank=True)
-    ece = models.BooleanField(u'(ECE)電機', default=False)
-    ece_cn = models.BooleanField(u'(ECE)電控', default=False)
-    ece_cm = models.BooleanField(u'(ECE)電信', default=False)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MaxValueValidator(2)])
+    jobfair_online = models.BooleanField(u'線上就博會', default=False)
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')
     lecture = models.BooleanField(u'就業力講座')
@@ -135,6 +134,7 @@ class Company(Signup):
 class SeminarSlot(models.Model):
     # (value in db,display name)
     SESSIONS = (
+        ("forenoon", "上午場"),
         ("noon", "中午場"),
         ("night1", "晚上場1"),
         ("night2", "晚上場2"),

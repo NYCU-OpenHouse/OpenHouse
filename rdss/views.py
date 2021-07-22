@@ -1,25 +1,19 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core import serializers
 from django.utils import timezone
 import rdss.forms
-from django.forms import modelformset_factory, inlineformset_factory
+from django.forms import inlineformset_factory
 from django import forms
 import company.models
 import rdss.models
-import datetime, json, csv
+import datetime, json
 from datetime import timedelta
 from company.models import Company
-from .forms import EmailPostForm
-from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Sum
 from django.core import urlresolvers
-from django.db.models import Q
 # for logging
 import logging
 
@@ -59,6 +53,7 @@ def Status(request):
         "jobfair_slot": "-",
     }
     seminar_session_display = {
+        "forenoon": "{}~{}".format(configs.session0_start, configs.session0_end),
         "noon": "{}~{}".format(configs.session1_start, configs.session1_end),
         "night1": "{}~{}".format(configs.session2_start, configs.session2_end),
         "night2": "{}~{}".format(configs.session3_start, configs.session3_end),
@@ -94,14 +89,12 @@ def Status(request):
     # Fee display
     fee = 0
     try:
-        if signup_data.seminar == "noon":
-            fee += configs.session1_fee
-        elif signup_data.seminar == "night":
-            fee += configs.session2_fee
-        fee += signup_data.jobfair * configs.jobfair_booth_fee
-        fee += signup_data.ece * 5000
-        fee += signup_data.ece_cn * 5000
-        fee += signup_data.ece_cm * 5000
+        if signup_data.seminar == "noon_night":
+            fee += configs.session_fee
+        if signup_data.jobfair:
+            fee += signup_data.jobfair * configs.jobfair_booth_fee
+        else:
+            fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
     except AttributeError:
         pass
 
@@ -182,6 +175,10 @@ def SignupRdss(request):
 
 @login_required(login_url='/company/login/')
 def SeminarInfo(request):
+    # semantic ui control
+    sidebar_ui = {'seminar_info': "active"}
+    menu_ui = {'rdss': "active"}
+
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -221,6 +218,10 @@ def SeminarInfo(request):
 
 @login_required(login_url='/company/login/')
 def JobfairInfo(request):
+    # semantic ui control
+    sidebar_ui = {'jobfair_info': "active"}
+    menu_ui = {'rdss': "active"}
+
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -289,7 +290,7 @@ def SeminarSelectFormGen(request):
     seminar_days = (seminar_end_date - seminar_start_date).days
     table_start_date = seminar_start_date
     # find the nearest Monday
-    while (table_start_date.weekday() != 0):
+    while table_start_date.weekday() != 0:
         table_start_date -= datetime.timedelta(days=1)
     # make the length to 5 multiples
     table_days = seminar_days + (seminar_days % 7) + 7
@@ -329,13 +330,14 @@ def SeminarSelectControl(request):
             my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
             # session wrong (signup noon but choose night)
             # and noon is not full yet
-            if (my_seminar_session not in slot.session) and \
-                    (rdss.models.SeminarSlot.objects.filter(session__contains=my_seminar_session,
-                                                            company=None).exists()):
-                # 選別人的時段，而且自己的時段還沒滿
-                return_data[index]['valid'] = False
-            else:
-                return_data[index]['valid'] = True
+            # if (my_seminar_session not in slot.session) and \
+            #         (rdss.models.SeminarSlot.objects.filter(session__contains=my_seminar_session,
+            #                                                 company=None).exists()):
+            #     # 選別人的時段，而且自己的時段還沒滿
+            #     return_data[index]['valid'] = False
+            # else:
+            #     return_data[index]['valid'] = True
+            return_data[index]['valid'] = True if len(my_seminar_session) > 0 else False
 
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
@@ -683,7 +685,9 @@ def CollectPoints(request):
     now = datetime.datetime.now()
 
     # Find the suitable session
-    if (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
+    if (now - timedelta(minutes=20)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
+        current_session = 'forenoon'
+    elif (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
         current_session = 'noon'
     elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
         current_session = 'night1'
@@ -802,7 +806,7 @@ def RDSSPublicIndex(request):
     rdss_company = rdss.models.Signup.objects.all()
     rdss_info = rdss.models.RdssInfo.objects.all()
     company_list = [
-        all_company.get(cid=company.cid) for company in rdss_company
+        all_company.get(cid=com.cid) for com in rdss_company
     ]
     company_list.sort(key=lambda item: getattr(item, 'category'))
     return render(request, 'public/rdss_index.html', locals())
@@ -829,6 +833,7 @@ def SeminarPublic(request):
         week_slot_info = []
         for day in range(5):
             today = table_start_date + datetime.timedelta(days=day + week * 7)
+            forenoon_slot = rdss.models.SeminarSlot.objects.filter(date=today, session='forenoon').first()
             noon_slot = rdss.models.SeminarSlot.objects.filter(date=today, session='noon').first()
             night1_slot = rdss.models.SeminarSlot.objects.filter(date=today, session='night1').first()
             night2_slot = rdss.models.SeminarSlot.objects.filter(date=today, session='night2').first()
@@ -836,6 +841,11 @@ def SeminarPublic(request):
             week_slot_info.append(
                 {
                     'date': today,
+                    'forenoon': '' if not forenoon_slot or not forenoon_slot.company else
+                    {
+                        'company': forenoon_slot.company.get_company_name(),
+                        'place_color': forenoon_slot.place.css_color
+                    },
                     'noon': '' if not noon_slot or not noon_slot.company else
                     {
                         'company': noon_slot.company.get_company_name(),

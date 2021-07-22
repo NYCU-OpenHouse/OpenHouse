@@ -29,10 +29,8 @@
         <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
                 <i class="info circle icon" style="color:white"></i>
-                企業說明會
+                線上企業說明會
             </h1>
-            <p>週一至週四舉辦公司說明會，每日舉辦4場；週五開放專屬企業日(企業可進行公司和職缺介紹，另搭配現場面試活動)，當日舉辦一場。</br>
-                交大保留專屬企業日之公司審核權，具較多職缺與完整職缺資訊者優先錄取，意者請與本校就業輔導組聯繫。</p>
 
             <table class="ui celled table">
                 <tr>
@@ -40,49 +38,20 @@
                     <td>{{ configs.seminar_start_date }} ~ {{ configs.seminar_end_date }}</td>
                 </tr>
                 <tr>
-                    <td>活動地點</td>
-                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
-                </tr>
-                <tr>
                     <td>活動內容</td>
-                    <td>透過說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                    <td>活動內容 透過本校線上徵才平台辦理企業說明會，徵才企業可以即時傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
                 </tr>
                 <tr>
                     <td>提供設備</td>
-                    <td>
-                        <ol>
-                            <li>可容納100至200人之國際會議廳</li>
-                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td><p style="color:red">(OH說明會)</p>提供服務</td>
-                    <td>
-                        <ol>
-                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照等事宜，並協助場內活動進行及突發狀況處理。
-                            </li>
-                            <li>提供企業人資至多2份餐點與飲水、2張免費校內停車證。</li>
-                            <li>提供40份餐點給參與同學(費用已含在報名活動費中，企業可加碼付費提供餐點數量)。</li>
-
-                        </ol>
-                    </td>
+                    <td>線上徵才系統平台，非單向傳播，可與學生互動。</td>
                 </tr>
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">選取欲報名(OH)說明會時段</h3>
-                <p>活動費用：中午場： {{ configs.session1_fee }} 元，晚上場 {{ configs.session2_fee }} 元</p>
+                <h3 class="ui header">選取欲報名說明會時段</h3>
+                <p>活動費用： {{ configs.session_fee }} 元</p>
                 {{ form.seminar }}
                 <div class="ui red button seminar_clear">清除</div>
-            </div>
-            <div class="ui segment">
-                <h3 class="ui header">選取欲報名的電機說明會場次</h3>
-                <p style="color:red">備註：欲報名電機說明會必須搭配參加就業博覽會(電機產學聯盟付費會員除外)</p>
-                <p>活動費用：5000 元/場</p>
-                {{ form.ece }} (ECE) 電機<br>
-                {{ form.ece_cn }} (ECE) 電控<br>
-                {{ form.ece_cm }} (ECE) 電信<br>
             </div>
         </div>
 
@@ -91,7 +60,7 @@
         <div class="ui green inverted segment">
             <h1 class="ui header">
                 <i class="student icon"></i>
-                就業博覽會
+                實體就業博覽會
             </h1>
 
             <table class="ui celled table">
@@ -105,37 +74,29 @@
                 </tr>
                 <tr>
                     <td>活動地點</td>
-                    <td>交映樓中庭</td>
+                    <td>本校交映樓中庭或浩然前廣場</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
                     <td>
-                        秋季招募以展示會方式呈現，邀請多家企業廠商到學校設點，展示公司的產品或職務內容，提供研替同學未來就業的參考依據。徵才企業廠商亦可進行一對一面試方式，詢問學生興趣經歷等相關問題，藉此篩選出符合公司文化及經營理念的替代役人選。
+                        邀請多家企業廠商到學校設點，展示公司的產品或職務內容。
                         <p style="color:blue">※若報名廠商未達15家，則以協助借用場地進行面試為宜。</p>
+                    </td>
                 </tr>
                 <tr>
                     <td>提供服務</td>
                     <td>
                         <ol class="ui list">
                             <li>本校工作人員協助報到及處理隨機突發狀況。</li>
-                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供5份；素食餐點請事先告知。</li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td>注意事項</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>場地布置時間：活動當日8:30後開放企業到場布置，貴重器材與物品請企業自行保管，本校不負保管之責。</li>
-                            <li>當天請於8:30~10:00期間向服務台辦理報到</li>
+                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供3份；素食餐點請事先告知。</li>
                         </ol>
                     </td>
                 </tr>
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">報名就博會</h3>
-                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <h3 class="ui header">報名實體就博會</h3>
+                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
                 <div class="ui compact red message">可申請攤位數最高為2</div>
                 <br>
                 <div class="ui labeled input">
@@ -152,15 +113,55 @@
 
         <div class="ui divider"></div>
 
+        <div class="ui teal inverted segment">
+            <h1 class="ui header">
+                <i class="laptop icon"></i>
+                線上就業博覽會
+            </h1>
+
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>
+                        <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>
+                        <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。
+                    </td>
+                </tr>
+                <tr>
+                    <td>提供服務</td>
+                    <td>
+                        線上徵才系統平台，非單向傳播，可與學生互動。
+                    </td>
+                </tr>
+            </table>
+
+            <div class="ui segment">
+                <h3 class="ui header">報名線上就博會</h3>
+                <p>活動費用： {{ configs.jobfair_online_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <div class="ui checkbox">
+                        {{ form.jobfair_online }}
+                        <label style="color:black">{{ form.jobfair_online.label }}</label>
+                    </div>
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
         <div class="ui black inverted segment">
             <h1 class="ui header">
                 <i class="users icon" style="color:white"></i>
-                企業職場導師
+                企業導師諮詢
             </h1>
             <table class="ui celled table">
                 <tr>
                     <td style="width:8em">活動日期</td>
-                    <td>2020 年 10 月</td>
+                    <td>2021 年 10 月 - 11 月</td>
                 </tr>
 
                 <tr>
@@ -180,7 +181,7 @@
                 <tr>
                     <td>活動對象</td>
                     <td>
-                        交大全體學生，以具秋季招募申請資格之學生優先。
+                        陽明交大全體學生，以具秋季招募申請資格之學生優先。
                     </td>
                 </tr>
                 <tr>
