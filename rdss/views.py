@@ -670,6 +670,7 @@ def CompanySurvey(request):
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)
     else:
+        (msg_type, msg_content) = ("green", "問卷填寫完成，感謝您")
         form = rdss.forms.SurveyForm(instance=my_survey)
 
     return render(request, 'company/survey_form.html', locals())

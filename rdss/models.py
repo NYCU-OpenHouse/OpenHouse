@@ -568,7 +568,7 @@ class CompanySurvey(models.Model):
     common_class = models.CharField(u'通識教育', max_length=4, choices=HELPFUL_RATE)
     national_exam = models.CharField(u'國家考試證書', max_length=4, choices=HELPFUL_RATE)
     cert = models.CharField(u'證照', max_length=4, choices=HELPFUL_RATE)
-    work_exp = models.CharField(u'相關工作經驗（打工、習實）', max_length=4, choices=HELPFUL_RATE)
+    work_exp = models.CharField(u'相關工作經驗（打工、實習）', max_length=4, choices=HELPFUL_RATE)
     travel_study = models.CharField(u'遊學（如交換學生）', max_length=4, choices=HELPFUL_RATE)
 
     # ways to recruit
