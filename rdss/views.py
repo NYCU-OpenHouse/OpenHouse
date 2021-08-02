@@ -87,6 +87,7 @@ def Status(request):
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
     # Fee display
+    total_fee = 0
     fee = 0
     try:
         if signup_data.seminar == "noon_night":
@@ -103,7 +104,8 @@ def Status(request):
     sponsorships = rdss.models.Sponsorship.objects.filter(company__cid=request.user.cid)
     for s in sponsorships:
         sponsor_amount += s.item.price
-    fee += sponsor_amount
+    
+    total_fee += fee + sponsor_amount
 
     # Seminar and Jobfair info status
     try:
