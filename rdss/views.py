@@ -104,7 +104,7 @@ def Status(request):
     sponsorships = rdss.models.Sponsorship.objects.filter(company__cid=request.user.cid)
     for s in sponsorships:
         sponsor_amount += s.item.price
-    
+
     total_fee += fee + sponsor_amount
 
     # Seminar and Jobfair info status
