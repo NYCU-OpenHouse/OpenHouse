@@ -521,7 +521,7 @@ class CompanySurvey(models.Model):
     nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=8, choices=SALARY_YEAR)
 
     # ability
-    no_nctu_employee = models.BooleanField(u'目前無交大畢業生在職')
+    no_nctu_employee = models.BooleanField(u'目前無本校畢業生在職')
     professional_skill_rate = models.CharField(u'專業知能', max_length=4, choices=RATING, null=True, blank=True)
     foreign_lang_rate = models.CharField(u'外語能力', max_length=4, choices=RATING, null=True, blank=True)
     document_process_rate = models.CharField(u'文書處理', max_length=4, choices=RATING, null=True, blank=True)
@@ -600,7 +600,7 @@ class CompanySurvey(models.Model):
         (u'30000人以上', u'30000人以上'),
     )
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
-    nctu_employees = models.IntegerField(u'交大校友人數')
+    nctu_employees = models.IntegerField(u'本校校友人數')
     CATEGORYS = (
         (u'半導體', u'半導體'),
         (u'消費電子', u'消費電子'),
