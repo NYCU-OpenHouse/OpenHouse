@@ -81,54 +81,54 @@
                 </div>
             </div>
         </div>
-        <div class="two fields">
-            <div class="field">
-                <label>{{ form.attendees.label }}{{ form.attendees.errors }}</label>
-                <p>至多提供2份人資餐點，如有素食請註明</p>
-                <div class="field">
-                    {{ form.attendees }}
-                </div>
-            </div>
-            <div class="field">
-                <label>{{ form.snack_box.label }}{{ form.snack_box.errors }}</label>
-                <p>基本提供40份餐點給參與同學(費用已含在活動費用中)，企業可加碼付費增加數量</p>
-                <div class="field">
-                    {{ form.snack_box }}
-                </div>
-            </div>
-        </div>
+        {#        <div class="two fields">#}
+        {#            <div class="field">#}
+        {#                <label>{{ form.attendees.label }}{{ form.attendees.errors }}</label>#}
+        {#                <p>至多提供2份人資餐點，如有素食請註明</p>#}
+        {#                <div class="field">#}
+        {#                    {{ form.attendees }}#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            <div class="field">#}
+        {#                <label>{{ form.snack_box.label }}{{ form.snack_box.errors }}</label>#}
+        {#                <p>基本提供40份餐點給參與同學(費用已含在活動費用中)，企業可加碼付費增加數量</p>#}
+        {#                <div class="field">#}
+        {#                    {{ form.snack_box }}#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
         <div class="field">
             <label>{{ form.ps.label }}{{ form.ps.errors }}</label>
             <div class="field">
                 {{ form.ps }}
             </div>
         </div>
-        <h3 class="ui dividing header">入校之汽車車號</h3>
-        <div class="field">
-            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>
-            <p>說明(2)：每間企業至多提供2部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
-            <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
-            {{ formset.management_form }}
-            {% for f in formset %}
-                {{ f.id }}
-                {{ f.info }}
-                <label>
-                    {{ f.license_plate_number.label }}{{ forloop.counter }}{{ f.license_plate_number.errors }}</label>
-                <div class="fields">
-                    <div class="fourteen wide field">
-                        {{ f.license_plate_number }}
-                    </div>
-                    {% if formset.can_delete %}
-                        <div class="two wide field">
-                            <div class="ui checkbox">
-                                {{ f.DELETE }}
-                                <label>刪除</label>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
+        {#        <h3 class="ui dividing header">入校之汽車車號</h3>#}
+        {#        <div class="field">#}
+        {#            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>#}
+        {#            <p>說明(2)：每間企業至多提供2部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>#}
+        {#            <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>#}
+        {#            {{ formset.management_form }}#}
+        {#            {% for f in formset %}#}
+        {#                {{ f.id }}#}
+        {#                {{ f.info }}#}
+        {#                <label>#}
+        {#                    {{ f.license_plate_number.label }}{{ forloop.counter }}{{ f.license_plate_number.errors }}</label>#}
+        {#                <div class="fields">#}
+        {#                    <div class="fourteen wide field">#}
+        {#                        {{ f.license_plate_number }}#}
+        {#                    </div>#}
+        {#                    {% if formset.can_delete %}#}
+        {#                        <div class="two wide field">#}
+        {#                            <div class="ui checkbox">#}
+        {#                                {{ f.DELETE }}#}
+        {#                                <label>刪除</label>#}
+        {#                            </div>#}
+        {#                        </div>#}
+        {#                    {% endif %}#}
+        {#                </div>#}
+        {#            {% endfor %}#}
+        {#        </div>#}
         <h3 class="ui dividing header">抽獎獎品</h3>
         <div class="fields">
             <div class="ten wide field">
