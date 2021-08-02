@@ -103,6 +103,7 @@ def Status(request):
     sponsorships = rdss.models.Sponsorship.objects.filter(company__cid=request.user.cid)
     for s in sponsorships:
         sponsor_amount += s.item.price
+    fee += sponsor_amount
 
     # Seminar and Jobfair info status
     try:
@@ -234,7 +235,7 @@ def JobfairInfo(request):
     except ObjectDoesNotExist:
         jobfair_info = None
 
-    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=5, extra=5,
+    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=3, extra=3,
                                              fields=('id', 'license_plate_number', 'info'),
                                              widgets={'license_plate_number': forms.TextInput(
                                                  attrs={'placeholder': '例AA-1234、4321-BB'})})
