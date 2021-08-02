@@ -173,7 +173,7 @@ class SeminarParkingAdmin(admin.ModelAdmin):
 class JobfairParkingInline(admin.StackedInline):
     model = models.JobfairParking
     extra = 1
-    max_num = 5
+    max_num = 3
 
 
 @admin.register(models.JobfairInfo)
