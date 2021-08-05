@@ -412,10 +412,20 @@ class CompanySurvey(models.Model):
     manage_phd = models.IntegerField(u'管理學院-博士人數', default=0)
     manage_satisfaction = models.CharField(u'管理學院 - 平均滿意度', max_length=2, choices=RATING,
                                            null=True, blank=True)
-    bio_bachelor = models.IntegerField(u'生科學院-大學人數', default=0)
-    bio_master = models.IntegerField(u'生科學院-碩士人數', default=0)
-    bio_phd = models.IntegerField(u'生科學院-博士人數', default=0)
-    bio_satisfaction = models.CharField(u'生科學院 - 平均滿意度', max_length=2, choices=RATING,
+    ls_bachelor = models.IntegerField(u'生命科學院-大學人數', default=0)
+    ls_master = models.IntegerField(u'生命科學院-碩士人數', default=0)
+    ls_phd = models.IntegerField(u'生命科學院-博士人數', default=0)
+    ls_satisfaction = models.CharField(u'生命科學院 - 平均滿意度', max_length=2, choices=RATING,
+                                       null=True, blank=True)
+    bio_bachelor = models.IntegerField(u'生物科技學院-大學人數', default=0)
+    bio_master = models.IntegerField(u'生物科技學院-碩士人數', default=0)
+    bio_phd = models.IntegerField(u'生物科技學院-博士人數', default=0)
+    bio_satisfaction = models.CharField(u'生物科技學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    bse_bachelor = models.IntegerField(u'生物醫學暨工程學院-大學人數', default=0)
+    bse_master = models.IntegerField(u'生物醫學暨工程學院-碩士人數', default=0)
+    bse_phd = models.IntegerField(u'生物醫學暨工程學院-博士人數', default=0)
+    bse_satisfaction = models.CharField(u'生物醫學暨工程學院 - 平均滿意度', max_length=2, choices=RATING,
                                         null=True, blank=True)
     sci_bachelor = models.IntegerField(u'理學院-大學人數', default=0)
     sci_master = models.IntegerField(u'理學院-碩士人數', default=0)
@@ -427,16 +437,66 @@ class CompanySurvey(models.Model):
     eng_phd = models.IntegerField(u'工學院-博士人數', default=0)
     eng_satisfaction = models.CharField(u'工學院 - 平均滿意度', max_length=2, choices=RATING,
                                         null=True, blank=True)
-    hs_bachelor = models.IntegerField(u'人社學院-大學人數', default=0)
-    hs_master = models.IntegerField(u'人社學院-碩士人數', default=0)
-    hs_phd = models.IntegerField(u'人社學院-博士人數', default=0)
-    hs_satisfaction = models.CharField(u'人社學院 - 平均滿意度', max_length=2, choices=RATING,
+    hs_bachelor = models.IntegerField(u'人文社會學院-大學人數', default=0)
+    hs_master = models.IntegerField(u'人文社會學院-碩士人數', default=0)
+    hs_phd = models.IntegerField(u'人文社會學院-博士人數', default=0)
+    hs_satisfaction = models.CharField(u'人文社會學院 - 平均滿意度', max_length=2, choices=RATING,
                                        null=True, blank=True)
+    hss_bachelor = models.IntegerField(u'人文與社會科學院-大學人數', default=0)
+    hss_master = models.IntegerField(u'人文與社會科學院-碩士人數', default=0)
+    hss_phd = models.IntegerField(u'人文與社會科學院-博士人數', default=0)
+    hss_satisfaction = models.CharField(u'人文與社會科學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
     haka_bachelor = models.IntegerField(u'客家學院-大學人數', default=0)
     haka_master = models.IntegerField(u'客家學院-碩士人數', default=0)
     haka_phd = models.IntegerField(u'客家學院-博士人數', default=0)
     haka_satisfaction = models.CharField(u'客家學院 - 平均滿意度', max_length=2, choices=RATING,
                                          null=True, blank=True)
+    den_bachelor = models.IntegerField(u'牙醫學院-大學人數', default=0)
+    den_master = models.IntegerField(u'牙醫學院-碩士人數', default=0)
+    den_phd = models.IntegerField(u'牙醫學院-博士人數', default=0)
+    den_satisfaction = models.CharField(u'牙醫學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    pho_bachelor = models.IntegerField(u'光電學院-大學人數', default=0)
+    pho_master = models.IntegerField(u'光電學院-碩士人數', default=0)
+    pho_phd = models.IntegerField(u'光電學院-博士人數', default=0)
+    pho_satisfaction = models.CharField(u'光電學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    law_bachelor = models.IntegerField(u'科技法律學院-大學人數', default=0)
+    law_master = models.IntegerField(u'科技法律學院-碩士人數', default=0)
+    law_phd = models.IntegerField(u'科技法律學院-博士人數', default=0)
+    law_satisfaction = models.CharField(u'科技法律學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    fse_bachelor = models.IntegerField(u'前瞻系統工程教育院-大學人數', default=0)
+    fse_master = models.IntegerField(u'前瞻系統工程教育院-碩士人數', default=0)
+    fse_phd = models.IntegerField(u'前瞻系統工程教育院-博士人數', default=0)
+    fse_satisfaction = models.CharField(u'前瞻系統工程教育院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    icst_bachelor = models.IntegerField(u'國際半導體學院-大學人數', default=0)
+    icst_master = models.IntegerField(u'國際半導體學院-碩士人數', default=0)
+    icst_phd = models.IntegerField(u'國際半導體學院-博士人數', default=0)
+    icst_satisfaction = models.CharField(u'國際半導體學院 - 平均滿意度', max_length=2, choices=RATING,
+                                         null=True, blank=True)
+    ai_bachelor = models.IntegerField(u'智慧科技暨綠能學院-大學人數', default=0)
+    ai_master = models.IntegerField(u'智慧科技暨綠能學院-碩士人數', default=0)
+    ai_phd = models.IntegerField(u'智慧科技暨綠能學院-博士人數', default=0)
+    ai_satisfaction = models.CharField(u'智慧科技暨綠能學院 - 平均滿意度', max_length=2, choices=RATING,
+                                       null=True, blank=True)
+    som_bachelor = models.IntegerField(u'醫學院-大學人數', default=0)
+    som_master = models.IntegerField(u'醫學院-碩士人數', default=0)
+    som_phd = models.IntegerField(u'醫學院-博士人數', default=0)
+    som_satisfaction = models.CharField(u'醫學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
+    ps_bachelor = models.IntegerField(u'藥物科學院-大學人數', default=0)
+    ps_master = models.IntegerField(u'藥物科學院-碩士人數', default=0)
+    ps_phd = models.IntegerField(u'藥物科學院-博士人數', default=0)
+    ps_satisfaction = models.CharField(u'藥物科學院 - 平均滿意度', max_length=2, choices=RATING,
+                                       null=True, blank=True)
+    son_bachelor = models.IntegerField(u'護理學院-大學人數', default=0)
+    son_master = models.IntegerField(u'護理學院-碩士人數', default=0)
+    son_phd = models.IntegerField(u'護理學院-博士人數', default=0)
+    son_satisfaction = models.CharField(u'護理學院 - 平均滿意度', max_length=2, choices=RATING,
+                                        null=True, blank=True)
     overall_satisfaction = models.CharField(u'整體滿意度', max_length=2, choices=RATING, null=True, blank=True)
 
     # salary
