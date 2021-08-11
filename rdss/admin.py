@@ -57,7 +57,7 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Signup)
 class SignupAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'visit', 'lecture', 'payment')
+    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'jobfair_online', 'career_tutor', 'visit', 'lecture', 'payment')
     inlines = (SponsorshipInline,)
 
     def company_name(self, obj):
