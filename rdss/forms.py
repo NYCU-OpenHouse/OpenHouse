@@ -55,7 +55,7 @@ class SeminarInfoCreationForm(forms.ModelForm):
     class Meta:
         model = rdss.models.SeminarInfo
         fields = '__all__'
-        exclude = ['cid']
+        exclude = ['cid', 'attendees', 'snack_box']
 
     def __init__(self, *args, **kwargs):
         super(SeminarInfoCreationForm, self).__init__(*args, **kwargs)

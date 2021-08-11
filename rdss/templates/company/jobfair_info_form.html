@@ -13,20 +13,8 @@
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
-                <ul class="ui ordered list">
-                    {% for field in form %}
-                        {% for e in field.errors %}
-                            <div class="item">{{ e }}</div>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for dict in formset.errors %}
-                        {% for field in dict.values %}
-                            {% for e in field %}
-                                <div class="item">{{ e }}</div>
-                            {% endfor %}
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
+                {{ form.errors }}
+                {{ formset.errors }}
             </div>
         {% elif jobfair_info %}
             <div class="ui teal compact message">
