@@ -299,7 +299,8 @@ def SeminarSelectFormGen(request):
     while table_start_date.weekday() != 0:
         table_start_date -= datetime.timedelta(days=1)
     # make the length to 5 multiples
-    table_days = seminar_days + (seminar_days % 7) + 7
+    # table_days = seminar_days + (seminar_days % 7) + 7
+    table_days = seminar_days + (seminar_days % 7)
     dates_in_week = list()
     for week in range(0, int(table_days / 7)):
         # separate into 5 in each list (there are 5 days in a week)
@@ -833,7 +834,8 @@ def SeminarPublic(request):
     while (table_start_date.weekday() != 0):
         table_start_date -= datetime.timedelta(days=1)
     # make the length to 5 multiples
-    table_days = seminar_days + (seminar_days % 7) + 7
+    # table_days = seminar_days + (seminar_days % 7) + 7
+    table_days = seminar_days + (seminar_days % 7)
     dates_in_week = list()
     for week in range(0, int(table_days / 7)):
         # separate into 5 in each list (there are 5 days in a week)
