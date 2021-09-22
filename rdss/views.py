@@ -893,6 +893,16 @@ def JobfairPublic(request):
     return render(request, 'public/rdss_jobfair.html', locals())
 
 
+def OnlineJobfairPublic(request):
+    # semantic ui control
+    sidebar_ui = {'online_jobfair': "active"}
+
+    place_map = rdss.models.Files.objects.filter(category='線上就博會攤位圖').first()
+    slots = rdss.models.OnlineJobfairSlot.objects.all()
+    rdss_online_jobfair_info = rdss.models.RdssOnlineJobfairInfo.objects.all()
+    return render(request, 'public/rdss_online_jobfair.html', locals())
+
+
 def QueryPoints(request):
     # semantic ui control
     sidebar_ui = {'query_points': "active"}

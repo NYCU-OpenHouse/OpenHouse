@@ -232,6 +232,17 @@ class JobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.RdssOnlineJobfairInfo)
+class OnlineJobfairContentAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+
+    def has_add_permission(self, request):
+        count = rdss.models.RdssOnlineJobfairInfo.objects.all().count()
+        if count == 0:
+            return True
+        return False
+
+
 @admin.register(models.Sponsorship)
 class SponsorshipAdmin(admin.ModelAdmin):
     list_display = ('company_id', 'item_id', 'updated',)
@@ -240,3 +251,4 @@ class SponsorshipAdmin(admin.ModelAdmin):
 # Register your models here.
 # admin.site.register(models.Sponsorship)
 admin.site.register(models.JobfairSlot)
+admin.site.register(models.OnlineJobfairSlot)

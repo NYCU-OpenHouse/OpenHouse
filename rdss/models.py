@@ -324,6 +324,25 @@ class JobfairSlot(models.Model):
         return self.serial_no
 
 
+class OnlineJobfairSlot(models.Model):
+    id = models.AutoField(primary_key=True)
+    serial_no = models.CharField(u'攤位編號', max_length=10)
+    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS)
+    company = models.ForeignKey('Signup', to_field='cid',
+                                verbose_name=u'公司',
+                                limit_choices_to={'jobfair_online': True},
+                                on_delete=models.CASCADE, blank=True, null=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        managed = True
+        verbose_name = u"線上就博會攤位"
+        verbose_name_plural = u"線上就博會攤位"
+
+    def __str__(self):
+        return self.serial_no
+
+
 class JobfairOrder(models.Model):
     id = models.AutoField(primary_key=True)
     time = models.DateTimeField(u'選位開始時間')
@@ -422,6 +441,7 @@ class Files(models.Model):
         ('報名說明書', '報名說明書'),
         ('選位相關', '選位相關'),
         ('就博會攤位圖', '就博會攤位圖'),
+        ('線上就博會攤位圖', '線上就博會攤位圖'),
         ('繳費資訊', '繳費資訊'),
         ('其它', '其它'),
     )
@@ -745,3 +765,17 @@ class RdssJobfairInfo(models.Model):
         managed = True
         verbose_name = u"就博會資訊編輯頁面"
         verbose_name_plural = u"就博會資訊編輯頁面"
+
+
+class RdssOnlineJobfairInfo(models.Model):
+    title = models.CharField(u'標題', default='', max_length=10)
+    content = RichTextField(u'內容', default='', null=True, blank=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    def __str__(self):
+        return "Rdss_online_Jobfair_info"
+
+    class Meta:
+        managed = True
+        verbose_name = u"線上就博會資訊編輯頁面"
+        verbose_name_plural = u"線上就博會資訊編輯頁面"

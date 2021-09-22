@@ -208,6 +208,11 @@ class UserChangeForm(forms.ModelForm):
                 for x in jobfair_slot:
                     x.company = obj
                     x.save()
+            online_jobfair_slot = rdss_model.OnlineJobfairSlot.objects.filter(company__cid=old_cid)
+            if online_jobfair_slot.exists():
+                for x in online_jobfair_slot:
+                    x.company = obj
+                    x.save()
             sponsorship = rdss_model.Sponsorship.objects.filter(company__cid=old_cid)
             if sponsorship.exists():
                 for x in sponsorship:
