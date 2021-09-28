@@ -853,27 +853,27 @@ def SeminarPublic(request):
                     'forenoon': '' if not forenoon_slot or not forenoon_slot.company else
                     {
                         'company': forenoon_slot.company.get_company_name(),
-                        'place_color': forenoon_slot.place.css_color
+                        'place_color': forenoon_slot.place.css_color if forenoon_slot.place else None
                     },
                     'noon': '' if not noon_slot or not noon_slot.company else
                     {
                         'company': noon_slot.company.get_company_name(),
-                        'place_color': noon_slot.place.css_color
+                        'place_color': noon_slot.place.css_color if noon_slot.place else None
                     },
                     'night1': '' if not night1_slot or not night1_slot.company else
                     {
                         'company': night1_slot.company.get_company_name(),
-                        'place_color': night1_slot.place.css_color
+                        'place_color': night1_slot.place.css_color if night1_slot.place else None
                     },
                     'night2': '' if not night2_slot or not night2_slot.company else
                     {
                         'company': night2_slot.company.get_company_name(),
-                        'place_color': night2_slot.place.css_color
+                        'place_color': night2_slot.place.css_color if night2_slot.place else None
                     },
                     'night3': '' if not night3_slot or not night3_slot.company else
                     {
                         'company': night3_slot.company.get_company_name(),
-                        'place_color': night3_slot.place.css_color
+                        'place_color': night3_slot.place.css_color if night3_slot.place else None
                     },
                 }
             )
