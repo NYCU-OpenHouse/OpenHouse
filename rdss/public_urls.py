@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^jobfair$',views.JobfairPublic,name="jobfair_public"),
     url(r'^online_jobfair$',views.OnlineJobfairPublic,name="jobfair_online"),
     url(r'^jobs$',views.ListJobs,name="rdss_jobs"),
-    url(r'^querypts$',views.QueryPoints,name="rdss_querypts"),
+    # url(r'^querypts$',views.QueryPoints,name="rdss_querypts"),
 
 	#export urls are defined in admin.py
 ]
