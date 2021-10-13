@@ -1,0 +1,78 @@
+{% extends 'recruit_public.html' %}
+{% block 'content' %}
+    <title>Open House 校園徵才 - 說明會</title>
+    <h1 class="ui dividing header">Open House 校園徵才 說明會</h1>
+    {% for seminar_info in recruit_seminar_info %}
+        {{ seminar_info.content|safe }}
+    {% endfor %}
+    <h1 class="ui dividing header">場次時間表</h1>
+    <ul>
+        <p> 場地資訊</p>
+        {% for location in locations %}
+            <li style="color:{{ location.css_color }}"> {{ location.place }} </li>
+        {% endfor %}
+    </ul>
+
+    <table class="ui celled table" style="text-align:center">
+        {% for weekday_info in week_info %}
+            <thead>
+            <tr>
+                <th>時間</th>
+                {% for weekday in weekday_info %}
+                    <th> {{ weekday.date.month }}/{{ weekday.date.day }} </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% if seminar_session_display.session_1 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_1 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.other1.place.css_color }}">{{ weekday.other1.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            {% if seminar_session_display.session_2 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_2 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.noon.place.css_color }}">{{ weekday.noon.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            {% if seminar_session_display.session_3 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_3 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.other2.place.css_color }}">{{ weekday.other2.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            {% if seminar_session_display.session_4 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_4 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.other3.place.css_color }}">{{ weekday.other3.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            {% if seminar_session_display.session_5 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_5 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.other4.place.css_color }}">{{ weekday.other4.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            {% if seminar_session_display.session_6 %}
+                <tr>
+                    <td>{{ seminar_session_display.session_6 }}</td>
+                    {% for weekday in weekday_info %}
+                        <td style="color:{{ weekday.other5.place.css_color }}">{{ weekday.other5.company }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock %}

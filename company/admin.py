@@ -115,6 +115,12 @@ class UserChangeForm(forms.ModelForm):
             except recruit_model.SeminarSlot.DoesNotExist:
                 pass
             try:
+                online_seminar_slot = recruit_model.OnlineSeminarSlot.objects.get(company__cid=old_cid)
+                online_seminar_slot.company = obj
+                online_seminar_slot.save()
+            except recruit_model.OnlineSeminarSlot.DoesNotExist:
+                pass
+            try:
                 seminar_info_temp = recruit_model.SeminarInfoTemporary.objects.get(company__cid=old_cid)
                 seminar_info_temp.company = obj
                 seminar_info_temp.save()
@@ -141,6 +147,11 @@ class UserChangeForm(forms.ModelForm):
             jobfair_slot = recruit_model.JobfairSlot.objects.filter(company__cid=old_cid)
             if jobfair_slot.exists():
                 for x in jobfair_slot:
+                    x.company = obj
+                    x.save()
+            online_jobfair_slot = recruit_model.OnlineJobfairSlot.objects.filter(company__cid=old_cid)
+            if online_jobfair_slot.exists():
+                for x in online_jobfair_slot:
                     x.company = obj
                     x.save()
             sponsorship = recruit_model.SponsorShip.objects.filter(company__cid=old_cid)

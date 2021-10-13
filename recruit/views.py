@@ -1057,6 +1057,10 @@ def seminar_temporary(request):
     return render(request, 'recruit/public/seminar_temporary.html', locals())
 
 
+def online_seminar(request):
+    return render(request, 'recruit/public/recruit_seminar_online.html', locals())
+
+
 def jobfair(request):
     # semantic ui control
     sidebar_ui = {'jobfair': "active"}
@@ -1090,6 +1094,10 @@ def jobfair_online(request, company_cid):
         return render(request, 'recruit/public/jobfair_online.html', locals())
     except:
         return redirect('jobfair')
+
+
+def online_jobfair(request):
+    return render(request, 'recruit/public/recruit_jobfair_online.html', locals())
 
 
 def query_points(request):

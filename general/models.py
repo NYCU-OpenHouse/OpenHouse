@@ -55,7 +55,9 @@ class PhotoSlide(models.Model):
 
 class NavbarConfigs(models.Model):
     show_jobfair = models.BooleanField(u'顯示校園徵才就博會連結')
+    show_recruit_online_jobfair = models.BooleanField(u'顯示校園徵才線上就博會連結', default=False)
     show_seminar = models.BooleanField(u'顯示校園徵才說明會連結')
+    show_recruit_online_seminar = models.BooleanField(u'顯示校園徵才線上說明會連結', default=False)
     show_rdss_jobfair = models.BooleanField(u'顯示秋季徵才就博會連結')
     show_rdss_online_jobfair = models.BooleanField(u'顯示秋季徵才線上就博會連結', default=False)
     show_rdss_seminar = models.BooleanField(u'顯示秋季徵才說明會連結')

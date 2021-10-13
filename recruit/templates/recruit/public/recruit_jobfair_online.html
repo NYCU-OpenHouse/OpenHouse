@@ -1,0 +1,130 @@
+{% extends 'recruit_public.html' %}
+{% load staticfiles %}
+{% block 'content' %}
+    <title>Open House 校園徵才 - 就博會</title>
+    <h1 class="ui dividing header">Open House 校園徵才 就業博覽會</h1>
+    {% for jobfair_info in recruit_jobfair_info %}
+        {{ jobfair_info.content|safe }}
+    {% endfor %}
+
+    <h1 class="ui dividing header">就博會攤位圖</h1>
+    {% for place_map in place_maps %}
+        <h3 class="ui dividing header">{{ place_map.title }}</h3>
+        <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就博會攤位圖">
+    {% endfor %}
+
+
+    <div class="ui segment">
+        <h3 class="ui dividing header">資訊軟體</h3>
+        <div class="ui six column padded grid">
+            {% for info_slot in info_slots %}
+                {% if info_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui blue center aligned segment'>
+                            <p>攤位{{ info_slot.serial_no }}: {{ info_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">消費電子</h3>
+        <div class="ui six column padded grid">
+            {% for elc_slot in elc_slots %}
+                {% if elc_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui yellow center aligned segment'>
+                            <p>攤位{{ elc_slot.serial_no }}: {{ elc_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">半導體</h3>
+        <div class="ui six column padded grid">
+            {% for semi_slot in semi_slots %}
+                {% if semi_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui pink center aligned segment'>
+                            <p>攤位{{ semi_slot.serial_no }}: {{ semi_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">光電光學</h3>
+        <div class="ui six column padded grid">
+            {% for photo_slot in photo_slots %}
+                {% if photo_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui grey center aligned segment'>
+                            <p>攤位{{ photo_slot.serial_no }}: {{ photo_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="ui segment">
+        <h3 class="ui dividing header">網路通訊</h3>
+        <div class="ui six column padded grid">
+            {% for network_slot in network_slots %}
+                {% if network_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui teal center aligned segment'>
+                            <p>攤位{{ network_slot.serial_no }}: {{ network_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">綜合(綜合、集團、機構、人力銀行)</h3>
+        <div class="ui six column padded grid">
+            {% for synthesis_slot in synthesis_slots %}
+                {% if synthesis_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui purple center aligned segment'>
+                            <p>攤位{{ synthesis_slot.serial_no }}: {{ synthesis_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">新創</h3>
+        <div class="ui six column padded grid">
+            {% for startup_slot in startup_slots %}
+                {% if startup_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui purple center aligned segment'>
+                            <p>攤位{{ startup_slot.serial_no }}: {{ startup_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">主辦保留</h3>
+        <div class="ui six column padded grid">
+            {% for reserved_slot in reserved_slots %}
+                {% if reserved_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui olive center aligned segment'>
+                            <p>攤位{{ reserved_slot.serial_no }}: {{ reserved_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

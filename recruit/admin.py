@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
-    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking
+    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -68,6 +68,12 @@ class RecruitSignupAdmin(admin.ModelAdmin):
 
 @admin.register(SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
+    list_display = ('date', 'session', 'company', 'place')
+    raw_id_fields = ("company",)
+
+
+@admin.register(OnlineSeminarSlot)
+class OnlineSeminarSlotAdmin(admin.ModelAdmin):
     list_display = ('date', 'session', 'company', 'place')
     raw_id_fields = ("company",)
 
@@ -167,6 +173,11 @@ class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'category', 'company', 'updated')
 
 
+@admin.register(OnlineJobfairSlot)
+class OnlineJobfairSlotAdmin(admin.ModelAdmin):
+    list_display = ('serial_no', 'category', 'company', 'updated')
+
+
 class JobfairParkingInline(admin.StackedInline):
     model = models.JobfairParking
     extra = 1
@@ -256,12 +267,34 @@ class RecruitJobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.RecruitOnlineJobfairInfo)
+class RecruitOnlineJobfairContentAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+
+    def has_add_permission(self, request):
+        count = models.RecruitOnlineJobfairInfo.objects.all().count()
+        if count == 0:
+            return True
+        return False
+
+
 @admin.register(models.RecruitSeminarInfo)
 class RecruitSeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)
 
     def has_add_permission(self, request):
         count = models.RecruitSeminarInfo.objects.all().count()
+        if count == 0:
+            return True
+        return False
+
+
+@admin.register(models.RecruitOnlineSeminarInfo)
+class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+
+    def has_add_permission(self, request):
+        count = models.RecruitOnlineSeminarInfo.objects.all().count()
         if count == 0:
             return True
         return False
