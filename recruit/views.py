@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
     SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm
 from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
-from .models import RecruitSignup, SponsorShip, CompanySurvey
+from .models import RecruitSignup, SponsorShip, CompanySurvey, RecruitOnlineSeminarInfo, RecruitOnlineJobfairInfo
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
@@ -953,45 +953,64 @@ def seminar(request):
     recruit_config = RecruitConfigs.objects.all()[0]
     start_date = recruit_config.seminar_start_date
     end_date = recruit_config.seminar_end_date
-    week_num = range(end_date.isocalendar()[1] - start_date.isocalendar()[1] + 1)
-    week_info = []
-
-    # Get all session with valid time
-    seminar_session_display = dict()
-    for idx in range(1, 7):
-        field_value = getattr(recruit_config, 'session_{}_start'.format(idx))
-        if field_value:
-            if datetime.time(6, 0, 0) < field_value < datetime.time(21, 0, 0):
-                start = getattr(recruit_config, 'session_{}_start'.format(idx))
-                end = getattr(recruit_config, 'session_{}_end'.format(idx))
-                seminar_session_display['session_{}'.format(idx)] = "{:d}:{:02d}~{:d}:{:02d}".format(start.hour,
-                                                                                                     start.minute,
-                                                                                                     end.hour,
-                                                                                                     end.minute)
-
-    for week in week_num:
-        weekday_info = []
-        for weekday in range(5):
-            today = start_date + timedelta(days=week * 7 + weekday - start_date.isocalendar()[2] + 1)
+    recruit_seminar_info = recruit.models.RecruitOnlineSeminarInfo.objects.all()
+    seminar_days = (end_date - start_date).days
+    table_start_date = start_date
+    # find the nearest Monday
+    while (table_start_date.weekday() != 0):
+        table_start_date -= datetime.timedelta(days=1)
+    # make the length to 5 multiples
+    # table_days = seminar_days + (seminar_days % 7) + 7
+    table_days = seminar_days + (seminar_days % 7)
+    dates_in_week = list()
+    for week in range(0, int(table_days / 7)):
+        # separate into 5 in each list (there are 5 days in a week)
+        week_slot_info = []
+        for day in range(5):
+            today = table_start_date + datetime.timedelta(days=day + week * 7)
             other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
             noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
             other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
             other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
             other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
             other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
-            slot_info = {
-                'date': today,
-                'other1': other1,
-                'noon': noon2,
-                'other2': other2,
-                'other3': other3,
-                'other4': other4,
-                'other5': other5,
-            }
-            weekday_info.append(slot_info)
-        week_info.append(weekday_info)
+            week_slot_info.append(
+                {
+                    'date': today,
+                    'other1': '' if not other1 or not other1.company else
+                    {
+                        'company': other1.company.get_company_name(),
+                        'place_color': other1.place.css_color if other1.place else None
+                    },
+                    'noon2': '' if not noon2 or not noon2.company else
+                    {
+                        'company': noon2.company.get_company_name(),
+                        'place_color': noon2.place.css_color if noon2.place else None
+                    },
+                    'other2': '' if not other2 or not other2.company else
+                    {
+                        'company': other2.company.get_company_name(),
+                        'place_color': other2.place.css_color if other2.place else None
+                    },
+                    'other3': '' if not other3 or not other3.company else
+                    {
+                        'company': other3.company.get_company_name(),
+                        'place_color': other3.place.css_color if other3.place else None
+                    },
+                    'other4': '' if not other4 or not other4.company else
+                    {
+                        'company': other4.company.get_company_name(),
+                        'place_color': other4.place.css_color if other4.place else None
+                    },
+                    'other5': '' if not other5 or not other5.company else
+                    {
+                        'company': other5.company.get_company_name(),
+                        'place_color': other5.place.css_color if other5.place else None
+                    },
+                }
+            )
+        dates_in_week.append(week_slot_info)
     locations = SlotColor.objects.all()
-    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
     return render(request, 'recruit/public/seminar.html', locals())
 
 
@@ -1058,6 +1077,46 @@ def seminar_temporary(request):
 
 
 def online_seminar(request):
+    # semantic ui control
+    sidebar_ui = {'online_seminar': "active"}
+
+    recruit_config = RecruitConfigs.objects.all()[0]
+    start_date = recruit_config.seminar_online_start_date
+    end_date = recruit_config.seminar_online_end_date
+    recruit_seminar_info = recruit.models.RecruitOnlineSeminarInfo.objects.all()
+    seminar_days = (end_date - start_date).days
+    table_start_date = start_date
+    # find the nearest Monday
+    while (table_start_date.weekday() != 0):
+        table_start_date -= datetime.timedelta(days=1)
+    # make the length to 5 multiples
+    # table_days = seminar_days + (seminar_days % 7) + 7
+    table_days = seminar_days + (seminar_days % 7)
+    dates_in_week = list()
+    for week in range(0, int(table_days / 7)):
+        # separate into 5 in each list (there are 5 days in a week)
+        week_slot_info = []
+        for day in range(5):
+            today = table_start_date + datetime.timedelta(days=day + week * 7)
+            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
+            noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
+            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
+            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
+            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
+            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
+            week_slot_info.append(
+                {
+                    'date': today,
+                    'other1': '' if not other1 or not other1.company else other1.company.get_company_name(),
+                    'noon2': '' if not noon2 or not noon2.company else noon2.company.get_company_name(),
+                    'other2': '' if not other2 or not other2.company else other2.company.get_company_name(),
+                    'other3': '' if not other3 or not other3.company else other3.company.get_company_name(),
+                    'other4': '' if not other4 or not other4.company else other4.company.get_company_name(),
+                    'other5': '' if not other5 or not other5.company else other5.company.get_company_name(),
+                }
+            )
+        dates_in_week.append(week_slot_info)
+    locations = SlotColor.objects.all()
     return render(request, 'recruit/public/recruit_seminar_online.html', locals())
 
 
@@ -1097,6 +1156,20 @@ def jobfair_online(request, company_cid):
 
 
 def online_jobfair(request):
+    # semantic ui control
+    sidebar_ui = {'online_jobfair': "active"}
+
+    recruit_jobfair_info = RecruitOnlineJobfairInfo.objects.all()
+    place_maps = Files.objects.filter(category='線上就博會攤位圖')
+    jobfair_slots = JobfairSlot.objects.all().order_by('serial_no')
+    elc_slots = JobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
+    semi_slots = JobfairSlot.objects.filter(category="半導體").order_by('serial_no')
+    photo_slots = JobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
+    info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
+    network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
+    synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
+    startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
+    reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
     return render(request, 'recruit/public/recruit_jobfair_online.html', locals())
 
 

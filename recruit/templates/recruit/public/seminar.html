@@ -13,65 +13,72 @@
         {% endfor %}
     </ul>
 
-    <table class="ui celled table" style="text-align:center">
-        {% for weekday_info in week_info %}
+    <table class="ui celled striped table" style="text-align:center">
+        {% for week in dates_in_week %}
             <thead>
             <tr>
                 <th>時間</th>
-                {% for weekday in weekday_info %}
-                    <th> {{ weekday.date.month }}/{{ weekday.date.day }} </th>
+                {% for day in week %}
+                    <th>{{ day.date|date:"m/d (D)" }}</th>
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
-            {% if seminar_session_display.session_1 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_1 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.other1.place.css_color }}">{{ weekday.other1.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
-            {% if seminar_session_display.session_2 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_2 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.noon.place.css_color }}">{{ weekday.noon.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
-            {% if seminar_session_display.session_3 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_3 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.other2.place.css_color }}">{{ weekday.other2.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
-            {% if seminar_session_display.session_4 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_4 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.other3.place.css_color }}">{{ weekday.other3.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
-            {% if seminar_session_display.session_5 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_5 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.other4.place.css_color }}">{{ weekday.other4.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
-            {% if seminar_session_display.session_6 %}
-                <tr>
-                    <td>{{ seminar_session_display.session_6 }}</td>
-                    {% for weekday in weekday_info %}
-                        <td style="color:{{ weekday.other5.place.css_color }}">{{ weekday.other5.company }}</td>
-                    {% endfor %}
-                </tr>
-            {% endif %}
+
+            <tr>
+                <td>{{ recruit_config.session_1_start }}~{{ recruit_config.session_1_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.other1.place_color }}">
+                        {{ day.other1.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td>{{ recruit_config.session_2_start }}~{{ recruit_config.session_2_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.noon2.place_color }}">
+                        {{ day.noon2.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td>{{ recruit_config.session_3_start }}~{{ recruit_config.session_3_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.other2.place_color }}">
+                        {{ day.other2.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td>{{ recruit_config.session_4_start }}~{{ recruit_config.session_4_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.other3.place_color }}">
+                        {{ day.other3.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td>{{ recruit_config.session_5_start }}~{{ recruit_config.session_5_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.other4.place_color }}">
+                        {{ day.other4.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td>{{ recruit_config.session_6_start }}~{{ recruit_config.session_6_end }}</td>
+                {% for day in week %}
+                    <td style="color:{{ day.other5.place_color }}">
+                        {{ day.other5.company }}
+                    </td>
+                {% endfor %}
+            </tr>
+
             </tbody>
         {% endfor %}
     </table>
