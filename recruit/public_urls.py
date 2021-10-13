@@ -9,6 +9,6 @@ urlpatterns = [
     # url(r'^seminar/$', views.seminar_temporary, name='seminar'),
     # url(r'^jobfair/(?P<company_cid>[0-9].*)/$', views.jobfair_online, name='jobfair_online'),
     url(r'^jobfair/$', views.jobfair, name='jobfair'),
-    url(r'^onlnine_jobfair/$', views.online_jobfair, name='recruit_jobfair_online'),
+    url(r'^online_jobfair/$', views.online_jobfair, name='recruit_jobfair_online'),
     url(r'^querypts/$', views.query_points, name='query_points'),
 ]
