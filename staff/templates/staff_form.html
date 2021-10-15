@@ -2,13 +2,14 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-		<link href={% static "css/staff/staff_form.css" %} rel="stylesheet">
+    <link href={% static "css/staff/staff_form.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
-<form class="ui form" method="POST" action="{% url 'staff_create' %}">
-	{{form.as_p}}
-	{% csrf_token %}
-	<button class="ui teal button" type="submit">Submit</button>
-</form>
+    <title>Open House 校園徵才 - 工作人員註冊</title>
+    <form class="ui form" method="POST" action="{% url 'staff_create' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="ui teal button" type="submit">Submit</button>
+    </form>
 {% endblock %}

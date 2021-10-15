@@ -8,7 +8,7 @@ def StaffCreation(request):
     if request.POST:
         form = staff.forms.StaffCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
+            form.save()
             return render(request, 'success.html')
         else:
             print(form.errors)
