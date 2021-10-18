@@ -81,6 +81,8 @@ class RecruitConfigs(models.Model):
 
     seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
+    seminar_online_btn_start = models.DateField(u'線上說明會按鈕開啟日期', null=True)
+    seminar_online_btn_end = models.DateField(u'線上說明會按鈕關閉日期', null=True)
     jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
     jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
 
@@ -98,7 +100,7 @@ class RecruitSignup(models.Model):
     )
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
     seminar = models.CharField(u'說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
-    seminar_online = models.BooleanField(u'線上說明會', default=False)
+    seminar_online = models.CharField(u'線上說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0)
     jobfair_online = models.BooleanField(u'線上就博會', default=False)
     career_tutor = models.BooleanField(u'企業職場導師')
@@ -242,7 +244,6 @@ class OnlineSeminarSlot(models.Model):
     session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
     company = models.OneToOneField('RecruitSignup', to_field='cid',
                                    verbose_name=u'公司',
-                                   limit_choices_to={'seminar_online': True},
                                    on_delete=models.CASCADE, null=True, blank=True)
     place = models.ForeignKey('SlotColor', null=True, blank=True,
                               verbose_name=u'場地',
@@ -280,7 +281,7 @@ class OnlineSeminarOrder(models.Model):
     time = models.DateTimeField(u'選位開始時間')
     company = models.OneToOneField('RecruitSignup', to_field='cid',
                                    verbose_name=u'公司',
-                                   limit_choices_to={'seminar_online': True},
+                                   limit_choices_to=~Q(seminar_online=''),
                                    on_delete=models.CASCADE, null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
@@ -400,6 +401,36 @@ class SeminarParking(models.Model):
     class Meta:
         verbose_name = u"說明會車牌號碼"
         verbose_name_plural = u"說明會車牌號碼"
+
+
+class OnlineSeminarInfo(models.Model):
+    id = models.AutoField(primary_key=True)
+    company = models.OneToOneField(RecruitSignup, to_field='cid',
+                                   verbose_name=u'公司',
+                                   on_delete=models.CASCADE)
+    topic = models.CharField(u'說明會主題', max_length=30)
+    speaker = models.CharField(u'主講人', max_length=30)
+    speaker_title = models.CharField(u'主講人稱謂', max_length=30)
+    speaker_email = models.EmailField(u'主講人Email', max_length=254)
+    raffle_prize = models.CharField(u'抽獎獎品', max_length=254,
+                                    null=True, blank=True)
+    raffle_prize_amount = models.SmallIntegerField(u'抽獎獎品數量', default=0)
+    qa_prize = models.CharField(u'QA獎獎品', max_length=254, null=True, blank=True)
+    qa_prize_amount = models.SmallIntegerField(u'QA獎獎品數量', default=0)
+    attend_prize = models.CharField(u'參加獎獎品', max_length=254,
+                                    null=True, blank=True)
+    attend_prize_amount = models.SmallIntegerField(u'參加獎獎品數量', default=0)
+    contact = models.CharField(u'聯絡人', max_length=30)
+    contact_mobile = models.CharField(u'聯絡人手機', max_length=16)
+    contact_email = models.EmailField(u'聯絡人Email', max_length=254)
+    job_number = models.SmallIntegerField(u'職缺人數', default=0)
+    ps = models.TextField(u'其它需求', null=True, blank=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        managed = True
+        verbose_name = u"線上說明會資訊"
+        verbose_name_plural = u"線上說明會資訊"
 
 
 class SeminarInfoTemporary(models.Model):

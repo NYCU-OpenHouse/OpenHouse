@@ -4,7 +4,7 @@ from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot, \
-    OnlineSeminarOrder
+    OnlineSeminarOrder, OnlineSeminarInfo
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -100,6 +100,12 @@ class SeminarParkingInline(admin.StackedInline):
 @admin.register(SeminarInfo)
 class SeminarInfoAdmin(admin.ModelAdmin):
     inlines = [SeminarParkingInline]
+    list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
+                    'contact_email', 'contact_mobile', 'updated')
+
+
+@admin.register(OnlineSeminarInfo)
+class OnlineSeminarInfoAdmin(admin.ModelAdmin):
     list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
                     'contact_email', 'contact_mobile', 'updated')
 
