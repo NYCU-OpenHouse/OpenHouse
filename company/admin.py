@@ -109,6 +109,12 @@ class UserChangeForm(forms.ModelForm):
             except recruit_model.SeminarOrder.DoesNotExist:
                 pass
             try:
+                online_seminar_order = recruit_model.OnlineSeminarOrder.objects.get(company__cid=old_cid)
+                online_seminar_order.company = obj
+                online_seminar_order.save()
+            except recruit_model.OnlineSeminarOrder.DoesNotExist:
+                pass
+            try:
                 seminar_slot = recruit_model.SeminarSlot.objects.get(company__cid=old_cid)
                 seminar_slot.company = obj
                 seminar_slot.save()

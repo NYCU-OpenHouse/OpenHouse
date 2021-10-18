@@ -3,7 +3,8 @@ from django.conf.urls import url
 from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, Company, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
-    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot
+    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot, \
+    OnlineSeminarOrder
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -80,6 +81,12 @@ class OnlineSeminarSlotAdmin(admin.ModelAdmin):
 
 @admin.register(SeminarOrder)
 class SeminarOrderAdmin(admin.ModelAdmin):
+    list_display = ("company", "time", "updated")
+    raw_id_fields = ("company",)
+
+
+@admin.register(OnlineSeminarOrder)
+class OnlineSeminarOrderAdmin(admin.ModelAdmin):
     list_display = ("company", "time", "updated")
     raw_id_fields = ("company",)
 

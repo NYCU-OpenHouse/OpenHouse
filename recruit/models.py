@@ -275,6 +275,21 @@ class SeminarOrder(models.Model):
         verbose_name_plural = u"說明會選位順序"
 
 
+class OnlineSeminarOrder(models.Model):
+    id = models.AutoField(primary_key=True)
+    time = models.DateTimeField(u'選位開始時間')
+    company = models.OneToOneField('RecruitSignup', to_field='cid',
+                                   verbose_name=u'公司',
+                                   limit_choices_to={'seminar_online': True},
+                                   on_delete=models.CASCADE, null=True, blank=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        managed = True
+        verbose_name = u"線上說明會選位順序"
+        verbose_name_plural = u"線上說明會選位順序"
+
+
 class JobfairOrder(models.Model):
     id = models.AutoField(primary_key=True)
     time = models.DateTimeField(u'選位開始時間')
