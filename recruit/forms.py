@@ -17,6 +17,9 @@ class RecruitSignupForm(ModelForm):
         self.fields['seminar'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['seminar_online'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
 
     class Meta:
         model = RecruitSignup

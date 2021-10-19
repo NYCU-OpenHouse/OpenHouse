@@ -64,6 +64,10 @@ def recruit_company_index(request):
 
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
+    # semantic ui control
+    sidebar_ui = {'signup': "active"}
+    menu_ui = {'recruit': "active"}
+
     configs = RecruitConfigs.objects.all()[0]
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
@@ -71,11 +75,9 @@ def recruit_signup(request):
                 timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
                 timezone.localtime(configs.recruit_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
             return render(request, 'recruit/error.html', locals())
-    signup_info_exist = False
     recruit_configs = RecruitConfigs.objects.all()[0]
     try:
         signup_info = RecruitSignup.objects.get(cid=request.user.cid)
-        signup_info_exist = True
     except ObjectDoesNotExist:
         signup_info = None
 
@@ -90,10 +92,6 @@ def recruit_signup(request):
 
     else:
         form = RecruitSignupForm(instance=signup_info)
-
-    # semantic ui control
-    sidebar_ui = {'signup': "active"}
-    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/signup.html', locals())
 
 

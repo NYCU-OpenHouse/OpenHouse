@@ -12,7 +12,7 @@
 
         <h1 class="ui dividing header">Open House 校園徵才 - 活動報名</h1>
 
-        {% if signup_info_exist %}
+        {% if signup_info %}
             <div class="ui compact teal message">
                 報名已完成，您也可以修改報名資料，再次送出。
             </div>
@@ -69,9 +69,9 @@
                     <td>提供服務</td>
                     <td>
                         <ol class="ui list">
-                            <li> 每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
+                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
                             <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>
-                            <li> 提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
+                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
                         </ol>
                     </td>
                 </tr>
@@ -79,8 +79,39 @@
 
             <div class="ui segment">
                 <h3 class="ui header">選取欲報名說明會時間</h3>
-                <p>活動費用：12:10場：{{ recruit_configs.session_2_fee }}，其餘場 {{ recruit_configs.session_4_fee }} 元</p>
+                <p>活動費用： {{ recruit_configs.session_fee }} 元</p>
                 {{ form.seminar }}
+                <div class="ui red button seminar_clear">清除</div>
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="ui violet inverted segment">
+            <h1 class="ui inverted header">
+                <i class="desktop icon" style="color:white"></i>
+                線上企業說明會
+            </h1>
+
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>{{ configs.seminar_online_start_date }} ~ {{ configs.seminar_online_end_date }}</td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>活動內容 透過本校線上徵才平台辦理企業說明會，徵才企業可以即時傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                </tr>
+                <tr>
+                    <td>提供設備</td>
+                    <td>線上徵才系統平台，非單向傳播，可與學生互動。</td>
+                </tr>
+            </table>
+
+            <div class="ui segment">
+                <h3 class="ui header">選取欲報名線上說明會時段</h3>
+                <p>活動費用： {{ configs.session_online_fee }} 元</p>
+                {{ form.seminar_online }}
                 <div class="ui red button seminar_clear">清除</div>
             </div>
         </div>
@@ -126,7 +157,7 @@
             </table>
             <div class="ui segment">
                 <h3 class="ui header">報名就博會</h3>
-                <p>活動費用：攤位每單位 {{ recruit_configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
                 <div class="ui labeled input">
                     <div class="ui label">
                         就博會攤位數量
@@ -138,6 +169,46 @@
                   每家廠商至多報名4個攤位，超過4攤以4攤計
                 </div>
                 -->
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="ui teal inverted segment">
+            <h1 class="ui header">
+                <i class="laptop icon"></i>
+                線上就業博覽會
+            </h1>
+
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:8em">活動日期</td>
+                    <td>
+                        <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>
+                        <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。
+                    </td>
+                </tr>
+                <tr>
+                    <td>提供服務</td>
+                    <td>
+                        線上徵才系統平台，非單向傳播，可與學生互動。
+                    </td>
+                </tr>
+            </table>
+
+            <div class="ui segment">
+                <h3 class="ui header">報名線上就博會</h3>
+                <p>活動費用： {{ configs.jobfair_online_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <div class="ui checkbox">
+                    {{ form.jobfair_online }}
+                    <label style="color:black">{{ form.jobfair_online.label }}</label>
+                </div>
             </div>
         </div>
 

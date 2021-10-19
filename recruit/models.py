@@ -75,6 +75,8 @@ class RecruitConfigs(models.Model):
     jobfair_place = models.CharField(u'就博會地點', max_length=150, default="")
     jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
     jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
+    jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
+    jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
     # 費用
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
     jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
