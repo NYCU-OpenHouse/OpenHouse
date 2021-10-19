@@ -149,14 +149,44 @@ def export_seminar_info(request):
 
     for i, info in enumerate(company_list):
         for j, field in enumerate(fields):
-            if (field.name != 'company' and field.name != 'updated'):
+            if field.name != 'company' and field.name != 'updated':
                 worksheet.write(i + 1, j, getattr(info, field.name))
-            elif (field.name == 'company'):
+            elif field.name == 'company':
                 cid = getattr(getattr(info, field.name), 'cid')
                 company_name = company.models.Company.objects.get(cid=cid).name
                 worksheet.write(i + 1, j, company_name)
         for index, lic in enumerate(recruit.models.SeminarParking.objects.filter(info=info)[:2]):
             worksheet.write(i + 1, license_start_loc + index, lic.license_plate_number)
+    workbook.close()
+    return response
+
+
+@staff_member_required
+def export_online_seminar_info(request):
+    if request.user and request.user.is_authenticated():
+        if not request.user.is_superuser:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=403)
+    filename = "recruit_online_seminar_info.xlsx"
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+    workbook = xlsxwriter.Workbook(response)
+    worksheet = workbook.add_worksheet("線上說明會資訊")
+
+    fields = recruit.models.OnlineSeminarInfo._meta.get_fields()[1:-1]
+    for index, field in enumerate(fields):
+        worksheet.write(0, index, field.verbose_name)
+    company_list = recruit.models.OnlineSeminarInfo.objects.all()
+
+    for i, info in enumerate(company_list):
+        for j, field in enumerate(fields):
+            if field.name != 'company' and field.name != 'updated':
+                worksheet.write(i + 1, j, getattr(info, field.name))
+            elif field.name == 'company':
+                cid = getattr(getattr(info, field.name), 'cid')
+                company_name = company.models.Company.objects.get(cid=cid).name
+                worksheet.write(i + 1, j, company_name)
     workbook.close()
     return response
 
@@ -184,9 +214,9 @@ def export_jobfair_info(request):
 
     for i, info in enumerate(company_list):
         for j, field in enumerate(fields):
-            if (field.name != 'company' and field.name != 'updated'):
+            if field.name != 'company' and field.name != 'updated':
                 worksheet.write(i + 1, j, getattr(info, field.name))
-            elif (field.name == 'company'):
+            elif field.name == 'company':
                 cid = getattr(getattr(info, field.name), 'cid')
                 company_name = company.models.Company.objects.get(cid=cid).name
                 worksheet.write(i + 1, j, company_name)

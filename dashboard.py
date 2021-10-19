@@ -37,6 +37,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('匯出線上說明會資訊'),
+                    'url': '/admin/recruit/export_online_seminar_info/',
+                    'external': False,
+                },
+                {
                     'title': _('匯出就博會資訊'),
                     'url': '/admin/recruit/export_jobfair_info/',
                     'external': False,
