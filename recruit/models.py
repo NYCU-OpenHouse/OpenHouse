@@ -1,11 +1,11 @@
 from django.db import models
-from company.models import Company
 from django.db.models import Q
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 import datetime
+import company.models
 
 
 def validate_license_plate_number(string):
@@ -90,8 +90,8 @@ class RecruitConfigs(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u'校徵活動設定'
-        verbose_name_plural = u'校徵活動設定'
+        verbose_name = u'1. 校徵活動設定'
+        verbose_name_plural = u'1. 校徵活動設定'
 
 
 class RecruitSignup(models.Model):
@@ -117,23 +117,23 @@ class RecruitSignup(models.Model):
 
     def __str__(self):
         try:
-            company = Company.objects.get(cid=self.cid)
+            com = company.models.Company.objects.get(cid=self.cid)
         except:
             return "資料庫不同步，請連絡資訊組"
-        return company.shortname
+        return com.shortname
 
     def get_company_name(self):
-        com = Company.objects.filter(cid=self.cid).first()
+        com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
 
     def get_company(self):
-        com = Company.objects.filter(cid=self.cid).first()
+        com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com
 
     class Meta:
         managed = True
-        verbose_name = u'活動報名情況'
-        verbose_name_plural = u'活動報名情況'
+        verbose_name = u'2. 活動報名情況'
+        verbose_name_plural = u'2. 活動報名情況'
 
 
 class Files(models.Model):
@@ -471,8 +471,8 @@ class SponsorItem(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u'贊助品'
-        verbose_name_plural = u'贊助品'
+        verbose_name = u'3. 贊助品'
+        verbose_name_plural = u'3. 贊助品'
 
 
 class SponsorShip(models.Model):
@@ -481,8 +481,8 @@ class SponsorShip(models.Model):
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
-        verbose_name = u'贊助情況'
-        verbose_name_plural = u'贊助情況'
+        verbose_name = u'4. 贊助情況'
+        verbose_name_plural = u'4. 贊助情況'
         unique_together = ('company', 'sponsor_item')
 
 
