@@ -2,12 +2,13 @@ from django.core import urlresolvers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
-    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm
+    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm, OnlineSeminarInfoCreationForm
 from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey, RecruitOnlineSeminarInfo, RecruitOnlineJobfairInfo
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
+from .models import OnlineSeminarInfo
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -272,6 +273,10 @@ def seminar_select_control(request):
 
 @login_required(login_url='/company/login/')
 def jobfair_info(request):
+    # semantic ui
+    sidebar_ui = {'jobfair_info': "active"}
+    menu_ui = {'recruit': "active"}
+
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -306,9 +311,6 @@ def jobfair_info(request):
         form = JobfairInfoForm(instance=jobfair_info_object)
         formset = parking_form_set(instance=jobfair_info_object)
 
-    # semantic ui
-    sidebar_ui = {'jobfair_info': "active"}
-    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
 
@@ -347,6 +349,10 @@ def jobfair_info_temp(request):
 
 @login_required(login_url='/company/login/')
 def seminar_info(request):
+    # semantic ui
+    sidebar_ui = {'seminar_info': "active"}
+    menu_ui = {'recruit': "active"}
+
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -379,10 +385,40 @@ def seminar_info(request):
         form = SeminarInfoCreationForm(instance=seminar_info_object)
         formset = parking_form_set(instance=seminar_info_object)
 
-    # semantic ui
-    sidebar_ui = {'seminar_info': "active"}
-    menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/seminar_info_form.html', locals())
+
+
+@login_required(login_url='/company/login/')
+def online_seminar_info(request):
+    # semantic ui
+    sidebar_ui = {'online_seminar_info': "active"}
+    menu_ui = {'recruit': "active"}
+
+    try:
+        company = RecruitSignup.objects.get(cid=request.user.cid)
+    except Exception as e:
+        error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    try:
+        online_seminar_info_object = OnlineSeminarInfo.objects.get(company=company)
+    except ObjectDoesNotExist:
+        online_seminar_info_object = None
+
+    if request.POST:
+        data = request.POST.copy()
+        data['company'] = company.cid
+        form = OnlineSeminarInfoCreationForm(data=data, instance=online_seminar_info_object)
+        if form.is_valid():
+            form.save()
+            # return render(request, 'recruit/company/success.html', locals())
+            return redirect(online_seminar_info)
+        else:
+            print(form.errors)
+    else:
+        form = SeminarInfoCreationForm(instance=online_seminar_info_object)
+
+    return render(request, 'recruit/company/online_seminar_info_form.html', locals())
 
 
 @login_required(login_url='/company/login/')
@@ -823,8 +859,10 @@ def Status(request):
 
     slot_info = {
         "seminar_select_time": "選位時間正在排定中",
+        "online_seminar_select_time": "選位時間正在排定中",
         "jobfair_select_time": "選位時間正在排定中",
         "seminar_slot": "-",
+        "online_seminar_slot": "-",
         "jobfair_slot": "-",
     }
     seminar_session_display = {
@@ -846,32 +884,44 @@ def Status(request):
 
     # 選位時間和數量狀態
     seminar_select_time = recruit.models.SeminarOrder.objects.filter(company=mycid).first()
+    online_seminar_select_time = recruit.models.OnlineSeminarOrder.objects.filter(company=mycid).first()
     jobfair_select_time = recruit.models.JobfairOrder.objects.filter(company=mycid).first()
     seminar_slot = recruit.models.SeminarSlot.objects.filter(company=mycid).first()
+    online_seminar_slot = recruit.models.OnlineSeminarSlot.objects.filter(company=mycid).first()
     jobfair_slot = recruit.models.JobfairSlot.objects.filter(company=mycid)
     if seminar_select_time and not seminar_slot:
         slot_info['seminar_select_time'] = seminar_select_time.time
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
+    if online_seminar_select_time and not online_seminar_slot:
+        slot_info['online_seminar_select_time'] = seminar_select_time.time
+        slot_info['online_seminar_slot'] = "請依時段於左方選單選位"
     if jobfair_select_time and not jobfair_slot:
         slot_info['jobfair_select_time'] = jobfair_select_time.time
         slot_info['jobfair_slot'] = "請依時段於左方選單選位"
     if seminar_slot:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
                                                    seminar_session_display[seminar_slot.session])
+    if online_seminar_slot:
+        slot_info['online_seminar_slot'] = "{} {}".format(online_seminar_slot.date,
+                                                          seminar_session_display[online_seminar_slot.session])
     if jobfair_slot:
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
     # Fee display
     fee = 0
     try:
-        if signup_data.seminar == "noon":
-            fee += configs.session_2_fee
-        elif signup_data.seminar == "other":
-            fee += configs.session_4_fee
-        fee += signup_data.jobfair * configs.jobfair_booth_fee
+        if signup_data.seminar == "noon" or signup_data.seminar == 'other':
+            fee += configs.session_fee
+        if signup_data.seminar_online == "noon" or signup_data.seminar_online == 'other':
+            fee += configs.session_online_fee
+        if signup_data.jobfair:
+            fee += signup_data.jobfair * configs.jobfair_booth_fee
+        else:
+            fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
     except AttributeError:
         # Company has not sign up
         pass
+
     # Sponsor fee display
     sponsor_amount = 0
     sponsorships = recruit.models.SponsorShip.objects.filter(company=request.user.cid)
@@ -886,16 +936,20 @@ def Status(request):
     if signup_data:
         company = RecruitSignup.objects.get(cid=request.user.cid)
         try:
-            # seminar_info = recruit.models.SeminarInfo.objects.get(company=request.user.cid)
-            seminar_info = recruit.models.SeminarInfoTemporary.objects.get(company=request.user.cid)
+            seminar_info = recruit.models.SeminarInfo.objects.get(company=request.user.cid)
         except ObjectDoesNotExist:
             seminar_info = None
+        try:
+            online_seminar_info = recruit.models.OnlineSeminarInfo.objects.get(company=request.user.cid)
+        except ObjectDoesNotExist:
+            online_seminar_info = None
         try:
             jobfair_info = JobfairInfo.objects.get(company=company)
         except ObjectDoesNotExist:
             jobfair_info = None
     else:
         seminar_info = None
+        online_seminar_info = None
         jobfair_info = None
 
     # control semantic ui class
@@ -905,8 +959,8 @@ def Status(request):
     menu_ui = {'recruit': "active"}
 
     step_ui[0] = "completed" if signup_data else "active"
-    step_ui[1] = "completed" if jobfair_slot or seminar_slot else "active"
-    step_ui[2] = "completed" if jobfair_info or seminar_info else "active"
+    step_ui[1] = "completed" if jobfair_slot or seminar_slot or online_seminar_slot else "active"
+    step_ui[2] = "completed" if jobfair_info or seminar_info or online_seminar_info else "active"
 
     return render(request, 'recruit/company/status.html', locals())
 
@@ -953,7 +1007,7 @@ def seminar(request):
     recruit_config = RecruitConfigs.objects.all()[0]
     start_date = recruit_config.seminar_start_date
     end_date = recruit_config.seminar_end_date
-    recruit_seminar_info = recruit.models.RecruitOnlineSeminarInfo.objects.all()
+    recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
     seminar_days = (end_date - start_date).days
     table_start_date = start_date
     # find the nearest Monday

@@ -3,6 +3,7 @@ from .models import (RecruitSignup,
                      JobfairInfo,
                      CompanySurvey,
                      SeminarInfo,
+                     OnlineSeminarInfo,
                      Student,
                      ExchangePrize,
                      SeminarInfoTemporary,
@@ -37,6 +38,25 @@ class SeminarInfoCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         record = super(SeminarInfoCreationForm, self).save(commit=False)
+        if commit:
+            record.save()
+        return record
+
+
+class OnlineSeminarInfoCreationForm(forms.ModelForm):
+    class Meta:
+        model = OnlineSeminarInfo
+        fields = '__all__'
+        exclude = ['cid']
+
+    def __init__(self, *args, **kwargs):
+        super(OnlineSeminarInfoCreationForm, self).__init__(*args, **kwargs)
+        self.fields['contact_mobile'].widget.attrs.update({
+            'placeholder': '格式：0912-345678',
+        })
+
+    def save(self, commit=True):
+        record = super(OnlineSeminarInfoCreationForm, self).save(commit=False)
         if commit:
             record.save()
         return record
