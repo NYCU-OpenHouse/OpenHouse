@@ -127,4 +127,18 @@
             {% endfor %}
         </div>
     </div>
+    <div class="ui segment">
+        <h3 class="ui dividing header">生科醫療</h3>
+        <div class="ui six column padded grid">
+            {% for bio_slot in bio_slots %}
+                {% if bio_slot.company %}
+                    <div class="column" style="padding:0.5rem">
+                        <div class='ui red center aligned segment'>
+                            <p>攤位{{ bio_slot.serial_no }}: {{ bio_slot.company }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

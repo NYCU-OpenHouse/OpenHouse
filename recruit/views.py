@@ -8,7 +8,7 @@ from .models import RecruitSignup, SponsorShip, CompanySurvey, RecruitOnlineSemi
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
-from .models import OnlineSeminarInfo
+from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -106,7 +106,7 @@ def seminar_select_form_gen(request):
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
         if my_signup.seminar == "":
-            error_msg = "貴公司已報名本次活動，但並末勾選參加說明會選項。"
+            error_msg = "貴公司已報名本次活動，但並未勾選參加說明會選項。"
             return render(request, 'recruit/error.html', locals())
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
@@ -263,6 +263,180 @@ def seminar_select_control(request):
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False, "msg": "刪除說明會選位失敗"})
+
+    else:
+        pass
+    raise Http404("What are u looking for?")
+
+
+@login_required(login_url='/company/login/')
+def online_seminar_select_form_gen(request):
+    # semantic ui control
+    sidebar_ui = {'online_seminar_select': "active"}
+    menu_ui = {'recruit': "active"}
+
+    mycid = request.user.cid
+    try:
+        my_signup = RecruitSignup.objects.get(cid=request.user.cid)
+        # check the company have signup online seminar
+        if my_signup.seminar_online == "":
+            error_msg = "貴公司已報名本次活動，但並未勾選參加線上說明會選項。"
+            return render(request, 'recruit/error.html', locals())
+    except Exception as e:
+        error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    # check the company have been assigned a slot select order and time
+    try:
+        seminar_select_time = OnlineSeminarOrder.objects.filter(company=mycid).first().time
+    except Exception as e:
+        seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方線上說明會時間表"
+
+    seminar_session = my_signup.get_seminar_online_display()
+
+    configs = RecruitConfigs.objects.all()[0]
+    seminar_start_date = configs.seminar_online_start_date
+    seminar_end_date = configs.seminar_online_end_date
+    table_start_date = seminar_start_date
+    # find the nearest Monday
+    while (table_start_date.weekday() != 0):
+        table_start_date -= datetime.timedelta(days=1)
+    # make the length to 5 multiples
+    dates_in_week = list()
+    weeks = seminar_end_date.isocalendar()[1] - seminar_start_date.isocalendar()[1] + 1
+    for week in range(0, weeks):
+        # separate into 5 in each list (there are 5 days in a week)
+        dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
+                              for day in range(0, 5)])
+
+    slot_colors = SlotColor.objects.all()
+    session_list = [
+        {"name": "other1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
+        {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
+        {"name": "other2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
+        {"name": "other3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
+        {"name": "other4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
+        {"name": "other5", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+    ]
+    for session in session_list:
+        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
+                datetime.datetime.combine(datetime.date.today(), session["start_time"])
+        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
+            session["valid"] = True
+        else:
+            session["valid"] = False
+    return render(request, 'recruit/company/online_seminar_select.html', locals())
+
+
+@login_required(login_url='/company/login/')
+def online_seminar_select_control(request):
+    if request.method == "POST":
+        post_data = json.loads(request.body.decode())
+        action = post_data.get("action")
+    else:
+        raise Http404("What are u looking for?")
+
+    # action query
+    configs = RecruitConfigs.objects.all()[0]
+    if action == "query":
+        slots = OnlineSeminarSlot.objects.all()
+        return_data = {}
+        for s in slots:
+            # make index first night1_20160707
+            index = "{}_{}".format(s.session, s.date.strftime("%Y%m%d"))
+            # dict for return data
+            return_data[index] = {}
+
+            return_data[index]['place_color'] = None if not s.place else \
+                s.place.css_color
+            return_data[index]["cid"] = "None" if not s.company else \
+                s.company.get_company_name()
+
+            my_seminar_session = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar_online
+
+            # session wrong (signup noon but choose night)
+            # and noon is not full yet
+            if (my_seminar_session not in s.session) and \
+                    (OnlineSeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists()):
+                # 選別人的時段，而且自己的時段還沒滿
+                return_data[index]['valid'] = False
+            else:
+                return_data[index]['valid'] = True
+
+        my_slot = OnlineSeminarSlot.objects.filter(company__cid=request.user.cid).first()
+        if my_slot:
+            return_data['my_slot'] = True
+        else:
+            return_data['my_slot'] = False
+
+        try:
+            my_select_time = OnlineSeminarOrder.objects.filter(company=request.user.cid).first().time
+        except AttributeError:
+            my_select_time = None
+
+        # Open button for 77777777
+        if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
+            select_ctrl = dict()
+            select_ctrl['display'] = True
+            select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
+            select_ctrl['select_btn'] = False
+        else:
+            select_ctrl = dict()
+            select_ctrl['display'] = False
+            select_ctrl['select_btn'] = True
+            today = timezone.now().date()
+            if (
+                    configs.seminar_online_btn_start <= today <= configs.seminar_online_btn_end) or request.user.username == "77777777":
+                select_ctrl['btn_display'] = True
+            else:
+                select_ctrl['btn_display'] = False
+
+        return JsonResponse({"success": True, "data": return_data, "select_ctrl": select_ctrl})
+
+    # action select
+    elif action == "select":
+        mycid = request.user.cid
+        # Open selection for 77777777
+        if request.user.username != '77777777':
+            my_select_time = OnlineSeminarOrder.objects.filter(company=mycid).first().time
+            if not my_select_time or timezone.now() < my_select_time:
+                return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
+
+        slot_session, slot_date_str = post_data.get("slot").split('_')
+        slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
+        try:
+            slot = OnlineSeminarSlot.objects.get(date=slot_date, session=slot_session)
+            my_signup = RecruitSignup.objects.get(cid=request.user.cid)
+        except:
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加線上說明會'})
+
+        if slot.company != None:
+            return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
+
+        if slot and my_signup:
+            # 不在公司時段，且該時段未滿
+            if my_signup.seminar_online not in slot.session and \
+                    OnlineSeminarSlot.objects.filter(session=my_signup.seminar_online, company=None):
+                return JsonResponse({"success": False, "msg": "選位失敗，時段錯誤"})
+
+            slot.company = my_signup
+            slot.save()
+            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加線上說明會'})
+
+    # end of action select
+    elif action == "cancel":
+        my_slot = OnlineSeminarSlot.objects.filter(company__cid=request.user.cid).first()
+        if my_slot:
+            logger.info('{} cancel seminar slot {} {}'.format(
+                my_slot.company.get_company_name(), my_slot.date, my_slot.session))
+            my_slot.company = None
+            my_slot.save()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "msg": "刪除線上說明會選位失敗"})
 
     else:
         pass
@@ -511,6 +685,9 @@ def jobfair_select_control(request):
          "is_mygroup": False, "color": "brown"},
         {"slot_type": "主辦保留", "display": "主辦保留", "category": ["主辦保留"], "slot_list": list(),
          "is_mygroup": False, "color": "olive"},
+
+        {"slot_type": "生科醫療", "display": "生科醫療", "category": ["生科醫療"], "slot_list": list(),
+         "is_mygroup": False, "color": "red"},
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -528,7 +705,7 @@ def jobfair_select_control(request):
     configs = RecruitConfigs.objects.all()[0]
     if action == "query":
         for group in slot_group:
-            slot_list = JobfairSlot.objects.filter(category=group['slot_type'])
+            slot_list = JobfairSlot.objects.filter(category__in=group["category"])
             for slot in slot_list:
                 slot_info = dict()
                 slot_info["serial_no"] = slot.serial_no
@@ -587,7 +764,7 @@ def jobfair_select_control(request):
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
 
         my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
-        if my_slot_group['slot_type'] != slot.category:
+        if slot.category not in my_slot_group['category']:
             return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
 
         slot.company = my_signup
@@ -1150,12 +1327,12 @@ def online_seminar(request):
         week_slot_info = []
         for day in range(5):
             today = table_start_date + datetime.timedelta(days=day + week * 7)
-            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
-            noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
-            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
-            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
-            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
-            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
+            other1 = OnlineSeminarSlot.objects.filter(date=today, session='other1').first()
+            noon2 = OnlineSeminarSlot.objects.filter(date=today, session='noon2').first()
+            other2 = OnlineSeminarSlot.objects.filter(date=today, session='other2').first()
+            other3 = OnlineSeminarSlot.objects.filter(date=today, session='other3').first()
+            other4 = OnlineSeminarSlot.objects.filter(date=today, session='other4').first()
+            other5 = OnlineSeminarSlot.objects.filter(date=today, session='other5').first()
             week_slot_info.append(
                 {
                     'date': today,
@@ -1184,9 +1361,10 @@ def jobfair(request):
     photo_slots = JobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
     info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
     network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
-    synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
+    synthesis_slots = JobfairSlot.objects.filter(category__in=["綜合", "集團", "人力銀行", "機構"]).order_by('serial_no')
     startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
     reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
+    bio_slots = JobfairSlot.objects.filter(category="生科醫療").order_by('serial_no')
     # return render(request, 'recruit/public/jobfair_temp.html', locals())
     return render(request, 'recruit/public/jobfair.html', locals())
 
@@ -1213,15 +1391,16 @@ def online_jobfair(request):
 
     recruit_jobfair_info = RecruitOnlineJobfairInfo.objects.all()
     place_maps = Files.objects.filter(category='線上就博會攤位圖')
-    jobfair_slots = JobfairSlot.objects.all().order_by('serial_no')
-    elc_slots = JobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
-    semi_slots = JobfairSlot.objects.filter(category="半導體").order_by('serial_no')
-    photo_slots = JobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
-    info_slots = JobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
-    network_slots = JobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
-    synthesis_slots = JobfairSlot.objects.filter(category="綜合").order_by('serial_no')
-    startup_slots = JobfairSlot.objects.filter(category="新創").order_by('serial_no')
-    reserved_slots = JobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
+    jobfair_slots = OnlineJobfairSlot.objects.all().order_by('serial_no')
+    elc_slots = OnlineJobfairSlot.objects.filter(category="消費電子").order_by('serial_no')
+    semi_slots = OnlineJobfairSlot.objects.filter(category="半導體").order_by('serial_no')
+    photo_slots = OnlineJobfairSlot.objects.filter(category="光電光學").order_by('serial_no')
+    info_slots = OnlineJobfairSlot.objects.filter(category="資訊軟體").order_by('serial_no')
+    network_slots = OnlineJobfairSlot.objects.filter(category="網路通訊").order_by('serial_no')
+    synthesis_slots = OnlineJobfairSlot.objects.filter(category__in=["綜合", "集團", "人力銀行", "機構"]).order_by('serial_no')
+    startup_slots = OnlineJobfairSlot.objects.filter(category="新創").order_by('serial_no')
+    reserved_slots = OnlineJobfairSlot.objects.filter(category="主辦保留").order_by('serial_no')
+    bio_slots = OnlineJobfairSlot.objects.filter(category="生科醫療").order_by('serial_no')
     return render(request, 'recruit/public/recruit_jobfair_online.html', locals())
 
 
