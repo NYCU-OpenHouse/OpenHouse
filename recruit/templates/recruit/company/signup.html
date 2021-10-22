@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block 'content' %}
-    <form class="ui form" action="." method="post">
+    <form class="ui form" method="POST" action="{% url 'recruit_signup' %}">
         {% csrf_token %}
 
         <h1 class="ui dividing header">Open House 校園徵才 - 活動報名</h1>
@@ -26,16 +26,16 @@
 
         <div class="ui divider"></div>
 
-        <div class="ui blue inverted segment" id="seminar">
+        <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
                 <i class="info circle icon" style="color:white"></i>
-                企業說明會
+                ECE說明會
             </h1>
             <table class="ui celled table">
                 <tr>
                     <td>活動日期</td>
-                    <td>{{ recruit_configs.seminar_start_date|date:"Y年m月d日(D)" }}
-                        ~ {{ recruit_configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
+                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
+                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
                     </td>
 
                 </tr>
@@ -78,10 +78,13 @@
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">選取欲報名說明會時間</h3>
-                <p>活動費用： {{ recruit_configs.session_fee }} 元</p>
-                {{ form.seminar }}
-                <div class="ui red button seminar_clear">清除</div>
+                <h3 class="ui header">報名ECE說明會</h3>
+                <p>活動費用： {{ configs.session_fee }} 元</p>
+                <div class="ui checkbox">
+                    {{ form.ece_seminar }}
+                    <label style="color:black">{{ form.ece_seminar.label }}</label>
+                </div>
+                {#                {{ form.seminar }}#}
             </div>
         </div>
 
@@ -126,15 +129,15 @@
             <table class="ui celled table">
                 <tr>
                     <td style="width:8em">活動日期</td>
-                    <td>{{ recruit_configs.jobfair_date }}</td>
+                    <td>{{ configs.jobfair_date }}</td>
                 </tr>
                 <tr>
                     <td style="width:8em">活動時間</td>
-                    <td>{{ recruit_configs.jobfair_start }} ~ {{ recruit_configs.jobfair_end }}</td>
+                    <td>{{ configs.jobfair_start }} ~ {{ configs.jobfair_end }}</td>
                 </tr>
                 <tr>
                     <td>活動地點</td>
-                    <td>{{ recruit_configs.jobfair_place }}</td>
+                    <td>{{ configs.jobfair_place }}</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
@@ -157,7 +160,7 @@
             </table>
             <div class="ui segment">
                 <h3 class="ui header">報名就博會</h3>
-                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
                 <div class="ui labeled input">
                     <div class="ui label">
                         就博會攤位數量
@@ -204,7 +207,7 @@
 
             <div class="ui segment">
                 <h3 class="ui header">報名線上就博會</h3>
-                <p>活動費用： {{ configs.jobfair_online_fee }} 元，線上+實體就博會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <p>活動費用： {{ configs.jobfair_online_fee }} 元</p>
                 <div class="ui checkbox">
                     {{ form.jobfair_online }}
                     <label style="color:black">{{ form.jobfair_online.label }}</label>

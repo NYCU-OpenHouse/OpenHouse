@@ -1,13 +1,13 @@
 {% extends 'recruit_public.html' %}
 {% block 'content' %}
-    <title>Open House 校園徵才 - 說明會</title>
-    <h1 class="ui dividing header">Open House 校園徵才 說明會</h1>
+    <title>Open House 校園徵才 - ECE說明會</title>
+    <h1 class="ui dividing header">Open House 校園徵才 ECE說明會</h1>
     {% for seminar_info in recruit_seminar_info %}
         {{ seminar_info.content|safe }}
     {% endfor %}
     <h1 class="ui dividing header">場次時間表</h1>
     <ul>
-        <p> 場地資訊</p>
+        <p>場地資訊</p>
         {% for location in locations %}
             <li style="color:{{ location.css_color }}"> {{ location.place }} </li>
         {% endfor %}

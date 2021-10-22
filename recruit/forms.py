@@ -26,6 +26,12 @@ class RecruitSignupForm(ModelForm):
         fields = '__all__'
         exclude = ['payment', 'receipt_no', 'ps', 'cid']
 
+    def save(self, commit=True):
+        record = super(RecruitSignupForm, self).save(commit=False)
+        if commit:
+            record.save()
+        return record
+
 
 class SeminarInfoCreationForm(forms.ModelForm):
     class Meta:

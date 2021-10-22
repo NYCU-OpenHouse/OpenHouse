@@ -49,7 +49,8 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'seminar',)
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'company_visit', 'lecture', 'payment')
+    list_display = ('cid', 'company_name', 'ece_seminar', 'seminar_online', 'jobfair', 'jobfair_online', 'career_tutor',
+                    'company_visit', 'lecture', 'payment')
     list_filter = ('seminar', 'career_tutor', 'company_visit', 'lecture', 'payment',)
     inlines = (SponsorshipInline,)
 

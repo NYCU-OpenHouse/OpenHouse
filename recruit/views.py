@@ -64,6 +64,9 @@ def recruit_company_index(request):
 
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
+    if request.user.is_staff:
+        return redirect("/admin")
+
     # semantic ui control
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
@@ -75,21 +78,22 @@ def recruit_signup(request):
                 timezone.localtime(configs.recruit_signup_start).strftime("%Y/%m/%d %H:%M:%S"),
                 timezone.localtime(configs.recruit_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
             return render(request, 'recruit/error.html', locals())
-    recruit_configs = RecruitConfigs.objects.all()[0]
+
+    plan_file = recruit.models.Files.objects.filter(category="企畫書").first()
+
     try:
         signup_info = RecruitSignup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
         signup_info = None
 
-    if request.method == 'POST':
-        form = RecruitSignupForm(data=request.POST, instance=signup_info)
+    if request.POST:
+        data = request.POST.copy()
+        # Because seminar is not used, we need to manually set value
+        data.update({'seminar': 'none'})
+        form = RecruitSignupForm(data=data, instance=signup_info)
+        form.cid = request.user.cid
         if form.is_valid():
-            new_form = form.save(commit=False)
-            new_form.cid = request.user.cid
-            new_form.save()
-            signup_info_exist = True
-            return render(request, 'recruit/company/signup_success.html', locals())
-
+            form.save()
     else:
         form = RecruitSignupForm(instance=signup_info)
     return render(request, 'recruit/company/signup.html', locals())
@@ -1085,14 +1089,14 @@ def Status(request):
     # Fee display
     fee = 0
     try:
-        if signup_data.seminar == "noon" or signup_data.seminar == 'other':
+        if signup_data.ece_seminar:
             fee += configs.session_fee
         if signup_data.seminar_online == "noon" or signup_data.seminar_online == 'other':
             fee += configs.session_online_fee
         if signup_data.jobfair:
             fee += signup_data.jobfair * configs.jobfair_booth_fee
-        else:
-            fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
+        if signup_data.jobfair_online:
+            fee += configs.jobfair_online_fee
     except AttributeError:
         # Company has not sign up
         pass
