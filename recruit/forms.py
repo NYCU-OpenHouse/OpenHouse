@@ -24,7 +24,7 @@ class RecruitSignupForm(ModelForm):
     class Meta:
         model = RecruitSignup
         fields = '__all__'
-        exclude = ['payment', 'receipt_no', 'ps', 'cid']
+        exclude = ['payment', 'receipt_no', 'ps']
 
     def save(self, commit=True):
         record = super(RecruitSignupForm, self).save(commit=False)
