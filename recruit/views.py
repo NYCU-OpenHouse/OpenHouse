@@ -98,6 +98,7 @@ def recruit_signup(request):
         else:
             # Debug
             print(form.errors.items())
+        return redirect(recruit_signup)
     else:
         form = RecruitSignupForm(instance=signup_info)
     return render(request, 'recruit/company/signup.html', locals())
