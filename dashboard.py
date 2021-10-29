@@ -142,3 +142,58 @@ class CustomDashboard(Dashboard):
             column=2,
             order=1
         ))
+
+
+class CustomAppDashboard(AppIndexDashboard):
+    columns = 2
+
+    def init_with_context(self, context):
+        self.available_children.append(modules.LinkList)
+
+        my_app_name = self.models()[0][:-2]
+        my_app = None
+        for app in context['available_apps']:
+            if app['app_label'] == my_app_name:
+                my_app = app
+                break
+
+        other, physical, online = [], [], []
+        for m in my_app['models']:
+            object_name = m['object_name']
+            lower_object_name = object_name.lower()
+            if 'temp' in lower_object_name:
+                # Hide temporary models
+                continue
+            if 'online' in lower_object_name:
+                online.append(my_app_name + '.' + object_name)
+            elif 'seminar' in lower_object_name or 'jobfair' in lower_object_name:
+                physical.append(my_app_name + '.' + object_name)
+            else:
+                other.append(my_app_name + '.' + object_name)
+
+        self.children.append(modules.ModelList(
+            title=_('其他設定'),
+            models=other,
+            column=0,
+            order=0
+        ))
+
+        self.children.append(modules.ModelList(
+            title=_('實體'),
+            models=physical,
+            column=0,
+            order=1
+        ))
+
+        self.children.append(modules.ModelList(
+            title=_('線上'),
+            models=online,
+            column=0,
+            order=2
+        ))
+
+        self.children.append(modules.RecentActions(
+            include_list=self.get_app_content_types(),
+            column=1,
+            order=0
+        ))
