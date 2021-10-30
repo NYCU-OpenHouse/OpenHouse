@@ -42,9 +42,10 @@
                 <tr>
                     <td>活動時間</td>
                     <td>
-                        <ul>
+                        <ul class="ui list">
                             <li>中午場次 12:10~13:00</li>
                             <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>
+                        </ul>
                     </td>
 
                 </tr>
@@ -124,7 +125,7 @@
         <div class="ui green inverted segment">
             <h1 class="ui header">
                 <i class="student icon"></i>
-                就業博覽會
+                實體就業博覽會
             </h1>
             <table class="ui celled table">
                 <tr>
@@ -159,11 +160,14 @@
                 </tr>
             </table>
             <div class="ui segment">
-                <h3 class="ui header">報名就博會</h3>
-                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</p>
+                <h3 class="ui header">報名實體就博會</h3>
+                <ol class="ui list">
+                    <li>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</li>
+                    <li>無攤位數量上限，<span style="color: #0070c0;">集團可由單一企業自行合併攤位數並完成線上報名</span></li>
+                </ol>
                 <div class="ui labeled input">
                     <div class="ui label">
-                        就博會攤位數量
+                        實體就博會攤位數量
                     </div>
                     {{ form.jobfair }}
                 </div>
@@ -263,14 +267,14 @@
             <table class="ui celled table">
                 <tr>
                     <td>活動內容</td>
-                    <td>藉由參觀企業來提升交大同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
+                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
                 </tr>
                 <tr>
                     <td>活動說明</td>
                     <td>
                         <ol class="ui list">
                             <li>
-                                企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓交大學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
+                                企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓本校學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
                             </li>
                             <li>企業參訪人數至少可接受35人以上之同學進行參訪，單趟車程不超過1.5小時為宜。</li>
                         </ol>
@@ -278,7 +282,7 @@
                 </tr>
                 <tr>
                     <td>回饋方案</td>
-                    <td>企業參與本次活動可增加選位積分5分</td>
+                    <td>企業參與本次活動可增加選位積分5分；上期邀約未回應之企業不予加分。</td>
                 </tr>
             </table>
             <div class="ui segment">
@@ -299,7 +303,19 @@
             </h1>
             <div class="ui segment">
                 <h3 class="ui header">{{ form.receipt_year.label }}</h3>
-                {{ form.receipt_year.help_text }}
+                <ol class="ui divided list">
+                    <li>請提供預計開立收據年份 (實際開立仍視企業繳款日期與對帳日期而訂</li>
+                    <li><span style="color: #0070c0;">本校無法預開收據作為企業請款用途</span>，企業先行繳款後才能開立收據；
+                        繳費期限為<span style="color: red; text-decoration: underline;">111年1月7日(五)</span>
+                    </li>
+                    <li>如未提供收據年份，今年12月17日前<strong style="text-decoration: underline;">對帳完成</strong>
+                        將開立110年收據、12月20日後<strong style="text-decoration: underline;">對帳完成</strong>
+                        將開立111年收據並於111年1月寄出；如有特別需求，請事先來信或來電告知
+                    </li>
+                    <li>請於網頁「公司資料」選單內
+                        <span style="text-decoration: underline;">確認收據開立抬頭、統編、郵寄地址、收件人等資訊</span>
+                    </li>
+                </ol>
                 {{ form.receipt_year.errors }}
                 {{ form.receipt_year }}
             </div>
