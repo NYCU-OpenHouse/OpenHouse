@@ -1110,7 +1110,8 @@ def Status(request):
     sponsor_amount = 0
     sponsorships = recruit.models.SponsorShip.objects.filter(company=request.user.cid)
     for s in sponsorships:
-        sponsor_amount += s.sponsor_item.price
+        if '企業攤位升級' not in s.sponsor_item.name:
+            sponsor_amount += s.sponsor_item.price
 
     # All the fee of Sponsor and Display
 
