@@ -632,7 +632,7 @@ class CompanySurvey(models.Model):
     nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=8, choices=SALARY_YEAR)
 
     # ability
-    no_nctu_employee = models.BooleanField(u'目前無交大畢業生在職')
+    no_nycu_employee = models.BooleanField(u'目前無本校畢業生在職', default=False)
     professional_skill_rate = models.CharField(u'專業知能', max_length=4, choices=RATING, null=True, blank=True)
     foreign_lang_rate = models.CharField(u'外語能力', max_length=4, choices=RATING, null=True, blank=True)
     document_process_rate = models.CharField(u'文書處理', max_length=4, choices=RATING, null=True, blank=True)
@@ -712,7 +712,7 @@ class CompanySurvey(models.Model):
     )
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
     # plan_to_recruit     = models.IntegerField(u'2017年預計招募職缺數', help_text="此數據不會對外公開，僅供主辦單位內部作業統計用途。")
-    nctu_employees = models.IntegerField(u'交大校友人數')
+    nycu_employees = models.IntegerField(u'本校校友人數', default=0)
     category = models.CharField(u'企業類別', max_length=10, choices=CATEGORYS)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
