@@ -26,7 +26,7 @@
                 線上說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 1/21 前完成「線上說明會資訊填寫」，以利活動宣傳</h2>
+        <h2 style="color:red">請企業於 1/7 前完成「線上說明會資訊填寫」，以利活動宣傳</h2>
         <h3 class="ui dividing header">主題資訊</h3>
         <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>
@@ -77,9 +77,9 @@
         <div class="field">
             {% now 'Y' as current_year %}
             {% now 'm' as current_month %}
-            {% if current_month > 6 %}
+            {% if current_month > '06' %}
                 <label>
-                    {{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+                    {{ current_year|add:1 }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
             {% else %}
                 <label>
                     {{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
