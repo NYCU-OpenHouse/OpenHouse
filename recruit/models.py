@@ -325,6 +325,8 @@ class JobfairInfo(models.Model):
     long_table = models.IntegerField(u'長桌', default=2)
     chair = models.IntegerField(u'椅子', default=5)
     doily = models.IntegerField(u'紅桌巾', default=1)
+    flag_pole_socket = models.IntegerField(u'旗桿座組', default=0)
+    searchlight = models.IntegerField(u'攤位頂部白光探照燈', default=0)
     ps = models.CharField(u'備註', max_length=128, blank=True, null=True)
 
     class Meta:

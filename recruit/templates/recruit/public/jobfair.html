@@ -1,13 +1,13 @@
 {% extends 'recruit_public.html' %}
 {% load staticfiles %}
 {% block 'content' %}
-    <title>Open House 校園徵才 - 就博會</title>
-    <h1 class="ui dividing header">Open House 校園徵才 就業博覽會</h1>
+    <title>Open House 校園徵才 - 實體就博會</title>
+    <h1 class="ui dividing header">Open House 校園徵才 實體就業博覽會</h1>
     {% for jobfair_info in recruit_jobfair_info %}
         {{ jobfair_info.content|safe }}
     {% endfor %}
 
-    <h1 class="ui dividing header">就博會攤位圖</h1>
+    <h1 class="ui dividing header">實體就博會攤位圖</h1>
     {% for place_map in place_maps %}
         <h3 class="ui dividing header">{{ place_map.title }}</h3>
         <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就博會攤位圖">
