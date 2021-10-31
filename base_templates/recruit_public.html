@@ -15,7 +15,12 @@
                 </a>
                 {% if nav_configs.show_seminar %}
                     <a class="{{ sidebar_ui.seminar }} item" href="{% url 'seminar' %}">
-                        ECE說明會
+                        實體說明會
+                    </a>
+                {% endif %}
+                {% if nav_configs.show_recruit_ece_seminar %}
+                    <a class="{{ sidebar_ui.ece_seminar }} item" href="{% url 'recruit_seminar_ece' %}">
+                        實體ECE說明會
                     </a>
                 {% endif %}
                 {% if nav_configs.show_recruit_online_seminar %}

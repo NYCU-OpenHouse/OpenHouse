@@ -1,7 +1,7 @@
 {% extends 'recruit_public.html' %}
 {% block 'content' %}
-    <title>Open House 校園徵才 - ECE說明會</title>
-    <h1 class="ui dividing header">Open House 校園徵才 ECE說明會</h1>
+    <title>Open House 校園徵才 - 實體說明會</title>
+    <h1 class="ui dividing header">Open House 校園徵才 實體說明會</h1>
     {% for seminar_info in recruit_seminar_info %}
         {{ seminar_info.content|safe }}
     {% endfor %}
@@ -28,8 +28,8 @@
             <tr>
                 <td>{{ recruit_config.session_1_start }}~{{ recruit_config.session_1_end }}</td>
                 {% for day in week %}
-                    <td style="color:{{ day.other1.place_color }}">
-                        {{ day.other1.company }}
+                    <td style="color:{{ day.noon1.place_color }}">
+                        {{ day.noon1.company }}
                     </td>
                 {% endfor %}
             </tr>
@@ -46,8 +46,8 @@
             <tr>
                 <td>{{ recruit_config.session_3_start }}~{{ recruit_config.session_3_end }}</td>
                 {% for day in week %}
-                    <td style="color:{{ day.other2.place_color }}">
-                        {{ day.other2.company }}
+                    <td style="color:{{ day.noon3.place_color }}">
+                        {{ day.noon3.company }}
                     </td>
                 {% endfor %}
             </tr>
@@ -55,8 +55,8 @@
             <tr>
                 <td>{{ recruit_config.session_4_start }}~{{ recruit_config.session_4_end }}</td>
                 {% for day in week %}
-                    <td style="color:{{ day.other3.place_color }}">
-                        {{ day.other3.company }}
+                    <td style="color:{{ day.evening1.place_color }}">
+                        {{ day.evening1.company }}
                     </td>
                 {% endfor %}
             </tr>
@@ -64,8 +64,8 @@
             <tr>
                 <td>{{ recruit_config.session_5_start }}~{{ recruit_config.session_5_end }}</td>
                 {% for day in week %}
-                    <td style="color:{{ day.other4.place_color }}">
-                        {{ day.other4.company }}
+                    <td style="color:{{ day.evening2.place_color }}">
+                        {{ day.evening2.company }}
                     </td>
                 {% endfor %}
             </tr>
@@ -73,8 +73,8 @@
             <tr>
                 <td>{{ recruit_config.session_6_start }}~{{ recruit_config.session_6_end }}</td>
                 {% for day in week %}
-                    <td style="color:{{ day.other5.place_color }}">
-                        {{ day.other5.company }}
+                    <td style="color:{{ day.evening3.place_color }}">
+                        {{ day.evening3.company }}
                     </td>
                 {% endfor %}
             </tr>

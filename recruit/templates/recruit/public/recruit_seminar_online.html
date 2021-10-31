@@ -6,13 +6,6 @@
         {{ seminar_info.content|safe }}
     {% endfor %}
     <h1 class="ui dividing header">場次時間表</h1>
-    <ul>
-        <p>場地資訊</p>
-        {% for location in locations %}
-            <li style="color:{{ location.css_color }}"> {{ location.place }} </li>
-        {% endfor %}
-    </ul>
-
     {% for week in dates_in_week %}
         <table class="ui celled striped table" style="text-align:center">
             <thead>
@@ -26,16 +19,16 @@
             <tbody>
 
             <tr>
-                <td>{{ recruit_config.session_1_start }}~{{ recruit_config.session_1_end }}</td>
+                <td>{{ recruit_config.session_online_1_start }}~{{ recruit_config.session_online_1_end }}</td>
                 {% for day in week %}
                     <td>
-                        {{ day.other1 }}
+                        {{ day.noon1 }}
                     </td>
                 {% endfor %}
             </tr>
 
             <tr>
-                <td>{{ recruit_config.session_2_start }}~{{ recruit_config.session_2_end }}</td>
+                <td>{{ recruit_config.session_online_2_start }}~{{ recruit_config.session_online_2_end }}</td>
                 {% for day in week %}
                     <td>
                         {{ day.noon2 }}
@@ -44,37 +37,28 @@
             </tr>
 
             <tr>
-                <td>{{ recruit_config.session_3_start }}~{{ recruit_config.session_3_end }}</td>
+                <td>{{ recruit_config.session_online_3_start }}~{{ recruit_config.session_online_3_end }}</td>
                 {% for day in week %}
                     <td>
-                        {{ day.other2 }}
+                        {{ day.evening1 }}
                     </td>
                 {% endfor %}
             </tr>
 
             <tr>
-                <td>{{ recruit_config.session_4_start }}~{{ recruit_config.session_4_end }}</td>
+                <td>{{ recruit_config.session_online_4_start }}~{{ recruit_config.session_online_4_end }}</td>
                 {% for day in week %}
                     <td>
-                        {{ day.other3 }}
+                        {{ day.evening2 }}
                     </td>
                 {% endfor %}
             </tr>
 
             <tr>
-                <td>{{ recruit_config.session_5_start }}~{{ recruit_config.session_5_end }}</td>
+                <td>{{ recruit_config.session_online_5_start }}~{{ recruit_config.session_online_5_end }}</td>
                 {% for day in week %}
                     <td>
-                        {{ day.other4 }}
-                    </td>
-                {% endfor %}
-            </tr>
-
-            <tr>
-                <td>{{ recruit_config.session_6_start }}~{{ recruit_config.session_6_end }}</td>
-                {% for day in week %}
-                    <td>
-                        {{ day.other5 }}
+                        {{ day.evening3 }}
                     </td>
                 {% endfor %}
             </tr>

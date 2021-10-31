@@ -1207,44 +1207,44 @@ def seminar(request):
         week_slot_info = []
         for day in range(5):
             today = table_start_date + datetime.timedelta(days=day + week * 7)
-            other1 = SeminarSlot.objects.filter(date=today, session='other1').first()
+            noon1 = SeminarSlot.objects.filter(date=today, session='noon1').first()
             noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
-            other2 = SeminarSlot.objects.filter(date=today, session='other2').first()
-            other3 = SeminarSlot.objects.filter(date=today, session='other3').first()
-            other4 = SeminarSlot.objects.filter(date=today, session='other4').first()
-            other5 = SeminarSlot.objects.filter(date=today, session='other5').first()
+            noon3 = SeminarSlot.objects.filter(date=today, session='noon3').first()
+            evening1 = SeminarSlot.objects.filter(date=today, session='evening1').first()
+            evening2 = SeminarSlot.objects.filter(date=today, session='evening2').first()
+            evening3 = SeminarSlot.objects.filter(date=today, session='evening3').first()
             week_slot_info.append(
                 {
                     'date': today,
-                    'other1': '' if not other1 or not other1.company else
+                    'noon1': '' if not noon1 or not noon1.company else
                     {
-                        'company': other1.company.get_company_name(),
-                        'place_color': other1.place.css_color if other1.place else None
+                        'company': noon1.company.get_company_name(),
+                        'place_color': noon1.place.css_color if noon1.place else None
                     },
                     'noon2': '' if not noon2 or not noon2.company else
                     {
                         'company': noon2.company.get_company_name(),
                         'place_color': noon2.place.css_color if noon2.place else None
                     },
-                    'other2': '' if not other2 or not other2.company else
+                    'noon3': '' if not noon3 or not noon3.company else
                     {
-                        'company': other2.company.get_company_name(),
-                        'place_color': other2.place.css_color if other2.place else None
+                        'company': noon3.company.get_company_name(),
+                        'place_color': noon3.place.css_color if noon3.place else None
                     },
-                    'other3': '' if not other3 or not other3.company else
+                    'evening1': '' if not evening1 or not evening1.company else
                     {
-                        'company': other3.company.get_company_name(),
-                        'place_color': other3.place.css_color if other3.place else None
+                        'company': evening1.company.get_company_name(),
+                        'place_color': evening1.place.css_color if evening1.place else None
                     },
-                    'other4': '' if not other4 or not other4.company else
+                    'evening2': '' if not evening2 or not evening2.company else
                     {
-                        'company': other4.company.get_company_name(),
-                        'place_color': other4.place.css_color if other4.place else None
+                        'company': evening2.company.get_company_name(),
+                        'place_color': evening2.place.css_color if evening2.place else None
                     },
-                    'other5': '' if not other5 or not other5.company else
+                    'evening3': '' if not evening3 or not evening3.company else
                     {
-                        'company': other5.company.get_company_name(),
-                        'place_color': other5.place.css_color if other5.place else None
+                        'company': evening3.company.get_company_name(),
+                        'place_color': evening3.place.css_color if evening3.place else None
                     },
                 }
             )
@@ -1315,6 +1315,14 @@ def seminar_temporary(request):
     return render(request, 'recruit/public/seminar_temporary.html', locals())
 
 
+def ece_seminar(request):
+    # semantic ui control
+    sidebar_ui = {'ece_seminar': "active"}
+
+    recruit_seminar_info = recruit.models.RecruitECESeminarInfo.objects.all()
+
+    return render(request, 'recruit/public/recruit_seminar_ece.html', locals())
+
 def online_seminar(request):
     # semantic ui control
     sidebar_ui = {'online_seminar': "active"}
@@ -1337,25 +1345,22 @@ def online_seminar(request):
         week_slot_info = []
         for day in range(5):
             today = table_start_date + datetime.timedelta(days=day + week * 7)
-            other1 = OnlineSeminarSlot.objects.filter(date=today, session='other1').first()
+            noon1 = OnlineSeminarSlot.objects.filter(date=today, session='noon1').first()
             noon2 = OnlineSeminarSlot.objects.filter(date=today, session='noon2').first()
-            other2 = OnlineSeminarSlot.objects.filter(date=today, session='other2').first()
-            other3 = OnlineSeminarSlot.objects.filter(date=today, session='other3').first()
-            other4 = OnlineSeminarSlot.objects.filter(date=today, session='other4').first()
-            other5 = OnlineSeminarSlot.objects.filter(date=today, session='other5').first()
+            evening1 = OnlineSeminarSlot.objects.filter(date=today, session='evening1').first()
+            evening2 = OnlineSeminarSlot.objects.filter(date=today, session='evening2').first()
+            evening3 = OnlineSeminarSlot.objects.filter(date=today, session='evening3').first()
             week_slot_info.append(
                 {
                     'date': today,
-                    'other1': '' if not other1 or not other1.company else other1.company.get_company_name(),
+                    'noon1': '' if not noon1 or not noon1.company else noon1.company.get_company_name(),
                     'noon2': '' if not noon2 or not noon2.company else noon2.company.get_company_name(),
-                    'other2': '' if not other2 or not other2.company else other2.company.get_company_name(),
-                    'other3': '' if not other3 or not other3.company else other3.company.get_company_name(),
-                    'other4': '' if not other4 or not other4.company else other4.company.get_company_name(),
-                    'other5': '' if not other5 or not other5.company else other5.company.get_company_name(),
+                    'evening1': '' if not evening1 or not evening1.company else evening1.company.get_company_name(),
+                    'evening2': '' if not evening2 or not evening2.company else evening2.company.get_company_name(),
+                    'evening3': '' if not evening3 or not evening3.company else evening3.company.get_company_name(),
                 }
             )
         dates_in_week.append(week_slot_info)
-    locations = SlotColor.objects.all()
     return render(request, 'recruit/public/recruit_seminar_online.html', locals())
 
 

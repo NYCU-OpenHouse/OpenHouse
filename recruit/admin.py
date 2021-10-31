@@ -303,6 +303,17 @@ class RecruitSeminarContentAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.RecruitECESeminarInfo)
+class RecruitECESeminarContentAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+
+    def has_add_permission(self, request):
+        count = models.RecruitECESeminarInfo.objects.all().count()
+        if count == 0:
+            return True
+        return False
+
+
 @admin.register(models.RecruitOnlineSeminarInfo)
 class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)

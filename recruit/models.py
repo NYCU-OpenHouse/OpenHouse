@@ -855,6 +855,20 @@ class RecruitSeminarInfo(models.Model):
         verbose_name_plural = u"實體說明會資訊編輯頁面 (學生)"
 
 
+class RecruitECESeminarInfo(models.Model):
+    title = models.CharField(u'標題', default='', max_length=10)
+    content = RichTextField(u'內容', default='', null=True, blank=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    def __str__(self):
+        return "Recruit_ECE_Seminar_Info"
+
+    class Meta:
+        managed = True
+        verbose_name = u"實體ECE說明會資訊編輯頁面 (學生)"
+        verbose_name_plural = u"實體ECE說明會資訊編輯頁面 (學生)"
+
+
 class RecruitOnlineSeminarInfo(models.Model):
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
