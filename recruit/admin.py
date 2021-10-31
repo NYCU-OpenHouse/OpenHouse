@@ -48,10 +48,10 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
-    search_fields = ('cid', 'seminar',)
-    list_display = ('cid', 'company_name', 'ece_seminar', 'seminar_online', 'jobfair', 'jobfair_online', 'career_tutor',
-                    'company_visit', 'lecture', 'payment')
-    list_filter = ('seminar', 'career_tutor', 'company_visit', 'lecture', 'payment',)
+    search_fields = ('cid', 'seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online',)
+    list_display = ('cid', 'company_name', 'seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online',
+                    'career_tutor', 'company_visit', 'lecture', 'payment')
+    list_filter = ('seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online', 'payment',)
     inlines = (SponsorshipInline,)
 
     # custom search the company name field in other db
@@ -76,7 +76,7 @@ class SeminarSlotAdmin(admin.ModelAdmin):
 
 @admin.register(OnlineSeminarSlot)
 class OnlineSeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'session', 'company', 'place')
+    list_display = ('date', 'session', 'company')
     raw_id_fields = ("company",)
 
 
