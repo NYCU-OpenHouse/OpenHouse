@@ -114,7 +114,7 @@ def seminar_select_form_gen(request):
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
         if my_signup.seminar == "":
-            error_msg = "貴公司已報名本次活動，但並未勾選參加說明會選項。"
+            error_msg = "貴公司已報名本次活動，但並未勾選參加實體說明會選項。"
             return render(request, 'recruit/error.html', locals())
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
@@ -124,7 +124,7 @@ def seminar_select_form_gen(request):
     try:
         seminar_select_time = SeminarOrder.objects.filter(company=mycid).first().time
     except Exception as e:
-        seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方說明會時間表"
+        seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方實體說明會時間表"
 
     seminar_session = my_signup.get_seminar_display()
 
@@ -145,12 +145,12 @@ def seminar_select_form_gen(request):
 
     slot_colors = SlotColor.objects.all()
     session_list = [
-        {"name": "other1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
+        {"name": "noon1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
         {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "other2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "other3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "other4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "other5", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+        {"name": "noon3", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
+        {"name": "evening1", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
+        {"name": "evening2", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
+        {"name": "evening3", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
     ]
     for session in session_list:
         delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
@@ -212,7 +212,7 @@ def seminar_select_control(request):
         if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
             select_ctrl = dict()
             select_ctrl['display'] = True
-            select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
+            select_ctrl['msg'] = '目前非貴公司選位時間，可先參考實體說明會時間表，並待選位時間內選位'
             select_ctrl['select_btn'] = False
         else:
             select_ctrl = dict()
@@ -241,7 +241,7 @@ def seminar_select_control(request):
             slot = SeminarSlot.objects.get(date=slot_date, session=slot_session)
             my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         except:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
 
         if slot.company != None:
             return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
@@ -257,7 +257,7 @@ def seminar_select_control(request):
             logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
 
     # end of action select
     elif action == "cancel":
@@ -270,7 +270,7 @@ def seminar_select_control(request):
             my_slot.save()
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, "msg": "刪除說明會選位失敗"})
+            return JsonResponse({"success": False, "msg": "刪除實體說明會選位失敗"})
 
     else:
         pass
@@ -317,14 +317,12 @@ def online_seminar_select_form_gen(request):
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
                               for day in range(0, 5)])
 
-    slot_colors = SlotColor.objects.all()
     session_list = [
-        {"name": "other1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
-        {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "other2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "other3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "other4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "other5", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+        {"name": "noon1", "start_time": configs.session_online_1_start, "end_time": configs.session_online_1_end},
+        {"name": "noon2", "start_time": configs.session_online_2_start, "end_time": configs.session_online_2_end},
+        {"name": "evening1", "start_time": configs.session_online_3_start, "end_time": configs.session_online_3_end},
+        {"name": "evening2", "start_time": configs.session_online_4_start, "end_time": configs.session_online_4_end},
+        {"name": "evening3", "start_time": configs.session_online_5_start, "end_time": configs.session_online_5_end},
     ]
     for session in session_list:
         delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
@@ -355,8 +353,6 @@ def online_seminar_select_control(request):
             # dict for return data
             return_data[index] = {}
 
-            return_data[index]['place_color'] = None if not s.place else \
-                s.place.css_color
             return_data[index]["cid"] = "None" if not s.company else \
                 s.company.get_company_name()
 
@@ -364,8 +360,7 @@ def online_seminar_select_control(request):
 
             # session wrong (signup noon but choose night)
             # and noon is not full yet
-            if (my_seminar_session not in s.session) and \
-                    (OnlineSeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists()):
+            if OnlineSeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists():
                 # 選別人的時段，而且自己的時段還沒滿
                 return_data[index]['valid'] = False
             else:
@@ -1074,25 +1069,29 @@ def Status(request):
     seminar_select_time = recruit.models.SeminarOrder.objects.filter(company=mycid).first()
     online_seminar_select_time = recruit.models.OnlineSeminarOrder.objects.filter(company=mycid).first()
     jobfair_select_time = recruit.models.JobfairOrder.objects.filter(company=mycid).first()
+    if seminar_select_time:
+        slot_info['seminar_select_time'] = seminar_select_time.time
+    if online_seminar_select_time:
+        slot_info['online_seminar_select_time'] = online_seminar_select_time.time
+    if jobfair_select_time:
+        slot_info['jobfair_select_time'] = jobfair_select_time.time
+
     seminar_slot = recruit.models.SeminarSlot.objects.filter(company=mycid).first()
     online_seminar_slot = recruit.models.OnlineSeminarSlot.objects.filter(company=mycid).first()
     jobfair_slot = recruit.models.JobfairSlot.objects.filter(company=mycid)
-    if seminar_select_time and not seminar_slot:
-        slot_info['seminar_select_time'] = seminar_select_time.time
+    if not seminar_slot:
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
-    if online_seminar_select_time and not online_seminar_slot:
-        slot_info['online_seminar_select_time'] = seminar_select_time.time
-        slot_info['online_seminar_slot'] = "請依時段於左方選單選位"
-    if jobfair_select_time and not jobfair_slot:
-        slot_info['jobfair_select_time'] = jobfair_select_time.time
-        slot_info['jobfair_slot'] = "請依時段於左方選單選位"
-    if seminar_slot:
+    else:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
                                                    seminar_session_display[seminar_slot.session])
-    if online_seminar_slot:
+    if not online_seminar_slot:
+        slot_info['online_seminar_slot'] = "請依時段於左方選單選位"
+    else:
         slot_info['online_seminar_slot'] = "{} {}".format(online_seminar_slot.date,
                                                           seminar_online_session_display[online_seminar_slot.session])
-    if jobfair_slot:
+    if not jobfair_slot:
+        slot_info['jobfair_slot'] = "請依時段於左方選單選位"
+    else:
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
     # Fee display

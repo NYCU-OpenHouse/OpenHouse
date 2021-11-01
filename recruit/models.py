@@ -135,7 +135,7 @@ class RecruitSignup(models.Model):
     )
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
     seminar = models.CharField(u'實體說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
-    seminar_ece = models.CharField(u'實體ECE說明會', choices=SEMINAR_ECE_CHOICES, max_length=15, default='none')
+    seminar_ece = models.CharField(u'實體ECE說明會', choices=SEMINAR_ECE_CHOICES, max_length=20, default='none')
     seminar_online = models.CharField(u'線上說明會場次', choices=SEMINAR_ONLINE_CHOICES, max_length=15, default='none')
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0)
     jobfair_online = models.BooleanField(u'線上就博會', default=False)

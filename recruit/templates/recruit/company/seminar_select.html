@@ -2,12 +2,12 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>說明會選位 | OpenHouse 企業校園徵才</title>
+    <title>實體說明會選位 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/recruit/Controller.js" %}></script>
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 校園徵才 - 說明會選位</h1>
+    <h1 class="ui dividing header">Open House 校園徵才 - 實體說明會選位</h1>
     <h2 class="ui dividing header">選位注意事項</h2>
     <div class="ui message">
         <div class="ui bulleted list">
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <h2 class="ui dividing header">說明會時間表</h2>
+        <h2 class="ui dividing header">實體說明會時間表</h2>
         <h3 class="ui dividing header">時段場地及顏色</h3>
         <p>可選時段會以顏色標記場地，請自行參考以下對照表</p>
         <ul class="ui list">
@@ -95,7 +95,7 @@
                                     {$ ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}.cid $}
                                 </p>
 
-                                <p ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
+                                <p ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }} == undefined"></p>
 
                             </td>
                         {% endfor %}
