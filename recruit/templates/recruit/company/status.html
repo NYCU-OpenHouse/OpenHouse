@@ -46,7 +46,6 @@
     </h3>
 
     {% if not signup_data %}
-
         <div class="ui warning icon message">
             <i class="warning icon"></i>
             <div class="content">
@@ -82,15 +81,33 @@
                     </td>
                 </tr>
                 {#                <tr>#}
-                {#                    <td>說明會場次</td>#}
+                {#                    <td>實體說明會</td>#}
                 {#                    <td>#}
-                {#                        {{ signup_data.get_seminar_display }}#}
+                {#                        {% if signup_data.seminar != 'none' %}#}
+                {#                            <i class="large green check icon"></i>#}
+                {#                            <b>參加</b>#}
+                {#                        {% else %}#}
+                {#                            <i class="large red x icon"></i>#}
+                {#                            <b>不參加</b>#}
+                {#                        {% endif %}#}
                 {#                    </td>#}
                 {#                </tr>#}
                 <tr>
-                    <td>ECE說明會</td>
+                    <td>實體ECE說明會</td>
                     <td>
-                        {% if signup_data.ece_seminar %}
+                        {% if signup_data.seminar_ece != 'none' %}
+                            <i class="large green check icon"></i>
+                            <b>{{ signup_data.get_seminar_ece_display }}</b>
+                        {% else %}
+                            <i class="large red x icon"></i>
+                            <b>不參加</b>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>線上說明會</td>
+                    <td>
+                        {% if signup_data.seminar_online != 'none' %}
                             <i class="large green check icon"></i>
                             <b>參加</b>
                         {% else %}
@@ -100,13 +117,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>線上說明會場次</td>
-                    <td>
-                        {{ signup_data.get_seminar_online_display }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>就博會攤位數量</td>
+                    <td>實體就博會攤位數量</td>
                     <td>{{ signup_data.jobfair }}</td>
                 </tr>
                 <tr>
@@ -169,7 +180,7 @@
                 </thead>
                 <tbody>
                 {#                <tr>#}
-                {#                    <td>說明會選位時間</td>#}
+                {#                    <td>實體說明會選位時間</td>#}
                 {#                    <td>{{ slot_info.seminar_select_time }}</td>#}
                 {#                </tr>#}
                 <tr>
@@ -177,11 +188,11 @@
                     <td>{{ slot_info.online_seminar_select_time }}</td>
                 </tr>
                 <tr>
-                    <td>就博會選位時間</td>
+                    <td>實體就博會選位時間</td>
                     <td>{{ slot_info.jobfair_select_time }}</td>
                 </tr>
                 {#                <tr>#}
-                {#                    <td>說明會已選場次</td>#}
+                {#                    <td>實體說明會已選場次</td>#}
                 {#                    <td>{{ slot_info.seminar_slot }}</td>#}
                 {#                </tr>#}
                 <tr>
@@ -189,12 +200,12 @@
                     <td>{{ slot_info.online_seminar_slot }}</td>
                 </tr>
                 <tr>
-                    <td>就博會已選攤位</td>
+                    <td>實體就博會已選攤位</td>
                     <td>編號： {{ slot_info.jobfair_slot }}</td>
                 </tr>
 
                 {#                <tr>#}
-                {#                    <td>說明會資訊</td>#}
+                {#                    <td>實體說明會資訊</td>#}
                 {#                    <td>#}
                 {#                        {% if seminar_info %}#}
                 {#                            <i class="large green checkmark icon"></i>#}
@@ -218,7 +229,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>就博會資訊</td>
+                    <td>實體就博會資訊</td>
                     <td>
                         {% if jobfair_info %}
                             <i class="large green checkmark icon"></i>

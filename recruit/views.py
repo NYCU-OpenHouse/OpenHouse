@@ -1049,14 +1049,19 @@ def Status(request):
         "jobfair_slot": "-",
     }
     seminar_session_display = {
-        "other1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
         "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "other2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "other3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "other4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "other5": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "extra": "補場",
-        "jobfair": "就博會",
+        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+    }
+    seminar_online_session_display = {
+        "noon1": "{}~{}".format(configs.session_online_1_start, configs.session_online_1_end),
+        "noon2": "{}~{}".format(configs.session_online_2_start, configs.session_online_2_end),
+        "evening1": "{}~{}".format(configs.session_online_3_start, configs.session_online_3_end),
+        "evening2": "{}~{}".format(configs.session_online_4_start, configs.session_online_4_end),
+        "evening3": "{}~{}".format(configs.session_online_5_start, configs.session_online_5_end),
     }
     # 問卷狀況
     try:
@@ -1086,16 +1091,18 @@ def Status(request):
                                                    seminar_session_display[seminar_slot.session])
     if online_seminar_slot:
         slot_info['online_seminar_slot'] = "{} {}".format(online_seminar_slot.date,
-                                                          seminar_session_display[online_seminar_slot.session])
+                                                          seminar_online_session_display[online_seminar_slot.session])
     if jobfair_slot:
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
     # Fee display
     fee = 0
     try:
-        if signup_data.ece_seminar:
+        if signup_data.seminar != 'none':
             fee += configs.session_fee
-        if signup_data.seminar_online == "noon" or signup_data.seminar_online == 'other':
+        if signup_data.seminar_ece != 'none':
+            fee += configs.session_ece_fee
+        if signup_data.seminar_online != "none":
             fee += configs.session_online_fee
         if signup_data.jobfair:
             fee += signup_data.jobfair * configs.jobfair_booth_fee
@@ -1109,7 +1116,7 @@ def Status(request):
     sponsor_amount = 0
     sponsorships = recruit.models.SponsorShip.objects.filter(company=request.user.cid)
     for s in sponsorships:
-        if '企業攤位升級' not in s.sponsor_item.name:
+        if '攤位升級' not in s.sponsor_item.name:
             sponsor_amount += s.sponsor_item.price
 
     # All the fee of Sponsor and Display
