@@ -2,14 +2,14 @@
 {% load staticfiles %}
 
 {% block 'custom_head' %}
-    <title>說明會資訊 | OpenHouse 企業校園徵才</title>
+    <title>實體說明會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form class="ui info form" method="POST" action="{% url 'recruit_seminar_info' %}">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 校園徵才 - 說明會資訊</h1>
+        <h1 class="ui dividing header">Open House 校園徵才 - 實體說明會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
@@ -30,10 +30,10 @@
             </div>
         {% elif seminar_info_object %}
             <div class="ui teal compact message">
-                說明會資訊填寫已完成，您也可以修改資訊，再次送出。
+                實體說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 1/7 前完成「說明會資訊填寫」，以利活動宣傳</h2>
+        <h2 style="color:red">請企業於 1/7 前完成「實體說明會資訊填寫」，以利活動宣傳</h2>
         <h3 class="ui dividing header">主題資訊</h3>
         <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>
@@ -119,7 +119,7 @@
         </div>
         <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
         <p>
-            說明(1)：參加說明會之企業，至多提供2部汽車入校停車費抵免；企業可選擇「提供車牌號碼」與「索取紙本停車抵用券」兩種並行。如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
+            說明(1)：參加實體說明會之企業，至多提供2部汽車入校停車費抵免；企業可選擇「提供車牌號碼」與「索取紙本停車抵用券」兩種並行。如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
         <p>
             說明(2)：本校進出車輛自2020年1月已改用車號辨識系統，可加速企業同仁離校速度與簡化繳費流程，如選擇此項之車輛須提供完整車號(例AA-1234、4321-BB)；若無法事先確認入校車輛之車牌號碼，請選擇索取紙本汽車抵用券。</p>
         <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
