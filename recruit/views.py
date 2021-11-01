@@ -91,7 +91,6 @@ def recruit_signup(request):
         # Because seminar in 2021 is not used, we need to manually set value
         data['seminar'] = 'none'
         data['cid'] = request.user.cid
-        print(data)
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():
             form.save()

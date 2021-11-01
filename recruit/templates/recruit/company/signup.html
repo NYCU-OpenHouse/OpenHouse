@@ -24,74 +24,109 @@
             <a class="ui blue button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
         </div>
 
+        {#        <div class="ui divider"></div>#}
+        {##}
+        {#        <div class="ui blue inverted segment">#}
+        {#            <h1 class="ui inverted header">#}
+        {#                <i class="info circle icon" style="color:white"></i>#}
+        {#                實體企業說明會#}
+        {#            </h1>#}
+        {#            <table class="ui celled table">#}
+        {#                <tr>#}
+        {#                    <td style="width: 6em;">活動日期</td>#}
+        {#                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}#}
+        {#                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止#}
+        {#                    </td>#}
+        {##}
+        {#                </tr>#}
+        {#                <tr>#}
+        {#                    <td>活動時間</td>#}
+        {#                    <td>#}
+        {#                        <ul class="ui list">#}
+        {#                            <li>中午場次 12:10~13:00</li>#}
+        {#                            <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>#}
+        {#                        </ul>#}
+        {#                    </td>#}
+        {##}
+        {#                </tr>#}
+        {#                <tr>#}
+        {#                    <td>活動地點</td>#}
+        {#                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>#}
+        {#                </tr>#}
+        {#                <tr>#}
+        {#                    <td>活動內容</td>#}
+        {#                    <td>透過實體說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>#}
+        {#                </tr>#}
+        {#                <tr>#}
+        {#                    <td>提供設備</td>#}
+        {#                    <td>#}
+        {#                        <ol class="ui list">#}
+        {#                            <li>可容納100至200人之國際會議廳</li>#}
+        {#                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>#}
+        {#                        </ol>#}
+        {#                    </td>#}
+        {#                </tr>#}
+        {#                <tr>#}
+        {#                    <td>提供服務</td>#}
+        {#                    <td>#}
+        {#                        <ol class="ui list">#}
+        {#                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>#}
+        {#                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>#}
+        {#                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>#}
+        {#                        </ol>#}
+        {#                    </td>#}
+        {#                </tr>#}
+        {#            </table>#}
+        {##}
+        {#            <div class="ui segment">#}
+        {#                <h3 class="ui header">選取欲報名實體說明會時段</h3>#}
+        {#                <p>活動費用： {{ configs.session_fee }} 元</p>#}
+        {#                {{ form.seminar }}#}
+        {#            </div>#}
+        {#        </div>#}
+
         <div class="ui divider"></div>
 
-        <div class="ui blue inverted segment">
+        <div class="ui violet inverted segment">
             <h1 class="ui inverted header">
-                <i class="info circle icon" style="color:white"></i>
-                ECE說明會
+                <i class="microchip icon" style="color:white"></i>
+                實體ECE電機說明會
             </h1>
+
             <table class="ui celled table">
                 <tr>
-                    <td>活動日期</td>
-                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
-                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>活動時間</td>
-                    <td>
-                        <ul class="ui list">
-                            <li>中午場次 12:10~13:00</li>
-                            <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>
-                        </ul>
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>活動地點</td>
-                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
+                    <td style="width: 6em;">活動日期</td>
+                    <td>{{ configs.seminar_online_start_date|date:"Y年m月d日(D)" }} ~
+                        {{ configs.seminar_online_end_date|date:"Y年m月d日(D)" }}</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
-                    <td>透過說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                    <td>與電機系以研究所seminar課程方式合作辦理，企業如對電機、電信、電控、電子(固態、系統+類比)此專業領域研究生有招募
+                        意願，可報名此項活動。每場次15~20分鐘，徵才企業使用投影片或書面，近距離傳達公司招募、企業實習、獎學金等訊息，讓
+                        學生深入了解企業。
+                    </td>
                 </tr>
                 <tr>
                     <td>提供設備</td>
                     <td>
                         <ol class="ui list">
-                            <li>可容納100至200人之國際會議廳</li>
-                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td>提供服務</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
-                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>
-                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
+                            <li>可容納約180人之國際會議廳或階梯教室。</li>
+                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。</li>
                         </ol>
                     </td>
                 </tr>
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">報名ECE說明會</h3>
-                <p>活動費用： {{ configs.session_fee }} 元</p>
-                <div class="ui checkbox">
-                    {{ form.ece_seminar }}
-                    <label style="color:black">{{ form.ece_seminar.label }}</label>
-                </div>
-                {#                {{ form.seminar }}#}
+                <h3 class="ui header">選取欲報名實體ECE說明會時段</h3>
+                <p>活動費用： {{ configs.session_ece_fee }} 元</p>
+                {{ form.seminar_ece }}
             </div>
         </div>
 
         <div class="ui divider"></div>
 
-        <div class="ui violet inverted segment">
+        <div class="ui purple inverted segment">
             <h1 class="ui inverted header">
                 <i class="desktop icon" style="color:white"></i>
                 線上企業說明會
@@ -99,16 +134,27 @@
 
             <table class="ui celled table">
                 <tr>
-                    <td style="width:8em">活動日期</td>
-                    <td>{{ configs.seminar_online_start_date }} ~ {{ configs.seminar_online_end_date }}</td>
+                    <td style="width: 6em;">活動日期</td>
+                    <td>{{ configs.seminar_online_start_date|date:"Y年m月d日(D)" }} ~
+                        {{ configs.seminar_online_end_date|date:"Y年m月d日(D)" }}</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
-                    <td>活動內容 透過本校線上徵才平台辦理企業說明會，徵才企業可以即時傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                    <td>
+                        <p>
+                            以線上直播串流方式舉辦，企業透過平台可傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等。
+                        </p>
+                        <ol class="ui list">
+                            <li>
+                                企業以播放影片、書面介紹或其他方式做公司簡介，針對所需專業人才，提供必要之說明，並傳達企業專業理念與形象。
+                            </li>
+                            <li>企業可自行設計活動內容並提供抽獎等以吸引參加人潮。</li>
+                        </ol>
+                    </td>
                 </tr>
                 <tr>
                     <td>提供設備</td>
-                    <td>線上徵才系統平台，非單向傳播，可與學生互動。</td>
+                    <td>線上徵才系統平台</td>
                 </tr>
             </table>
 
@@ -116,7 +162,6 @@
                 <h3 class="ui header">選取欲報名線上說明會時段</h3>
                 <p>活動費用： {{ configs.session_online_fee }} 元</p>
                 {{ form.seminar_online }}
-                <div class="ui red button seminar_clear">清除</div>
             </div>
         </div>
 
@@ -129,11 +174,11 @@
             </h1>
             <table class="ui celled table">
                 <tr>
-                    <td style="width:8em">活動日期</td>
+                    <td style="width: 6em;">活動日期</td>
                     <td>{{ configs.jobfair_date }}</td>
                 </tr>
                 <tr>
-                    <td style="width:8em">活動時間</td>
+                    <td>活動時間</td>
                     <td>{{ configs.jobfair_start }} ~ {{ configs.jobfair_end }}</td>
                 </tr>
                 <tr>
@@ -189,7 +234,7 @@
 
             <table class="ui celled table">
                 <tr>
-                    <td style="width:8em">活動日期</td>
+                    <td style="width: 6em;">活動日期</td>
                     <td>
                         <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>
                         <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p>
@@ -228,7 +273,7 @@
             </h1>
             <table class="ui celled table">
                 <tr>
-                    <td>活動內容</td>
+                    <td style="width: 6em;">活動內容</td>
                     <td>
                         本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
                     </td>
@@ -266,7 +311,7 @@
             </h1>
             <table class="ui celled table">
                 <tr>
-                    <td>活動內容</td>
+                    <td style="width: 6em;">活動內容</td>
                     <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
                 </tr>
                 <tr>
