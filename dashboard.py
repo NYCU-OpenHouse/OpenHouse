@@ -32,7 +32,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title': _('匯出說明會資訊'),
+                    'title': _('匯出實體說明會資訊'),
                     'url': '/admin/recruit/export_seminar_info/',
                     'external': False,
                 },
@@ -42,7 +42,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title': _('匯出就博會資訊'),
+                    'title': _('匯出實體就博會資訊'),
                     'url': '/admin/recruit/export_jobfair_info/',
                     'external': False,
                 },

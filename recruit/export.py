@@ -57,26 +57,21 @@ def ExportAll(request):
 
     # Company Signup
     signups = recruit.models.RecruitSignup.objects.all()
-    signups_dict = json.loads(serializers.serialize('json', signups))
-    # join company info
-    for signup in signups_dict:
-        company_obj = company.models.Company.objects.get(
-            cid=signup['fields']['cid'])
-        company_dict = model_to_dict(company_obj)
-        for key, value in company_dict.items():
-            signup['fields'][key] = value
 
     title_pairs = [
         {'fieldname': 'cid', 'title': '公司統一編號'},
         {'fieldname': 'shortname', 'title': '公司簡稱'},
-        {'fieldname': 'seminar', 'title': '說明會場次'},
-        {'fieldname': 'jobfair', 'title': '就博會攤位數'},
+        {'fieldname': 'seminar', 'title': '實體說明會場次'},
+        {'fieldname': 'seminar_ece', 'title': '實體ECE說明會'},
+        {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
+        {'fieldname': 'jobfair', 'title': '實體就博會攤位數'},
+        {'fieldname': 'jobfair_online', 'title': '線上就博會'},
         {'fieldname': 'company_visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
         {'fieldname': 'lecture', 'title': '提供就業力講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
         {'fieldname': 'receipt_year', 'title': '收據年份'},
-        {'fieldname': 'updated', 'title': '更新時間'},
+        {'fieldname': 'ps', 'title': '備註'},
     ]
 
     signup_worksheet = workbook.add_worksheet("廠商報名情況")
@@ -84,10 +79,27 @@ def ExportAll(request):
     for index, pair in enumerate(title_pairs):
         signup_worksheet.write(0, index, pair['title'])
 
-    for row_count, signup in enumerate(signups_dict):
+    for row_count, signup in enumerate(signups):
+        signup_dict = model_to_dict(signup)
+        # join company info
+        company_obj = company.models.Company.objects.get(
+            cid=signup_dict['cid'])
+        company_dict = model_to_dict(company_obj)
+        for key, value in company_dict.items():
+            signup_dict[key] = value
         for col_count, pairs in enumerate(title_pairs):
-            signup_worksheet.write(row_count + 1, col_count,
-                                   signup['fields'][pairs['fieldname']])
+            if pairs['fieldname'] == 'seminar':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup.get_seminar_display())
+            elif pairs['fieldname'] == 'seminar_ece':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup.get_seminar_ece_display())
+            elif pairs['fieldname'] == 'seminar_online':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup.get_seminar_online_display())
+            else:
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup_dict[pairs['fieldname']])
 
     # Sponsorships
     sponsor_items = recruit.models.SponsorItem.objects.all().annotate(num_sponsor=Count('sponsorship'))
@@ -137,7 +149,7 @@ def export_seminar_info(request):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=' + filename
     workbook = xlsxwriter.Workbook(response)
-    worksheet = workbook.add_worksheet("說明會資訊")
+    worksheet = workbook.add_worksheet("實體說明會資訊")
 
     fields = recruit.models.SeminarInfo._meta.get_fields()[1:-1]
     for index, field in enumerate(fields):
@@ -202,7 +214,7 @@ def export_jobfair_info(request):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=' + filename
     workbook = xlsxwriter.Workbook(response)
-    worksheet = workbook.add_worksheet("就博會資訊")
+    worksheet = workbook.add_worksheet("實體就博會資訊")
 
     fields = recruit.models.JobfairInfo._meta.get_fields()[1:]
     for index, field in enumerate(fields):
@@ -269,15 +281,15 @@ def ExportActivityInfo(request):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=' + filename
     workbook = xlsxwriter.Workbook(response)
-    worksheet = workbook.add_worksheet("說明會資訊")
+    worksheet = workbook.add_worksheet("實體說明會資訊")
     worksheet.write(0, 0, "廠商")
-    # ignore id and cid which is index 0 and 1
+    # Ignore id and cid which is index 0 and 1
     fields = recruit.models.SeminarInfo._meta.get_fields()[2:]
     for index, field in enumerate(fields):
         worksheet.write(0, index + 1, field.verbose_name)
 
-    seminar_into_list = recruit.models.SeminarInfo.objects.all()
-    for row_count, info in enumerate(seminar_into_list):
+    seminar_info_list = recruit.models.SeminarInfo.objects.all()
+    for row_count, info in enumerate(seminar_info_list):
         worksheet.write(row_count + 1, 0, info.company.get_company_name())
         for col_count, field in enumerate(fields):
             try:
@@ -287,7 +299,25 @@ def ExportActivityInfo(request):
                 # except, to write string
                 worksheet.write(row_count + 1, col_count + 1, info.updated.strftime("%Y-%m-%d %H:%M:%S"))
 
-    worksheet = workbook.add_worksheet("就博會資訊")
+    worksheet = workbook.add_worksheet("線上說明會資訊")
+    worksheet.write(0, 0, "廠商")
+    # Ignore id and cid which is index 0 and 1
+    fields = recruit.models.OnlineSeminarInfo._meta.get_fields()[2:]
+    for index, field in enumerate(fields):
+        worksheet.write(0, index + 1, field.verbose_name)
+
+    seminar_online_info_list = recruit.models.OnlineSeminarInfo.objects.all()
+    for row_count, info in enumerate(seminar_online_info_list):
+        worksheet.write(row_count + 1, 0, info.company.get_company_name())
+        for col_count, field in enumerate(fields):
+            try:
+                worksheet.write(row_count + 1, col_count + 1, getattr(info, field.name))
+            except TypeError as e:
+                # xlsxwriter do not accept django timzeone aware time, so use
+                # except, to write string
+                worksheet.write(row_count + 1, col_count + 1, info.updated.strftime("%Y-%m-%d %H:%M:%S"))
+
+    worksheet = workbook.add_worksheet("實體就博會資訊")
     worksheet.write(0, 0, "廠商")
     # ignore id and cid which is index 0 and 1
     fields = recruit.models.JobfairInfo._meta.get_fields()[2:]
