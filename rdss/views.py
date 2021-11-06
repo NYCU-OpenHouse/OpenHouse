@@ -936,12 +936,12 @@ def ListJobs(request):
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
-                    'brief': target_company.brief,
+                    'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
                     'website': target_company.website,
-                    'recruit_info': replace_urls(target_company.recruit_info),
-                    'recruit_url': replace_urls(target_company.recruit_url),
+                    'recruit_info': replace_urls_and_emails(target_company.recruit_info),
+                    'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
             except:
                 pass
@@ -953,12 +953,12 @@ def ListJobs(request):
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
-                    'brief': target_company.brief,
+                    'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
                     'website': target_company.website,
-                    'recruit_info': replace_urls(target_company.recruit_info),
-                    'recruit_url': replace_urls(target_company.recruit_url),
+                    'recruit_info': replace_urls_and_emails(target_company.recruit_info),
+                    'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
             except:
                 pass
@@ -966,9 +966,13 @@ def ListJobs(request):
     return render(request, 'public/rdss_jobs.html', locals())
 
 
-def replace_urls(original_str):
+def replace_urls_and_emails(original_str):
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', original_str)
     for url in urls:
         original_str = original_str.replace(url, '<a href="{}" target="_blank">連結</a>'.format(url))
+
+    emails = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', original_str)
+    for email in emails:
+        original_str = original_str.replace(email, '<a href="mailto:{}" target="_blank">email</a>'.format(email))
 
     return '<span>' + original_str + '</span>'
