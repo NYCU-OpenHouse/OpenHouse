@@ -265,7 +265,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
-            'fields': ('cid', 'password', 'name', 'shortname', 'category', 'phone',
+            'fields': ('cid', 'password', 'name', 'english_name', 'shortname', 'category', 'phone',
                        'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo', 'recruit_url',
                        'business_project', 'relation_business', 'subsidiary', 'receipt_title')
         }
@@ -291,9 +291,9 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
-            'fields': ('cid', 'password1', 'password2', 'name', 'shortname',
+            'fields': ('cid', 'password1', 'password2', 'name', 'english_name', 'shortname',
                        'category', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
-                       'recruit_url', 'receipt_title')
+                       'recruit_url', 'business_project', 'relation_business', 'subsidiary', 'receipt_title')
         }
          ),
         ("人資資料", {
@@ -312,7 +312,7 @@ class UserAdmin(BaseUserAdmin):
         }
          ),
     )
-    search_fields = ('cid', 'name', 'shortname')
+    search_fields = ('cid', 'name', 'english_name', 'shortname')
     ordering = ('cid',)
     filter_horizontal = ()
 
