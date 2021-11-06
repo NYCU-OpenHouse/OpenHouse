@@ -927,11 +927,10 @@ def company_survey(request):
         form = SurveyForm(data=data, instance=my_survey)
         if form.is_valid():
             form.save()
-            (msg_display, msg_type, msg_content) = (True, "green", "問卷填寫完成，感謝您")
+            return redirect(company_survey)
         else:
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)
-        return redirect(company_survey)
     else:
         form = SurveyForm(instance=my_survey)
 
