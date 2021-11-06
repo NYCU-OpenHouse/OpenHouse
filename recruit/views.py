@@ -650,7 +650,7 @@ def jobfair_select_form_gen(request):
     except Exception as e:
         jobfair_select_time = "選位時間及順序尚未排定，您可以先參考攤位圖"
 
-    place_maps = Files.objects.filter(category='實體就博會攤位圖')
+    place_maps = Files.objects.filter(category='就博會攤位圖')
 
     return render(request, 'recruit/company/jobfair_select.html', locals())
 
