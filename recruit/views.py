@@ -25,6 +25,7 @@ from company.models import Company
 from datetime import timedelta
 import recruit.models
 from urllib.parse import urlparse, parse_qs
+import re
 
 logger = logging.getLogger('recruit')
 
@@ -1178,17 +1179,46 @@ def list_jobs(request):
             raise Http404("What are u looking for?")
         for company in RecruitSignup.objects.all():
             try:
-                companies.append(Company.objects.get(cid=company.cid, category=category_filtered))
+                target_company = Company.objects.get(cid=company.cid, category=category_filtered)
+                companies.append({
+                    'logo': target_company.logo,
+                    'name': target_company.name,
+                    'category': target_company.category,
+                    'brief': target_company.brief,
+                    'address': target_company.address,
+                    'phone': target_company.phone,
+                    'website': target_company.website,
+                    'recruit_info': replace_urls(target_company.recruit_info),
+                    'recruit_url': replace_urls(target_company.recruit_url),
+                })
             except:
                 pass
     else:
         for company in RecruitSignup.objects.all():
             try:
-                companies.append(Company.objects.get(cid=company.cid))
+                target_company = Company.objects.get(cid=company.cid)
+                companies.append({
+                    'logo': target_company.logo,
+                    'name': target_company.name,
+                    'category': target_company.category,
+                    'brief': target_company.brief,
+                    'address': target_company.address,
+                    'phone': target_company.phone,
+                    'website': target_company.website,
+                    'recruit_info': replace_urls(target_company.recruit_info),
+                    'recruit_url': replace_urls(target_company.recruit_url),
+                })
             except:
                 pass
     return render(request, 'recruit/public/list_jobs.html', locals())
 
+
+def replace_urls(original_str):
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', original_str)
+    for url in urls:
+        original_str = original_str.replace(url, '<a href="{}" target="_blank">連結</a>'.format(url))
+
+    return '<span>' + original_str + '</span>'
 
 def seminar(request):
     # semantic ui control
