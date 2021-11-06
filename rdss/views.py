@@ -14,6 +14,7 @@ from company.models import Company
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Sum
 from django.core import urlresolvers
+import re
 # for logging
 import logging
 
@@ -930,14 +931,44 @@ def ListJobs(request):
             raise Http404("What are u looking for?")
         for signup in rdss.models.Signup.objects.all():
             try:
-                companies.append(company.models.Company.objects.get(cid=signup.cid, category=category_filtered))
+                target_company = company.models.Company.objects.get(cid=signup.cid, category=category_filtered)
+                companies.append({
+                    'logo': target_company.logo,
+                    'name': target_company.name,
+                    'category': target_company.category,
+                    'brief': target_company.brief,
+                    'address': target_company.address,
+                    'phone': target_company.phone,
+                    'website': target_company.website,
+                    'recruit_info': replace_urls(target_company.recruit_info),
+                    'recruit_url': replace_urls(target_company.recruit_url),
+                })
             except:
                 pass
     else:
         for signup in rdss.models.Signup.objects.all():
             try:
-                companies.append(company.models.Company.objects.get(cid=signup.cid))
+                target_company = company.models.Company.objects.get(cid=signup.cid)
+                companies.append({
+                    'logo': target_company.logo,
+                    'name': target_company.name,
+                    'category': target_company.category,
+                    'brief': target_company.brief,
+                    'address': target_company.address,
+                    'phone': target_company.phone,
+                    'website': target_company.website,
+                    'recruit_info': replace_urls(target_company.recruit_info),
+                    'recruit_url': replace_urls(target_company.recruit_url),
+                })
             except:
                 pass
 
     return render(request, 'public/rdss_jobs.html', locals())
+
+
+def replace_urls(original_str):
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', original_str)
+    for url in urls:
+        original_str = original_str.replace(url, '<a href="{}" target="_blank">連結</a>'.format(url))
+
+    return '<span>' + original_str + '</span>'

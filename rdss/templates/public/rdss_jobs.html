@@ -41,13 +41,13 @@
                 <td>{{ company.name }}</td>
                 <td>{{ company.category }}</td>
                 <td>{{ company.brief }}</td>
-                <td>{{ company.recruit_info }}</td>
+                <td>{{ company.recruit_info|safe }}</td>
                 <td>
                     <ul class="ui list">
                         <li>公司地址: {{ company.address }}</li>
                         <li>公司電話: {{ company.phone }}</li>
-                        <li>公司網址: <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></li>
-                        <li>應徵方式: {{ company.recruit_url }}</li>
+                        <li>公司網址: <a href="{{ company.website }}" target="_blank">連結</a></li>
+                        <li>應徵方式: {{ company.recruit_url|safe }}</li>
                     </ul>
                 </td>
             </tr>
