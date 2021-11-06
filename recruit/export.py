@@ -12,6 +12,7 @@ import json
 import datetime
 import recruit.models
 import company.models
+import re
 
 
 @staff_member_required
@@ -368,12 +369,35 @@ def ExportAdFormat(request):
         return HttpResponse(status=403)
     all_company = company.models.Company.objects.all()
     recruit_company = recruit.models.RecruitSignup.objects.all()
-    company_list = [
-        all_company.get(cid=c.cid) for c in recruit_company
-    ]
-    company_list.sort(key=lambda item: getattr(item, 'category'))
+    company_list = []
+    for c in recruit_company:
+        target_company = all_company.get(cid=c.cid)
+        company_list.append({
+            'logo': target_company.logo,
+            'name': target_company.name,
+            'category': target_company.category,
+            'brief': replace_urls_and_emails(target_company.brief),
+            'address': target_company.address,
+            'phone': target_company.phone,
+            'website': target_company.website,
+            'recruit_info': replace_urls_and_emails(target_company.recruit_info),
+            'recruit_url': replace_urls_and_emails(target_company.recruit_url),
+        })
+    company_list.sort(key=lambda item: item['category'])
 
     return render(request, 'admin/export_ad.html', locals())
+
+
+def replace_urls_and_emails(original_str):
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', original_str)
+    for url in urls:
+        original_str = original_str.replace(url, '<a href="{}" target="_blank">連結</a>'.format(url))
+
+    emails = re.findall(r'[\w\.-]+@[\w\.-]+(?:\.[\w]+)+', original_str, re.ASCII)
+    for email in emails:
+        original_str = original_str.replace(email, '<a href="mailto:{}" target="_blank">email</a>'.format(email))
+
+    return '<span>' + original_str + '</span>'
 
 
 def PayInfo(request):
