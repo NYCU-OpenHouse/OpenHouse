@@ -1218,7 +1218,7 @@ def replace_urls_and_emails(original_str):
     for url in urls:
         original_str = original_str.replace(url, '<a href="{}" target="_blank">連結</a>'.format(url))
 
-    emails = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', original_str)
+    emails = re.findall(r'[\w\.-]+@[\w\.-]+(?:\.[\w]+)+', original_str, re.ASCII)
     for email in emails:
         original_str = original_str.replace(email, '<a href="mailto:{}" target="_blank">email</a>'.format(email))
 
