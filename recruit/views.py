@@ -931,6 +931,7 @@ def company_survey(request):
         else:
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)
+        return redirect(company_survey)
     else:
         form = SurveyForm(instance=my_survey)
 

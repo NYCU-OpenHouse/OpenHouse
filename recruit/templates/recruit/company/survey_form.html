@@ -21,12 +21,17 @@
         感謝貴公司長久以來對本校的支持與愛護，本校職涯發展組為了建立校友就業相關資料，以期瞭解業界對本校畢業生的指教，做為本校改善教學以及推展研究的重要參考，<b style=color:red>數據僅作為校內教學研究用途，亦不對外公開。</b>
 
         若有任何問題，請致電(03)5131365或03-5712121分機31365、50659（吳文鈴），謝謝您的協助！
-
     </div>
 
     {% if msg_display %}
         <div class="ui {{ msg_type }} message">
             {{ msg_content }}
+        </div>
+    {% endif %}
+
+    {% if my_survey %}
+        <div class="ui teal compact message">
+            企業滿意度問卷填寫已完成，您也可以修改資訊，再次送出。
         </div>
     {% endif %}
 
@@ -310,7 +315,7 @@
                 <div class="ui teal segment">
                     <h3 class="ui dividing header">(3) 針對本校畢業生在職場上的表現問題，請協助評估後進行勾選</h3>
                     <div class="ui message">
-                        <p>若貴企業目前並無交通大學畢業生，請勾選下方空格，題目則留空不填</p>
+                        <p>若貴企業目前並無本校畢業生，請勾選下方空格，題目則留空不填</p>
                         <div class="ui checkbox">
                             {{ form.no_nycu_employee }}
                             <label>{{ form.no_nctu_employee.label }}</label>
