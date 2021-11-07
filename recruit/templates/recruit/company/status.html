@@ -72,10 +72,10 @@
                     <td>企業滿意度問卷</td>
                     <td>
                         {% if fill_survey %}
-                            <i class="large green checkmark icon"></i>
-                            已填寫
+                            <i class="large green check icon"></i>
+                            <b>已填寫</b>
                         {% else %}
-                            <i class="large red remove icon"></i>
+                            <i class="large red x icon"></i>
                             <a href="{% url 'recruit_survey' %}">點此填寫問卷</a>
                         {% endif %}
                     </td>
@@ -95,9 +95,14 @@
                 <tr>
                     <td>實體ECE說明會</td>
                     <td>
-                        {% if signup_data.seminar_ece %}
+                        {% if signup_data.seminar_ece.all %}
                             <i class="large green check icon"></i>
-                            <b>{{ signup_data.get_seminar_ece_display }}</b>
+                            <b>參加</b>
+                            <ul class="ui divided list">
+                                {% for ece in signup_data.seminar_ece.all %}
+                                    <li>{{ ece }}</li>
+                                {% endfor %}
+                            </ul>
                         {% else %}
                             <i class="large red x icon"></i>
                             <b>不參加</b>
@@ -220,10 +225,10 @@
                     <td>線上說明會資訊</td>
                     <td>
                         {% if online_seminar_info %}
-                            <i class="large green checkmark icon"></i>
-                            已填寫
+                            <i class="large green check icon"></i>
+                            <b>已填寫</b>
                         {% else %}
-                            <i class="large red remove icon"></i>
+                            <i class="large red x icon"></i>
                             <a href="{% url 'recruit_online_seminar_info' %}">點此填寫</a>
                         {% endif %}
                     </td>
@@ -232,10 +237,10 @@
                     <td>實體就博會資訊</td>
                     <td>
                         {% if jobfair_info %}
-                            <i class="large green checkmark icon"></i>
-                            已填寫
+                            <i class="large green check icon"></i>
+                            <b>已填寫</b>
                         {% else %}
-                            <i class="large red remove icon"></i>
+                            <i class="large red x icon"></i>
                             <a href="{% url 'recruit_jobfair_info' %}">點此填寫</a>
                         {% endif %}
                     </td>

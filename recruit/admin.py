@@ -4,7 +4,7 @@ from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot, \
-    OnlineSeminarOrder, OnlineSeminarInfo
+    OnlineSeminarOrder, OnlineSeminarInfo, ECESeminar
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -46,12 +46,17 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ('card_num', 'student_id', 'name', 'phone')
 
 
+@admin.register(ECESeminar)
+class ECESeminarAdmin(admin.ModelAdmin):
+    list_display = ('seminar_name',)
+
+
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
-    search_fields = ('cid', 'seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online',)
-    list_display = ('cid', 'company_name', 'seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online',
+    search_fields = ('cid', 'seminar', 'seminar_online', 'jobfair', 'jobfair_online',)
+    list_display = ('cid', 'company_name', 'seminar', 'seminar_online', 'jobfair', 'jobfair_online',
                     'career_tutor', 'company_visit', 'lecture', 'payment')
-    list_filter = ('seminar', 'seminar_ece', 'seminar_online', 'jobfair', 'jobfair_online', 'payment',)
+    list_filter = ('seminar', 'seminar_online', 'jobfair', 'jobfair_online', 'payment',)
     inlines = (SponsorshipInline,)
 
     # custom search the company name field in other db

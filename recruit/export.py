@@ -94,7 +94,7 @@ def ExportAll(request):
                                        signup.get_seminar_display())
             elif pairs['fieldname'] == 'seminar_ece':
                 signup_worksheet.write(row_count + 1, col_count,
-                                       signup.get_seminar_ece_display())
+                                       ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
             elif pairs['fieldname'] == 'seminar_online':
                 signup_worksheet.write(row_count + 1, col_count,
                                        signup.get_seminar_online_display())

@@ -116,6 +116,19 @@ class RecruitConfigs(models.Model):
         verbose_name_plural = u'1. 校徵活動設定'
 
 
+class ECESeminar(models.Model):
+    id = models.AutoField(primary_key=True)
+    seminar_name = models.CharField(u'實體ECE說明會名稱', max_length=50)
+
+    def __str__(self):
+        return u'{}'.format(self.seminar_name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'3. 實體ECE說明會設定'
+        verbose_name_plural = u'3. 實體ECE說明會設定'
+
+
 class RecruitSignup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加實體說明會'),
@@ -125,17 +138,9 @@ class RecruitSignup(models.Model):
         (u'none', u'不參加線上說明會'),
         (u'attend', u'參加線上說明會'),
     )
-    SEMINAR_ECE_CHOICES = (
-        (u'none', u'不參加實體ECE說明會'),
-        (u'ece', u'電機所說明會'),
-        (u'communication', u'電信所說明會'),
-        (u'control', u'電控所說明會'),
-        (u'ee_solid', u'電子所固態說明會'),
-        (u'ee_system_analog', u'電子所系統&類比說明會'),
-    )
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
     seminar = models.CharField(u'實體說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
-    seminar_ece = models.CharField(u'實體ECE說明會', choices=SEMINAR_ECE_CHOICES, max_length=20, default='none')
+    seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
     seminar_online = models.CharField(u'線上說明會場次', choices=SEMINAR_ONLINE_CHOICES, max_length=15, default='none')
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0)
     jobfair_online = models.BooleanField(u'線上就博會', default=False)
@@ -166,8 +171,8 @@ class RecruitSignup(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u'2. 活動報名情況'
-        verbose_name_plural = u'2. 活動報名情況'
+        verbose_name = u'4. 活動報名情況'
+        verbose_name_plural = u'4. 活動報名情況'
 
 
 class Files(models.Model):
@@ -496,8 +501,8 @@ class SponsorItem(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u'6. 贊助品'
-        verbose_name_plural = u'6. 贊助品'
+        verbose_name = u'7. 贊助品'
+        verbose_name_plural = u'7. 贊助品'
 
 
 class SponsorShip(models.Model):
@@ -506,8 +511,8 @@ class SponsorShip(models.Model):
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
-        verbose_name = u'7. 贊助情況'
-        verbose_name_plural = u'7. 贊助情況'
+        verbose_name = u'8. 贊助情況'
+        verbose_name_plural = u'8. 贊助情況'
         unique_together = ('company', 'sponsor_item')
 
 
@@ -823,8 +828,8 @@ class RecruitInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"5. 校徵活動資訊 (學生)"
-        verbose_name_plural = u"5. 校徵活動資訊 (學生)"
+        verbose_name = u"6. 校徵活動資訊 (學生)"
+        verbose_name_plural = u"6. 校徵活動資訊 (學生)"
 
 
 class RecruitCompanyInfo(models.Model):
@@ -837,8 +842,8 @@ class RecruitCompanyInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"4. 校徵活動資訊 (企業)"
-        verbose_name_plural = u"4. 校徵活動資訊 (企業)"
+        verbose_name = u"5. 校徵活動資訊 (企業)"
+        verbose_name_plural = u"5. 校徵活動資訊 (企業)"
 
 
 class RecruitSeminarInfo(models.Model):

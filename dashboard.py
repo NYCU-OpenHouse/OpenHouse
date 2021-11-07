@@ -166,7 +166,7 @@ class CustomAppDashboard(AppIndexDashboard):
                 continue
             if 'online' in lower_object_name:
                 online.append(my_app_name + '.' + object_name)
-            elif 'seminar' in lower_object_name or 'jobfair' in lower_object_name:
+            elif ('seminar' in lower_object_name and 'ece' not in lower_object_name) or 'jobfair' in lower_object_name:
                 physical.append(my_app_name + '.' + object_name)
             else:
                 other.append(my_app_name + '.' + object_name)

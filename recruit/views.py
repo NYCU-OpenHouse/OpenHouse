@@ -95,6 +95,7 @@ def recruit_signup(request):
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():
             form.save()
+            form.save_m2m()
         else:
             # Debug
             print(form.errors.items())
@@ -1100,8 +1101,9 @@ def Status(request):
     try:
         if signup_data.seminar != 'none':
             fee += configs.session_fee
-        if signup_data.seminar_ece != 'none':
-            fee += configs.session_ece_fee
+        num_of_ece = len(signup_data.seminar_ece.all())
+        if num_of_ece:
+            fee += configs.session_ece_fee * num_of_ece
         if signup_data.seminar_online != "none":
             fee += configs.session_online_fee
         if signup_data.jobfair:
