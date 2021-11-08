@@ -3,6 +3,7 @@
 
 {% block 'custom_head' %}
     {{ form.media }}
+    <title>公司資料修改 | OpenHouse 企業校園徵才 </title>
 {% endblock %}
 
 {% block 'content' %}
@@ -34,6 +35,10 @@
                         {{ form.name }}
                     </div>
                     <div class="required field">
+                        <label>{{ form.english_name.label_tag }}</label>
+                        {{ form.english_name }}
+                    </div>
+                    <div class="required field">
                         <label>{{ form.receipt_title.label_tag }}</label>
                         {{ form.receipt_title }}
                     </div>
@@ -61,7 +66,7 @@
                         <label>{{ form.website.label_tag }}</label>
                         {{ form.website }}
                     </div>
-                    <div class="required field">
+                    <div class="field">
                         <label>{{ form.business_project.label_tag }}</label>
                         {{ form.business_project }}
                     </div>
