@@ -35,7 +35,7 @@ def ExportAll(request):
         company_list.append(
             company.models.Company.objects.filter(cid=cid).first())
 
-    fieldname_list = ['cid', 'name', 'shortname', 'category', 'phone',
+    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'category', 'phone',
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
