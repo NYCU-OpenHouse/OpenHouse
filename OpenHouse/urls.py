@@ -20,9 +20,14 @@ from django.views.decorators.cache import never_cache
 import rdss.views
 import general.views
 from ckeditor_uploader import views as ckeditor_views
+# for media file
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     # custom sponsorship admin url and view
+    
     url(r'', include('general.urls')),  # add '' on the include path!!!
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URL
@@ -44,5 +49,6 @@ urlpatterns = [
     url(r'^recruit/', include('recruit.public_urls')),
     url(r'^visit/', include('company_visit.urls')),
     # url(r'^vote/', include('vote.urls')),
-    url(r'^monograph/', include('monograph.urls'))
-]
+    url(r'^monograph/', include('monograph.urls')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -135,7 +135,7 @@ class CustomDashboard(Dashboard):
                 },
                 {
                     'title': _('讀卡程式及驅動'),
-                    'url': '/static/data/apps/card_reader.zip',
+                    'url': '/media/data/apps/card_reader.zip',
                     'external': False,
                 },
             ],
