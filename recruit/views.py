@@ -20,7 +20,7 @@ from django.db.models import Count, Q
 import datetime
 import json
 import logging
-from ipware.ip import get_real_ip
+from ipware.ip import get_client_ip
 from company.models import Company
 from datetime import timedelta
 import recruit.models
@@ -775,7 +775,7 @@ def jobfair_select_control(request):
         slot.company = my_signup
         slot.save()
 
-        ip = get_real_ip(request)
+        ip = get_client_ip(request)
         if ip is None:
             ip = "Unknown IP"
         logger.info('{} select jobfair slot {} from {}'.format(my_signup.get_company_name(), slot.serial_no, ip))
@@ -791,7 +791,7 @@ def jobfair_select_control(request):
             cancel_slot.company = None
             cancel_slot.save()
 
-            ip = get_real_ip(request)
+            ip = get_client_ip(request)
             if ip is None:
                 ip = "Unknown IP"
             logger.info(

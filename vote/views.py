@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Participant,Vote, VoteInfo
-from ipware.ip import get_real_ip,get_ip
+from ipware.ip import get_ip
 from django.db import IntegrityError
 import datetime
 
