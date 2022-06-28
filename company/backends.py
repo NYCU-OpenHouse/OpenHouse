@@ -7,7 +7,7 @@ class CompanyBackend(ModelBackend):
     OpenHouse company Backend
     """
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             user = Company._default_manager.get_by_natural_key(username=username)
             if user.check_password(password):
