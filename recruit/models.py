@@ -252,7 +252,7 @@ class SeminarSlot(models.Model):
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True)
     place = models.ForeignKey('SlotColor', null=True, blank=True,
-                              verbose_name=u'場地')
+                      verbose_name=u'場地', on_delete=models.SET_NULL)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
@@ -339,7 +339,7 @@ class JobfairOrder(models.Model):
 
 class JobfairInfo(models.Model):
     id = models.AutoField(primary_key=True)
-    company = models.OneToOneField(RecruitSignup, verbose_name=u'公司')
+    company = models.OneToOneField(RecruitSignup, verbose_name=u'公司', on_delete=models.CASCADE)
     sign_name = models.CharField(u'攤位招牌名稱', max_length=20)
     contact_person = models.CharField(u'聯絡人', max_length=10)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=32)
@@ -377,7 +377,7 @@ class JobfairParking(models.Model):
 
 class JobfairInfoTemp(models.Model):
     id = models.AutoField(primary_key=True)
-    company = models.OneToOneField(RecruitSignup, verbose_name=u'公司')
+    company = models.OneToOneField(RecruitSignup, verbose_name=u'公司', on_delete=models.CASCADE)
     video = models.CharField(u'影片', max_length=100, blank=True, null=True)
     content = RichTextUploadingField(u'招募內容')
     updated_time = models.DateTimeField(u'更新時間', auto_now=True)
@@ -801,15 +801,15 @@ class Student(models.Model):
 
 
 class StuAttendance(models.Model):
-    student = models.ForeignKey(Student, to_field='card_num')
-    seminar = models.ForeignKey(SeminarSlot, to_field='id')
+    student = models.ForeignKey(Student, to_field='card_num', on_delete=models.CASCADE)
+    seminar = models.ForeignKey(SeminarSlot, to_field='id', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('student', 'seminar')
 
 
 class ExchangePrize(models.Model):
-    student = models.ForeignKey(Student, to_field='card_num', verbose_name='u學生證卡號')
+    student = models.ForeignKey(Student, to_field='card_num', verbose_name='u學生證卡號', on_delete=models.CASCADE)
     points = models.IntegerField(u'所需點數')
     prize = models.CharField(u'獎品', max_length=100)
 

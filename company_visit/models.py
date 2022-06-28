@@ -41,7 +41,7 @@ class StudentApply(models.Model):
         (u'other', u'其他'),
     )
     id = models.AutoField(primary_key=True)
-    event = models.ForeignKey(CompanyVisit, to_field='id', verbose_name=u'場次/編號')
+    event = models.ForeignKey(CompanyVisit, to_field='id', on_delete=models.CASCADE, verbose_name=u'場次/編號')
     name = models.CharField(u'姓名', max_length=10)
     student_id = models.CharField(u'學號', max_length=20)
     gender = models.CharField(u'性別', choices=GENDER, max_length=8)

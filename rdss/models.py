@@ -150,8 +150,7 @@ class SeminarSlot(models.Model):
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True)
     place = models.ForeignKey('SlotColor', null=True, blank=True,
-                              verbose_name=u'場地',
-                              )
+                        verbose_name=u'場地', on_delete=models.SET_NULL)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 

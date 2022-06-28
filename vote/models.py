@@ -21,7 +21,7 @@ class Participant(models.Model):
 class Vote(models.Model):
     ip = models.CharField(max_length=40)
     date = models.DateField()
-    participant = models.ForeignKey(Participant)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     class Meta:
         unique_together = ("ip", "date")
 
