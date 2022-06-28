@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory, Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rdss.public_urls import urlpatterns as pub_urls
 from rdss.internal_urls import urlpatterns as inter_urls
 

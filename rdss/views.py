@@ -13,7 +13,7 @@ from datetime import timedelta
 from company.models import Company
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Sum
-from django.core import urlresolvers
+from django.urls import reverse
 import re
 # for logging
 import logging
@@ -639,7 +639,7 @@ def SponsorAdmin(request):
             "amount": amount,
             "shortname": shortname,
             "id": c.id,
-            "change_url": urlresolvers.reverse('admin:rdss_signup_change',
+            "change_url": reverse('admin:rdss_signup_change',
                                                args=(c.id,))
         })
 

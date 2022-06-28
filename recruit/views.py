@@ -1,4 +1,4 @@
-from django.core import urlresolvers
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
@@ -897,7 +897,7 @@ def SponsorAdmin(request):
             "amount": amount,
             "shortname": shortname,
             "id": c.id,
-            "change_url": urlresolvers.reverse('admin:recruit_recruitsignup_change',
+            "change_url": reverse('admin:recruit_recruitsignup_change',
                                                args=(c.id,))
         })
 
