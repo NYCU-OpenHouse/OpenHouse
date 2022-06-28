@@ -57,7 +57,7 @@ def CompanyCreation(request):
 @login_required(login_url='/company/login/')
 def CompanyEdit(request):
     submit_btn_name = "確認修改"
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         user = request.user
     else:
         user = None

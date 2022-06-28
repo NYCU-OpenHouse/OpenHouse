@@ -18,7 +18,7 @@ import re
 @staff_member_required
 def ExportAll(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -141,7 +141,7 @@ def ExportAll(request):
 
 @staff_member_required
 def export_seminar_info(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -183,7 +183,7 @@ def export_seminar_info(request):
 
 @staff_member_required
 def export_online_seminar_info(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -220,7 +220,7 @@ def export_online_seminar_info(request):
 
 @staff_member_required
 def export_jobfair_info(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -262,7 +262,7 @@ def export_jobfair_info(request):
 
 @staff_member_required
 def ExportSurvey(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -294,7 +294,7 @@ def ExportSurvey(request):
 @staff_member_required
 def ExportActivityInfo(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -362,7 +362,7 @@ def ExportActivityInfo(request):
 
 @staff_member_required
 def ExportAdFormat(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:

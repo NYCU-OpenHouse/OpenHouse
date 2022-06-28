@@ -15,7 +15,7 @@ import company.models
 @staff_member_required
 def Export_Company(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:

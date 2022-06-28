@@ -16,7 +16,7 @@ import company.models
 @staff_member_required
 def Export_Signup(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -75,7 +75,7 @@ def Export_Signup(request):
 @staff_member_required
 def Export_Company(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -117,7 +117,7 @@ def Export_Company(request):
 @staff_member_required
 def ExportAll(request):
     # Create the HttpResponse object with the appropriate Excel header.
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -227,7 +227,7 @@ def ExportAll(request):
 
 @staff_member_required
 def ExportSeminar(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -270,7 +270,7 @@ def ExportSeminar(request):
 
 @staff_member_required
 def ExportJobfair(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -313,7 +313,7 @@ def ExportJobfair(request):
 
 @staff_member_required
 def ExportSurvey(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -347,7 +347,7 @@ def ExportSurvey(request):
 
 @staff_member_required
 def ExportActivityInfo(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
@@ -398,7 +398,7 @@ def ExportActivityInfo(request):
 
 @staff_member_required
 def ExportAdFormat(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:

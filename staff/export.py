@@ -9,7 +9,7 @@ import staff.models
 # Create the HttpResponse object with the appropriate Excel Header
 @staff_member_required
 def ExportStaff(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         if not request.user.is_superuser:
             return HttpResponse(status=403)
     else:
