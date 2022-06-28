@@ -12,12 +12,18 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 import os
 import logging
+from six import python_2_unicode_compatible
+import django.utils.encoding
+django.utils.encoding.python_2_unicode_compatible = python_2_unicode_compatible
+
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-MEDIA_ROOT=BASE_DIR+"/static/data/"
-MEDIA_URL="/static/data/"
+MEDIA_ROOT=BASE_DIR+"/media/data/"
+MEDIA_URL="/media/data/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -52,18 +58,17 @@ INSTALLED_APPS = [
 		'ckeditor',
 		'ckeditor_uploader',
 		'vote',
+        'monograph',
         ]
 
-MIDDLEWARE_CLASSES = [
-		'django.middleware.security.SecurityMiddleware',
-		'django.contrib.sessions.middleware.SessionMiddleware',
-		'django.middleware.common.CommonMiddleware',
-		'django.middleware.csrf.CsrfViewMiddleware',
-		'django.contrib.auth.middleware.AuthenticationMiddleware',
-		'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-		'django.contrib.messages.middleware.MessageMiddleware',
-		'django.middleware.clickjacking.XFrameOptionsMiddleware',
-		]
+MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+]
 
 ROOT_URLCONF = 'OpenHouse.urls'
 
@@ -95,27 +100,63 @@ DATABASES = {
 		'default': {
 			#'ENGINE': 'mysql.connector.django',
 			'ENGINE': 'django.db.backends.mysql',
-			'HOST': '172.17.0.2',
+			'HOST': '/var/run/mysqld/mysqld.sock',
 			'PORT':'3306',
 			'NAME' : 'oh_core',
 			'USER' : 'root',
 			'PASSWORD' : 'mypw',
                         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
 			},
-		'oh_2016': {
+		# 'oh_2016': {
+		# 	'ENGINE': 'django.db.backends.mysql',
+		# 	'HOST': 'oh_mysql',
+		# 	'PORT':'3306',
+		# 	'NAME' : 'oh_2016',
+		# 	'USER' : 'root',
+		# 	'PASSWORD' : 'mypw',
+        #                 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+		# 	},
+		# 'oh_2017': {
+		# 	'ENGINE': 'django.db.backends.mysql',
+		# 	'HOST': 'oh_mysql',
+		# 	'PORT':'3306',
+		# 	'NAME' : 'oh_2017',
+		# 	'USER' : 'root',
+		# 	'PASSWORD' : 'mypw',
+        #                 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+		# 	},
+        # 'oh_2018': {
+		# 	'ENGINE': 'django.db.backends.mysql',
+		# 	'HOST': 'oh_mysql',
+		# 	'PORT':'3306',
+		# 	'NAME' : 'oh_2018',
+		# 	'USER' : 'root',
+		# 	'PASSWORD' : 'mypw',
+        #                 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+		# 	},
+        # 'oh_2019': {
+		# 	'ENGINE': 'django.db.backends.mysql',
+		# 	'HOST': 'oh_mysql',
+		# 	'PORT':'3306',
+		# 	'NAME' : 'oh_2019',
+		# 	'USER' : 'root',
+		# 	'PASSWORD' : 'mypw',
+        #                 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+		# 	},
+        # 'oh_2020': {
+		# 	'ENGINE': 'django.db.backends.mysql',
+		# 	'HOST': 'oh_mysql',
+		# 	'PORT':'3306',
+		# 	'NAME' : 'oh_2020',
+		# 	'USER' : 'root',
+		# 	'PASSWORD' : 'mypw',
+        #                 'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+		# 	},
+        'oh_2021': {
 			'ENGINE': 'django.db.backends.mysql',
-			'HOST': '172.17.0.2',
+			'HOST': '/var/run/mysqld/mysqld.sock',
 			'PORT':'3306',
-			'NAME' : 'oh_2016',
-			'USER' : 'root',
-			'PASSWORD' : 'mypw',
-                        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
-			},
-		'oh_2017': {
-			'ENGINE': 'django.db.backends.mysql',
-			'HOST': '172.17.0.2',
-			'PORT':'3306',
-			'NAME' : 'oh_2017',
+			'NAME' : 'oh_2021',
 			'USER' : 'root',
 			'PASSWORD' : 'mypw',
                         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
@@ -184,7 +225,7 @@ STATICFILES_DIRS = (
 		# Always use forward slashes, even on Windows.
 		# Don't forget to use absolute paths, not relative paths.
 		BASE_DIR+'/static',
-		'/home/billy/repo/OpenHouse/static/'
+		
 		)
 
 
@@ -272,3 +313,10 @@ LOGGING = {
     },
 }
 JET_INDEX_DASHBOARD = 'dashboard.CustomDashboard'
+JET_APP_INDEX_DASHBOARD = 'dashboard.CustomAppDashboard'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
