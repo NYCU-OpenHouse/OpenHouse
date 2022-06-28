@@ -46,6 +46,7 @@ class MonographInfo(models.Model):
     """
     Model representing the introduction on monograph's main page
     """
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=20)
     content = RichTextField(u'內容', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)

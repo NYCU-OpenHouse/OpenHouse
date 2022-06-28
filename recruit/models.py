@@ -39,6 +39,7 @@ CATEGORYS = (
 
 
 class RecruitConfigs(models.Model):
+    id = models.AutoField(primary_key=True)
     register_start = models.DateTimeField(u'廠商註冊開始時間')
     register_end = models.DateTimeField(u'廠商註冊結束時間')
     recruit_signup_start = models.DateTimeField(u'校徵報名開始時間')
@@ -138,6 +139,7 @@ class RecruitSignup(models.Model):
         (u'none', u'不參加線上說明會'),
         (u'attend', u'參加線上說明會'),
     )
+    id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
     seminar = models.CharField(u'實體說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
@@ -488,6 +490,7 @@ class SeminarInfoTemporary(models.Model):
 
 
 class SponsorItem(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(u'贊助品名稱', max_length=20, unique=True)
     description = models.CharField(u'贊助品說明', max_length=100)
     spec = models.CharField(u'規格', blank=True, null=True, max_length=100)
@@ -506,6 +509,7 @@ class SponsorItem(models.Model):
 
 
 class SponsorShip(models.Model):
+    id = models.AutoField(primary_key=True)
     company = models.ForeignKey(RecruitSignup, to_field='cid', on_delete=models.CASCADE)
     sponsor_item = models.ForeignKey(SponsorItem, to_field='name', on_delete=models.CASCADE)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -525,6 +529,7 @@ class CompanySurvey(models.Model):
         (u'劣', u'劣'),
     )
 
+    id = models.AutoField(primary_key=True)
     english_name = models.CharField(u'公司英文名稱', blank=True, null=True, max_length=255)
     # os = overseas, osc = overseas chinese, cn = china
     os_serve = models.BooleanField(u'境外生參與活動', default=False)
@@ -801,6 +806,7 @@ class Student(models.Model):
 
 
 class StuAttendance(models.Model):
+    id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, to_field='card_num', on_delete=models.CASCADE)
     seminar = models.ForeignKey(SeminarSlot, to_field='id', on_delete=models.CASCADE)
 
@@ -809,6 +815,7 @@ class StuAttendance(models.Model):
 
 
 class ExchangePrize(models.Model):
+    id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, to_field='card_num', verbose_name='u學生證卡號', on_delete=models.CASCADE)
     points = models.IntegerField(u'所需點數')
     prize = models.CharField(u'獎品', max_length=100)
@@ -819,6 +826,7 @@ class ExchangePrize(models.Model):
 
 
 class RecruitInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -833,6 +841,7 @@ class RecruitInfo(models.Model):
 
 
 class RecruitCompanyInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -847,6 +856,7 @@ class RecruitCompanyInfo(models.Model):
 
 
 class RecruitSeminarInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -861,6 +871,7 @@ class RecruitSeminarInfo(models.Model):
 
 
 class RecruitECESeminarInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -875,6 +886,7 @@ class RecruitECESeminarInfo(models.Model):
 
 
 class RecruitOnlineSeminarInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -889,6 +901,7 @@ class RecruitOnlineSeminarInfo(models.Model):
 
 
 class RecruitJobfairInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -903,6 +916,7 @@ class RecruitJobfairInfo(models.Model):
 
 
 class RecruitOnlineJobfairInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)

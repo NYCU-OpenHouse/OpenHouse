@@ -42,6 +42,7 @@ CATEGORYS = (
 
 
 class RdssConfigs(models.Model):
+    id = models.AutoField(primary_key=True)
     register_start = models.DateTimeField(u'廠商註冊開始時間')
     register_end = models.DateTimeField(u'廠商註冊結束時間')
     rdss_signup_start = models.DateTimeField(u'秋季招募報名開始時間')
@@ -193,6 +194,7 @@ class Student(models.Model):
 
 
 class StuAttendance(models.Model):
+    id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, to_field='idcard_no',
                                 verbose_name=u'學生證卡號',
                                 on_delete=models.CASCADE, )
@@ -209,6 +211,7 @@ class StuAttendance(models.Model):
 
 
 class RedeemPrize(models.Model):
+    id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, to_field='idcard_no',
                                 verbose_name=u'學生證卡號',
                                 on_delete=models.CASCADE, )
@@ -420,6 +423,7 @@ class SponsorItems(models.Model):
 
 
 class Sponsorship(models.Model):
+    id = models.AutoField(primary_key=True)
     company = models.ForeignKey(Signup, to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE)
@@ -465,6 +469,7 @@ class CompanySurvey(models.Model):
         (u'劣', u'劣'),
     )
 
+    id = models.AutoField(primary_key=True)
     english_name = models.CharField(u'公司英文名稱', blank=True, null=True, max_length=255)
     # os = overseas, osc = overseas chinese, cn = china
     os_serve = models.BooleanField(u'境外生參與活動', default=False)
@@ -711,6 +716,7 @@ class CompanySurvey(models.Model):
 
 
 class RdssInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -725,6 +731,7 @@ class RdssInfo(models.Model):
 
 
 class RdssCompanyInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -739,6 +746,7 @@ class RdssCompanyInfo(models.Model):
 
 
 class RdssSeminarInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -753,6 +761,7 @@ class RdssSeminarInfo(models.Model):
 
 
 class RdssJobfairInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
@@ -767,6 +776,7 @@ class RdssJobfairInfo(models.Model):
 
 
 class RdssOnlineJobfairInfo(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
     content = RichTextField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
