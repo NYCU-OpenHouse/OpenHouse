@@ -1,0 +1,33 @@
+version: '2'
+services:
+  nginx:
+    build: nginx
+    container_name: nginx
+    ports:
+      - '8080:80'
+    networks:
+      - backend
+    volumes:
+      - ./OpenHouse/static:/oh/static:ro
+      - ./OpenHouse/media:/oh/media:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - oh
+  oh:
+    container_name: oh
+    restart: always
+    build :
+      context: ./OpenHouse
+      dockerfile: Dockerfile.prod
+    volumes:
+      - /var/run/mysqld:/var/run/mysqld
+      - ./OpenHouse:/oh:rw
+    networks:
+      - backend
+    environment:
+      - MYSQL_HOST=/var/run/mysqld/mysqld.sock
+      - MYSQL_PASSWORD=<MYSQL_PASSWORD>
+
+
+networks:
+  backend:
