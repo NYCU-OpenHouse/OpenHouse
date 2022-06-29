@@ -1,0 +1,8 @@
+django==3.2.13
+django-ckeditor
+django-ipware
+django-jet-reboot==1.3.1
+mysqlclient
+Pillow
+XlsxWriter
+six

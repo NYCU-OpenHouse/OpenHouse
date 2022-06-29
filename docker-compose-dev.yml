@@ -1,0 +1,41 @@
+version: "3"
+services:
+
+  mysql:
+    container_name: oh_mysql
+    restart: always
+    build: mysql
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 'mypw' # TODO: Change this
+    volumes:
+      - oh_volume:/var/lib/mysql
+    networks:
+      - db_network
+
+  oh:
+    container_name: oh
+    restart: always
+    build :
+      context: ./OpenHouse
+      dockerfile: Dockerfile.dev
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./OpenHouse:/oh
+    networks:
+      - db_network
+    environment:
+      - DEBUG=True
+      - MYSQL_HOST=oh_mysql
+      - MYSQL_PASSWORD=mypw
+
+volumes:
+  oh_volume:
+      external: true
+      name: oh_volume
+
+
+networks:
+  db_network:
+    driver: bridge
