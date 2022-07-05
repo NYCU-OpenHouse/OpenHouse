@@ -11,6 +11,7 @@ services:
       - ./OpenHouse/static:/oh/static:ro
       - ./OpenHouse/media:/oh/media:ro
       - /var/log/nginx:/var/log/nginx
+      - ./nginx/html:/etc/nginx/html
     depends_on:
       - oh
   oh:
