@@ -4,7 +4,8 @@ services:
     build: nginx
     container_name: nginx
     ports:
-      - '8080:80'
+      - '80:80'
+      - '443:443'
     networks:
       - backend
     volumes:
@@ -12,6 +13,7 @@ services:
       - ./OpenHouse/media:/oh/media:ro
       - /var/log/nginx:/var/log/nginx
       - ./nginx/html:/etc/nginx/html
+      - ./nginx/key:/etc/ssl
     depends_on:
       - oh
   oh:
