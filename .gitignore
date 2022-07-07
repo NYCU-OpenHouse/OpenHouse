@@ -1,13 +1,14 @@
 *.swp
 .*.
 OpenHouse/OpenHouse/settings.py
-__pycache__/
-migrations/
-tools/
-static/*
-!static/css/
-!static/js/
-!static/Ideal-Image-Slider
+__pycache__
+OpenHouse/migrations/
+OpenHouse/tools/
+OpenHouse/static/*
+OpenHouse/media/*
+!OpenHouse/static/css/
+!OpenHouse/static/js/
+OpenHouse/static/Ideal-Image-Slider
 .ropeproject/
 <<<<<<< HEAD
 *.log
