@@ -6,3 +6,4 @@ mysqlclient
 Pillow
 XlsxWriter
 six
+gunicorn
