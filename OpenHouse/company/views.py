@@ -89,10 +89,17 @@ def CompanyLogin(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+            next_url = request.GET.get('next')
             if user.is_staff:
+                if next_url == None:
                 return redirect('/admin/')
             else:
+                    return redirect(next_url)
+            else:
+                if next_url == None:
                 return redirect('/company/')
+                else:
+                    return redirect(next_url)
         else:
             error_display = True
             error_msg = "帳號或密碼錯誤"
