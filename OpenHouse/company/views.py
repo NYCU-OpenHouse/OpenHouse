@@ -92,12 +92,12 @@ def CompanyLogin(request):
             next_url = request.GET.get('next')
             if user.is_staff:
                 if next_url == None:
-                return redirect('/admin/')
-            else:
+                    return redirect('/admin/')
+                else:
                     return redirect(next_url)
             else:
                 if next_url == None:
-                return redirect('/company/')
+                    return redirect('/company/')
                 else:
                     return redirect(next_url)
         else:
