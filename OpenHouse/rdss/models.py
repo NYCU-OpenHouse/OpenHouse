@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import RegexValidator, MaxValueValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from ckeditor.fields import RichTextField
@@ -101,7 +101,7 @@ class Signup(models.Model):
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='', blank=True)
-    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MaxValueValidator(2)])
+    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MaxValueValidator(2), MinValueValidator(0)])
     jobfair_online = models.BooleanField(u'線上就博會', default=False)
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')
@@ -697,6 +697,7 @@ class CompanySurvey(models.Model):
         (u'綜合', u'綜合'),
         (u'人力銀行', u'人力銀行'),
         (u'機構', u'機構'),
+        (u'公家單位', u'公家單位'),
         (u'化工/化學', u'化工/化學'),
         (u'傳產/製造', u'傳產/製造'),
         (u'工商/服務', u'工商/服務'),
