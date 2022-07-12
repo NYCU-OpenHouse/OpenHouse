@@ -44,6 +44,7 @@ def Status(request):
     # get the dates from the configs
     configs = rdss.models.RdssConfigs.objects.all()[0]
     signup_data = rdss.models.Signup.objects.filter(cid=mycid).first()
+    mycompany = company.models.Company.objects.filter(cid=mycid).first()
 
     pay_info_file = rdss.models.Files.objects.filter(category="繳費資訊").first()
 
@@ -97,6 +98,8 @@ def Status(request):
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
+        if mycompany.category == '公家單位':
+            fee = 0
     except AttributeError:
         pass
 
