@@ -158,8 +158,8 @@ class SeminarSlot(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"說明會場次"
-        verbose_name_plural = u"說明會場次"
+        verbose_name = u"線上-說明會場次"
+        verbose_name_plural = u"線上-說明會場次"
 
     def __str__(self):
         return '{} {}'.format(self.date, self.session)
@@ -254,8 +254,8 @@ class SeminarOrder(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"說明會選位順序"
-        verbose_name_plural = u"說明會選位順序"
+        verbose_name = u"線上-說明會選位順序"
+        verbose_name_plural = u"線上-說明會選位順序"
 
 
 class SeminarInfo(models.Model):
@@ -289,8 +289,8 @@ class SeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"說明會資訊"
-        verbose_name_plural = u"說明會資訊"
+        verbose_name = u"線上-說明會資訊"
+        verbose_name_plural = u"線上-說明會資訊"
 
 
 class SeminarParking(models.Model):
@@ -302,8 +302,8 @@ class SeminarParking(models.Model):
         return self.license_plate_number
 
     class Meta:
-        verbose_name = u"說明會車牌號碼"
-        verbose_name_plural = u"說明會車牌號碼"
+        verbose_name = u"線上-說明會車牌號碼"
+        verbose_name_plural = u"線上-說明會車牌號碼"
 
 
 # 以下為就博會
