@@ -130,7 +130,7 @@ class CompanyPasswordResetForm(PasswordResetForm):
         }
         subject_template = "password_reset_subject.txt"
         email_body_template = 'password_reset_email.html'
-        from_email = "交通大學 OpenHouse <password_reset@openhouse.nctu.edu.tw>"
+        from_email = "陽明交通大學 OpenHouse <password_reset@openhouse.nctu.edu.tw>"
         self.send_mail(subject_template, email_body_template, context, from_email, to_email)
 
     def clean_user(self):
