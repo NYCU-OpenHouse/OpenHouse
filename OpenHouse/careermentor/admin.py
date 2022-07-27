@@ -15,7 +15,8 @@ class CareerMentorAdmin(admin.ModelAdmin):
 
 @admin.register(models.Signup)
 class CareerSignupAdmin(admin.ModelAdmin):
+    date_hierarchy = 'mentor__date'
     list_filter = ('mentor','mentor__category')
-    list_display=('mentor', 'name', 'student_id','dep','phone',
+    list_display=('mentor','dep', 'name', 'student_id','phone',
                   'email', 'time_available','question','cv_en','cv_zh','other', 'updated' )
 

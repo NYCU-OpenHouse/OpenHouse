@@ -62,3 +62,13 @@ def event_info(request, event_id):
         return render(request, 'mentor/error.html')
 
     return render(request, 'mentor/mentor_info.html', locals())
+
+
+def ListCareerMentor(request):
+
+    mentor_events = models.Mentor.objects.all() \
+        .order_by('-date') \
+        .annotate(signup_num=Count('signup'))
+
+    return render(request, 'admin/mentor_list.html', locals())
+

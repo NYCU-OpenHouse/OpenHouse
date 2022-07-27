@@ -30,6 +30,7 @@ class Mentor(models.Model):
         managed = True
         verbose_name = u"企業職場導師/職涯教練"
         verbose_name_plural = u"企業職場導師/職涯教練"
+        ordering = ['-date', 'start_time']
 
     def __str__(self):
         return "{} / {} {}~{}".format(self.company, self.date, self.start_time, self.end_time)
