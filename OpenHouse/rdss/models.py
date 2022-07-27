@@ -69,6 +69,12 @@ class RdssConfigs(models.Model):
     # 費用
     session_fee = models.IntegerField(u'說明會場次_費用', default=0)
 
+    # 實體ECE說明會相關
+    seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
+    seminar_ece_end_date = models.DateField(u'實體ECE說明會結束日期', default=datetime.date.today)
+    # 費用
+    session_ece_fee = models.IntegerField(u'實體ECE說明會_費用', default=0)
+
     # 就博會相關
     jobfair_date = models.DateField(u'就博會日期')
     jobfair_start = models.TimeField(u'就博會開始時間')
@@ -91,6 +97,18 @@ class RdssConfigs(models.Model):
         verbose_name = u"1. 秋季招募活動設定"
         verbose_name_plural = u"1. 秋季招募活動設定"
 
+class ECESeminar(models.Model):
+    id = models.AutoField(primary_key=True)
+    seminar_name = models.CharField(u'實體ECE說明會名稱', max_length=50)
+
+    def __str__(self):
+        return u'{}'.format(self.seminar_name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'3. 實體ECE說明會設定'
+        verbose_name_plural = u'3. 實體ECE說明會設定'
+
 
 class Signup(models.Model):
     SEMINAR_CHOICES = (
@@ -102,6 +120,7 @@ class Signup(models.Model):
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
+    seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
     jobfair_online = models.BooleanField(u'線上就博會', default=False)
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')
@@ -114,8 +133,8 @@ class Signup(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"3. 活動報名情況"
-        verbose_name_plural = u"3. 活動報名情況"
+        verbose_name = u"4. 活動報名情況"
+        verbose_name_plural = u"4. 活動報名情況"
 
     def __str__(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
@@ -416,8 +435,8 @@ class SponsorItems(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"4. 贊助品"
-        verbose_name_plural = u"4. 贊助品"
+        verbose_name = u"5. 贊助品"
+        verbose_name_plural = u"5. 贊助品"
 
     def __str__(self):
         return self.name
@@ -435,8 +454,8 @@ class Sponsorship(models.Model):
     class Meta:
         managed = True
         # unique_together = ("company",  "item")
-        verbose_name = u"5. 贊助情況"
-        verbose_name_plural = u"5. 贊助情況"
+        verbose_name = u"6. 贊助情況"
+        verbose_name_plural = u"6. 贊助情況"
 
 
 class Files(models.Model):
@@ -758,8 +777,8 @@ class RdssSeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"說明會資訊編輯頁面"
-        verbose_name_plural = u"說明會資訊編輯頁面"
+        verbose_name = u"線上-說明會資訊編輯頁面"
+        verbose_name_plural = u"線上-說明會資訊編輯頁面"
 
 
 class RdssJobfairInfo(models.Model):

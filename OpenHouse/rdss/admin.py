@@ -33,6 +33,9 @@ class StudentAdmin(admin.ModelAdmin):
     inlines = (StuAttendanceInline,)
     list_display = ('idcard_no', 'student_id', 'name', 'phone')
 
+@admin.register(models.ECESeminar)
+class ECESeminarAdmin(admin.ModelAdmin):
+    list_display = ('seminar_name',)
 
 @admin.register(models.RedeemPrize)
 class RedeemAdmin(admin.ModelAdmin):

@@ -94,6 +94,9 @@ def Status(request):
     try:
         if signup_data.seminar == "noon_night":
             fee += configs.session_fee
+        num_of_ece = len(signup_data.seminar_ece.all())
+        if num_of_ece:
+            fee += configs.session_ece_fee * num_of_ece
         if signup_data.jobfair:
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         else:
@@ -165,6 +168,7 @@ def SignupRdss(request):
             form = rdss.forms.SignupCreationForm(data)
         if form.is_valid():
             form.save()
+            form.save_m2m()
         else:
             # for debug usage
             print(form.errors.items())

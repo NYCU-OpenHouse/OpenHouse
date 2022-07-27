@@ -26,6 +26,56 @@
 
         <div class="ui divider"></div>
 
+        <div class="ui violet inverted segment">
+            <h1 class="ui inverted header">
+                <i class="microchip icon" style="color:white"></i>
+                實體ECE電機說明會
+            </h1>
+
+            <table class="ui celled table">
+                <tr>
+                    <td style="width: 6em;">活動日期</td>
+                    <td>{{ configs.seminar_ece_start_date|date:"Y年m月d日(D)" }} ~
+                        {{ configs.seminar_ece_end_date|date:"Y年m月d日(D)" }}</td>
+                </tr>
+                <tr>
+                    <td>活動內容</td>
+                    <td>與電機系以研究所seminar課程方式合作辦理，企業如對電機、電信、電控、電子(固態、系統+類比)此專業領域研究生有招募
+                        意願，可報名此項活動。每場次15~20分鐘，徵才企業使用投影片或書面，近距離傳達公司招募、企業實習、獎學金等訊息，讓
+                        學生深入了解企業。
+                    </td>
+                </tr>
+                <tr>
+                    <td>提供設備</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>可容納約180人之國際會議廳或階梯教室。</li>
+                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>會員確認聯絡資訊</td>
+                    <td>
+                            電機資源產學聯盟
+                            聯絡人：
+                            電機系 胡宸語
+                            charlotte@nycu.edu.tw
+                            (03)5712121#54070
+                            <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="ui segment">
+                <h3 class="ui header">選取欲報名實體ECE說明會時段</h3>
+                <p>活動費用： {{ configs.session_ece_fee }} 元</p>
+                {{ form.seminar_ece }}
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
         <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
                 <i class="info circle icon" style="color:white"></i>
