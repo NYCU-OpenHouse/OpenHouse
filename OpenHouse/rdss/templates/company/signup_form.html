@@ -272,6 +272,41 @@
             </div>
         </div>
 
+        <div class="ui brown inverted segment">
+            <h1 class="ui header">
+                <i class="briefcase icon" style="color:white"></i>
+                企業參訪
+            </h1>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width: 6em;">活動內容</td>
+                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>
+                                企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓本校學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
+                            </li>
+                            <li>企業參訪人數至少可接受35人以上之同學進行參訪，單趟車程不超過1.5小時為宜。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>企業參與本次活動可增加選位積分5分；上期邀約未回應之企業不予加分。</td>
+                </tr>
+            </table>
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
+                <div class="ui checked checkbox">
+                    {{ form.visit }}
+                    <label style="color:black">{{ form.visit.label }}</label>
+                </div>
+            </div>
+        </div>
+
         <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
     </form>
 
