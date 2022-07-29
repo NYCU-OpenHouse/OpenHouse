@@ -112,8 +112,8 @@ class ECESeminar(models.Model):
 
 class Signup(models.Model):
     SEMINAR_CHOICES = (
-        (u'none', u'不參加實體說明會'),
-        (u'attend', u'參加實體說明會'),
+        (u'none', u'不參加線企業上說明會'),
+        (u'attend', u'參加線上企業說明會'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
