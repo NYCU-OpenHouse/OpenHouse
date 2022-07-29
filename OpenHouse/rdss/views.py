@@ -92,7 +92,7 @@ def Status(request):
     total_fee = 0
     fee = 0
     try:
-        if signup_data.seminar == "noon_night":
+        if signup_data.seminar != "none":
             fee += configs.session_fee
         num_of_ece = len(signup_data.seminar_ece.all())
         if num_of_ece:

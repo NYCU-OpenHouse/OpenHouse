@@ -112,13 +112,13 @@ class ECESeminar(models.Model):
 
 class Signup(models.Model):
     SEMINAR_CHOICES = (
-        (u'', u'不參加'),
-        (u'noon_night', u'參加'),
+        (u'none', u'不參加實體說明會'),
+        (u'attend', u'參加實體說明會'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
     seminar = models.CharField(u'說明會場次', max_length=15,
-                               choices=SEMINAR_CHOICES, default='', blank=True)
+                               choices=SEMINAR_CHOICES, default='none', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
     jobfair_online = models.BooleanField(u'線上就業博覽會', default=False)
