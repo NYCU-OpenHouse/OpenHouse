@@ -121,7 +121,7 @@ class Signup(models.Model):
                                choices=SEMINAR_CHOICES, default='', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
-    jobfair_online = models.BooleanField(u'線上就博會', default=False)
+    jobfair_online = models.BooleanField(u'線上就業博覽會', default=False)
     career_tutor = models.BooleanField(u'企業職場導師')
     visit = models.BooleanField(u'企業參訪')
     lecture = models.BooleanField(u'就業力講座')
