@@ -35,7 +35,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(models.ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):
-    list_display = ('seminar_name',)
+    list_display = ('seminar_name','ece_member_discount',)
 
 @admin.register(models.RedeemPrize)
 class RedeemAdmin(admin.ModelAdmin):

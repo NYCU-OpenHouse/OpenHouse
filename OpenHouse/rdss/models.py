@@ -100,6 +100,7 @@ class RdssConfigs(models.Model):
 class ECESeminar(models.Model):
     id = models.AutoField(primary_key=True)
     seminar_name = models.CharField(u'實體ECE說明會名稱', max_length=50)
+    ece_member_discount = models.BooleanField(u'電機資源產學聯盟優惠', default=False)
 
     def __str__(self):
         return u'{}'.format(self.seminar_name)

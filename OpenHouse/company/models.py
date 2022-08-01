@@ -72,6 +72,11 @@ class Company(AbstractBaseUser):
     payment_ps = models.TextField(u'款項備註', default="", blank=True)
     other_ps = models.TextField(u'其他備註', default="", blank=True)
 
+    # discount for special member
+    ece_member = models.BooleanField(u'電機資源產學聯盟', default=False)
+    gloria_normal = models.BooleanField(u'國際產學聯盟總中心_一般會員', default=False)
+    gloria_startup = models.BooleanField(u'國際產學聯盟總中心_國際新創會員', default=False)
+
     last_update = models.DateTimeField(u'更新時間', auto_now=True, null=True)
     date_join = models.DateTimeField(u'date joined', auto_now_add=True, null=True)
     objects = UserManager()

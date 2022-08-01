@@ -285,6 +285,11 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('payment_ps', 'other_ps')
         }
          ),
+         ("會員身份", {
+            'classes': ('wide',),
+            'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
+        }
+         ),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -309,6 +314,11 @@ class UserAdmin(BaseUserAdmin):
         ("其他備註資料", {
             'classes': ('wide',),
             'fields': ('payment_ps', 'other_ps')
+        }
+         ),
+         ("會員身份", {
+            'classes': ('wide',),
+            'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
         }
          ),
     )

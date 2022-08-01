@@ -90,19 +90,35 @@ def Status(request):
 
     # Fee display
     total_fee = 0
+    discount = 0
     fee = 0
     try:
         if signup_data.seminar != "none":
             fee += configs.session_fee
+        
+        # ece seminar fee
+        if mycompany.ece_member:
+            discount_num_of_ece = 0
+            for ece_seminar in signup_data.seminar_ece.all():
+                if ece_seminar.ece_member_discount:
+                    discount_num_of_ece += 1
+            discount += configs.session_ece_fee * discount_num_of_ece
         num_of_ece = len(signup_data.seminar_ece.all())
-        if num_of_ece:
-            fee += configs.session_ece_fee * num_of_ece
+        fee += configs.session_ece_fee * num_of_ece
+
+        # jobfair fee
         if signup_data.jobfair:
+            if mycompany.ece_member or mycompany.gloria_normal:
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+            elif mycompany.gloria_startup:
+                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
+        
         if mycompany.category == '公家單位':
-            fee = 0
+            discount = fee
     except AttributeError:
         pass
 
@@ -112,7 +128,7 @@ def Status(request):
     for s in sponsorships:
         sponsor_amount += s.item.price
 
-    total_fee += fee + sponsor_amount
+    total_fee += fee + sponsor_amount -discount
 
     # Seminar and Jobfair info status
     try:
