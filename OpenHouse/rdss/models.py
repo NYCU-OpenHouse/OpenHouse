@@ -332,7 +332,7 @@ class SeminarParking(models.Model):
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
-    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS)
+    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, default='通用')
     company = models.ForeignKey('Signup', to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE, blank=True, null=True)
