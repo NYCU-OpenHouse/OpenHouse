@@ -79,6 +79,7 @@ class SignupAdmin(admin.ModelAdmin):
 @admin.register(models.Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('cid', 'category', 'hr_name', 'hr_phone', 'hr_mobile', 'hr_email')
+    search_fields = ['cid']
 
     def get_urls(self):
         urls = super(CompanyAdmin, self).get_urls()
