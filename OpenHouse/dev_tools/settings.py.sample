@@ -59,6 +59,9 @@ INSTALLED_APPS = [
 		'ckeditor_uploader',
 		'vote',
         'monograph',
+		'oauth',
+		'oauth2_provider',
+
         ]
 
 MIDDLEWARE = [
@@ -197,6 +200,7 @@ AUTHENTICATION_BACKENDS=['django.contrib.auth.backends.ModelBackend',
 		'company.backends.CompanyBackend',
 		]
 
+LOGIN_URL='/company/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -320,3 +324,25 @@ JET_APP_INDEX_DASHBOARD = 'dashboard.CustomAppDashboard'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+#OAuth
+
+OAUTH2_PROVIDER = {
+	'SCOPES' : {
+		'read' : '讀取統一編號',
+	},
+	'DEFAULT_SCOPES' : ['read'],
+
+	"PKCE_REQUIRED": False,
+	"AUTHORIZATION_CODE_EXPIRE_SECONDS": 600
+
+}
+
+
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "oauth.CustomAccessToken"
+
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "oauth.CustomRefreshToken"
+OAUTH2_PROVIDER_GRANT_MODEL = "oauth.CustomGrant"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "oauth.CustomIDToken"
+
+
+OAUTH2_PROVIDER_APPLICATION_MODEL='oauth.MyApplication'

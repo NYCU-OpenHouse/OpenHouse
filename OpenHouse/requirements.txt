@@ -7,3 +7,4 @@ Pillow
 XlsxWriter
 six
 gunicorn
+django-oauth-toolkit
