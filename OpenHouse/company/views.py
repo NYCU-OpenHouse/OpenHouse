@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -13,7 +13,8 @@ from company.forms import CompanyCreationForm, CompanyEditForm
 import rdss.models
 import recruit.models
 import company.models
-
+from oauth2_provider.decorators import protected_resource
+from oauth.models import CustomAccessToken
 
 # Create your views here.
 
@@ -161,3 +162,13 @@ def ResetPassword(request):
             return redirect(CompanyInfo)
     form = SetPasswordForm(user)
     return render(request, 'password_reset_confirm.html', {'form': form})
+
+@protected_resource()
+def get_company_id(request):
+
+    access_token = CustomAccessToken.objects.get(token=request.META.get('HTTP_AUTHORIZATION').split(' ')[1])
+
+    data = {
+        "company_id": access_token.user.cid,
+    }
+    return JsonResponse(data)

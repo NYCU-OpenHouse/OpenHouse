@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^reset_password/$', views.ResetPassword, name="reset_password"),
     url(r'^password-reset-confirm/(?P<uidb64>[-\w]+)/(?P<token>[-\w]+)/$', views.password_reset_confirm,
         name='password_reset_confirm'),
+    url(r'^company_id/$', views.get_company_id, name="company_id"),
 ]
