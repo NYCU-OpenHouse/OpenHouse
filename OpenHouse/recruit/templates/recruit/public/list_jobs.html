@@ -23,8 +23,8 @@
     <table class="ui celled table" style="table-layout: fixed">
         <thead>
         <tr>
-            <th style="width: 15%">Logo</th>
-            <th style="width: 15%">企業名</th>
+            <th style="width: 20%">Logo</th>
+            <th style="width: 10%">企業名</th>
             <th style="width: 10%">類別</th>
             <th style="width: 20%">簡介</th>
             <th style="width: 20%">職缺</th>
@@ -34,11 +34,11 @@
         <tbody>
         {% for company in companies %}
             <tr>
-                <td><img class="ui small image" src="{{ company.logo.url }}"/></td>
+                <td><img class="ui small image" style="width: 100%" src="{{ company.logo.url }}"/></td>
                 <td>{{ company.name }}</td>
                 <td>{{ company.category }}</td>
-                <td>{{ company.brief|safe }}</td>
-                <td>{{ company.recruit_info|safe }}</td>
+                <td style="word-wrap: break-word; ">{{ company.brief |safe }}</td>
+                <td style="word-wrap: break-word; ">{{ company.recruit_info|safe }}</td>
                 <td>
                     <ul class="ui list">
                         <li>公司地址: {{ company.address }}</li>
