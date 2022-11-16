@@ -43,7 +43,7 @@ class Company(AbstractBaseUser):
     shortname = models.CharField(u'公司簡稱', max_length=20)
     category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, help_text='公司主要事業類別')
     phone = models.CharField(u'公司電話', max_length=32, help_text='格式: 區碼-號碼#分機')
-    postal_code = models.CharField(u'郵遞區號', max_length=5, validators=[validate_all_num])
+    postal_code = models.CharField(u'郵遞區號(3+3)', max_length=6,help_text='ex:300123', validators=[validate_all_num])
     address = models.CharField(u'公司地址', max_length=128)
     website = models.CharField(u'公司網站', max_length=64)
     brief = models.CharField(u'公司簡介', max_length=200, help_text='為了印刷效果，限200字內')
