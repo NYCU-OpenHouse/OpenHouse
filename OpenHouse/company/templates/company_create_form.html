@@ -44,16 +44,12 @@
             </div>
         </div>
 
-        <div class="two fields">
-            <div class="required field">
-                <label>{{ form.receipt_title.label_tag }}</label>
-                {{ form.receipt_title }}
-            </div>
-            <div class="field">
-                <label>{{ form.business_project.label_tag }}</label>
-                {{ form.business_project }}
-            </div>
+        
+        <div class="field">
+            <label>{{ form.business_project.label_tag }}</label>
+            {{ form.business_project }}
         </div>
+        
 
         <div class="two fields">
             <div class="field">
@@ -168,6 +164,27 @@
         <div class="field">
             <label>{{ form.hr_ps.label_tag }}</label>
             {{ form.hr_ps }}
+        </div>
+        <h4 class="ui dividing header">收據相關資料</h4>
+        <div class="required field">
+            <label>{{ form.receipt_title.label_tag }}</label>
+            {{ form.receipt_title }}
+        </div>
+        <div class="required field">
+            <label>{{ form.receipt_postal_code.label_tag }} {{ form.receipt_postal_code.help_text }}</label>
+            {{ form.receipt_postal_code }}
+        </div>
+        <div class="required field">
+            <label>{{ form.receipt_postal_address.label_tag }} ({{ form.receipt_postal_address.help_text }})</label>
+            {{ form.receipt_postal_address }}
+        </div>
+        <div class="required field">
+            <label>{{ form.receipt_contact_name.label_tag }}</label>
+            {{ form.receipt_contact_name }}
+        </div>
+        <div class="required field">
+            <label>{{ form.receipt_contact_phone.label_tag }} ({{ form.receipt_contact_phone.help_text }})</label>
+            {{ form.receipt_contact_phone }}
         </div>
 
 

@@ -69,6 +69,18 @@
 
                 <tbody>
                 <tr>
+                    <td>收據相關資訊填寫</td>
+                    <td>
+                        {% if fill_receipt %}
+                            <i class="large green check icon"></i>
+                            <b>已填寫</b>
+                        {% else %}
+                            <i class="large red x icon"></i>
+                            <b>尚未填寫 <a href="{% url 'company_edit' %}">點此填寫收據資訊</a></b>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
                     <td>企業滿意度問卷</td>
                     <td>
                         {% if fill_survey %}

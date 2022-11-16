@@ -267,7 +267,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('cid', 'password', 'name', 'english_name', 'shortname', 'category', 'phone',
                        'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo', 'recruit_url',
-                       'business_project', 'relation_business', 'subsidiary', 'receipt_title')
+                       'business_project', 'relation_business', 'subsidiary')
         }
          ),
         ("人資資料", {
@@ -288,6 +288,12 @@ class UserAdmin(BaseUserAdmin):
          ("會員身份", {
             'classes': ('wide',),
             'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
+        }
+         ),
+         ("收據資訊", {
+            'classes': ('wide',),
+            'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
+                       'receipt_contact_name', 'receipt_contact_phone')
         }
          ),
     )
@@ -298,7 +304,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('cid', 'password1', 'password2', 'name', 'english_name', 'shortname',
                        'category', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
-                       'recruit_url', 'business_project', 'relation_business', 'subsidiary', 'receipt_title')
+                       'recruit_url', 'business_project', 'relation_business', 'subsidiary')
         }
          ),
         ("人資資料", {
@@ -319,6 +325,12 @@ class UserAdmin(BaseUserAdmin):
          ("會員身份", {
             'classes': ('wide',),
             'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
+        }
+         ),
+         ("收據資訊", {
+            'classes': ('wide',),
+            'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
+                       'receipt_contact_name', 'receipt_contact_phone')
         }
          ),
     )

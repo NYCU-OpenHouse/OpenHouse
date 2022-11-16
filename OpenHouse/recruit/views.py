@@ -1144,6 +1144,18 @@ def Status(request):
         seminar_info = None
         online_seminar_info = None
         jobfair_info = None
+        
+    # check recepit information whether submit or not
+    
+    target_company = Company.objects.get(cid=mycid)
+    
+    if target_company.receipt_title == ""  or target_company.receipt_postal_code == ""  \
+        or target_company.receipt_postal_address == ""  or target_company.receipt_contact_name == ""  \
+        or target_company.receipt_contact_phone == "" :
+        fill_receipt = False
+    else:
+        fill_receipt = True
+    
 
     # control semantic ui class
     step_ui = ["", "", ""]  # for step ui in template

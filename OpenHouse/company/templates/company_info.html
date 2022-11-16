@@ -126,6 +126,31 @@
             </table>
         </div>
         <div class="five wide column">
+            <div class="ui header">收據相關資料</div>
+            <table class="ui celled striped table">
+                <tbody>
+                <tr>
+                    <td>公司收據抬頭</td>
+                    <td>{{ company_info.receipt_title }}</td>
+                </tr>
+                <tr>
+                    <td>收據寄送郵遞區號(3+3)</td>
+                    <td>{{ company_info.receipt_postal_code }}</td>
+                </tr>
+                <tr>
+                    <td>收據寄送地址</td>
+                    <td>{{ company_info.receipt_postal_address }}</td>
+                </tr>
+                <tr>
+                    <td>收據聯絡人姓名</td>
+                    <td>{{ company_info.receipt_contact_name }}</td>
+                </tr>
+                <tr>
+                    <td>收據聯絡人公司電話</td>
+                    <td>{{ company_info.receipt_contact_phone }}</td>
+                </tr>
+                </tbody>
+            </table>
             <div class="ui header">公司介紹</div>
             <div class="ui segment">
                 <div class="ui header">公司簡介</div>

@@ -39,10 +39,6 @@
                         {{ form.english_name }}
                     </div>
                     <div class="required field">
-                        <label>{{ form.receipt_title.label_tag }}</label>
-                        {{ form.receipt_title }}
-                    </div>
-                    <div class="required field">
                         <label>{{ form.shortname.label_tag }}</label>
                         {{ form.shortname }}
                     </div>
@@ -55,7 +51,7 @@
                         {{ form.phone }}
                     </div>
                     <div class="required field">
-                        <label>{{ form.postal_code.label_tag }}</label>
+                        <label>{{ form.postal_code.label_tag }} {{form.postal_code.help_text}}</label>
                         {{ form.postal_code }}
                     </div>
                     <div class="required field">
@@ -146,7 +142,27 @@
                         <label>{{ form.hr_ps.label_tag }}</label>
                         {{ form.hr_ps }}
                     </div>
-
+                    <div class="ui dividing header">收據相關資料</div>
+                    <div class="required field">
+                        <label>{{ form.receipt_title.label_tag }}</label>
+                        {{ form.receipt_title }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_postal_code.label_tag }} {{ form.receipt_postal_code.help_text }}</label>
+                        {{ form.receipt_postal_code }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_postal_address.label_tag }} ({{ form.receipt_postal_address.help_text }})</label>
+                        {{ form.receipt_postal_address }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_contact_name.label_tag }}</label>
+                        {{ form.receipt_contact_name }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_contact_phone.label_tag }} ({{ form.receipt_contact_phone.help_text }})</label>
+                        {{ form.receipt_contact_phone }}
+                    </div>
                 </div>
             </div>
         </div>

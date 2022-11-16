@@ -38,7 +38,6 @@ class Company(AbstractBaseUser):
 
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8)
-    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="")
     name = models.CharField(u'公司名稱', max_length=64)
     english_name = models.CharField(u'公司英文完整名稱', max_length=100, default='None')
     shortname = models.CharField(u'公司簡稱', max_length=20)
@@ -77,6 +76,14 @@ class Company(AbstractBaseUser):
     gloria_normal = models.BooleanField(u'國際產學聯盟總中心_一般會員', default=False)
     gloria_startup = models.BooleanField(u'國際產學聯盟總中心_國際新創會員', default=False)
 
+    # receipt information
+    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="")
+    receipt_postal_code = models.CharField(u'收據寄送郵遞區號(3+3)',help_text='ex:300123', max_length=6, default="",  validators=[validate_all_num])
+    receipt_postal_address = models.CharField(u'收據寄送地址', max_length=128, default="", help_text="另註公司名尤佳")
+    receipt_contact_name =  models.CharField(u'收據聯絡人姓名', max_length=10, default="")
+    receipt_contact_phone = models.CharField(u'收據聯絡人公司電話', max_length=32, default="", help_text='格式: 區碼-號碼#分機', validators=[validate_phone])
+    
+    
     last_update = models.DateTimeField(u'更新時間', auto_now=True, null=True)
     date_join = models.DateTimeField(u'date joined', auto_now_add=True, null=True)
     objects = UserManager()
