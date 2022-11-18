@@ -62,6 +62,7 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 class SignupAdmin(admin.ModelAdmin):
     list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'jobfair_online', 'career_tutor', 'visit', 'lecture', 'payment')
     inlines = (SponsorshipInline,)
+    search_fields = ('cid',)
 
     def company_name(self, obj):
         # com = company.models.Company.objects.filter(cid=obj.cid).first()
@@ -74,12 +75,44 @@ class SignupAdmin(admin.ModelAdmin):
             url(r'^export/$', rdss.export.Export_Signup),
         ]
         return my_urls + urls
+    
+    # Custom search for company name
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term,
+        )
+        try:
+            companies = company.models.Company.objects.filter(name__icontains=search_term)
+            companies = company.models.Company.objects.filter(shortname__icontains=search_term)
+        except ValueError:
+            pass
+        else:
+            if(companies):
+                for com in companies :
+                    queryset |= self.model.objects.filter(cid=com.cid)
+        return queryset, may_have_duplicates
 
 
 @admin.register(models.Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'category', 'hr_name', 'hr_phone', 'hr_mobile', 'hr_email')
-    search_fields = ['cid']
+    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_mobile', 'hr_email')
+    search_fields = ['cid',]
+
+    # Custom search for company name
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term,
+        )
+        try:
+            companies = company.models.Company.objects.filter(name__icontains=search_term)
+            companies = company.models.Company.objects.filter(shortname__icontains=search_term)
+        except ValueError:
+            pass
+        else:
+            if(companies):
+                for com in companies :
+                    queryset |= self.model.objects.filter(cid=com.cid)
+        return queryset, may_have_duplicates
 
     def get_urls(self):
         urls = super(CompanyAdmin, self).get_urls()
@@ -107,6 +140,9 @@ class CompanyAdmin(admin.ModelAdmin):
     def hr_email(self, obj):
         com = company.models.Company.objects.filter(cid=obj.cid).first()
         return com.hr_email
+    def name(self, obj):
+        com = company.models.Company.objects.filter(cid=obj.cid).first()
+        return com.name
 
     category.short_description = '類型'
     hr_name.short_description = '人資姓名'
