@@ -221,6 +221,46 @@ def ExportAll(request):
             spon_worksheet.write(row_count + row_offset, col_count + 1, count)
         spon_worksheet.write(row_count + row_offset, len(com['counts']) + 1, com['amount'])
 
+    # ece seminar information
+    
+    signups = rdss.models.Signup.objects.all()
+    signups_dict = json.loads(serializers.serialize('json', signups))
+    # join company info
+    for signup in signups_dict:
+        company_obj = company.models.Company.objects.get(
+            cid=signup['fields']['cid'])
+        company_dict = model_to_dict(company_obj)
+        for key, value in company_dict.items():
+            signup['fields'][key] = value
+    
+    signup_worksheet = workbook.add_worksheet("ece 廠商報名情況")
+    
+    ece = rdss.models.ECESeminar.objects.all()
+    
+    i = 0
+    title_pairs = [
+        {'fieldname': 'cid', 'title': '公司統一編號'},
+        {'fieldname': 'shortname', 'title': '公司簡稱'},
+    ]
+    
+    for index, pair in enumerate(title_pairs):
+        signup_worksheet.write(0, i, pair['title'])
+        i += 1
+    
+    for index, pair in enumerate(ece):
+        signup_worksheet.write(0, i, pair.seminar_name)
+        i += 1
+    
+    for row_count, signup in enumerate(signups_dict):
+        for col_count, pairs in enumerate(title_pairs):
+            signup_worksheet.write(row_count + 1, col_count,
+                                   signup['fields'][pairs['fieldname']])
+        print(signup['fields']['seminar_ece'])
+        for ece in signup['fields']['seminar_ece']:
+            signup_worksheet.write(row_count + 1, col_count + ece,
+                                   "TRUE")
+
+    
     workbook.close()
     return response
 
