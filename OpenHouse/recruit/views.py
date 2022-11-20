@@ -1099,18 +1099,33 @@ def Status(request):
 
     # Fee display
     fee = 0
+    discount = 0
+    mycompany = Company.objects.get(cid=mycid)
+    
     try:
         if signup_data.seminar != 'none':
             fee += configs.session_fee
         num_of_ece = len(signup_data.seminar_ece.all())
+        if mycompany.ece_member:
+            discount_num_of_ece = 0
+            for ece_seminar in signup_data.seminar_ece.all():
+                if ece_seminar.ece_member_discount:
+                    discount_num_of_ece += 1
+            discount += configs.session_ece_fee * discount_num_of_ece
         if num_of_ece:
             fee += configs.session_ece_fee * num_of_ece
         if signup_data.seminar_online != "none":
             fee += configs.session_online_fee
         if signup_data.jobfair:
+            if mycompany.ece_member or mycompany.gloria_normal:
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+            elif mycompany.gloria_startup:
+                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         if signup_data.jobfair_online:
             fee += configs.jobfair_online_fee
+        if mycompany.category == '公家單位':
+            discount = fee
     except AttributeError:
         # Company has not sign up
         pass
@@ -1124,7 +1139,7 @@ def Status(request):
 
     # All the fee of Sponsor and Display
 
-    all_fee = fee + sponsor_amount
+    all_fee = fee + sponsor_amount - discount
 
     # Seminar and Jobfair info status
     if signup_data:
