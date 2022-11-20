@@ -89,8 +89,9 @@ def recruit_signup(request):
 
     if request.POST:
         data = request.POST.copy()
-        # Because seminar in 2021 is not used, we need to manually set value
-        data['seminar'] = 'none'
+        # Because seminar in 2022 is not used, we need to manually set value
+        # data['seminar'] = 'none'
+        data['seminar_online'] = 'none'
         data['cid'] = request.user.cid
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():

@@ -69,7 +69,7 @@ def ExportAll(request):
         {'fieldname': 'jobfair_online', 'title': '線上就博會'},
         {'fieldname': 'company_visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
-        {'fieldname': 'lecture', 'title': '提供就業力講座'},
+        {'fieldname': 'lecture', 'title': '提供就業講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
         {'fieldname': 'receipt_year', 'title': '收據年份'},
         {'fieldname': 'ps', 'title': '備註'},

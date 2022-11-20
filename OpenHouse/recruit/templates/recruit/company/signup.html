@@ -24,67 +24,6 @@
             <a class="ui blue button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
         </div>
 
-        {#        <div class="ui divider"></div>#}
-        {##}
-        {#        <div class="ui blue inverted segment">#}
-        {#            <h1 class="ui inverted header">#}
-        {#                <i class="info circle icon" style="color:white"></i>#}
-        {#                實體企業說明會#}
-        {#            </h1>#}
-        {#            <table class="ui celled table">#}
-        {#                <tr>#}
-        {#                    <td style="width: 6em;">活動日期</td>#}
-        {#                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}#}
-        {#                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止#}
-        {#                    </td>#}
-        {##}
-        {#                </tr>#}
-        {#                <tr>#}
-        {#                    <td>活動時間</td>#}
-        {#                    <td>#}
-        {#                        <ul class="ui list">#}
-        {#                            <li>中午場次 12:10~13:00</li>#}
-        {#                            <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>#}
-        {#                        </ul>#}
-        {#                    </td>#}
-        {##}
-        {#                </tr>#}
-        {#                <tr>#}
-        {#                    <td>活動地點</td>#}
-        {#                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>#}
-        {#                </tr>#}
-        {#                <tr>#}
-        {#                    <td>活動內容</td>#}
-        {#                    <td>透過實體說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>#}
-        {#                </tr>#}
-        {#                <tr>#}
-        {#                    <td>提供設備</td>#}
-        {#                    <td>#}
-        {#                        <ol class="ui list">#}
-        {#                            <li>可容納100至200人之國際會議廳</li>#}
-        {#                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>#}
-        {#                        </ol>#}
-        {#                    </td>#}
-        {#                </tr>#}
-        {#                <tr>#}
-        {#                    <td>提供服務</td>#}
-        {#                    <td>#}
-        {#                        <ol class="ui list">#}
-        {#                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>#}
-        {#                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>#}
-        {#                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>#}
-        {#                        </ol>#}
-        {#                    </td>#}
-        {#                </tr>#}
-        {#            </table>#}
-        {##}
-        {#            <div class="ui segment">#}
-        {#                <h3 class="ui header">選取欲報名實體說明會時段</h3>#}
-        {#                <p>活動費用： {{ configs.session_fee }} 元</p>#}
-        {#                {{ form.seminar }}#}
-        {#            </div>#}
-        {#        </div>#}
-
         <div class="ui divider"></div>
 
         <div class="ui violet inverted segment">
@@ -125,47 +64,111 @@
         </div>
 
         <div class="ui divider"></div>
+        
+        
 
-        <div class="ui purple inverted segment">
+        <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
-                <i class="desktop icon" style="color:white"></i>
-                線上企業說明會
+                <i class="info circle icon" style="color:white"></i>
+                實體企業說明會
             </h1>
-
             <table class="ui celled table">
                 <tr>
                     <td style="width: 6em;">活動日期</td>
-                    <td>{{ configs.seminar_online_start_date|date:"Y年m月d日(D)" }} ~
-                        {{ configs.seminar_online_end_date|date:"Y年m月d日(D)" }}</td>
+                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
+                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>活動時間</td>
+                    <td>
+                        <ul class="ui list">
+                            <li>中午場次 12:10~13:00</li>
+                            <li>其餘場次 13:20、17:40、18:50 (每場 50 分鐘)</li>
+                        </ul>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>活動地點</td>
+                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
+                    <td>透過實體說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
+                </tr>
+                <tr>
+                    <td>提供設備</td>
                     <td>
-                        <p>
-                            以線上直播串流方式舉辦，企業透過平台可傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等。
-                        </p>
                         <ol class="ui list">
-                            <li>
-                                企業以播放影片、書面介紹或其他方式做公司簡介，針對所需專業人才，提供必要之說明，並傳達企業專業理念與形象。
-                            </li>
-                            <li>企業可自行設計活動內容並提供抽獎等以吸引參加人潮。</li>
+                            <li>可容納100至200人之國際會議廳</li>
+                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
                         </ol>
                     </td>
                 </tr>
                 <tr>
-                    <td>提供設備</td>
-                    <td>線上徵才系統平台</td>
+                    <td>提供服務</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
+                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>
+                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
+                        </ol>
+                    </td>
                 </tr>
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">選取欲報名線上說明會時段</h3>
-                <p>活動費用： {{ configs.session_online_fee }} 元</p>
-                {{ form.seminar_online }}
+                <h3 class="ui header">選取欲報名實體說明會時段</h3>
+                <p>活動費用： {{ configs.session_fee }} 元</p>
+                {{ form.seminar }}
             </div>
         </div>
-
         <div class="ui divider"></div>
+        
+
+        {#<div class="ui purple inverted segment">#}
+        {#    <h1 class="ui inverted header">#}
+        {#        <i class="desktop icon" style="color:white"></i>#}
+        {#        線上企業說明會#}
+        {#    </h1>#}
+{##}
+        {#    <table class="ui celled table">#}
+        {#        <tr>#}
+        {#            <td style="width: 6em;">活動日期</td>#}
+        {#            <td>{{ configs.seminar_online_start_date|date:"Y年m月d日(D)" }} ~#}
+        {#                {{ configs.seminar_online_end_date|date:"Y年m月d日(D)" }}</td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>活動內容</td>#}
+        {#            <td>#}
+        {#                <p>#}
+        {#                    以線上直播串流方式舉辦，企業透過平台可傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等。 #}
+        {#                </p>#}
+        {#                <ol class="ui list">#}
+        {#                    <li>#}
+        {#                        企業以播放影片、書面介紹或其他方式做公司簡介，針對所需專業人才，提供必要之說明，並傳達企業專業理念與形象。#}
+        {#                    </li>#}
+        {#                    <li>企業可自行設計活動內容並提供抽獎等以吸引參加人潮。</li>#}
+        {#                </ol>#}
+        {#            </td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>提供設備</td>#}
+        {#            <td>線上徵才系統平台</td>#}
+        {#        </tr>#}
+        {#    </table>#}
+{##}
+        {#    <div class="ui segment">#}
+        {#        <h3 class="ui header">選取欲報名線上說明會時段</h3>#}
+        {#        <p>活動費用： {{ configs.session_online_fee }} 元</p>#}
+        {#        {{ form.seminar_online }}#}
+        {#    </div>#}
+        {#</div>#}
+{##}
+        {#<div class="ui divider"></div>#}
+        
 
         <div class="ui green inverted segment">
             <h1 class="ui header">
@@ -225,80 +228,129 @@
         </div>
 
         <div class="ui divider"></div>
+        
+        {# <div class="ui teal inverted segment">#}
+        {#     <h1 class="ui header">#}
+        {#         <i class="laptop icon"></i>#}
+        {#         線上就業博覽會#}
+        {#     </h1>#}
+{# #}
+        {#     <table class="ui celled table">#}
+        {#         <tr>#}
+        {#             <td style="width: 6em;">活動日期</td>#}
+        {#             <td>#}
+        {#                 <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>#}
+        {#                 {# <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p> #}
+        {#             </td>#}
+        {#         </tr>#}
+        {#         <tr>#}
+        {#             <td>活動內容</td>#}
+        {#             <td>#}
+        {#                 透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。#}
+        {#             </td>#}
+        {#         </tr>#}
+        {#         <tr>#}
+        {#             <td>提供服務</td>#}
+        {#             <td>#}
+        {#                 線上徵才系統平台，非單向傳播，可與學生互動。#}
+        {#             </td>#}
+        {#         </tr>#}
+        {#     </table>#}
+{# #}
+        {#     <div class="ui segment">#}
+        {#         <h3 class="ui header">報名線上就博會</h3>#}
+        {#         <p>活動費用： {{ configs.jobfair_online_fee }} 元</p>#}
+        {#         <div class="ui checkbox">#}
+        {#             {{ form.jobfair_online }}#}
+        {#             <label style="color:black">{{ form.jobfair_online.label }}</label>#}
+        {#         </div>#}
+        {#     </div>#}
+        {# </div>#}
+{# #}
+        {# <div class="ui divider"></div>#}
+        
+        {#<div class="ui black inverted segment">#}
+        {#    <h1 class="ui header">#}
+        {#        <i class="users icon" style="color:white"></i>#}
+        {#        企業職場導師#}
+        {#    </h1>#}
+        {#    <table class="ui celled table">#}
+        {#        <tr>#}
+        {#            <td style="width: 6em;">活動內容</td>#}
+        {#            <td>#}
+        {#                本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。#}
+        {#            </td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>活動說明</td>#}
+        {#            <td>#}
+        {#                <ol class="ui list">#}
+        {#                    <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。#}
+        {#                    </li>#}
+        {#                    <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>#}
+        {#                </ol>#}
+        {#            </td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>回饋方案</td>#}
+        {#            <td>企業參與本次活動可增加選位積分5分</td>#}
+        {#        </tr>#}
+        {#    </table>#}
+        {#    <div class="ui segment">#}
+        {#        <h3 class="ui header">願意提供</h3>#}
+        {#        <div class="ui checked checkbox">#}
+        {#            {{ form.career_tutor }}#}
+        {#            <label style="color:black">{{ form.career_tutor.label }}</label>#}
+        {#        </div>#}
+        {#    </div>#}
+        {#</div>#}
 
+        {#<div class="ui divider"></div>#}
+        
         <div class="ui teal inverted segment">
-            <h1 class="ui header">
+            <h1>
                 <i class="laptop icon"></i>
-                線上就業博覽會
+                就業講座
             </h1>
+            <div class="ui celled table">
+                <table>
 
-            <table class="ui celled table">
-                <tr>
-                    <td style="width: 6em;">活動日期</td>
-                    <td>
-                        <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>
-                        {# <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p> #}
-                    </td>
-                </tr>
-                <tr>
-                    <td>活動內容</td>
-                    <td>
-                        透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。
-                    </td>
-                </tr>
-                <tr>
-                    <td>提供服務</td>
-                    <td>
-                        線上徵才系統平台，非單向傳播，可與學生互動。
-                    </td>
-                </tr>
-            </table>
+                        <tr>
+                            <td>活動日期</td>
+                            <td>2023年1月~6月; 暫定)星期三或星期五 12:10 ~ 17:00 (1-2 小時)</td>
+                        </tr>
+                        <tr>
+                            <td>活動內容</td>
+                            <td>
+                                藉由參加講座／參訪來提升本校同學對企業的實際瞭解，對同學籌劃未來就
+                                業藍圖有所助益；參加學生以應屆畢業碩博士生與大四學生優先。
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>活動說明</td>
+                            <td>
+                                講座內容
+                                <ol class="ui list">
+                                    <li>就職前資料準備：履歷及自傳準備、個人特質及作品的呈現方式……等</li>
+                                    <li>面試、就職後須知(薪資保密)、公司適應、跨國溝通/協作……等</li>
+                                </ol>
+                                <strong>*請企業錄取後主動來信提供可辦理講座日期及時段。</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>回饋方案</td>
+                            <td>企業參與本次活動可增加 2000 分；未主動聯繫之企業下期將不予加分。</td>
+                        </tr>
 
-            <div class="ui segment">
-                <h3 class="ui header">報名線上就博會</h3>
-                <p>活動費用： {{ configs.jobfair_online_fee }} 元</p>
-                <div class="ui checkbox">
-                    {{ form.jobfair_online }}
-                    <label style="color:black">{{ form.jobfair_online.label }}</label>
+                </table>
+                <div class="ui segment">
+                    <h3>願意提供</h3>
+                    <div class="ui checked checkbox">
+                        {{form.lecture}}
+                        <label style="color:black">{{form.lecture.label}}</label>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="ui divider"></div>
-
-        <div class="ui black inverted segment">
-            <h1 class="ui header">
-                <i class="users icon" style="color:white"></i>
-                企業職場導師
-            </h1>
-            <table class="ui celled table">
-                <tr>
-                    <td style="width: 6em;">活動內容</td>
-                    <td>
-                        本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
-                    </td>
-                </tr>
-                <tr>
-                    <td>活動說明</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。
-                            </li>
-                            <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td>回饋方案</td>
-                    <td>企業參與本次活動可增加選位積分5分</td>
-                </tr>
-            </table>
-            <div class="ui segment">
-                <h3 class="ui header">願意提供</h3>
-                <div class="ui checked checkbox">
-                    {{ form.career_tutor }}
-                    <label style="color:black">{{ form.career_tutor.label }}</label>
-                </div>
             </div>
         </div>
 
@@ -307,27 +359,43 @@
         <div class="ui brown inverted segment">
             <h1 class="ui header">
                 <i class="briefcase icon" style="color:white"></i>
-                企業參訪
+                企業參訪/諮詢服務
             </h1>
             <table class="ui celled table">
                 <tr>
                     <td style="width: 6em;">活動內容</td>
-                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
+                    <td>
+                        <strong>參訪內容</strong>
+                        <p>
+                        由企業自行規劃、以公司內部參觀為主，讓學生多了解企業實際運行狀況。
+                        人數至少可接受 30 人以上之同學進行參訪，單趟車程不超過 1.5 小時為宜。
+                        </p>
+
+                        <strong>諮詢內容</strong>
+                        <p>
+                        擬邀請駐點業師，以一對一遠距指導方式，提供同學職涯諮詢指導、履歷寫
+                        作、面試技巧等，期讓學生模擬面談真實情況並更了解企業運作、讓學生發
+                        掘自我潛能並在起跑點上更具備潛在優勢。
+                        </p>
+                    </td>
                 </tr>
                 <tr>
                     <td>活動說明</td>
                     <td>
                         <ol class="ui list">
                             <li>
-                                企業可於報名系統上勾選「企業參訪」意願，<strong>參訪內容可由企業自行規劃</strong>，以介紹公司或以公司內部參觀為主，希望能夠讓本校學生多了解企業實際運行狀況；<strong>主辦單位保留最終邀請參訪活動之權利。</strong>
+                                於報名系統上勾選擔任「企業參訪/諮詢服務」意願，擔任企業導師可為
+                                企業人資、各部門技術或行政主管(至少提供2小時諮詢)。
                             </li>
-                            <li>企業參訪人數至少可接受35人以上之同學進行參訪，單趟車程不超過1.5小時為宜。</li>
+                            <li>請企業錄取後主動來信可提供參訪/諮詢日期及時段。</li>
                         </ol>
+
+
                     </td>
                 </tr>
                 <tr>
                     <td>回饋方案</td>
-                    <td>企業參與本次活動可增加選位積分5分；上期邀約未回應之企業不予加分。</td>
+                    <td>企業參與本次活動可增加 1000 分；未主動聯繫之企業下期將不加分。</td>
                 </tr>
             </table>
             <div class="ui segment">
@@ -367,37 +435,7 @@
             </div>
         </div>
 
-        <!--
-  <div class="ui segment">
-      <h1>就業力講座</h1>
-      <div class="ui celled table">
-          <table>
 
-                <tr>
-                    <td>活動日期</td>
-                    <td>2017年3月~5月</td>
-                </tr>
-                <tr>
-                    <td>活動內容</td>
-                    <td>在徵才活動期間穿插名人演講及職涯分享講座,邀請不同領域的講師為整場活動注入更多活水並增加講座多元性，藉此提升同學於就學獎學金、企業實習、海外工作、創業就業等主題上,能更清楚其範疇及預先準備。</td>
-                </tr>
-                <tr>
-                    <td>活動說明</td>
-                    <td>企業可於報名系統上勾選「就業力講座」意願,表達企業願意擔任名人演講、職涯分享講座講師,並提供擬定主講者;講座內容不可做公司宣傳與進行人才招募;主辦單位保留最終邀請講座主辦之權利。</td>
-                </tr>
-
-          </table>
-          <div class="ui segment">
-            <h3>願意提供</h3>
-            <div class="ui checked checkbox">
-                {{form.lecture}}
-                <label>{{form.lecture.label}}</label>
-            </div>
-        </div>
-
-      </div>
-  </div>
-  -->
         <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
     </form>
 {% endblock %}
