@@ -53,9 +53,9 @@ class ECESeminarAdmin(admin.ModelAdmin):
 
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
-    search_fields = ('cid', 'seminar', 'seminar_online', 'jobfair', 'jobfair_online',)
-    list_display = ('cid', 'company_name', 'seminar', 'seminar_online', 'jobfair', 'jobfair_online',
-                    'career_tutor', 'company_visit', 'lecture', 'payment')
+    search_fields = ('cid', 'seminar', 'jobfair',)
+    list_display = ('cid', 'company_name', 'seminar', 'jobfair',
+                    'company_visit', 'lecture', 'payment')
     list_filter = ('seminar', 'seminar_online', 'jobfair', 'jobfair_online', 'payment',)
     inlines = (SponsorshipInline,)
 
