@@ -23,6 +23,10 @@ class RecruitSignupForm(ModelForm):
         self.fields['seminar_online'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['jobfair'].widget.attrs.update({
+            'max' : '4',
+            'min' : '0'
+        })
 
     class Meta:
         model = RecruitSignup
