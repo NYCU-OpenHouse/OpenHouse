@@ -67,65 +67,65 @@
         
         
 
-        <div class="ui blue inverted segment">
-            <h1 class="ui inverted header">
-                <i class="info circle icon" style="color:white"></i>
-                實體企業說明會
-            </h1>
-            <table class="ui celled table">
-                <tr>
-                    <td style="width: 6em;">活動日期</td>
-                    <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
-                        ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>活動時間</td>
-                    <td>
-                        <ul class="ui list">
-                            <li>中午場次 12:10~13:00</li>
-                            <li>其餘場次 10:10~11:00、15:30~16:20 (每場 50 分鐘)</li>
-                        </ul>
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>活動地點</td>
-                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
-                </tr>
-                <tr>
-                    <td>活動內容</td>
-                    <td>透過實體說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>
-                </tr>
-                <tr>
-                    <td>提供設備</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>可容納100至200人之國際會議廳</li>
-                            <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td>提供服務</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
-                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>
-                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
-                        </ol>
-                    </td>
-                </tr>
-            </table>
-
-            <div class="ui segment">
-                <h3 class="ui header">選取欲報名實體說明會時段</h3>
-                <p>活動費用： {{ configs.session_fee }} 元</p>
-                {{ form.seminar }}
-            </div>
-        </div>
-        <div class="ui divider"></div>
+        {#<div class="ui blue inverted segment">#}
+        {#    <h1 class="ui inverted header">#}
+        {#        <i class="info circle icon" style="color:white"></i>#}
+        {#        實體企業說明會#}
+        {#    </h1>#}
+        {#    <table class="ui celled table">#}
+        {#        <tr>#}
+        {#            <td style="width: 6em;">活動日期</td>#}
+        {#            <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}#}
+        {#                ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止#}
+        {#            </td>#}
+{##}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>活動時間</td>#}
+        {#            <td>#}
+        {#                <ul class="ui list">#}
+        {#                    <li>中午場次 12:10~13:00</li>#}
+        {#                    <li>其餘場次 10:10~11:00、15:30~16:20 (每場 50 分鐘)</li>#}
+        {#                </ul>#}
+        {#            </td>#}
+{##}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>活動地點</td>#}
+        {#            <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>活動內容</td>#}
+        {#            <td>透過實體說明會提供完善的場地與設備，徵才企業可以近距離傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等，為學生進一步認識企業之橋樑。</td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>提供設備</td>#}
+        {#            <td>#}
+        {#                <ol class="ui list">#}
+        {#                    <li>可容納100至200人之國際會議廳</li>#}
+        {#                    <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。※如有特殊需求請務必事先告知。</li>#}
+        {#                </ol>#}
+        {#            </td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <td>提供服務</td>#}
+        {#            <td>#}
+        {#                <ol class="ui list">#}
+        {#                    <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>#}
+        {#                    <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>#}
+        {#                    <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>#}
+        {#                </ol>#}
+        {#            </td>#}
+        {#        </tr>#}
+        {#    </table>#}
+{##}
+        {#    <div class="ui segment">#}
+        {#        <h3 class="ui header">選取欲報名實體說明會時段</h3>#}
+        {#        <p>活動費用： {{ configs.session_fee }} 元</p>#}
+        {#        {{ form.seminar }}#}
+        {#    </div>#}
+        {#</div>#}
+        {#<div class="ui divider"></div>#}
         
 
         {#<div class="ui purple inverted segment">#}
