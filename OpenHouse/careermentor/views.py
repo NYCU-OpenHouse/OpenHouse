@@ -9,7 +9,10 @@ from . import models
 def get_event_status(events):
     for event in events:
         event.full = False
-        if event.limit == 0:
+        if event.signup_deadline < timezone.now().date():
+            event.status = "報名時間截止 (Times Up)"
+            event.full = True
+        elif event.limit == 0:
             event.status = "Available"
         elif event.signup_num < event.limit:
             event.status = "Available：{}人".format(event.limit - event.signup_num)
@@ -40,6 +43,9 @@ def CareerMentorSignup(request, event_id):
         event = models.Mentor.objects.filter(id=event_id).annotate(signup_num=Count('signup')).first()
         # reach limit
         if event.limit != 0 and event.signup_num >= 2 * event.limit:
+            return render(request, 'mentor/error.html')
+        # time reach deadline
+        if event.signup_deadline < timezone.now().date():
             return render(request, 'mentor/error.html')
     except:
         return render(request, 'mentor/error.html')

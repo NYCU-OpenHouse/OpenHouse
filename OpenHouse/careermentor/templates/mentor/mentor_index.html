@@ -39,6 +39,7 @@
                 <th>導師(Mentor)</th>
                 <th>日期(Date)</th>
                 <th>進行方式(Mode)</th>
+                <th>截止時間(Deadline)</th>
                 <th>狀態(Status)</th>
                 <th>人數限制(Limits)</th>
                 <th>動作(Actions)</th>
@@ -50,8 +51,9 @@
                     <td><a href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
                     <td>{{ event.company }}</td>
                     <td>{{ event.mentor }} {{ event.mentor_title }}</td>
-                    <td>{{ event.date }} {{ event.start_time }} - {{ event.end_time }}</td>
+                    <td>{{ event.date | date:'Y-m-d' }} {{ event.start_time }} - {{ event.end_time }}</td>
                     <td>{{ event.mode }}</td>
+                    <td>{{ event.signup_deadline | date:'Y-m-d' }} 23:59</td>
                     <td> {{ event.status }} </td>
                     <td>
                         {% if event.limit == 0 %}
@@ -79,6 +81,7 @@
                 <th>導師(Mentor)</th>
                 <th>日期(Date)</th>
                 <th>進行方式(Mode)</th>
+                <th>截止時間(Deadline)</th>
                 <th>狀態(Status)</th>
                 <th>人數限制(Limits)</th>
                 <th>動作(Actions)</th>
@@ -92,6 +95,7 @@
                     <td>{{ event.mentor }} {{ event.mentor_title }}</td>
                     <td>{{ event.date }} {{ event.start_time }} - {{ event.end_time }}</td>
                     <td>{{ event.mode }}</td>
+                    <td>{{ event.signup_deadline | date:'Y-m-d' }} 23:59</td>
                     <td> {{ event.status }} </td>
                     <td>
                         {% if event.limit == 0 %}

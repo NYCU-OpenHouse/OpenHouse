@@ -1,6 +1,6 @@
 from django.db import models
 from company import models as company
-
+from django.utils import timezone
 
 class Mentor(models.Model):
     MENTOR_CAT = (
@@ -13,6 +13,7 @@ class Mentor(models.Model):
     category = models.CharField(u'類型', max_length=10, choices=MENTOR_CAT)
     title = models.CharField(u'標題', max_length=100)
     abstract = models.TextField(u'大綱')
+    signup_deadline = models.DateField(u'報名截止日期', help_text='報名時間到當日23:59截止', default=timezone.now)
     date = models.DateField(u'日期')
     start_time = models.TimeField(u'開始時間')
     end_time = models.TimeField(u'結束時間')
