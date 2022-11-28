@@ -23,7 +23,7 @@
             </tr>
             <tr>
                 <td>導師簡介 (Mentor Intro)</td>
-                <td>{{ event.mentor_brief }}</td>
+                <td>{{ event.mentor_brief | linebreaks }}</td>
             </tr>
             <tr>
                 <td>日期 (Date)</td>
@@ -35,7 +35,7 @@
             </tr>
             <tr>
                 <td>大綱 (Abstract)</td>
-                <td>{{ event.abstract }}</td>
+                <td>{{ event.abstract | linebreaks }}</td>
             </tr>
             <tr>
                 <td>狀態 (Status)</td>
