@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Count, Sum
+from django.utils import timezone
 from datetime import datetime
 from . import forms
 from . import models
@@ -61,6 +62,8 @@ def CareerMentorSignup(request, event_id):
 def event_info(request, event_id):
     try:
         event = models.Mentor.objects.get(id=event_id)
+        if event.date < timezone.now().date():
+            return render(request, 'mentor/error.html')
     except:
         return render(request, 'mentor/error.html')
 
