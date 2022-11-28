@@ -8,7 +8,9 @@ from . import models
 def get_event_status(events):
     for event in events:
         event.full = False
-        if event.signup_num < event.limit:
+        if event.limit == 0:
+            event.status = "Available"
+        elif event.signup_num < event.limit:
             event.status = "Available：{}人".format(event.limit - event.signup_num)
         elif event.signup_num >= 2 * event.limit:
             event.status = "已額滿(Full)"
@@ -35,7 +37,8 @@ def CareerMentorIndex(request):
 def CareerMentorSignup(request, event_id):
     try:
         event = models.Mentor.objects.filter(id=event_id).annotate(signup_num=Count('signup')).first()
-        if event.signup_num >= 2 * event.limit:
+        # reach limit
+        if event.limit != 0 and event.signup_num >= 2 * event.limit:
             return render(request, 'mentor/error.html')
     except:
         return render(request, 'mentor/error.html')
