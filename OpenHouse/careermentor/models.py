@@ -6,6 +6,7 @@ class Mentor(models.Model):
     MENTOR_CAT = (
         ('職場導師', '職場導師'),
         ('職涯教練', '職涯教練'),
+        ('職涯講座', '職涯講座'),
     )
     id = models.AutoField(primary_key=True)
     company = models.CharField(u'廠商', max_length=100)
@@ -38,6 +39,11 @@ class Mentor(models.Model):
 
 
 class Signup(models.Model):
+    ATTEND_CAT = (
+        ('實體', '實體'),
+        ('線上', '線上'),
+    )
+    
     id = models.AutoField(primary_key=True)
     mentor = models.ForeignKey(Mentor, to_field='id',
                                verbose_name=u'場次/編號',
@@ -47,6 +53,7 @@ class Signup(models.Model):
     dep = models.CharField(u'系所/年級(Department and Grade)', max_length=16)
     phone = models.CharField(u'手機(Cellphone)', max_length=20,
                              help_text='格式：0987654321')
+    attend_mode = models.CharField(u'參加方式', max_length=50, default='實體',choices=ATTEND_CAT , blank=True)
     email = models.EmailField(u'Email', max_length=64)
     time_available = models.CharField(u'場次時段內可以的時間(Available Time)', max_length=100)
     question = models.CharField(u'諮詢的內容(Enquiry)', max_length=100, default='', blank=True)
