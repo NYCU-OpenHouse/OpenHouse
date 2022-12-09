@@ -694,6 +694,12 @@ def jobfair_select_control(request):
 
         {"slot_type": "生科醫療", "display": "生科醫療", "category": ["生科醫療"], "slot_list": list(),
          "is_mygroup": False, "color": "red"},
+        
+        {"slot_type": "公家單位", "display": "公家單位", "category": ["公家單位"], "slot_list": list(),
+         "is_mygroup": False, "color": "green"},
+        {"slot_type": "通用", "display": "通用", "category": ["通用"], "slot_list": list(),
+         "is_mygroup": True, "color": "purple"},
+        
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -703,10 +709,13 @@ def jobfair_select_control(request):
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
     # 把自己的group enable並放到最前面顯示
-    my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
-    slot_group.remove(my_slot_group)
-    my_slot_group['is_mygroup'] = True
-    slot_group.insert(0, my_slot_group)
+    try:
+        my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
+        slot_group.remove(my_slot_group)
+        my_slot_group['is_mygroup'] = True
+        slot_group.insert(0, my_slot_group)
+    except StopIteration:
+        pass
 
     configs = RecruitConfigs.objects.all()[0]
     if action == "query":
@@ -719,6 +728,10 @@ def jobfair_select_control(request):
                     slot.company.get_company_name()
                 group['slot_list'].append(slot_info)
 
+        # remove those slot list is equal to 0
+        for group in slot_group.copy():
+            if  not group['slot_list']:
+                slot_group.remove(group)
         my_slot_list = [slot.serial_no for slot in JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
         try:
@@ -769,8 +782,14 @@ def jobfair_select_control(request):
         if my_slot_list.count() >= my_signup.jobfair:
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
 
-        my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
-        if slot.category not in my_slot_group['category']:
+        try:
+            my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
+            if slot.category not in my_slot_group['category']:
+                return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
+        except StopIteration:
+            pass
+            
+        if slot.category == '主辦保留':
             return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
 
         slot.company = my_signup
