@@ -784,7 +784,7 @@ def jobfair_select_control(request):
 
         try:
             my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
-            if slot.category not in my_slot_group['category']:
+            if slot.category not in my_slot_group['category'] and slot.category != "通用":
                 return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
         except StopIteration:
             pass
