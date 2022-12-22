@@ -9,6 +9,7 @@ from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJo
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
 from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
+from company.models import Company
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -710,28 +711,31 @@ def jobfair_select_control(request):
         return JsonResponse(ret)
     # 把自己的group enable並放到最前面顯示
     try:
-        my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
+        company_category = my_signup.get_company().category
+        my_slot_group = next(group for group in slot_group if company_category in group['category'])
         slot_group.remove(my_slot_group)
         my_slot_group['is_mygroup'] = True
         slot_group.insert(0, my_slot_group)
     except StopIteration:
         pass
 
-    configs = RecruitConfigs.objects.all()[0]
+    
     if action == "query":
+        companyname = dict(Company.objects.values_list('cid', 'shortname'))
         for group in slot_group:
             slot_list = JobfairSlot.objects.filter(category__in=group["category"])
             for slot in slot_list:
                 slot_info = dict()
                 slot_info["serial_no"] = slot.serial_no
-                slot_info["company"] = None if not slot.company else \
-                    slot.company.get_company_name()
+                slot_info["company"] = None if not slot.company_id else \
+                    companyname[slot.company_id]
                 group['slot_list'].append(slot_info)
 
         # remove those slot list is equal to 0
         for group in slot_group.copy():
             if  not group['slot_list']:
                 slot_group.remove(group)
+                
         my_slot_list = [slot.serial_no for slot in JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
         try:
@@ -751,7 +755,8 @@ def jobfair_select_control(request):
             select_ctrl['display'] = False
             select_ctrl['select_enable'] = True
             today = timezone.now().date()
-            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
+            configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
+            if (configs['jobfair_btn_start'] <= today <= configs['jobfair_btn_end']) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
@@ -783,7 +788,7 @@ def jobfair_select_control(request):
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
 
         try:
-            my_slot_group = next(group for group in slot_group if my_signup.get_company().category in group['category'])
+            my_slot_group = next(group for group in slot_group if company_category in group['category'])
             if slot.category not in my_slot_group['category'] and slot.category != "通用":
                 return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
         except StopIteration:
