@@ -85,7 +85,8 @@ class CompanyEditForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = '__all__'
-        exclude = ['password', 'last_login', 'date_join', 'is_active']
+        exclude = ['password', 'last_login', 'date_join', 'is_active', \
+                   'ece_member', 'gloria_normal', 'gloria_startup', 'payment_ps', 'other_ps']
         widgets = {
             'brief': forms.Textarea(),
             'recruit_info': forms.Textarea(),
