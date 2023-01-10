@@ -24,6 +24,7 @@ services:
       dockerfile: Dockerfile.prod
     volumes:
       - /var/run/mysqld:/var/run/mysqld
+      - /var/log/openhouse:/var/log/openhouse:rw
       - ./OpenHouse:/oh:rw
     networks:
       - backend
