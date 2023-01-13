@@ -24,6 +24,8 @@ def Index(request):
 
 #TODO permission
 def ReadNews(request,news_id):
+    if not news_id.isnumeric():
+        raise Http404("Not found")
     news = models.News.objects.filter(id = news_id).first()
     if not news:
         raise Http404("Not found")
