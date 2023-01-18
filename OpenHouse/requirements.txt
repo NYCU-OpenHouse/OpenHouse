@@ -8,3 +8,4 @@ XlsxWriter
 six
 gunicorn
 django-oauth-toolkit
+requests

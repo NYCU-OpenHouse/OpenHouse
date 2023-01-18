@@ -1,5 +1,5 @@
 from django.contrib import admin
-from company.models import Company
+from company.models import Company, ChineseFundedCompany
 from recruit import models as recruit_model
 from careermentor.models import Mentor
 from rdss import models as rdss_model
@@ -351,3 +351,8 @@ admin.site.register(Company, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 # admin.site.unregister(Group)
+
+@admin.register(ChineseFundedCompany)
+class ChineseFundedCompanyAdmin(admin.ModelAdmin):
+    search_fields = ('cid', 'name')
+    list_display = ('cid', 'name','updated_time')

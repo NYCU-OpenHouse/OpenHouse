@@ -133,3 +133,15 @@ class Company(AbstractBaseUser):
 
     def has_perm(self, perm, obj=None):
         return False
+
+class ChineseFundedCompany(models.Model):
+    cid = models.CharField(u'公司統一編號', unique=True, max_length=8)
+    name = models.CharField(u'公司名稱', max_length=100)
+    updated_time = models.DateTimeField(u'更新時間', auto_now=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'chinesefundedcompany'
+
+        verbose_name = u"中資企業列表"
+        verbose_name_plural = u"中資企業列表"

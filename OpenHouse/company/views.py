@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from company.forms import CompanyCreationForm, CompanyEditForm, CompanyPasswordResetForm
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from .models import Company
+from .models import Company, ChineseFundedCompany
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
 from company.forms import CompanyCreationForm, CompanyEditForm
@@ -42,6 +42,13 @@ def CompanyCreation(request):
     submit_btn_name = "創建帳號"
     if request.POST:
         form = CompanyCreationForm(request.POST, request.FILES)
+        try:
+            ChineseFundedCompany.objects.get(cid=request.POST['cid'])
+            error_display = True
+            error_msg = "此統編已被政府列為中資企業，若有註冊需求，歡迎來信詢求協助!"
+            return render(request, 'company_create_form.html', locals())
+        except ChineseFundedCompany.DoesNotExist:
+            pass
         if form.is_valid():
             form.save()
             user = authenticate(username=form.clean_cid(), password=form.clean_password2())
