@@ -12,8 +12,20 @@
                 <tbody>
                 {% for recruit_news in recruit_news_page %}
                     <tr>
-                        <td><a href="/news/{{ recruit_news.id }}/"> {{ recruit_news.title }} </a></td>
-                        <td class="right aligned collapsed">{{ recruit_news.updated_time|date:"Y-m-d" }}</td>
+                        <td>
+                            <div>
+                                <a href="/news/{{ recruit_news.id }}/"> {{ recruit_news.title }} </a>
+                            </div>
+                            <div class="right aligned collapsed">
+                                {% if recruit_news.pinned %}
+                                    <span style="color:red;font-size:0.5em;">
+                                        <i class="thumbtack icon" style="color:red;font-size:0.4em ;margin-right:0%;transform:rotate(45deg);"></i>
+                                        置頂
+                                    </span>
+                                {% endif %}
+                                {{ recruit_news.updated_time|date:"Y-m-d" }}
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

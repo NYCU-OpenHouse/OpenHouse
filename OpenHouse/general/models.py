@@ -17,6 +17,7 @@ class News(models.Model):
     )
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', max_length=100)
+    pinned = models.BooleanField(u'置頂貼文', default=False)
     category = models.CharField(u'公告類別', max_length=5, choices=CATEGORYS)
     perm = models.CharField(u'誰能看到這則公告', max_length=15, choices=PERM)
     content = RichTextUploadingField(u'內容')

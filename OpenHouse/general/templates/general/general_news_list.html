@@ -12,8 +12,20 @@
                 <tbody>
                 {% for general_news in general_news_page %}
                     <tr>
-                        <td><a href="/news/{{ general_news.id }}/"> {{ general_news.title }} </a></td>
-                        <td class="right aligned collapsed">{{ general_news.updated_time|date:"Y-m-d" }}</td>
+                        <td>
+                            <div>
+                                <a href="/news/{{ general_news.id }}/"> {{ general_news.title }} </a>
+                            </div>
+                            <div class="right aligned collapsed">
+                                {% if general_news.pinned %}
+                                    <span style="color:red;font-size:0.5em;">
+                                        <i class="thumbtack icon" style="color:red;font-size:0.4em ;margin-right:0%;transform:rotate(45deg);"></i>
+                                        置頂
+                                    </span>
+                                {% endif %}
+                                {{ general_news.updated_time|date:"Y-m-d" }}
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
