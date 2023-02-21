@@ -9,8 +9,10 @@
         <div style="text-align:center">
             <h2 class="ui header">{{ news.title }}</h2>
             <p style="text-align:right">
-                <i class="thumbtack icon" style="color:red;font-size:0.4em ;margin-right:0%;transform:rotate(45deg);"></i>
-                <span style="color:red;">置頂</span> 
+                {% if news.pinned %}
+                    <i class="thumbtack icon" style="color:red;font-size:0.4em ;margin-right:0%;transform:rotate(45deg);"></i>
+                    <span style="color:red;">置頂</span> 
+                {% endif %}
                 修改時間：{{ news.created_time }} 
             </p>
         </div>
