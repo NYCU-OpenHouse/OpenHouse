@@ -466,26 +466,33 @@ def jobfair_info(request):
         jobfair_info_object = JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info_object = None
-
+    
+    deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
+    reach_deadline =timezone.now() > deadline
     parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=3, extra=3,
                                              fields=('id', 'license_plate_number', 'info'),
                                              widgets={'license_plate_number': forms.TextInput(
                                                  attrs={'placeholder': '例AA-1234、4321-BB'})})
 
     if request.POST:
-        data = request.POST.copy()
-        form = JobfairInfoForm(data=data, instance=jobfair_info_object)
-        formset = parking_form_set(data=data, instance=jobfair_info_object)
-        if form.is_valid() and formset.is_valid():
-            new_info = form.save(commit=False)
-            company = RecruitSignup.objects.get(cid=request.user.cid)
-            new_info.company = company
-            new_info.save()
-            formset.save()
-            # return render(request, 'recruit/company/success.html', locals())
-            return redirect(jobfair_info)
+        if not reach_deadline:
+            data = request.POST.copy()
+            form = JobfairInfoForm(data=data, instance=jobfair_info_object)
+            formset = parking_form_set(data=data, instance=jobfair_info_object)
+            if form.is_valid() and formset.is_valid():
+                new_info = form.save(commit=False)
+                company = RecruitSignup.objects.get(cid=request.user.cid)
+                new_info.company = company
+                new_info.save()
+                formset.save()
+                # return render(request, 'recruit/company/success.html', locals())
+                return redirect(jobfair_info)
+            else:
+                print(form.errors)
         else:
-            print(form.errors)
+            error_msg = "實體就博會資訊填寫時間已截止!若有更改需求，請來信或來電。"
+            return render(request, 'recruit/error.html', locals())
+
     else:
         form = JobfairInfoForm(instance=jobfair_info_object)
         formset = parking_form_set(instance=jobfair_info_object)

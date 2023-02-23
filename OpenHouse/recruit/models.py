@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator, MaxValueValidator, MinValueVa
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.utils import timezone
 import datetime
 import company.models
 
@@ -95,6 +96,7 @@ class RecruitConfigs(models.Model):
     jobfair_start = models.TimeField(u'實體就博會開始時間', default='00:00')
     jobfair_end = models.TimeField(u'實體就博會結束時間', default='00:00')
     jobfair_place = models.CharField(u'實體就博會地點', max_length=150, default="")
+    jobfair_info_deadline = models.DateTimeField(u'實體資訊截止填寫時間', default=timezone.now)
     # 費用
     jobfair_booth_fee = models.IntegerField(u'實體就博會攤位費用(每攤)', default=0)
 

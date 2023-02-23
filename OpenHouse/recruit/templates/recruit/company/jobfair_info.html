@@ -15,7 +15,7 @@
                 實體就博會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 1/9 前完成「實體就博會資訊」填寫，以進行行政施工等準備作業</h2>
+        <h2 style="color:red">請企業於 {{ deadline }} 前完成「實體就博會資訊」填寫，以進行行政施工等準備作業</h2>
         <h3 class="ui dividing header">攤位資訊</h3>
         <div class="field required">
             <label>{{ form.sign_name.label }}</label>
@@ -124,6 +124,10 @@
                 </div>
             {% endfor %}
         </div>
-        <button class="ui blue button" style="float: right;" type="submit">送出</button>
+        {% if reach_deadline %}
+            <div class="ui red button" style="float: right;" >填寫截止</div>
+        {% else%}
+            <button class="ui blue button" style="float: right;" type="submit">送出</button>
+        {% endif %}
     </form>
 {% endblock %}
