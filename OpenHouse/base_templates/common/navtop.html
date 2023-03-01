@@ -18,9 +18,9 @@
         <a class="{{ menu_ui.recruit }} item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
             校園徵才
         </a>
-        <a class="{{ menu_ui.rdss }} item" href="{% url 'rdss_company_index' %}">
-            秋季招募
-        </a>
+        {# <a class="{{ menu_ui.rdss }} item" href="{% url 'rdss_company_index' %}">  #}
+        {#     秋季招募  #}
+        {# </a>  #}
         <a class="item" id="navtop_rdss_btn" data-content="籌備中，11月初與大家相見">
             職涯相關服務
         </a>
@@ -70,39 +70,39 @@
                 {#                </a>#}
             </div>
         </div>
-        <div class="ui simple dropdown item" id="rdss_navtop_dropdown">
-            秋季招募
-            <i class="dropdown inverted icon"></i>
-            <div class="menu">
-                <a class="item" href="{% url 'rdss_index' %}">
-                    活動資訊
-                </a>
-                <a class="item" href="{% url 'rdss_jobs' %}">
-                    職缺列表
-                </a>
-                {% if nav_configs.show_rdss_seminar %}
-                    <a class="item" href="{% url 'seminar_public' %}">
-                        線上說明會
-                    </a>
-                {% endif %}
-                {% if nav_configs.show_rdss_jobfair %}
-                    <a class="item" href="{% url 'jobfair_public' %}">
-                        實體就博會
-                    </a>
-                {% endif %}
-                {% if nav_configs.show_rdss_online_jobfair %}
-                    <a class="item" href="{% url 'jobfair_online' %}">
-                        線上就博會
-                    </a>
-                {% endif %}
-                <a class="item" href="https://openhouse.act.nycu.edu.tw" target="_blank">
-                    線上就博會系統
-                </a>
-                {#                <a class="item" href="{% url 'rdss_querypts' %}">#}
-                {#                    查集點#}
-                {#                </a>#}
-            </div>
-        </div>
+        {# <div class="ui simple dropdown item" id="rdss_navtop_dropdown">  #}
+        {#     秋季招募  #}
+        {#     <i class="dropdown inverted icon"></i>  #}
+        {#     <div class="menu">  #}
+        {#         <a class="item" href="{% url 'rdss_index' %}">  #}
+        {#             活動資訊  #}
+        {#         </a>  #}
+        {#         <a class="item" href="{% url 'rdss_jobs' %}">  #}
+        {#             職缺列表  #}
+        {#         </a>  #}
+        {#         {% if nav_configs.show_rdss_seminar %}  #}
+        {#             <a class="item" href="{% url 'seminar_public' %}">  #}
+        {#                 線上說明會  #}
+        {#             </a>  #}
+        {#         {% endif %}  #}
+        {#         {% if nav_configs.show_rdss_jobfair %}  #}
+        {#             <a class="item" href="{% url 'jobfair_public' %}">  #}
+        {#                 實體就博會  #}
+        {#             </a>  #}
+        {#         {% endif %}  #}
+        {#         {% if nav_configs.show_rdss_online_jobfair %}  #}
+        {#             <a class="item" href="{% url 'jobfair_online' %}">  #}
+        {#                 線上就博會  #}
+        {#             </a>  #}
+        {#         {% endif %}  #}
+        {#         <a class="item" href="https://openhouse.act.nycu.edu.tw" target="_blank">  #}
+        {#             線上就博會系統  #}
+        {#         </a>  #}
+        {#                         <a class="item" href="{% url 'rdss_querypts' %}">  #}
+        {#                             查集點  #}
+        {#                         </a>  #}
+        {#     </div>  #}
+        {# </div>  #}
         <a class="item navtop_rdss_popup" href="{% url 'mentor_index' %}">
             職涯相關服務
         </a>
