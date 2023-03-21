@@ -13,6 +13,7 @@ class SignupForm(forms.ModelForm):
         self.fields['attend_mode'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['time_available'].required = True
 
     class Meta:
         model=models.Signup

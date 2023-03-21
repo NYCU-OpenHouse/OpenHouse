@@ -55,7 +55,7 @@ class Signup(models.Model):
                              help_text='格式：0987654321')
     attend_mode = models.CharField(u'參加方式', max_length=50, default='實體',choices=ATTEND_CAT , blank=True)
     email = models.EmailField(u'Email', max_length=64)
-    time_available = models.CharField(u'場次時段內可以的時間(Available Time)', max_length=100)
+    time_available = models.CharField(u'場次時段內可以的時間(Available Time)', max_length=100, default='', blank=True)
     question = models.CharField(u'諮詢的內容(Enquiry)', max_length=100, default='', blank=True)
     remark = models.CharField(u'備註(Remark)', max_length=100, default='', blank=True)
     cv_en = models.FileField(u'CV upload', upload_to='career_mentor', blank=True, null=True,
