@@ -18,7 +18,7 @@ class Mentor(models.Model):
     date = models.DateField(u'日期')
     start_time = models.TimeField(u'開始時間')
     end_time = models.TimeField(u'結束時間')
-    mentor = models.CharField(u'導師', max_length=30, default='', blank=True)
+    mentor = models.CharField(u'導師', max_length=100, default='', blank=True)
     mentor_brief = models.TextField(u'導師介紹')
     mentor_title = models.CharField(u'導師稱謂', max_length=30, default='', blank=True)
     mentor_email = models.EmailField(u'導師Email', max_length=254, default='', blank=True)
