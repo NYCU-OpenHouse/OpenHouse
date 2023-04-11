@@ -20,7 +20,7 @@ class Mentor(models.Model):
     end_time = models.TimeField(u'結束時間')
     mentor = models.CharField(u'導師', max_length=100, default='', blank=True)
     mentor_brief = models.TextField(u'導師介紹')
-    mentor_title = models.CharField(u'導師稱謂', max_length=30, default='', blank=True)
+    mentor_title = models.CharField(u'導師稱謂', max_length=100, default='', blank=True)
     mentor_email = models.EmailField(u'導師Email', max_length=254, default='', blank=True)
     mode = models.CharField(u'進行方式', max_length=100, default='', blank=True)
     place = models.CharField(u'地點', max_length=100)
