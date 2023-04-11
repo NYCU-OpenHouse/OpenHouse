@@ -47,6 +47,17 @@ class CareerSeminarSignupForm(forms.ModelForm):
         self.fields['meal_category'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        set_attend_mode = models.Mentor.objects.get(id=kwargs['initial']['mentor']).set_attend_mode
+        
+        new_choices = list(self.fields['attend_mode'].choices)
+        if set_attend_mode == '僅限實體':
+            new_choices.remove(('線上', '線上(Online)'))
+            self.fields['attend_mode'].initial = '實體'
+        if set_attend_mode == '僅限線上':
+            new_choices.remove(('實體', '實體(Onsite)'))
+            self.fields['attend_mode'].initial = '線上'
+        self.fields['attend_mode'].choices = new_choices
+        self.fields['attend_mode'].widget.choices = new_choices
 
     class Meta:
         model=models.Signup
