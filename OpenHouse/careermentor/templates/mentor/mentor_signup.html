@@ -28,9 +28,13 @@
     </div>
     <form class="ui form" method="POST" enctype="multipart/form-data">
         <p>有*的欄位為必填</p>
+        {% if  error_message %}
+            <div class="ui negative message">
+                    {{ error_message }}
+            </div>
+        {% endif %}
         {% csrf_token %}
-        {{ form.as_p }}
-        <div class="ui error message"></div>
+        {{ form.as_p }}    
         <button class="ui teal button" type="submit">送出</button>
     </form>
 {% endblock %}
