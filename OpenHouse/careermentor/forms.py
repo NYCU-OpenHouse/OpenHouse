@@ -13,6 +13,9 @@ class SignupForm(forms.ModelForm):
         self.fields['attend_mode'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['meal_category'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
         self.fields['time_available'].required = True
 
     class Meta:
@@ -39,6 +42,9 @@ class CareerSeminarSignupForm(forms.ModelForm):
             'class': 'ui disabled dropdown',
         })
         self.fields['attend_mode'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
+        self.fields['meal_category'].widget.attrs.update({
             'class': 'ui dropdown',
         })
 
