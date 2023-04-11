@@ -60,11 +60,17 @@ def CareerMentorSignup(request, event_id):
     init_data = {'mentor': event_id}
     form = forms.SignupForm(initial=init_data)
     if request.method == "POST":
-        data = request.POST.copy()
-        form = forms.SignupForm(data, request.FILES)
+        request_data = request.POST.copy()
+        form = forms.SignupForm(request_data, request.FILES,initial=init_data)
+
         if form.is_valid():
-            form.save()
-            return render(request, 'mentor/mentor_signup_success.html', locals())
+            data = form.cleaned_data
+            if models.Signup.objects.filter(mentor=event_id, student_id=data['student_id'],name=data['name']).exists():
+                error_message = "報名重複!!!"
+                return render(request, 'mentor/mentor_signup.html', locals())
+            else:
+                form.save()
+                return render(request, 'mentor/mentor_signup_success.html', locals())
 
         else:
             print(form.errors)
