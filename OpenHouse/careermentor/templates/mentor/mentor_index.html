@@ -63,9 +63,12 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not event.full %}
-                            <a href={% url 'mentor_signup' event.id %}>報名(Register)</a>
-                        {% endif %}
+                        <div class="ui list">
+                            {% if not event.full %}
+                            <a class="item" href={% url 'mentor_signup' event.id %}>報名(Register)</a>
+                            {% endif %}
+                            <a class="item" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
@@ -105,9 +108,12 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not event.full %}
-                            <a href={% url 'mentor_signup' event.id %}>報名(Register)</a>
-                        {% endif %}
+                        <div class="ui list">
+                            {% if not event.full %}
+                            <a class="item" href={% url 'mentor_signup' event.id %}>報名(Register)</a>
+                            {% endif %}
+                            <a class="item" href={% url 'mentor_signup' event.id %}>查詢報名狀態(Registration Status)</a>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
@@ -147,9 +153,12 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not event.full %}
-                            <a href={% url 'career_seminar_signup' event.id %}>報名(Register)</a>
-                        {% endif %}
+                        <div class="ui list">
+                            {% if not event.full %}
+                                <a class="item" href={% url 'career_seminar_signup' event.id %}>報名(Register)</a>
+                            {% endif %}
+                            <a class="item" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}

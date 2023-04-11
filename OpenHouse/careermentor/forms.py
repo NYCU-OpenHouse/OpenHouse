@@ -72,3 +72,16 @@ class CareerSeminarSignupForm(forms.ModelForm):
         if commit:
             form.save()
             return form
+
+class SearchMentorStatus(forms.Form):
+    mentor = forms.ModelChoiceField(queryset=models.Mentor.objects.all(), to_field_name='id',label=u'場次')
+    student_id = forms.CharField(label=u'學號(Student ID)',max_length=20)
+    name = forms.CharField(label=u'姓名(Name)', max_length=64)
+    phone = forms.CharField(label=u'手機(Cellphone)' , max_length=20,
+                             help_text='格式：0987654321')
+    
+    def __init__(self, *args, **kwargs):
+        super(SearchMentorStatus, self).__init__(*args, **kwargs)
+        self.fields['mentor'].widget.attrs.update({
+            'class': 'ui disabled dropdown',
+        })

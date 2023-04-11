@@ -1,0 +1,60 @@
+{% extends 'general_base.html' %}
+{% load static %}
+
+{% block 'custom_head' %}
+    <title>Open House 職涯相關服務</title>
+    
+{% endblock %}
+
+{% block 'content' %}
+        {% if  error_message %}
+            <div class="ui compact segment" style="margin:auto; width:80%">
+                <div class="ui negative message">
+                        {{ error_message }}
+                </div>
+                <a class="ui button" href={% url 'mentor_index' %}>回列表</a>
+            </div>
+        {% else %}
+            <div class="ui compact segment" style="margin:auto; width:80%">
+                <h2 class="ui centered header">報名詳細資訊</h2>
+                <table class="ui stripped celled table">
+                    <tbody>
+                        <tr>
+                            <td>場次 </td>
+                            <td>{{ student.mentor }}</td>
+                        </tr>
+                        <tr>
+                            <td>姓名 (Name)</td>
+                            <td>{{ student.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>學號 (Student ID)</td>
+                            <td>{{ student.student_id }}</td>
+                        </tr>
+                        <tr>
+                            <td>系所/年級(Department and Grade)</td>
+                            <td>{{ student.dep }}</td>
+                        </tr>
+                        <tr>
+                            <td>手機 (Cellphone)</td>
+                            <td>{{ student.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ student.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>參加方式 (Attend Mode)</td>
+                            <td>{{ student.attend_mode }}</td>
+                        </tr>
+                        <tr>
+                            <td>葷素(Meal Category)</td>
+                            <td>{{ student.meal_category }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a class="ui button" href={% url 'mentor_index' %}>回列表</a>
+            </div>
+        {% endif %}
+        
+{% endblock %}

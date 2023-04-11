@@ -1,0 +1,22 @@
+{% extends 'general_base.html' %}
+{% load static %}
+
+{% block 'custom_head' %}
+    <title>Open House 職涯相關服務</title>
+    <link href={% static "css/mentor/search_form.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'content' %}
+    <h2 class="ui center aligned header">查詢報名狀況</h2>
+    <form class="ui form" method="POST" enctype="multipart/form-data">
+        {% if  error_message %}
+            <div class="ui negative message">
+                    {{ error_message }}
+            </div>
+        {% endif %}
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button class="ui teal button" type="submit">查詢</button>
+    </form>
+{% endblock %}

@@ -98,13 +98,31 @@ def CareerSeminarSignup(request, event_id):
                 error_message = "報名重複!!!"
                 return render(request, 'mentor/mentor_signup.html', locals())
             else:
-            form.save()
-            return render(request, 'mentor/mentor_signup_success.html', locals())
+                form.save()
+                return render(request, 'mentor/mentor_signup_success.html', locals())
 
         else:
             print(form.errors)
 
     return render(request, 'mentor/mentor_signup.html', locals())
+
+def MentorStatus(request, event_id):
+    init_data = {'mentor': event_id}
+    form = forms.SearchMentorStatus(initial=init_data)
+    
+    if request.method == "POST":
+        form = forms.SearchMentorStatus(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            queryset = models.Signup.objects.filter(mentor=data['mentor'], student_id=data['student_id']
+                                            ,name=data['name'], phone=data['phone'])
+            if queryset.exists():
+                student = queryset[0]
+                return render(request, 'mentor/mentor_status_search_result.html', locals())
+            else:
+                error_message='查無資料!'
+                return render(request, 'mentor/mentor_status_search_result.html', locals())
+    return render(request, 'mentor/mentor_status_search.html', locals())
 
 def event_info(request, event_id):
     try:
