@@ -8,6 +8,8 @@ urlpatterns = [
      url(r'^news/(?P<news_id>[0-9].*)/$', views.ReadNews),
      url(r'^general_news/$', views.GeneralNewsListing, name = 'general_news_list'),
      url(r'^recruit_news/$', views.RecruitNewsListing, name = 'recruit_news_list'),
+     url(r'^faq/$', views.FAQ, name = 'FAQ'),
+     
 
 	#export urls are defined in admin.py
 ]
