@@ -14,8 +14,9 @@ def index(request):
     except MonographInfo.DoesNotExist:
         mono_info = None
 
-    paginator = Paginator(Monograph.objects.all(), 16)
+    paginator = Paginator(Monograph.objects.all(), 15)
     page_number = request.GET.get('page')
+    carousel = Monograph.objects.all()[:10]
 
     try:
         mono = paginator.page(page_number)
@@ -36,9 +37,13 @@ def monograph_detail(request, monograph_id):
         mono = Monograph.objects.get(id=monograph_id)
     except Monograph.DoesNotExist:
         raise Http404('Monograph does not exist')
-
+    
     mono.view_count += 1
     mono.save()
+    
+    recent_mono = Monograph.objects.all()[:5]
+    
+    hot_mono = Monograph.objects.order_by('-view_count', '-updated')[:5]
     
     if mono.priority:
         previous = Monograph.objects.filter(priority=True, updated__gt=mono.updated).last()

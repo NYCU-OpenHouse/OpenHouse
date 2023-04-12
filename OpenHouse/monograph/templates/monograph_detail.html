@@ -3,134 +3,173 @@
 
 {% block 'custom_head' %}
     <title>Open House 專刊 | {{ mono.title }}</title>
+    <link href={% static "css/monograph/detail.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'body' %}
     <br>
-    <div class="ui segment" style="margin:auto;width:90%;">
-        <div style="text-align:center">
-            <h2 class="ui header">{{ mono.title }}</h2>
-            <p style="text-align:right">修改時間：{{ mono.updated }} </p>
-        </div>
+    <div id="monograph_detail">
+        <div class="ui grid two stackable" >
+            <div class="ui eleven wide column">
+                <div class="ui segment" >
+                    <div style="text-align:center">
+                        <h2 class="ui header">{{ mono.title }}</h2>
+                        <p style="text-align:right">修改時間：{{ mono.updated }} </p>
+                    </div>
 
-        <h4 class="ui horizontal divider header">
-            <i class="book icon"></i>
-            內容
-        </h4>
+                    <h4 class="ui horizontal divider header">
+                        <i class="book icon"></i>
+                        內容
+                    </h4>
 
-        <!-- computer and tablet only content -->
-        <div class="ui grid">
-            {% if mono.content_2 and mono.image_1 and mono.image_2 %}
-                <div class="computer only tablet only ten wide column">
-                    {{ mono.content_1|safe }}
-                </div>
-                <div class="computer only tablet only six wide column">
-                    <img class="ui image" src="{{ mono.image_1.url }}">
-                </div>
-                <div class="computer only tablet only six wide column">
-                    <img class="ui image" src="{{ mono.image_2.url }}">
-                </div>
-                <div class="computer only tablet only ten wide column">
-                    {{ mono.content_2|safe }}
-                </div>
-            {% elif mono.content_2 %}
-                <div class="computer only tablet only column">
-                    {{ mono.content_1|safe }}
-                    {{ mono.content_2|safe }}
-                </div>
-            {% elif mono.image_1 or mono.image_2 %}
-                <div class="computer only tablet only column">
-                    {% if mono.image_1 and mono.image_2 %}
-                        <img class="ui image" src="{{ mono.image_1.url }}">
-                        {{ mono.content_1|safe }}
-                        <img class="ui image" src="{{ mono.image_2.url }}">
-                    {% elif mono.image_1 %}
-                        <img class="ui image" src="{{ mono.image_1.url }}">
-                        {{ mono.content_1|safe }}
-                    {% else %}
-                        <img class="ui image" src="{{ mono.image_2.url }}">
-                        {{ mono.content_1|safe }}
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="computer only tablet only column">
-                    {{ mono.content_1|safe }}
-                </div>
-            {% endif %}
-        </div>
+                    <!-- computer and tablet only content -->
+                    <div class="ui grid">
+                        {% if mono.content_2 and mono.image_1 and mono.image_2 %}
+                            <div class="computer only tablet only ten wide column">
+                                {{ mono.content_1|safe }}
+                            </div>
+                            <div class="computer only tablet only six wide column">
+                                <img class="ui image" src="{{ mono.image_1.url }}">
+                            </div>
+                            <div class="computer only tablet only six wide column">
+                                <img class="ui image" src="{{ mono.image_2.url }}">
+                            </div>
+                            <div class="computer only tablet only ten wide column">
+                                {{ mono.content_2|safe }}
+                            </div>
+                        {% elif mono.content_2 %}
+                            <div class="computer only tablet only column">
+                                {{ mono.content_1|safe }}
+                                {{ mono.content_2|safe }}
+                            </div>
+                        {% elif mono.image_1 or mono.image_2 %}
+                            <div class="computer only tablet only column">
+                                {% if mono.image_1 and mono.image_2 %}
+                                    <img class="ui image" src="{{ mono.image_1.url }}">
+                                    {{ mono.content_1|safe }}
+                                    <img class="ui image" src="{{ mono.image_2.url }}">
+                                {% elif mono.image_1 %}
+                                    <img class="ui image" src="{{ mono.image_1.url }}">
+                                    {{ mono.content_1|safe }}
+                                {% else %}
+                                    <img class="ui image" src="{{ mono.image_2.url }}">
+                                    {{ mono.content_1|safe }}
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="computer only tablet only column">
+                                {{ mono.content_1|safe }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-        <!-- mobile only content -->
-        <div class="ui grid">
-            <div class="mobile only column">
-                {% if mono.content_2 and mono.image_1 and mono.image_2 %}
-                    {{ mono.content_1|safe }}
-                    <img class="ui image" src="{{ mono.image_1.url }}">
-                    {{ mono.content_2|safe }}
-                    <img class="ui image" src="{{ mono.image_2.url }}">
-                {% elif mono.content_2 %}
-                    {{ mono.content_1|safe }}
-                    {{ mono.content_2|safe }}
-                {% elif mono.image_1 or mono.image_2 %}
-                    {% if mono.image_1 and mono.image_2 %}
-                        <img class="ui image" src="{{ mono.image_1.url }}">
-                        {{ mono.content_1|safe }}
-                        <img class="ui image" src="{{ mono.image_2.url }}">
-                    {% elif mono.image_1 %}
-                        <img class="ui image" src="{{ mono.image_1.url }}">
-                        {{ mono.content_1|safe }}
-                    {% else %}
-                        <img class="ui image" src="{{ mono.image_2.url }}">
-                        {{ mono.content_1|safe }}
-                    {% endif %}
-                {% else %}
-                    {{ mono.content_1|safe }}
-                {% endif %}
+                    <!-- mobile only content -->
+                    <div class="ui grid">
+                        <div class="mobile only column">
+                            {% if mono.content_2 and mono.image_1 and mono.image_2 %}
+                                {{ mono.content_1|safe }}
+                                <img class="ui image" src="{{ mono.image_1.url }}">
+                                {{ mono.content_2|safe }}
+                                <img class="ui image" src="{{ mono.image_2.url }}">
+                            {% elif mono.content_2 %}
+                                {{ mono.content_1|safe }}
+                                {{ mono.content_2|safe }}
+                            {% elif mono.image_1 or mono.image_2 %}
+                                {% if mono.image_1 and mono.image_2 %}
+                                    <img class="ui image" src="{{ mono.image_1.url }}">
+                                    {{ mono.content_1|safe }}
+                                    <img class="ui image" src="{{ mono.image_2.url }}">
+                                {% elif mono.image_1 %}
+                                    <img class="ui image" src="{{ mono.image_1.url }}">
+                                    {{ mono.content_1|safe }}
+                                {% else %}
+                                    <img class="ui image" src="{{ mono.image_2.url }}">
+                                    {{ mono.content_1|safe }}
+                                {% endif %}
+                            {% else %}
+                                {{ mono.content_1|safe }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui five wide column">
+                <div class="ui cards" >
+                    <div class="card">
+                      <div class="extra content">
+                        <div class="ui white header">最新文章</div>
+                    </div>
+                    <div class="content">
+                        <div class="ui relaxed divided link list">
+                            {% for ele in recent_mono %}
+                            <a href="{{ ele.get_absolute_url }}" class="item">
+                                {{ ele.title }}
+                            </a>
+                            {% endfor %}
+                          </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                        <div class="extra content">
+                          <div class="ui white header">熱門文章</div>
+                        </div>
+                        <div class="content">
+                          <div class="ui relaxed divided link list">
+                            {% for ele in hot_mono %}
+                            <a href="{{ ele.get_absolute_url }}" class="item">
+                                {{ ele.title }}
+                            </a>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
-    </div>
 
-    <!-- computer and tablet only buttons -->
-    <div class="ui grid">
-        <div class="computer only tablet only column">
-            <div class="ui basic segment" style="margin:auto;width:90%;">
-                <a class="ui teal left floated button" href="/">回首頁</a>
-                <a class="ui teal left floated button" href="{% url 'monograph_index' %}">專刊</a>
-                {% if next_mono %}
-                    <a class="ui teal right floated right labeled icon button" href="{{ next_mono.get_absolute_url }}">
-                        <i class="angle right icon"></i>
-                        {{ next_mono.title }}
-                    </a>
-                {% endif %}
-                {% if previous %}
-                    <a class="ui teal right floated left labeled icon button" href="{{ previous.get_absolute_url }}">
-                        <i class="angle left icon"></i>
-                        {{ previous.title }}
-                    </a>
-                {% endif %}
+        <!-- computer and tablet only buttons -->
+        <div class="computer only tablet only ui grid" id="pc_buttons_grid">
+            <div class="column" id="padding_x_0">
+                <div class="ui basic segment" id="padding_x_0">
+                    <a class="ui teal left floated button" href="/">回首頁</a>
+                    <a class="ui teal left floated button" href="{% url 'monograph_index' %}">專刊</a>
+                    {% if next_mono %}
+                        <a class="ui teal right floated right labeled icon button" href="{{ next_mono.get_absolute_url }}">
+                            <i class="angle right icon"></i>
+                            {{ next_mono.title }}
+                        </a>
+                    {% endif %}
+                    {% if previous %}
+                        <a class="ui teal right floated left labeled icon button" href="{{ previous.get_absolute_url }}">
+                            <i class="angle left icon"></i>
+                            {{ previous.title }}
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- mobile only buttons -->
-    <div class="ui grid">
-        <div class="mobile only column">
-            <div class="ui basic segment" style="margin:auto;width:90%;">
-                <a class="ui teal left floated icon button" href="/">
-                    <i class="home icon"></i>
-                </a>
-                <a class="ui teal left floated icon button" href="{% url 'monograph_index' %}">
-                    <i class="archive icon"></i>
-                </a>
-                {% if next_mono %}
-                    <a class="ui teal right floated icon button" href="{{ next_mono.get_absolute_url }}">
-                        <i class="angle right icon"></i>
+        <!-- mobile only buttons -->
+        <div class="mobile only ui grid" id="mobile_buttons_grid">
+            <div class="column" id="padding_x_0">
+                <div class="ui basic segment">
+                    <a class="ui teal left floated icon button" href="/">
+                        <i class="home icon"></i>
                     </a>
-                {% endif %}
-                {% if previous %}
-                    <a class="ui teal right floated icon button" href="{{ previous.get_absolute_url }}">
-                        <i class="angle left icon"></i>
+                    <a class="ui teal left floated icon button" href="{% url 'monograph_index' %}">
+                        <i class="archive icon"></i>
                     </a>
-                {% endif %}
+                    {% if next_mono %}
+                        <a class="ui teal right floated icon button" href="{{ next_mono.get_absolute_url }}">
+                            <i class="angle right icon"></i>
+                        </a>
+                    {% endif %}
+                    {% if previous %}
+                        <a class="ui teal right floated icon button" href="{{ previous.get_absolute_url }}">
+                            <i class="angle left icon"></i>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
