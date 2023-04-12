@@ -20,6 +20,7 @@ class Monograph(models.Model):
     image_2 = models.ImageField(u'圖片2', upload_to='monograph_images', null=True, blank=True,
                                 help_text='僅接受 jpg, png, gif 格式。')
     priority = models.BooleanField(u'優先', default=False)
+    view_count = models.PositiveIntegerField(u'瀏覽次數', default=0)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     def get_absolute_url(self):
