@@ -78,4 +78,10 @@ def GetCompanyNewsList(request):
 
     return JsonResponse({'success':True,'data':ret_news_list})
 
-
+def FAQ(request):
+    try:
+        FAQ = models.FAQ.objects.get(id=1)
+    except models.FAQ.DoesNotExist:
+        error_msg = '常見問題尚未建立，敬請等待!'
+        return render(request, 'general/error.html', locals())
+    return render(request, 'general/FAQ.html', locals())

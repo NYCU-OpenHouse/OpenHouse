@@ -25,6 +25,7 @@ class Mentor(models.Model):
     start_time = models.TimeField(u'開始時間')
     end_time = models.TimeField(u'結束時間')
     set_attend_mode = models.CharField(u'設定參加方式', max_length=20, default='線上及實體', choices=ATTEND_MODE)
+    set_meal = models.BooleanField(u'提供餐點', default=True)
     mentor = models.CharField(u'導師', max_length=100, default='', blank=True)
     mentor_brief = models.TextField(u'導師介紹')
     mentor_title = models.CharField(u'導師稱謂', max_length=100, default='', blank=True)
@@ -51,7 +52,8 @@ class Signup(models.Model):
         ('線上', '線上(Online)'),
     )
     MEAL_CATEGORY = (
-        ('無','無(None)'),
+        ('不提供餐點','不提供餐點(No Meal)'),
+        ('無','不需要(No Need)'),
         ('葷', '葷(Meat)'),
         ('素','素(Vegetarian)'),
     )

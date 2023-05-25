@@ -3,12 +3,58 @@
 
 {% block 'custom_head' %}
     <title>Open House 專刊</title>
-    <link href={% static "css/vote/index.css" %} rel="stylesheet">
+    <link href={% static "css/monograph/index.css" %} rel="stylesheet">
+    
 {% endblock %}
 
 {% block 'body' %}
-    {% if mono_info %}
-        <div id="vote_index">
+
+    
+    <div id="monograph">
+        {% if mono_info %}
+        <div class="embla">
+            <div class="embla__viewport">
+            <div class="embla__container">
+                {% for m in carousel %}
+                    <a class="embla__slide" href="{{ m.get_absolute_url }}">
+                        {% if m.cover %}
+                        <img class="ui rounded image resize_image" src="{{ m.cover.url }}">
+                        {% else %}
+                            <img class="ui rounded image"
+                                src="https://img.icons8.com/color/480/000000/image.png">
+                        {% endif %}
+                        <div class="content corausel_title">
+                            <div class="sticky_note">
+                                <div class="ui header" style="line-break:auto;color:#eee;text-align:center">
+                                    {{ m.title }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </a>
+                {% endfor %}
+            </div>
+            </div>
+            <button class="embla__button embla__button--prev">
+                <svg
+                class="embla__button__svg"
+                viewBox="137.718 -1.001 366.563 644"
+                >
+                <path
+                    d="M428.36 12.5c16.67-16.67 43.76-16.67 60.42 0 16.67 16.67 16.67 43.76 0 60.42L241.7 320c148.25 148.24 230.61 230.6 247.08 247.08 16.67 16.66 16.67 43.75 0 60.42-16.67 16.66-43.76 16.67-60.42 0-27.72-27.71-249.45-249.37-277.16-277.08a42.308 42.308 0 0 1-12.48-30.34c0-11.1 4.1-22.05 12.48-30.42C206.63 234.23 400.64 40.21 428.36 12.5z"
+                ></path>
+                </svg>
+            </button>
+            <button class="embla__button embla__button--next">
+                <svg class="embla__button__svg" viewBox="0 0 238.003 238.003">
+                    <path
+                    d="M181.776 107.719L78.705 4.648c-6.198-6.198-16.273-6.198-22.47 0s-6.198 16.273 0 22.47l91.883 91.883-91.883 91.883c-6.198 6.198-6.198 16.273 0 22.47s16.273 6.198 22.47 0l103.071-103.039a15.741 15.741 0 0 0 4.64-11.283c0-4.13-1.526-8.199-4.64-11.313z"
+                    ></path>
+                </svg>
+            </button>
+            <div class="embla__dots"></div>
+        </div>
+        <div id="index">
             <h2 class="ui dividing header">{{ mono_info.title }}</h2>
             {% if mono_info.content %}
                 <p>{{ mono_info.content|safe }}</p>
@@ -17,23 +63,23 @@
                 <i class="archive icon"></i>
                 專刊書架
             </h4>
-            <div class="ui raised link four stackable cards">
+            <div class="ui raised link three stackable cards">
                 {% for m in mono %}
-                    <a class="ui teal card" style="overflow: hidden;" href="{{ m.get_absolute_url }}">
-                        <div class="ui fluid image">
+                    <a class="ui teal card card_full" href="{{ m.get_absolute_url }}">
+                        <div class="ui fluid card_image">
                             {% if m.priority %}
                                 <div class="ui red left corner label">
                                     <i class="star icon"></i>
                                 </div>
                             {% endif %}
                             {% if m.cover %}
-                                <img class="ui rounded image" src="{{ m.cover.url }}">
+                                <img class="resize_image" src="{{ m.cover.url }}">
                             {% else %}
-                                <img class="ui rounded image"
-                                     src="https://img.icons8.com/color/480/000000/image.png">
+                                <img class="resize_image"
+                                    src="https://img.icons8.com/color/480/000000/image.png">
                             {% endif %}
                         </div>
-                        <div class="content">
+                        <div class="content card_title">
                             <div class="header">
                                 {{ m.title }}
                             </div>
@@ -45,85 +91,89 @@
                 {% endfor %}
             </div>
         </div>
-    {% endif %}
-
-    {% block pagination %}
-        {% if mono.paginator.num_pages > 1 %}
-            <br>
-            <!-- computer and tablet only pagination -->
-            <div class="ui grid">
-                <div class="computer only tablet only column">
-                    <div class="ui center aligned container">
-                        <div class="ui pagination menu">
-                            <a class="item" href="{{ request.path }}?page=1#bookshelf">
-                                <i class="angle double left icon"></i>
-                            </a>
-                            {% if mono.has_previous %}
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
-                                    <i class="chevron left icon"></i>
-                                </a>
-                                {% if mono.previous_page_number != 1 %}
-                                    <a class="item" href="{{ request.path }}?page=1#bookshelf">1</a>
-                                    <div class="disabled item">...</div>
-                                {% endif %}
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">{{ mono.previous_page_number }}</a>
-                            {% endif %}
-                            <a class="active item"
-                               href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}</a>
-                            {% if mono.has_next %}
-                                {% if mono.next_page_number != mono.paginator.num_pages %}
-                                    <a class="item"
-                                       href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">{{ mono.next_page_number }}</a>
-                                    <div class="disabled item">...</div>
-                                {% endif %}
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">{{ mono.paginator.num_pages }}</a>
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
-                                    <i class="chevron right icon"></i>
-                                </a>
-                            {% endif %}
-                            <a class="item"
-                               href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
-                                <i class="angle double right icon"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- mobile only pagination -->
-            <div class="ui grid">
-                <div class="mobile only column">
-                    <div class="ui center aligned container">
-                        <div class="ui pagination menu">
-                            <a class="item" href="{{ request.path }}?page=1#bookshelf"><i
-                                    class="angle double left icon"></i>
-                            </a>
-                            {% if mono.has_previous %}
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
-                                    <i class="chevron left icon"></i>
-                                </a>
-                            {% endif %}
-                            <a class="active item"
-                               href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}/{{ mono.paginator.num_pages }}</a>
-                            {% if mono.has_next %}
-                                <a class="item"
-                                   href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
-                                    <i class="chevron right icon"></i>
-                                </a>
-                            {% endif %}
-                            <a class="item"
-                               href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
-                                <i class="angle double right icon"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         {% endif %}
+
+        {% block pagination %}
+            {% if mono.paginator.num_pages > 1 %}
+                <br>
+                <!-- computer and tablet only pagination -->
+                <div class="ui grid">
+                    <div class="computer only tablet only column">
+                        <div class="ui center aligned container">
+                            <div class="ui pagination menu">
+                                <a class="item" href="{{ request.path }}?page=1#bookshelf">
+                                    <i class="angle double left icon"></i>
+                                </a>
+                                {% if mono.has_previous %}
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
+                                        <i class="chevron left icon"></i>
+                                    </a>
+                                    {% if mono.previous_page_number != 1 %}
+                                        <a class="item" href="{{ request.path }}?page=1#bookshelf">1</a>
+                                        <div class="disabled item">...</div>
+                                    {% endif %}
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">{{ mono.previous_page_number }}</a>
+                                {% endif %}
+                                <a class="active item"
+                                href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}</a>
+                                {% if mono.has_next %}
+                                    {% if mono.next_page_number != mono.paginator.num_pages %}
+                                        <a class="item"
+                                        href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">{{ mono.next_page_number }}</a>
+                                        <div class="disabled item">...</div>
+                                    {% endif %}
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">{{ mono.paginator.num_pages }}</a>
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
+                                        <i class="chevron right icon"></i>
+                                    </a>
+                                {% endif %}
+                                <a class="item"
+                                href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
+                                    <i class="angle double right icon"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- mobile only pagination -->
+                <div class="ui grid" id="mobile_pagination">
+                    <div class="mobile only column">
+                        <div class="ui center aligned container">
+                            <div class="ui pagination menu">
+                                <a class="item" href="{{ request.path }}?page=1#bookshelf"><i
+                                        class="angle double left icon"></i>
+                                </a>
+                                {% if mono.has_previous %}
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.previous_page_number }}#bookshelf">
+                                        <i class="chevron left icon"></i>
+                                    </a>
+                                {% endif %}
+                                <a class="active item"
+                                href="{{ request.path }}?page={{ mono.number }}#bookshelf">{{ mono.number }}/{{ mono.paginator.num_pages }}</a>
+                                {% if mono.has_next %}
+                                    <a class="item"
+                                    href="{{ request.path }}?page={{ mono.next_page_number }}#bookshelf">
+                                        <i class="chevron right icon"></i>
+                                    </a>
+                                {% endif %}
+                                <a class="item"
+                                href="{{ request.path }}?page={{ mono.paginator.num_pages }}#bookshelf">
+                                    <i class="angle double right icon"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     {% endblock %}
+    <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
+    <script src="https://unpkg.com/embla-carousel-autoplay/embla-carousel-autoplay.umd.js"></script>
+    <script src={% static "js/monograph/index.js" %}></script>
 {% endblock %}

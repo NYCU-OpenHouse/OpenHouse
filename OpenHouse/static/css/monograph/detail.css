@@ -1,0 +1,37 @@
+#padding_x_0{
+    padding-left: 0;
+    padding-right: 0;
+}
+.ui.cards>.card {
+    width: 100% !important;
+}
+.ui.cards>.card>.extra {
+    background-color: #00b5ad;
+    
+  }
+.ui.white.header{
+    color:white !important;
+}
+
+@media ( min-width:576px ) {
+    #monograph_detail{
+        width:90%;
+        margin-left:6%;
+        margin-right:4%;
+    }
+    #pc_buttons_grid{
+        width:100%;
+        margin: 0;
+    }
+    
+}
+
+@media ( max-width:576px ) {
+    #monograph_detail{
+        width:100%;
+    }
+    #mobile_buttons_grid{
+        width:100%;
+        margin: 0;
+    }
+}

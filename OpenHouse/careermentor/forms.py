@@ -43,8 +43,24 @@ class CareerSeminarSignupForm(forms.ModelForm):
         })
         self.fields['meal_category'].widget.attrs.update({
             'class': 'ui dropdown',
-        })
+        }) 
+
         set_attend_mode = models.Mentor.objects.get(id=kwargs['initial']['mentor']).set_attend_mode
+        set_meal = models.Mentor.objects.get(id=kwargs['initial']['mentor']).set_meal
+
+        meal_choices = list(self.fields['meal_category'].choices)
+        if set_meal:
+            meal_choices.remove(('不提供餐點','不提供餐點(No Meal)'))
+        else:
+            meal_choices.remove(('無','不需要(No Need)'))
+            meal_choices.remove(('葷', '葷(Meat)'))
+            meal_choices.remove(('素','素(Vegetarian)'))
+            self.fields['meal_category'].initial = '不提供餐點'
+            self.fields['meal_category'].widget.attrs.update({
+                'class': 'ui disabled dropdown',
+            })
+        self.fields['meal_category'].choices = meal_choices
+        self.fields['meal_category'].widget.choices = meal_choices
         
         new_choices = list(self.fields['attend_mode'].choices)
         if set_attend_mode == '僅限實體':

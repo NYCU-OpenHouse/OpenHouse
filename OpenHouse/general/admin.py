@@ -27,3 +27,5 @@ class NavbarConfigsAdmin(admin.ModelAdmin):
     list_display=['title']
     def title(self,obj):
         return '連結設定' # Register your models here.
+    
+admin.site.register(models.FAQ)

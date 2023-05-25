@@ -34,6 +34,16 @@
                 <td>{{ event.mode }}</td>
             </tr>
             <tr>
+                <td>提供餐點 (Provide Meal)</td>
+                <td>
+                    {% if event.set_meal %}
+                        提供
+                    {% else %}
+                        不提供
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <td>大綱 (Abstract)</td>
                 <td>{{ event.abstract | linebreaks }}</td>
             </tr>
