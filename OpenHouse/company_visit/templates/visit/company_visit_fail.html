@@ -1,0 +1,15 @@
+{% extends 'general_base.html' %}
+{% load static %}
+
+{% block 'custom_head' %}
+    <link href={% static "css/visit/visit_success.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'body' %}
+    <title>Open House 企業參訪</title>
+    <div id="visit_success">
+        <div class="ui segment">
+            <h1 class="ui center aligned  header">報名時間已截止</h1>
+        </div>
+    </div>
+{% endblock %}

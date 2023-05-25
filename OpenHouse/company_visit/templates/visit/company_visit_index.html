@@ -31,9 +31,9 @@
             <tr>
                 <th>標題</th>
                 <th>廠商</th>
-                <th>日期</th>
-                <th>時間</th>
+                <th>參訪時間</th>
                 <th>參訪地點</th>
+                <th>報名截止日</th>
                 <th>人數限制</th>
                 <th>報名</th>
             </tr>
@@ -43,9 +43,9 @@
                 <tr>
                     <td><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></td>
                     <td>{{ event.company }}</td>
-                    <td>{{ event.date }}</td>
-                    <td>{{ event.start_time }}~{{ event.end_time }}</td>
+                    <td>{{ event.date }} {{ event.start_time }}~{{ event.end_time }}</td>
                     <td>{{ event.place }}</td>
+                    <td>{{ event.signup_deadline }}</td>
                     <td>{{ event.get_people_num }}/{{ event.limit }}</td>
                     <td><a href={% url 'company_visit_apply' event.id %}>報名</a></td>
                 </tr>
