@@ -18,7 +18,7 @@ class SignupForm(forms.ModelForm):
     class Meta:
         model=models.Signup
         fields='__all__'
-        exclude=['id','updated','ps','meal_category']
+        exclude=['id','updated','meal_category']
         widgets = {
             'question': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
         }
@@ -75,7 +75,7 @@ class CareerSeminarSignupForm(forms.ModelForm):
     class Meta:
         model=models.Signup
         fields='__all__'
-        exclude=['id','updated','ps','time_available', 'question', 'cv_en', 'cv_zh', 'other']
+        exclude=['id','updated','time_available', 'question', 'cv_en', 'cv_zh', 'other']
         widgets = {
             'question': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
         }
