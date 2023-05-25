@@ -20,20 +20,28 @@
                 <td>{{ event.company }}</td>
             </tr>
             <tr>
-                <td>日期</td>
-                <td>{{ event.date }}</td>
+                <td>報名截止日期</td>
+                <td>{{ event.signup_deadline }}</td>
             </tr>
             <tr>
-                <td>時間</td>
-                <td>{{ event.start_time }}~{{ event.end_time }}</td>
+                <td>參訪時間 </td>
+                <td>{{ event.date }}  {{ event.start_time }}~{{ event.end_time }}</td>
+            </tr>
+            <tr>
+                <td>活動大綱</td>
+                <td>{{ event.info | linebreaks }}</td>
             </tr>
             <tr>
                 <td>行程介紹</td>
-                <td>{{ event.intro }}</td>
+                <td>{{ event.intro | linebreaks }}</td>
+            </tr>
+            <tr>
+                <td>進行方式</td>
+                <td>{{ event.mode | linebreaks }}</td>
             </tr>
             <tr>
                 <td>建議科系</td>
-                <td>{{ event.departments }}</td>
+                <td>{{ event.departments | linebreaks }}</td>
             </tr>
             <tr>
                 <td>參訪地點</td>
@@ -42,6 +50,14 @@
             <tr>
                 <td>人數限制</td>
                 <td>{{ event.limit }}</td>
+            </tr>
+            <tr>
+                <td>活動更多資訊</td>
+                <td>{{ event.event_more_info | safe }}</td>
+            </tr>
+            <tr>
+                <td>備註</td>
+                <td>{{ event.remark | linebreaks }}</td>
             </tr>
             </tbody>
         </table>

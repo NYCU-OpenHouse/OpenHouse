@@ -1,14 +1,22 @@
 from django.db import models
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
+from django.utils import timezone
+
 
 
 class CompanyVisit(models.Model):
     id = models.AutoField(primary_key=True)
     company = models.CharField(u'廠商', max_length=30)
     title = models.CharField(u'標題', max_length=30)
-    intro = models.TextField(u'行程介紹', max_length=200)
-    departments = models.TextField(u'建議科系', max_length=200)
-    date = models.DateField(u'日期')
+    info = models.TextField(u'活動大綱', max_length=400, default='', blank=True)
+    intro = models.TextField(u'行程介紹', max_length=400)
+    departments = models.TextField(u'建議科系', max_length=400)
+    event_more_info = RichTextUploadingField(u'活動更多資訊', default='', blank=True)
+    mode = models.TextField(u'進行方式', max_length=400, default='', blank=True)
+    remark = models.TextField(u'備註', max_length=400, default='', blank=True)
+    signup_deadline = models.DateField(u'報名截止日期', default=timezone.now)
+    date = models.DateField(u'參訪日期')
     start_time = models.TimeField(u'開始時間')
     end_time = models.TimeField(u'結束時間')
     place = models.CharField(u'參訪地點', max_length=30)
