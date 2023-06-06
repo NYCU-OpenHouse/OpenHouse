@@ -62,6 +62,18 @@ class CustomDashboard(Dashboard):
             order=1
         ))
         self.children.append(modules.LinkList(
+            _('企業參訪匯出'),
+            children=[
+                {
+                    'title': _('匯出學生登記狀況'),
+                    'url': '/admin/company_visit/student_signup_status/list',
+                    'external': False,
+                },
+            ],
+            column=2,
+            order=1
+        ))
+        self.children.append(modules.LinkList(
             _('職場導師匯出'),
             children=[
                 {

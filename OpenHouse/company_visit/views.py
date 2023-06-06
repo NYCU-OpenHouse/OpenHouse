@@ -30,3 +30,10 @@ def company_visit_apply(request,id):
             form.save()
             return render(request,'visit/company_visit_success.html',locals())
     return render(request, "visit/company_visit_apply.html", locals())
+
+def ListCompanyVisit(request):
+
+    company_visit_events = CompanyVisit.objects.all() \
+        .order_by('-date') \
+
+    return render(request, 'admin/company_visit_list.html', locals())

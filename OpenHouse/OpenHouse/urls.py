@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^admin/rdss/', include('rdss.admin_urls')),
     url(r'^admin/recruit/', include('recruit.admin_urls')),
     url(r'^admin/careermentor/', include('careermentor.admin_urls')),
+    url(r'^admin/company_visit/', include('company_visit.admin_urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^company/', include('company.urls')),  # add '' on the include path!!!
     url(r'^company/rdss/', include('rdss.internal_urls')),  # add '' on the include path!!!
