@@ -28,7 +28,11 @@ def ExportStudentSignupStatus(request, id):
     student_signup_status = company_visit.studentapply_set.all()
     for row_count, info in enumerate(student_signup_status):
         for col_count, field in enumerate(fields):
-            worksheet.write(row_count + 1, col_count, getattr(info, field.name))
+            if field.name == 'date':
+                date_format = workbook.add_format({'num_format': 'yyyy/mm/dd'})
+                worksheet.write_datetime(row_count + 1, col_count, getattr(info, field.name), date_format)
+            else:
+                worksheet.write(row_count + 1, col_count, getattr(info, field.name))
 
 
     
