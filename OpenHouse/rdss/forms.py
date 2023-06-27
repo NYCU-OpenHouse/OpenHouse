@@ -91,6 +91,12 @@ class JobfairInfoCreationForm(forms.ModelForm):
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
+        self.fields['meat_lunchbox'].widget.attrs.update({
+            'placeholder': '若不索取，填0即可',
+        })
+        self.fields['vege_lunchbox'].widget.attrs.update({
+            'placeholder': '若不索取，填0即可',
+        })      
 
     # def clean_cid(self):
     #       raise forms.ValidationError(
