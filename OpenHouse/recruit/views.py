@@ -54,7 +54,11 @@ def parse_YT_video(url):
 @login_required(login_url='/company/login/')
 def recruit_company_index(request):
     sidebar_ui = {'index': 'active'}
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     plan_file = Files.objects.filter(category="企畫書").first()
     recruit_company_info = recruit.models.RecruitCompanyInfo.objects.all()
 
@@ -73,7 +77,10 @@ def recruit_signup(request):
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
 
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -132,7 +139,10 @@ def seminar_select_form_gen(request):
 
     seminar_session = my_signup.get_seminar_display()
 
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
     table_start_date = seminar_start_date
@@ -175,7 +185,10 @@ def seminar_select_control(request):
         raise Http404("What are u looking for?")
 
     # action query
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slots = SeminarSlot.objects.all()
         return_data = {}
@@ -306,7 +319,10 @@ def online_seminar_select_form_gen(request):
 
     seminar_session = my_signup.get_seminar_online_display()
 
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_online_start_date
     seminar_end_date = configs.seminar_online_end_date
     table_start_date = seminar_start_date
@@ -347,7 +363,10 @@ def online_seminar_select_control(request):
         raise Http404("What are u looking for?")
 
     # action query
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slots = OnlineSeminarSlot.objects.all()
         return_data = {}
@@ -466,8 +485,12 @@ def jobfair_info(request):
         jobfair_info_object = JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info_object = None
+        
+    try:
+        deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
-    deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
     reach_deadline =timezone.now() > deadline
     parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=3, extra=3,
                                              fields=('id', 'license_plate_number', 'info'),
@@ -762,7 +785,10 @@ def jobfair_select_control(request):
             select_ctrl['display'] = False
             select_ctrl['select_enable'] = True
             today = timezone.now().date()
-            configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
+            try:
+                configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
+            except IndexError:
+                return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
             if (configs['jobfair_btn_start'] <= today <= configs['jobfair_btn_end']) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
@@ -873,7 +899,11 @@ def Sponsor(request):
     sidebar_ui = {'sponsor': "active"}
     menu_ui = {'recruit': "active"}
 
-    configs = RecruitConfigs.objects.all()[0]
+    
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非贊助時間。期間為 {} 至 {}".format(
@@ -941,7 +971,10 @@ def company_survey(request):
     # semantic ui
     sidebar_ui = {'survey': "active"}
     menu_ui = {'recruit': "active"}
-    configs = RecruitConfigs.objects.all()[0]
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     if timezone.now() > configs.survey_end or timezone.now() < configs.survey_start:
         if request.user.username != "77777777":
@@ -1002,7 +1035,10 @@ def collect_points(request):
     """
     students = Student.objects.all()
     today = datetime.datetime.now().date()
-    config = RecruitConfigs.objects.all()[0]
+    try:
+        config = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     # Find the suitable session
     now = datetime.datetime.now()
@@ -1064,7 +1100,10 @@ def Status(request):
         return redirect("/admin")
     mycid = request.user.cid
     # get the dates from the configs
-    configs = recruit.models.RecruitConfigs.objects.all()[0]
+    try:
+        configs = recruit.models.RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
 
     pay_info_file = Files.objects.filter(category="繳費資訊").first()
@@ -1289,8 +1328,12 @@ def replace_urls_and_emails(original_str):
 def seminar(request):
     # semantic ui control
     sidebar_ui = {'seminar': "active"}
-
-    recruit_config = RecruitConfigs.objects.all()[0]
+    
+    try:
+        recruit_config = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     start_date = recruit_config.seminar_start_date
     end_date = recruit_config.seminar_end_date
     recruit_seminar_info = recruit.models.RecruitSeminarInfo.objects.all()
@@ -1428,8 +1471,12 @@ def ece_seminar(request):
 def online_seminar(request):
     # semantic ui control
     sidebar_ui = {'online_seminar': "active"}
-
-    recruit_config = RecruitConfigs.objects.all()[0]
+    
+    try:
+        recruit_config = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     start_date = recruit_config.seminar_online_start_date
     end_date = recruit_config.seminar_online_end_date
     recruit_seminar_info = recruit.models.RecruitOnlineSeminarInfo.objects.all()

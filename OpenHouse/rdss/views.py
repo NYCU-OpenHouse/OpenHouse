@@ -29,8 +29,11 @@ def RDSSCompanyIndex(request):
     # semantic ui control
     menu_ui = {'rdss': "active"}
     sidebar_ui = {'index': "active"}
-
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     rdss_company_info = rdss.models.RdssCompanyInfo.objects.all()
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
     return render(request, 'company/rdss_company_entrance.html', locals())
@@ -42,7 +45,10 @@ def Status(request):
         return redirect("/admin")
     mycid = request.user.cid
     # get the dates from the configs
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     signup_data = rdss.models.Signup.objects.filter(cid=mycid).first()
     mycompany = company.models.Company.objects.filter(cid=mycid).first()
 
@@ -162,7 +168,10 @@ def SignupRdss(request):
     sidebar_ui = {'signup': "active"}
     menu_ui = {'rdss': "active"}
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     # use timezone now to get current time with GMT+8
     if timezone.now() > configs.rdss_signup_end or timezone.now() < configs.rdss_signup_start:
@@ -314,7 +323,10 @@ def SeminarSelectFormGen(request):
 
     seminar_session = my_signup.get_seminar_display()
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
     seminar_days = (seminar_end_date - seminar_start_date).days
@@ -344,7 +356,10 @@ def SeminarSelectControl(request):
         raise Http404("What are u looking for?")
 
     # action query
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slots = rdss.models.SeminarSlot.objects.all()
         return_data = {}
@@ -489,7 +504,10 @@ def JobfairSelectControl(request):
     else:
         raise Http404("What are u looking for?")
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slot_list = rdss.models.JobfairSlot.objects.all()
         slot_list_return = list()
@@ -606,7 +624,10 @@ def Sponsor(request):
     sidebar_ui = {'sponsor': "active"}
     menu_ui = {'rdss': "active"}
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if timezone.now() < configs.rdss_signup_start or timezone.now() > configs.rdss_signup_end:
         if request.user.username != "77777777":
             error_msg = "非贊助時間。期間為 {} 至 {}".format(
@@ -671,7 +692,10 @@ def SponsorAdmin(request):
 
 @login_required(login_url='/company/login/')
 def CompanySurvey(request):
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     # semantic ui
     sidebar_ui = {'survey': "active"}
@@ -712,7 +736,10 @@ def CollectPoints(request):
     site_title = "OpenHouse"
     title = "說明會集點"
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     today = datetime.datetime.now().date()
     now = datetime.datetime.now()
 
@@ -848,7 +875,10 @@ def SeminarPublic(request):
     # semantic ui control
     sidebar_ui = {'seminar': "active"}
 
-    configs = rdss.models.RdssConfigs.objects.all()[0]
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
     seminar_days = (seminar_end_date - seminar_start_date).days
