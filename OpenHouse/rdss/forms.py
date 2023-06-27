@@ -84,7 +84,7 @@ class JobfairInfoCreationForm(forms.ModelForm):
     class Meta:
         model = rdss.models.JobfairInfo
         fields = '__all__'
-        exclude = ['cid']
+        exclude = ['cid', 'ps']
 
     def __init__(self, *args, **kwargs):
         super(JobfairInfoCreationForm, self).__init__(*args, **kwargs)
