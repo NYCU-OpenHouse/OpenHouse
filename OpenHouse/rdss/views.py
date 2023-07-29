@@ -273,7 +273,7 @@ def JobfairInfo(request):
     except ObjectDoesNotExist:
         jobfair_info = None
 
-    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=3, extra=3,
+    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=1, extra=1,
                                              fields=('id', 'license_plate_number', 'info'),
                                              widgets={'license_plate_number': forms.TextInput(
                                                  attrs={'placeholder': '例AA-1234、4321-BB'})})

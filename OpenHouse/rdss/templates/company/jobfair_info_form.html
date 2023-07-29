@@ -82,7 +82,7 @@
                 {{ f.id }}
                 {{ f.info }}
                 <label>
-                    {{ f.license_plate_number.label }}{{ forloop.counter }}{{ f.license_plate_number.errors }}</label>
+                    {{ f.license_plate_number.label }} {# {{ forloop.counter }} #} {{ f.license_plate_number.errors }}</label>
                 <div class="fields">
                     <div class="fourteen wide field">
                         {{ f.license_plate_number }}
