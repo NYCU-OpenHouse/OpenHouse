@@ -160,6 +160,21 @@
                 </div>
             </div>
         </div>
+        <h3 class="ui dividing header">餐點</h3>
+        <div class="fields">
+            <div class="ten wide field">
+                <label>{{ form.meal.label }}{{ form.meal.errors }}</label>
+                <div class="field">
+                    {{ form.meal }}
+                </div>
+            </div>
+            <div class="six wide field">
+                <label>{{ form.meal_amount.label }}{{ form.meal_amount.errors }}</label>
+                <div class="field">
+                    {{ form.meal_amount }}
+                </div>
+            </div>
+        </div>
         <button class="ui blue button" style="float: right;" type="submit">送出</button>
     </form>
 {% endblock %}

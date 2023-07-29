@@ -300,6 +300,9 @@ class SeminarInfo(models.Model):
     attend_prize = models.CharField(u'參加獎獎品', max_length=254,
                                     null=True, blank=True)
     attend_prize_amount = models.SmallIntegerField(u'參加獎獎品數量', default=0)
+    meal = models.CharField(u'餐點名稱', max_length=254,
+                                    null=True, blank=True)
+    meal_amount = models.SmallIntegerField(u'餐點數量', default=0)
     snack_box = models.SmallIntegerField(u'加碼餐盒數量', default=0)
     contact = models.CharField(u'聯絡人', max_length=30)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=16,
