@@ -22,11 +22,27 @@
             </div>
         {% endif %}
         <h3 class="ui dividing header">攤位資訊</h3>
-        <div class="field required">
-            <label>{{ form.signname.label }}</label>
-            {{ form.signname }}
-            {{ form.signname.errors }}
+        <p>
+            請務必確認攤位招牌名稱中文+英文大小寫是否正確。
+            將再自行裝潢者，請務必另勾選無需校對欄位，以確定免除校對流程。
+        </p>
+        <div class="fields">
+            <div class="ten wide field required">
+                
+                <label>{{ form.signname.label }} (含英文名稱)</label>
+                {{ form.signname }}
+                {{ form.signname.errors }}
+            </div>
+            <div class="six wide field">
+                <label>  {{ form.disable_proofread.label }}</label>
+                <div class="field">
+                    {{ form.disable_proofread }}
+                    「此招牌名稱僅供我方工作人員辨識用。職發組無須與我校對，可逕自送印」
+                    {{ form.disable_proofread.errors }}
+                </div>
+            </div>
         </div>
+        
         <div class="fields">
             <div class="four wide field required">
                 <label>{{ form.contact.label }}</label>
@@ -47,13 +63,13 @@
             </div>
         </div>
         <div class="fields">
-            <div class="four wide field required">
-                <label>{{ form.meat_lunchbox.label }}</label>
+            <div class="six wide field required">
+                <label>{{ form.meat_lunchbox.label }} (若不索取，填0即可)</label>
                 {{ form.meat_lunchbox }}
                 {{ form.meat_lunchbox.errors }}
             </div>
-            <div class="four wide field required">
-                <label>{{ form.vege_lunchbox.label }}</label>
+            <div class="six wide field required">
+                <label>{{ form.vege_lunchbox.label }} (若不索取，填0即可)</label>
                 {{ form.vege_lunchbox }}
                 {{ form.vege_lunchbox.errors }}
             </div>
@@ -74,9 +90,10 @@
         {# </div>  #}
         <h3 class="ui dividing header">入校之汽車車號</h3>
         <div class="field">
-            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號。</p>
-            <p>說明(2)：每間企業至多提供3部汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
+            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號(未能於期限前完成者一律提供紙本停車證)。</p>
+            <p>說明(2)：每間企業已提供汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
             <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
+            <p style="color: red">★若不需要停車折抵，留空即可</p>
             {{ formset.management_form }}
             {% for f in formset %}
                 {{ f.id }}

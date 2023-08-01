@@ -395,6 +395,7 @@ class JobfairInfo(models.Model):
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE)
     signname = models.CharField(u'攤位招牌名稱', max_length=30)
+    disable_proofread = models.BooleanField(u'無需校對', default=False)
     contact = models.CharField(u'聯絡人', max_length=30)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=16,
                                       validators=[validate_mobile])
