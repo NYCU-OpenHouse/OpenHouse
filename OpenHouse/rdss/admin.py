@@ -286,6 +286,7 @@ class OnlineJobfairContentAdmin(admin.ModelAdmin):
 @admin.register(models.Sponsorship)
 class SponsorshipAdmin(admin.ModelAdmin):
     list_display = ('company_id', 'item_id', 'updated',)
+    list_filter = ('item_id',)
 
 
 # Register your models here.

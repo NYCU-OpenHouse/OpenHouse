@@ -121,6 +121,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('廠商贊助統整'),
+                    'url': '/admin/rdss/sponsorship_situation',
+                    'external': False,
+                },
+                {
                     'title': _('廠商滿意度問卷'),
                     'url': '/admin/rdss/companysurvey/export/',
                     'external': False,

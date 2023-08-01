@@ -7,7 +7,7 @@ urlpatterns = [
     # url(r'^$', 'oh2016_dj.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^sponsorship/$', views.SponsorAdmin),
+    url(r'^sponsorship_situation/$', views.SponsorAdmin, name="rdss_sponsorship_situation"),
     url(r'^collect_points/$', views.CollectPoints, name="rdss_collect_points"),
     url(r'^reg_card/$', views.RegisterCard, name="rdss_reg_card"),
     url(r'redeem/$', views.RedeemPrize, name='rdss_redeem'),
