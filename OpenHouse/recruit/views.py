@@ -57,7 +57,7 @@ def recruit_company_index(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     plan_file = Files.objects.filter(category="企畫書").first()
     recruit_company_info = recruit.models.RecruitCompanyInfo.objects.all()
@@ -76,7 +76,7 @@ def recruit_signup(request):
     # semantic ui control
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
-
+    
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
@@ -84,7 +84,7 @@ def recruit_signup(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -123,11 +123,12 @@ def seminar_select_form_gen(request):
     # semantic ui control
     sidebar_ui = {'seminar_select': "active"}
     menu_ui = {'recruit': "active"}
-
+    
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     
+
     mycid = request.user.cid
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -150,7 +151,7 @@ def seminar_select_form_gen(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_start_date
     seminar_end_date = configs.seminar_end_date
     table_start_date = seminar_start_date
@@ -196,7 +197,7 @@ def seminar_select_control(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slots = SeminarSlot.objects.all()
         return_data = {}
@@ -323,7 +324,7 @@ def online_seminar_select_form_gen(request):
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
-
+    
     # check the company have been assigned a slot select order and time
     try:
         seminar_select_time = OnlineSeminarOrder.objects.filter(company=mycid).first().time
@@ -335,7 +336,7 @@ def online_seminar_select_form_gen(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     seminar_start_date = configs.seminar_online_start_date
     seminar_end_date = configs.seminar_online_end_date
     table_start_date = seminar_start_date
@@ -379,7 +380,7 @@ def online_seminar_select_control(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
         slots = OnlineSeminarSlot.objects.all()
         return_data = {}
@@ -506,7 +507,7 @@ def jobfair_info(request):
     try:
         deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     reach_deadline =timezone.now() > deadline
     parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=3, extra=3,
@@ -578,7 +579,7 @@ def seminar_info(request):
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
     menu_ui = {'recruit': "active"}
-
+    
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
@@ -817,7 +818,7 @@ def jobfair_select_control(request):
             try:
                 configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
             except IndexError:
-                return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+                return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
             if (configs['jobfair_btn_start'] <= today <= configs['jobfair_btn_end']) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
@@ -935,7 +936,7 @@ def Sponsor(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非贊助時間。期間為 {} 至 {}".format(
@@ -1011,7 +1012,7 @@ def company_survey(request):
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     if timezone.now() > configs.survey_end or timezone.now() < configs.survey_start:
         if request.user.username != "77777777":
@@ -1075,7 +1076,7 @@ def collect_points(request):
     try:
         config = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     # Find the suitable session
     now = datetime.datetime.now()
@@ -1144,7 +1145,7 @@ def Status(request):
     try:
         configs = recruit.models.RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
 
     pay_info_file = Files.objects.filter(category="繳費資訊").first()
@@ -1373,7 +1374,7 @@ def seminar(request):
     try:
         recruit_config = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     start_date = recruit_config.seminar_start_date
     end_date = recruit_config.seminar_end_date
@@ -1516,7 +1517,7 @@ def online_seminar(request):
     try:
         recruit_config = RecruitConfigs.objects.all()[0]
     except IndexError:
-        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     start_date = recruit_config.seminar_online_start_date
     end_date = recruit_config.seminar_online_end_date
