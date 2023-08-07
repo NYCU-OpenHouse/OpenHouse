@@ -77,6 +77,10 @@ def recruit_signup(request):
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
@@ -120,6 +124,10 @@ def seminar_select_form_gen(request):
     sidebar_ui = {'seminar_select': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+    
     mycid = request.user.cid
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -301,6 +309,11 @@ def online_seminar_select_form_gen(request):
     menu_ui = {'recruit': "active"}
 
     mycid = request.user.cid
+    
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+    
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         # check the company have signup online seminar
@@ -475,6 +488,10 @@ def jobfair_info(request):
     sidebar_ui = {'jobfair_info': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})    
+
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -562,6 +579,10 @@ def seminar_info(request):
     sidebar_ui = {'seminar_info': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
@@ -602,6 +623,10 @@ def online_seminar_info(request):
     # semantic ui
     sidebar_ui = {'online_seminar_info': "active"}
     menu_ui = {'recruit': "active"}
+
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
@@ -667,6 +692,10 @@ def jobfair_select_form_gen(request):
     sidebar_ui = {'jobfair_select': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+    
     mycid = request.user.cid
     # check the company have signup recruit
     try:
@@ -899,6 +928,9 @@ def Sponsor(request):
     sidebar_ui = {'sponsor': "active"}
     menu_ui = {'recruit': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     
     try:
         configs = RecruitConfigs.objects.all()[0]
@@ -971,6 +1003,11 @@ def company_survey(request):
     # semantic ui
     sidebar_ui = {'survey': "active"}
     menu_ui = {'recruit': "active"}
+    
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+    
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
@@ -1099,6 +1136,10 @@ def Status(request):
     if request.user.is_staff:
         return redirect("/admin")
     mycid = request.user.cid
+    
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     # get the dates from the configs
     try:
         configs = recruit.models.RecruitConfigs.objects.all()[0]

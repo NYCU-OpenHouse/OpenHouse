@@ -260,7 +260,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'last_update')
+    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'last_update')
     list_filter = ()
     fieldsets = (
         ("基本資料", {
@@ -294,6 +294,11 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
                        'receipt_contact_name', 'receipt_contact_phone')
+        }
+         ),
+         ("中資", {
+            'classes': ('wide',),
+            'fields': ('chinese_funded',)
         }
          ),
     )
@@ -331,6 +336,11 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
                        'receipt_contact_name', 'receipt_contact_phone')
+        }
+         ),
+         ("中資", {
+            'classes': ('wide',),
+            'fields': ('chinese_funded',)
         }
          ),
     )

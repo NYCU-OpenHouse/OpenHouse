@@ -31,7 +31,7 @@ class CompanyCreationForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = '__all__'
-        exclude = ['id', 'password', 'last_login', 'is_active']
+        exclude = ['id', 'password', 'last_login', 'is_active', 'chinese_funded']
         widgets = {
             'brief': forms.Textarea(attrs={'cols': 80, 'rows': 8}),
             'recruit_info': forms.Textarea(attrs={'cols': 80, 'rows': 8}),
@@ -86,7 +86,8 @@ class CompanyEditForm(forms.ModelForm):
         model = Company
         fields = '__all__'
         exclude = ['password', 'last_login', 'date_join', 'is_active', \
-                   'ece_member', 'gloria_normal', 'gloria_startup', 'payment_ps', 'other_ps']
+                   'ece_member', 'gloria_normal', 'gloria_startup', 'payment_ps', 'other_ps', \
+                    'chinese_funded']
         widgets = {
             'brief': forms.Textarea(),
             'recruit_info': forms.Textarea(),

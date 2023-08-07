@@ -12,6 +12,18 @@ class CustomDashboard(Dashboard):
 
     def add_export_dashboard(self):
         self.children.append(modules.LinkList(
+            _('企業列表'),
+            children=[
+                {
+                    'title': _('已註冊中資公司'),
+                    'url': '/admin/company/company/registered_chinese_funded_company/',
+                    'external': False,
+                },
+            ],
+            column=2,
+            order=0
+        ))
+        self.children.append(modules.LinkList(
             _('其它匯出'),
             children=[
                 {

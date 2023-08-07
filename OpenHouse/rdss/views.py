@@ -52,6 +52,9 @@ def Status(request):
     signup_data = rdss.models.Signup.objects.filter(cid=mycid).first()
     mycompany = company.models.Company.objects.filter(cid=mycid).first()
 
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     pay_info_file = rdss.models.Files.objects.filter(category="繳費資訊").first()
 
     slot_info = {
@@ -173,6 +176,10 @@ def SignupRdss(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     # use timezone now to get current time with GMT+8
     if timezone.now() > configs.rdss_signup_end or timezone.now() < configs.rdss_signup_start:
         if request.user.username != "77777777":
@@ -221,6 +228,9 @@ def SeminarInfo(request):
         error_msg = "貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request, 'error.html', locals())
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     try:
         seminar_info = rdss.models.SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
@@ -260,6 +270,9 @@ def JobfairInfo(request):
     # semantic ui control
     sidebar_ui = {'jobfair_info': "active"}
     menu_ui = {'rdss': "active"}
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
@@ -304,6 +317,9 @@ def SeminarSelectFormGen(request):
     menu_ui = {'rdss': "active"}
 
     mycid = request.user.cid
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     # check the company have signup rdss
     try:
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
@@ -471,6 +487,9 @@ def JobfairSelectFormGen(request):
     sidebar_ui = {'jobfair_select': "active"}
     menu_ui = {'rdss': "active"}
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     mycid = request.user.cid
     # check the company have signup rdss
     try:
@@ -503,7 +522,7 @@ def JobfairSelectControl(request):
         action = post_data.get("action")
     else:
         raise Http404("What are u looking for?")
-
+    
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
     except IndexError:
@@ -628,6 +647,11 @@ def Sponsor(request):
         configs = rdss.models.RdssConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
+    mycompany = company.models.Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+    
     if timezone.now() < configs.rdss_signup_start or timezone.now() > configs.rdss_signup_end:
         if request.user.username != "77777777":
             error_msg = "非贊助時間。期間為 {} 至 {}".format(
@@ -697,6 +721,9 @@ def CompanySurvey(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     # semantic ui
     sidebar_ui = {'survey': "active"}
     menu_ui = {'rdss': "active"}

@@ -87,6 +87,8 @@ class Company(AbstractBaseUser):
     receipt_contact_name =  models.CharField(u'收據聯絡人姓名', max_length=10, default="")
     receipt_contact_phone = models.CharField(u'收據聯絡人公司電話', max_length=32, default="", help_text='格式: 區碼-號碼#分機')
     
+    # chinese funded
+    chinese_funded = models.BooleanField(u'中資公司', default=False)
     
     last_update = models.DateTimeField(u'更新時間', auto_now=True, null=True)
     date_join = models.DateTimeField(u'date joined', auto_now_add=True, null=True)
