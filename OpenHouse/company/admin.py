@@ -11,6 +11,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.conf.urls import url, include
 from . import export
+from . import views
 
 
 class UserCreationForm(forms.ModelForm):
@@ -352,6 +353,7 @@ class UserAdmin(BaseUserAdmin):
         urls = super(UserAdmin, self).get_urls()
         my_urls = [
             url(r'^export/$', export.Export_Company),
+            url(r'^registered_chinese_funded_company/$',views.regitered_chinese_funded_company),  
         ]
         return my_urls + urls
 

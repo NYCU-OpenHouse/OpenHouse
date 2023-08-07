@@ -1,0 +1,32 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<div id="content-main">
+	<table class="ui celled table">
+		<thead>
+			<th> 統編 </th>
+			<th> 已註冊中資公司 </th>
+			<th> 標記中資 </th>
+		</thead>
+		<tbody>
+
+			{% for company in registered_chinese_funded_company %}
+			<tr>
+                <td>{{company.cid}}</td>
+				<td>{{company.shortname}}</td>
+				<td>
+					{% if company.chinese_funded %}
+						<img src="/static/admin/img/icon-yes.svg" alt="True">
+					{% else %}
+						<img src="/static/admin/img/icon-no.svg" alt="False">
+					{% endif %}
+				</td>
+
+			</tr>
+			{% endfor %}
+
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+

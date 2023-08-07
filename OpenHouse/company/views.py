@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from company.forms import CompanyCreationForm, CompanyEditForm, CompanyPasswordResetForm
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -179,3 +180,17 @@ def get_company_id(request):
         "company_id": access_token.user.cid,
     }
     return JsonResponse(data)
+
+@staff_member_required
+def regitered_chinese_funded_company(request):
+    
+    registered_chinese_funded_company = []
+    
+    companies = Company.objects.all()
+    
+    for company in companies:
+        if len(ChineseFundedCompany.objects.filter(cid=company.cid)) == 1:
+            registered_chinese_funded_company.append(company)
+    
+    
+    return render(request, 'admin/registered_chinese_funded_company.html', locals())
