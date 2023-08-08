@@ -38,6 +38,7 @@ class Company(AbstractBaseUser):
         (u'住宿/餐飲業', u'住宿/餐飲業'),
         (u'批發及零售/運輸及倉儲業', u'批發及零售/運輸及倉儲業'),
         (u'電力及燃氣供應業', u'電力及燃氣供應業'),
+        (u'傳統製造業', u'傳統製造業'),
     )
 
     id = models.AutoField(primary_key=True)
