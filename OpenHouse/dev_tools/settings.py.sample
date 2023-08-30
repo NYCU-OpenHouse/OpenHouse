@@ -236,7 +236,14 @@ STATICFILES_DIRS = (
 
 
 KEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+
+# ckeditor
 CKEDITOR_UPLOAD_PATH = "news_uploads/"
+CKEDITOR_CONFIGS = {
+	'default': {
+		'toolbar': 'full',
+	},
+}
 
 # Logging
 
