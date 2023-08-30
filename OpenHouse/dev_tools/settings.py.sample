@@ -326,6 +326,10 @@ LOGGING = {
         },
     },
 }
+
+# disable get/ post payload field number check
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 JET_INDEX_DASHBOARD = 'dashboard.CustomDashboard'
 JET_APP_INDEX_DASHBOARD = 'dashboard.CustomAppDashboard'
 
