@@ -109,7 +109,8 @@ DATABASES = {
 			'NAME' : 'oh_core',
 			'USER' : 'root',
 			'PASSWORD' : 'mypw',
-                        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+                        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+						'charset': 'utf8mb4',},
 			},
 		# 'oh_2016': {
 		# 	'ENGINE': 'django.db.backends.mysql',
@@ -163,7 +164,8 @@ DATABASES = {
 			'NAME' : 'oh_2021',
 			'USER' : 'root',
 			'PASSWORD' : 'mypw',
-                        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
+                        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+						'charset': 'utf8mb4',},
 			},
 		}
 
