@@ -31,7 +31,8 @@ def Export_Company(request):
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
-                      'brief', 'recruit_info']
+                      'brief', 'recruit_info', 'receipt_title', 'receipt_postal_code',
+                      'receipt_postal_address', 'receipt_contact_name', 'receipt_contact_phone']
     title_pairs = dict()
     for fieldname in fieldname_list:
         title_pairs[fieldname] = company.models.Company._meta.get_field(fieldname).verbose_name
