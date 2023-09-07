@@ -189,6 +189,36 @@ def ExportAll(request):
             signup_worksheet.write(row_count + 1, col_count,
                                    signup['fields'][pairs['fieldname']])
 
+    #only export those signed up company receipt information 
+    receipt_worksheet = workbook.add_worksheet("收據相關資訊")
+    
+    receipt_title_pairs = [
+        {'fieldname': 'cid', 'title': '公司統一編號'},
+        {'fieldname': 'shortname', 'title': '公司簡稱'},
+        {'fieldname': 'english_name', 'title': '公司英文名稱'},
+        {'fieldname': 'receipt_title', 'title': '公司收據抬頭'},
+        {'fieldname': 'receipt_postal_code', 'title': '收據寄送郵遞區號'},
+        {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
+        {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},
+        {'fieldname': 'receipt_contact_phone', 'title': '收據聯絡人公司電話'},
+    ]
+    
+    for index, pair in enumerate(receipt_title_pairs):
+            receipt_worksheet.write(0, index, pair['title'])
+            
+    for row_count, signup in enumerate(signups):
+        signup_dict = model_to_dict(signup)
+        # join company info
+        company_obj = company.models.Company.objects.get(
+            cid=signup_dict['cid'])
+        company_dict = model_to_dict(company_obj)
+        for key, value in company_dict.items():
+            signup_dict[key] = value
+        for col_count, pairs in enumerate(receipt_title_pairs):
+            receipt_worksheet.write(row_count + 1, col_count,
+                                    signup_dict[pairs['fieldname']])
+
+
     # Sponsorships
     sponsor_items = rdss.models.SponsorItems.objects.all().annotate(num_sponsor=Count('sponsorship'))
     sponsorships_list = list()
