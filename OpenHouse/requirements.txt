@@ -9,3 +9,4 @@ six
 gunicorn
 django-oauth-toolkit
 requests
+openpyxl
