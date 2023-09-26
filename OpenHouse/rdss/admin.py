@@ -31,6 +31,7 @@ admin.site.register(models.StuAttendance, StuAttendanceAdmin)
 @admin.register(models.Student)
 class StudentAdmin(admin.ModelAdmin):
     inlines = (StuAttendanceInline,)
+    search_fields = ('idcard_no' ,'name', 'student_id')
     list_display = ('idcard_no', 'student_id', 'name', 'phone')
 
 @admin.register(models.ECESeminar)

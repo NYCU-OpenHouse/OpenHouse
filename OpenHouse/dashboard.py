@@ -175,6 +175,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('匯出集點資料'),
+                    'url': '/admin/rdss/export_points_info/',
+                    'external': False,
+                },
+                {
                     'title': _('讀卡程式及驅動'),
                     'url': '/media/data/apps/card_reader.zip',
                     'external': False,
