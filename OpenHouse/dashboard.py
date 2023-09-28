@@ -175,6 +175,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('各場次學生登記總覽'),
+                    'url': '/admin/rdss/seminar_attended_student/',
+                    'external': False,
+                },
+                {
                     'title': _('匯出集點資料'),
                     'url': '/admin/rdss/export_points_info/',
                     'external': False,

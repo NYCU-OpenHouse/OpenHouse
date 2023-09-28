@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import path
 import rdss.views as views
 import rdss.export as export
 
@@ -12,6 +13,8 @@ urlpatterns = [
     url(r'^reg_card/$', views.RegisterCard, name="rdss_reg_card"),
     url(r'redeem/$', views.RedeemPrize, name='rdss_redeem'),
     url(r'export_points_info/$', export.ExportPointsInfo, name='rdss_export_points_info'),
+    url(r'^seminar_attended_student/$', views.SeminarAttendedStudent, name='rdss_seminar_attended_student'),
+    path(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='rdss_seminar_attended_student_detail'),
     url(r'^export_activity_info/$', export.ExportActivityInfo, name="rdss_export_activity_info"),
     url(r'^export_all/$', export.ExportAll, name="rdss_export_all"),
     url(r'^export_ad/$', export.ExportAdFormat,name="rdss_export_ad"),
