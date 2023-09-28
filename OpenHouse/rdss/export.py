@@ -484,11 +484,6 @@ def ExportAdFormat(request):
 
 @staff_member_required
 def ExportPointsInfo(request):
-    if request.user and request.user.is_authenticated:
-        if not request.user.is_superuser:
-            return HttpResponse(status=403)
-    else:
-        return HttpResponse(status=403)
 
     filename = "rdss_points_info_{}.xlsx".format(timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
     response = HttpResponse(content_type='application/ms-excel')
