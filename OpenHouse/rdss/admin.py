@@ -22,7 +22,8 @@ class StuAttendanceInline(admin.TabularInline):
 
 
 class StuAttendanceAdmin(admin.ModelAdmin):
-    list_display = ['seminar']
+    list_display = ['seminar', 'get_student_id', 'get_student_name']
+    search_fields = ('student__student_id', 'student__name')
 
 
 admin.site.register(models.StuAttendance, StuAttendanceAdmin)

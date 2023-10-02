@@ -230,6 +230,14 @@ class StuAttendance(models.Model):
 
     updated = models.DateTimeField(u'時間', auto_now=True)
 
+    def get_student_id(self):
+        return self.student.student_id
+    get_student_id.short_description = "學號"
+
+    def get_student_name(self):
+        return self.student.name
+    get_student_name.short_description = "姓名"
+
     class Meta:
         unique_together = ("student", "seminar")
         verbose_name = u"說明會參加記錄"
