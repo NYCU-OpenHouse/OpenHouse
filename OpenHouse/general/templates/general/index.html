@@ -20,7 +20,9 @@
         </div>
         {% for slide in photo_slide_list %}
             <div id="caption-{{ slide.id }}" style="display:none;">
-                <h1>{{ slide.title }}</h1>
+                <div class="caption-title">
+                    {{ slide.title }}
+                </div>
             </div>
         {% endfor %}
     </div>
