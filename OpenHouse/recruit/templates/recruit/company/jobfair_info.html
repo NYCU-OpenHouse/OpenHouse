@@ -40,7 +40,6 @@
             <div class="field">
                 <label>{{ form.general_lunch_box.label }}</label>
                 {{ form.general_lunch_box }}
-                <p>每家企業至多提供3份餐點</p>
             </div>
             <div class="field">
                 <label>{{ form.veget_lunch_box.label }}</label>
@@ -61,6 +60,9 @@
                 </div>
             </div>
         </div>
+
+        <p>每攤位免費提供<span style="color:red;">最多 3 人份午餐</span>。若超過免費數量，將收取超出的餐點費用。</p>
+
         <div class="field">
             <label>{{ form.send_obj.label }}</label>
             {{ form.send_obj }}

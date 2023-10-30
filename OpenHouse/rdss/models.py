@@ -187,7 +187,10 @@ class SeminarSlot(models.Model):
         verbose_name_plural = u"線上-說明會場次"
 
     def __str__(self):
-        return '{} {}'.format(self.date, self.session)
+        if self.company is None:
+            return '{} {} {}'.format(self.date, self.session, "None")
+
+        return '{} {} {}'.format(self.date, self.session, self.company.get_company_name())
 
 
 class Student(models.Model):
@@ -229,6 +232,20 @@ class StuAttendance(models.Model):
                                 on_delete=models.CASCADE, )
 
     updated = models.DateTimeField(u'時間', auto_now=True)
+
+    def get_company(self):
+        if self.seminar.company is None:
+            return "None"
+        return self.seminar.company.get_company_name()
+    get_company.short_description = "說明會企業"
+
+    def get_student_id(self):
+        return self.student.student_id
+    get_student_id.short_description = "學號"
+
+    def get_student_name(self):
+        return self.student.name
+    get_student_name.short_description = "姓名"
 
     class Meta:
         unique_together = ("student", "seminar")

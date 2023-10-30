@@ -22,7 +22,8 @@ class StuAttendanceInline(admin.TabularInline):
 
 
 class StuAttendanceAdmin(admin.ModelAdmin):
-    list_display = ['seminar']
+    list_display = ['seminar', 'get_company', 'get_student_id', 'get_student_name',]
+    search_fields = ('student__student_id', 'student__name')
 
 
 admin.site.register(models.StuAttendance, StuAttendanceAdmin)
@@ -31,6 +32,7 @@ admin.site.register(models.StuAttendance, StuAttendanceAdmin)
 @admin.register(models.Student)
 class StudentAdmin(admin.ModelAdmin):
     inlines = (StuAttendanceInline,)
+    search_fields = ('idcard_no' ,'name', 'student_id')
     list_display = ('idcard_no', 'student_id', 'name', 'phone')
 
 @admin.register(models.ECESeminar)

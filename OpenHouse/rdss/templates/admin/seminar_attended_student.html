@@ -1,0 +1,27 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<div id="content-main">
+	<table class="ui celled table">
+		<thead>
+			<th> 時間 </th>
+			<th> 公司 </th>
+			<th> 已集點學生數量 </th>
+			<th> </th>
+		</thead>
+		<tbody>
+
+			{% for seminar in seminars %}
+			<tr>
+                <td>{{ seminar.date }} {{ seminar.time }}</td>
+				<td>{{ seminar.company }}</td>
+				<td>{{ seminar.student_count }}</td>
+				<td><a href="/admin/rdss/seminar_attended_student/detail/{{seminar.id}}">詳細學生登記資料</a></td>
+			</tr>
+			{% endfor %}
+
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+

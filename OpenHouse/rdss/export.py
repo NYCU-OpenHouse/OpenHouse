@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.conf import settings
 import xlsxwriter
 import json
@@ -481,3 +481,34 @@ def ExportAdFormat(request):
     company_list.sort(key=lambda item: getattr(item, 'category'))
 
     return render(request, 'admin/export_ad.html', locals())
+
+@staff_member_required
+def ExportPointsInfo(request):
+
+    filename = "rdss_points_info_{}.xlsx".format(timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+    workbook = xlsxwriter.Workbook(response)
+    worksheet = workbook.add_worksheet("集點總覽")
+    
+    student_list = rdss.models.Student.objects.annotate(
+                points=Sum('attendance__points')).order_by('-points')
+    
+    fields = rdss.models.Student._meta.get_fields()[3:8]
+    
+    for index, field in enumerate(fields):
+        worksheet.write(0, index, field.verbose_name)
+    worksheet.write(0, index, "累積點數")
+    
+    for row_count, info in enumerate(student_list):
+        col_count = 0
+        for col_count, field in enumerate(fields):
+            worksheet.write(row_count + 1, col_count , getattr(info, field.name))
+        if getattr(info, "points") is None:
+            worksheet.write(row_count + 1, col_count, 0)
+        else:
+            worksheet.write(row_count + 1, col_count, getattr(info, "points"))
+            
+
+    workbook.close()
+    return response
