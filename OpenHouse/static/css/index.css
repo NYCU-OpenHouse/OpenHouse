@@ -28,6 +28,39 @@ body
 }
 
 .ui.segment.slider_seg{
-  width:60%;
+  width: 60%;
   margin:auto;
+}
+
+@media (max-width: 770px) {
+  .ui.segment.slider_seg {
+    width: 90%;
+  }
+}
+
+.caption-div {
+  width: 200px;
+  height: 100px;
+  background-color: #ccc;
+}
+
+@media (max-width: 500px) {
+  .caption-div {
+    width: 150px;
+    height: 75px;
+  }
+}
+
+.caption-title {
+  color: white;
+  font-weight: bold;
+  font-size: 28px;
+  padding: 10px 5px 5px 5px;
+}
+
+@media (max-width: 500px) {
+  .caption-title {
+    font-size: 14px;
+    padding: 0px;
+  }
 }
