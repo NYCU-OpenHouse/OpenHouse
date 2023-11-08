@@ -1323,6 +1323,7 @@ def list_jobs(request):
             try:
                 target_company = Company.objects.get(cid=company.cid, category=category_filtered)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
@@ -1340,6 +1341,7 @@ def list_jobs(request):
             try:
                 target_company = Company.objects.get(cid=company.cid)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,

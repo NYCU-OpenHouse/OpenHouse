@@ -1053,6 +1053,7 @@ def ListJobs(request):
             try:
                 target_company = company.models.Company.objects.get(cid=signup.cid, category=category_filtered)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
@@ -1070,6 +1071,7 @@ def ListJobs(request):
             try:
                 target_company = company.models.Company.objects.get(cid=signup.cid)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
