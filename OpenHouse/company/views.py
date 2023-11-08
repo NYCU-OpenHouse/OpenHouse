@@ -7,15 +7,17 @@ from django.contrib.admin.views.decorators import staff_member_required
 from company.forms import CompanyCreationForm, CompanyEditForm, CompanyPasswordResetForm
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from .models import Company, ChineseFundedCompany
+from .models import Company, ChineseFundedCompany, Job
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
-from company.forms import CompanyCreationForm, CompanyEditForm
+from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet
 import rdss.models
 import recruit.models
 import company.models
 from oauth2_provider.decorators import protected_resource
 from oauth.models import CustomAccessToken
+from django.http import Http404
+
 
 # Create your views here.
 
@@ -36,6 +38,7 @@ def CompanyInfo(request):
     menu_ui = {'info': "active"}
 
     company_info = company.models.Company.objects.get(cid=request.user.cid)
+    jobs = company.models.Job.objects.filter(cid=request.user.id)
     return render(request, 'company_info.html', locals())
 
 
@@ -54,7 +57,8 @@ def CompanyCreation(request):
             form.save()
             user = authenticate(username=form.clean_cid(), password=form.clean_password2())
             login(request, user)
-            return redirect(CompanyIndex)
+            messages.success(request, '公司帳號創建成功！請至編輯頁最下方新增公司招募職缺')
+            return redirect(CompanyEdit)
         else:
             error_display = True
             error_msg = form.errors
@@ -65,27 +69,49 @@ def CompanyCreation(request):
 
 @login_required(login_url='/company/login/')
 def CompanyEdit(request):
+
     submit_btn_name = "確認修改"
     if request.user and request.user.is_authenticated:
         user = request.user
     else:
         user = None
+        
+    company_info = company.models.Company.objects.get(cid=request.user.cid)
+    jobs = Job.objects.filter(cid=request.user.id)
+    
+    if (len(jobs) == 0):
+        messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')
 
     if request.POST:
         form = CompanyEditForm(request.POST, request.FILES, instance=user)
+
         if form.is_valid():
             if user and (form.data["cid"] != user.cid or form.data["category"] != user.category):
                 if not user.is_staff:
                     # only staff can change cid & category
                     form = CompanyEditForm(instance=user)
+                    job_formset = ItemModelFormSet(instance=user)
+                    job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
+
             user = form.save()
+            job_formset = ItemModelFormSet(request.POST, instance=user)
+            if job_formset.is_valid():
+                job_formset.save()
+            else:
+                print(job_formset.errors)
+                messages.error(request, '填入資料有誤，請重新修改公司資料')
+                return render(request, 'company_edit_form.html', locals())
+
             # messages.success(request, _("User '{0}' created.").format(user))
             return redirect(CompanyInfo)
         else:
-            # messages.error(request, ("The user could not be created due to errors.") )
+            messages.error(request, '填入資料有誤，請重新修改公司資料')
             return render(request, 'company_edit_form.html', locals())
-    form = CompanyEditForm(instance=user);
-    company_info = company.models.Company.objects.get(cid=request.user.cid)
+    else:
+        form = CompanyEditForm(instance=user)
+        job_formset = ItemModelFormSet(instance=user)
+        job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
+
     return render(request, 'company_edit_form.html', locals())
 
 
@@ -194,3 +220,13 @@ def regitered_chinese_funded_company(request):
     
     
     return render(request, 'admin/registered_chinese_funded_company.html', locals())
+
+def CompanyDetail(request, companyId):
+    """
+    Function displaying specific company info to public
+    """
+    company_info = Company.objects.get(cid=companyId)
+    id = company_info.id
+    jobs = company.models.Job.objects.filter(cid=id)
+
+    return render(request, 'company_detail.html', locals())

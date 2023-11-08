@@ -3,13 +3,149 @@
 
 {% block 'custom_head' %}
     {{ form.media }}
+    {% load static %}
+    {{ form.media.js }}
     <title>公司資料修改 | OpenHouse 企業校園徵才 </title>
+    <script type="text/javascript">
+        /** 
+         * For form delete and add
+        */
+        function init() {
+            $('.btn_delete').parent().hide();
+        }
+ 
+        // Code adapted from http://djangosnippets.org/snippets/1389/
+        function updateElementIndex(el, prefix, ndx) {
+            var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+            var replacement = prefix + '-' + ndx + '-';
+            if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,
+                replacement));
+            if (el.id) el.id = el.id.replace(id_regex, replacement);
+            if (el.name) el.name = el.name.replace(id_regex, replacement);
+        }
+ 
+        function deleteForm(btn, prefix) {
+            var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+ 
+            {% if user %}
+                if ($("[id$='-id']", $(btn).parent().parent()).val() != "")//update the existing record
+                {
+                    $(".btn_delete", $(btn).parent()).attr("checked", true);
+                    $(btn).parents('.form-row').hide();
+                    //$(btn).parents('.item').hide();
+                    return false;
+                } else//newly added record
+                {
+                    var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+                    // Delete the item/form
+                    $(btn).parents('.form-row').remove();
+                    var forms = $('.form-row'); // Get all the forms
+                    // Update the total number of forms (1 less than before)
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+                    var i = 0;
+                    // Go through the forms and set their indices, names and IDs
+                    for (formCount = forms.length; i < formCount; i++) {
+                        $(forms.get(i)).children().children().each(function () {
+                            if ($(this).get(0).tagName == 'INPUT') updateElementIndex(this, prefix, i);
+                        });
+                    }
+                    return false;
+                }
+            {% else %}
+                // Delete the item/form
+                $(btn).parents('.form-row').remove();
+                var forms = $('.form-row'); // Get all the forms
+                // Update the total number of forms (1 less than before)
+                $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+                var i = 0;
+                // Go through the forms and set their indices, names and IDs
+                for (formCount = forms.length; i < formCount; i++) {
+                    $(forms.get(i)).find("*").each(function () {
+                        if ($(this).get(0).tagName == 'INPUT') updateElementIndex(this, prefix, i);
+                    });
+                }
+                return false;
+            {% endif %}
+        }
+ 
+        function addForm(btn, prefix) {
+            var index = $(btn).data('index');
+            console.log(index);
+            var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+            // Clone a form (without event handlers) from the first form
+            var row = $(".form-row:first").clone(false).get(0);
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+            // Relabel or rename all the relevant bits
+            $(row).find('*').each(function () {
+                updateElementIndex(this, prefix, formCount);
+                $('input[type="text"]',row).val("");
+                $('textarea',row).val("");
+                $('input[type="checkbox"]',row).attr('checked', false);
+            });
+            $("input[class='btn_delete']", row).val("");
+            $(row).find(".remove-form-row").click(function () {
+                return deleteForm(this, prefix);
+            });
+            // Bind the 'is_foreign' change event handler to the new row
+            $(row).find('input[name*="is_foreign"]').change(function() {
+                var isForeign = $(this).is(':checked');
+                console.log('Foreign student select: ' + isForeign);
+                if (isForeign) {
+                    alert('開放外籍生選擇職缺建議一併填寫英文職缺名稱、內容');
+                }
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+            // Insert it after the last form
+            $(row).removeAttr('id').hide().insertAfter(".form-row:last").slideDown(300);
+            console.log(formCount);
+            console.log(prefix);
+            return false;
+        }
+
+        // Call function in template
+        $(document).ready(function () {
+            init();
+            // Register the click event handlers
+            $(".add-form-row").click(function () {
+                return addForm(this, "company_job_set");
+            });
+            $(".remove-form-row").click(function () {
+                return deleteForm(this, "company_job_set");
+            });
+            // Register the click event handlers for foreign student alert
+            $('input[name*="is_foreign"]').change(function() {
+                var isForeign = $(this).is(':checked');
+                console.log('Foreign student select: ' + isForeign);
+                if (isForeign) {
+                    alert('開放外籍生選擇職缺建議一併填寫英文職缺名稱、內容')
+                }
+            });
+        });
+ 
+    </script>
 {% endblock %}
 
 {% block 'content' %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="ui {% if message.tags %}{{ message.tags }} message{% else %}message{% endif %}" style="width:70%;margin:auto">
+                {{ message }}
+            </div>
+            <br />
+        {% endfor %}
+    {% endif %}
+    
     <form method="post" enctype="multipart/form-data" class="ui form">
         {% csrf_token %}
         <div class="ui three column grid" style="width:90%;margin:auto">
+            <div class="row">
+                <h1>基本資料</h1>
+            </div>
+            <div class="ui divider"></div>
             <div class="row">
                 <div class="column">
                     <div class="ui card">
@@ -23,7 +159,6 @@
                             {{ form.logo }}
                         </div>
                     </div>
-                    <button class="ui teal button" type="submit">{{ submit_btn_name }}</button>
                 </div>
                 <div class="column">
                     <div class="required field">
@@ -58,6 +193,8 @@
                         <label>{{ form.address.label_tag }}</label>
                         {{ form.address }}
                     </div>
+                </div>
+                <div class="column">
                     <div class="required field">
                         <label>{{ form.website.label_tag }}</label>
                         {{ form.website }}
@@ -81,19 +218,32 @@
                         {{ form.brief.errors }}
                         {{ form.brief }}
                     </div>
+                </div>
+            </div>
+            <!-- HR & receipient info -->
+            <div class="row">
+                <div class="column">
+                    <div class="ui dividing header">收據相關資料</div>
                     <div class="required field">
-                        <label>{{ form.recruit_info.label_tag }}</label>
-                        {{ form.recruit_info.help_text }}
-                        {{ form.recruit_info.errors }}
-                        {{ form.recruit_info }}
+                        <label>{{ form.receipt_title.label_tag }}</label>
+                        {{ form.receipt_title }}
                     </div>
                     <div class="required field">
-                        <label>{{ form.recruit_url.label_tag }}</label>
-                        {{ form.recruit_url.help_text }}
-                        {{ form.recruit_url.errors }}
-                        {{ form.recruit_url }}
+                        <label>{{ form.receipt_postal_code.label_tag }} {{ form.receipt_postal_code.help_text }}</label>
+                        {{ form.receipt_postal_code }}
                     </div>
-
+                    <div class="required field">
+                        <label>{{ form.receipt_postal_address.label_tag }} ({{ form.receipt_postal_address.help_text }})</label>
+                        {{ form.receipt_postal_address }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_contact_name.label_tag }}</label>
+                        {{ form.receipt_contact_name }}
+                    </div>
+                    <div class="required field">
+                        <label>{{ form.receipt_contact_phone.label_tag }} ({{ form.receipt_contact_phone.help_text }})</label>
+                        {{ form.receipt_contact_phone }}
+                    </div>
                 </div>
                 <div class="column">
                     <div class="ui dividing header">人資資料</div>
@@ -117,6 +267,8 @@
                         <label>{{ form.hr_email.label_tag }}</label>
                         {{ form.hr_email }}
                     </div>
+                </div>
+                <div class="column">
                     <div class="ui dividing header">第二位人資資料</div>
                     <div class="field">
                         <label>{{ form.hr2_name.label_tag }}</label>
@@ -142,27 +294,87 @@
                         <label>{{ form.hr_ps.label_tag }}</label>
                         {{ form.hr_ps }}
                     </div>
-                    <div class="ui dividing header">收據相關資料</div>
+                </div>
+            </div>
+        </div>
+        <div class="ui column grid" style="width:90%;margin:auto">
+            <div class="row">
+                <h1>職缺內容</h1>
+            </div>
+            <div class="ui divider"></div>
+            <div class="row">
+                <div class="eight wide column">
                     <div class="required field">
-                        <label>{{ form.receipt_title.label_tag }}</label>
-                        {{ form.receipt_title }}
+                        <label>{{ form.recruit_info.label_tag }}</label>
+                        {{ form.recruit_info.help_text }}
+                        {{ form.recruit_info.errors }}
+                        {{ form.recruit_info }}
                     </div>
+                </div>
+                <div class="eight wide column">
                     <div class="required field">
-                        <label>{{ form.receipt_postal_code.label_tag }} {{ form.receipt_postal_code.help_text }}</label>
-                        {{ form.receipt_postal_code }}
+                        <label>{{ form.recruit_url.label_tag }}</label>
+                        {{ form.recruit_url.help_text }}
+                        {{ form.recruit_url.errors }}
+                        {{ form.recruit_url }}
                     </div>
-                    <div class="required field">
-                        <label>{{ form.receipt_postal_address.label_tag }} ({{ form.receipt_postal_address.help_text }})</label>
-                        {{ form.receipt_postal_address }}
+                </div>
+            </div>
+        </div>
+        <div class="ui three column grid" style="width:90%;margin:auto">
+            <div class="ui dividing header">職缺列表</div>
+                {{ job_formset.management_form }}
+                {{ job_formset.non_form_errors }}
+                {% for form in job_formset %}
+                    {{ form.id }}
+                    <div class="form-row row">
+                        <div class="column">
+                            <div class="required field">
+                                <label>{{ form.title.label_tag }}</label>
+                                {{ form.title.errors }}
+                                {{ form.title }}
+                                <label>{{ form.quantity.label_tag }}</label>
+                                {{ form.quantity.errors }}
+                                {{ form.quantity }}
+                            </div>
+                            {{ form.is_liberal.label_tag }} {{ form.is_liberal }}
+                            <br /><br />
+                            <div id="id_is_foreign">
+                                {{ form.is_foreign.label_tag }} {{ form.is_foreign }}
+                                <p>(開放外籍生選擇職缺建議一併填寫英文職缺名稱、內容)</p>
+                            </div>
+                            <br/><br/>
+                            <div class="delete" style="display: none;">
+                                {{ form.DELETE }}
+                            </div>
+                            <button class="ui button remove-form-row">remove</button>
+                        </div>
+
+                        <div class="column" id="chinese-fields-{{ form.prefix }}">
+                            <div class="required field">
+                                <label>{{ form.description.label_tag }}</label>
+                                {{ form.description.errors }}
+                                {{ form.description }}
+                            </div>
+                            {{ form.note.label_tag }} {{ form.note }}
+                        </div> 
+
+                        <div class="column" id="english-fields">
+                            {{ form.english_title.label_tag }}: {{ form.english_title }}
+                            {{ form.english_description.label_tag }}: {{ form.english_description }}
+                            {{ form.english_note.label_tag }}: {{ form.english_note }}
+                        </div>
                     </div>
-                    <div class="required field">
-                        <label>{{ form.receipt_contact_name.label_tag }}</label>
-                        {{ form.receipt_contact_name }}
-                    </div>
-                    <div class="required field">
-                        <label>{{ form.receipt_contact_phone.label_tag }} ({{ form.receipt_contact_phone.help_text }})</label>
-                        {{ form.receipt_contact_phone }}
-                    </div>
+                    <div class="ui divider"></div>
+                {% endfor %}
+                <button class="ui primary button btn add-form-row">+ add</button>
+            </div>
+        </div>
+
+        <div class="ui column grid" style="width:90%;margin:auto">
+            <div class="row">
+                <div class="column">
+                    <button class="ui teal button" type="submit">{{ submit_btn_name }}</button>
                 </div>
             </div>
         </div>

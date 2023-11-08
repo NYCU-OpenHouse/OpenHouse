@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.core.validators import RegexValidator, MinLengthValidator, validate_email
 from django.utils import timezone
 from datetime import datetime
+from django.urls import reverse
 
 
 def validate_all_num(string):
@@ -52,8 +53,6 @@ class Company(AbstractBaseUser):
     address = models.CharField(u'公司地址', max_length=128)
     website = models.CharField(u'公司網站', max_length=64)
     brief = models.CharField(u'公司簡介', max_length=200, help_text='為了印刷效果，限200字內')
-    recruit_info = models.CharField(u'職缺內容', max_length=260, help_text='為了印刷效果，限260字內')
-    recruit_url = models.CharField(u'應徵方式', max_length=260, help_text='報名網站或詳細職缺說明, 限260字內', blank=True)
     business_project = models.CharField(u'營業項目', max_length=100, default="", blank=True)
     relation_business = models.CharField(u'關係企業', max_length=64, help_text='若無, 可免填', blank=True, default="")
     subsidiary = models.CharField(u'分公司', max_length=64, help_text='若無, 可免填', blank=True, default="")
@@ -75,6 +74,10 @@ class Company(AbstractBaseUser):
 
     payment_ps = models.TextField(u'款項備註', default="", blank=True)
     other_ps = models.TextField(u'其他備註', default="", blank=True)
+
+    # recruit info
+    recruit_info = models.CharField(u'職缺內容簡介', max_length=260, help_text='為了印刷效果，限260字內')
+    recruit_url = models.CharField(u'應徵方式', max_length=260, help_text='報名網站或詳細職缺說明, 限260字內', blank=True)
 
     # discount for special member
     ece_member = models.BooleanField(u'電機資源產學聯盟', default=False)
@@ -140,6 +143,20 @@ class Company(AbstractBaseUser):
 
     def has_perm(self, perm, obj=None):
         return False
+    
+    def get_liberal_jobs_count(self):
+        return self.company_job_set.filter(is_liberal=True).count()
+
+    def get_foreign_open_jobs_count(self):
+        return self.company_job_set.filter(is_foreign=True).count()
+    
+    def get_absolute_url(self):
+        """
+        Function returning the absolute url of a company for company info to public
+        :return: url of the company and jobs list
+        """
+        return reverse('company_detail', args=[str(self.cid)])
+
 
 class ChineseFundedCompany(models.Model):
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8)
@@ -152,3 +169,28 @@ class ChineseFundedCompany(models.Model):
 
         verbose_name = u"中資企業列表"
         verbose_name_plural = u"中資企業列表"
+
+class Job(models.Model):
+    id = models.AutoField(primary_key=True)
+    # This id is company id not cid
+    cid = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_job_set')
+    title = models.CharField(u'職缺名稱', max_length=100)
+    is_liberal = models.BooleanField(u'是否為文組職缺', default=False)
+    is_foreign = models.BooleanField(u'是否開放外籍生投遞', default=False)
+    description = models.TextField(u'職缺內容')
+    quantity = models.PositiveIntegerField(u'職缺數量', default=1)
+    note = models.TextField(u'備註', blank=True)
+
+    english_title = models.CharField(u'職缺名稱(英文)', max_length=100, blank=True)
+    english_description = models.TextField(u'職缺內容(英文)', blank=True)
+    english_note = models.TextField(u'備註(英文)', blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'job'
+
+        verbose_name = u"職缺"
+        verbose_name_plural = u"職缺"
+
+    def __str__(self):
+        return self.title
