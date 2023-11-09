@@ -35,11 +35,13 @@ class Company(AbstractBaseUser):
         (u'金融/保險/不動產', u'金融/保險/不動產'),
         (u'出版影音/藝術、娛樂及休閒服務業', u'出版影音/藝術、娛樂及休閒服務業'),
         (u'醫療保健及社會工作服務業', u'醫療保健及社會工作服務業'),
-        (u'政府/國防/財團法人研究單位', u'政府/國防/財團法人研究單位'),
+        (u'公家單位', u'公家單位'),
+        (u'財團法人/社團法人', u'財團法人/社團法人'),
         (u'住宿/餐飲業', u'住宿/餐飲業'),
         (u'批發及零售/運輸及倉儲業', u'批發及零售/運輸及倉儲業'),
         (u'電力及燃氣供應業', u'電力及燃氣供應業'),
         (u'傳統製造業', u'傳統製造業'),
+        (u'其他', u'其他'),
     )
 
     id = models.AutoField(primary_key=True)
@@ -85,7 +87,7 @@ class Company(AbstractBaseUser):
     gloria_startup = models.BooleanField(u'國際產學聯盟總中心_國際新創會員', default=False)
 
     # receipt information
-    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="")
+    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="", help_text="ex. 12345678國立陽明交通大學")
     receipt_postal_code = models.CharField(u'收據寄送郵遞區號(3+3)',help_text='ex:300123', max_length=6, default="",  validators=[validate_all_num])
     receipt_postal_address = models.CharField(u'收據寄送地址', max_length=128, default="", help_text="另註公司名尤佳")
     receipt_contact_name =  models.CharField(u'收據聯絡人姓名', max_length=10, default="")
@@ -174,16 +176,16 @@ class Job(models.Model):
     id = models.AutoField(primary_key=True)
     # This id is company id not cid
     cid = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_job_set')
-    title = models.CharField(u'職缺名稱', max_length=100)
+    title = models.CharField(u'職缺名稱', max_length=50)
     is_liberal = models.BooleanField(u'是否為文組職缺', default=False)
     is_foreign = models.BooleanField(u'是否開放外籍生投遞', default=False)
-    description = models.TextField(u'職缺內容')
+    description = models.TextField(u'職缺內容', max_length=260)
     quantity = models.PositiveIntegerField(u'職缺數量', default=1)
-    note = models.TextField(u'備註', blank=True)
+    note = models.TextField(u'備註', blank=True, max_length=260)
 
-    english_title = models.CharField(u'職缺名稱(英文)', max_length=100, blank=True)
-    english_description = models.TextField(u'職缺內容(英文)', blank=True)
-    english_note = models.TextField(u'備註(英文)', blank=True)
+    english_title = models.CharField(u'職缺名稱(英文)', max_length=50, blank=True)
+    english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=260)
+    english_note = models.TextField(u'備註(英文)', blank=True, max_length=260)
 
     class Meta:
         managed = True

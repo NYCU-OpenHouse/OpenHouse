@@ -266,7 +266,7 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'jobs_summary', 'last_update')
-    list_filter = ()
+    list_filter = ('category',)
     fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
