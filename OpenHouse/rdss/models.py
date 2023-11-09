@@ -571,7 +571,6 @@ class CompanySurvey(models.Model):
     os_eng_read = models.CharField(u'English Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
     os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
 
-
     os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
     os_seminar = models.BooleanField(u'外籍生說明會', default=False)
     os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)

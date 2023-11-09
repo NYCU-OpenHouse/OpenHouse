@@ -544,8 +544,54 @@ class CompanySurvey(models.Model):
     os_for_intern = models.BooleanField(u'外籍生實習', default=False)
     os_osc_intern = models.BooleanField(u'僑生實習', default=False)
     os_cn_intern = models.BooleanField(u'陸生實習', default=False)
-    os_other_required = models.CharField(u'境外生能力要求', blank=True, null=True, max_length=255)
+
+    # application process
+    APP_PROCESS_CHOICES = (
+        ('literal','Hand over your CV to the HR personnel at the booth. (將協助引導學生至公司攤位)'),
+        ('online', 'Upload your CV to the recruitment website. (請留下應徵網址)'),
+        ('others', '其他')
+    )
+    os_app_process = models.CharField(u'應徵方式 ', max_length=50, choices=APP_PROCESS_CHOICES, null=True)
+    os_app_cv_url = models.CharField(u'網址', max_length=64, blank=True, null=True, default='')
+    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內')
+
+    # major multiple choice field
+    os_major_ee = models.BooleanField(u'電子電機', default=False)
+    os_major_po = models.BooleanField(u'光電', default=False)
+    os_major_cs = models.BooleanField(u'資工', default=False)
+    os_major_me = models.BooleanField(u'機械', default=False)
+    os_major_mse = models.BooleanField(u'材料', default=False)
+    os_major_chem = models.BooleanField(u'化學', default=False)
+    os_major_phys = models.BooleanField(u'物理', default=False)
+    os_major_math = models.BooleanField(u'數學', default=False)
+    os_major_bs = models.BooleanField(u'生科', default=False)
+    os_major_ms = models.BooleanField(u'管理', default=False)
+    os_major_hs = models.BooleanField(u'人社', default=False)
+    os_major_law = models.BooleanField(u'法律', default=False)
+    os_major_ohter = models.CharField(u'其他', max_length=50, blank=True, null=True)
+
+    SKILL_RATING = (
+        (u'native', u'native'),
+        (u'good', u'good'),
+        (u'fair', u'fair'),
+        (u'poor', u'poor'),
+        (u'inapplicable', u'inalpplicable'),
+    )
+    # chinese skill (optional)
+    os_chinese_listen = models.CharField(u'Chinese Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_speak = models.CharField(u'Chinese Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_read = models.CharField(u'Chinese Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_write = models.CharField(u'Chinese Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    # english skill (optional)
+    os_eng_listen = models.CharField(u'English Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_speak = models.CharField(u'English Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_read = models.CharField(u'English Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
     os_seminar = models.BooleanField(u'外籍生說明會', default=False)
+    os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)
 
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
@@ -757,8 +803,8 @@ class CompanySurvey(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"企業滿意度問卷"
-        verbose_name_plural = u"企業滿意度問卷"
+        verbose_name = u"畢業生滿意度問卷"
+        verbose_name_plural = u"畢業生滿意度問卷"
 
 
 class SlotColor(models.Model):

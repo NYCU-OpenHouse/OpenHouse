@@ -93,10 +93,112 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>其他能力要求</td>
+                    <td>OpenHouse 應徵方式</td>
                     <td>
-                        <p>境外生須具備之能力及相關要求? (例如：領域限制、語言能力、學位別、國籍等；無則免填)</p>
-                        {{ form.os_other_required }}
+                        <p>若當天有其他應徵方式，請以英文敘明。</p>
+                        {{ form.os_app_process }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>科系領域</td>
+                    <td>
+                        <p>複選，請勾選開放職缺之相關科系或領域。</p>
+                        <div class="ui checkbox">
+                            {{ form.os_major_ee }}
+                            <label>Electrical Engineering (電子電機)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_po }}
+                            <label>Photonics (光電)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_cs }}
+                            <label>Computer Science (資工)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_me }}
+                            <label>Mechanical Engineering (機械)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_mse }}
+                            <label>Materials Science and Engineering (材料)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_chem }}
+                            <label>Chemistry (化學)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_phys }}
+                            <label>Physics (物理)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_math }}
+                            <label>Mathematics (數學)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_bs }}
+                            <label>Biological Science and Technology (生科)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_ms }}
+                            <label>Management (管理)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_hs }}
+                            <label>Humanities and Social Sciences (人社)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_law }}
+                            <label>Law (法律)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_other }}
+                            <label>Others 其他：</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>中文能力要求</td>
+                    <td>
+                        <p>選填，無特別要求者可跳過。</p>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Listening</td>
+                                <td>{{ form.os_chinese_listen }}{{ form.os_chinese_listen.errors }}</td>
+                                <td>Speaking</td>
+                                <td>{{ form.os_chinese_speak }}{{ form.os_chinese_speak.errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>Reading</td>
+                                <td>{{ form.os_chinese_read }}{{ form.os_chinese_read.errors }}</td>
+                                <td>Writing</td>
+                                <td>{{ form.os_chinese_write }}{{ form.os_chinese_write.errors }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>英文能力要求</td>
+                    <td>
+                        <p>選填，無特別要求者可跳過。</p>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Listening</td>
+                                <td>{{ form.os_eng_listen }}{{ form.os_eng_listen.errors }}</td>
+                                <td>Speaking</td>
+                                <td>{{ form.os_eng_speak }}{{ form.os_eng_speak.errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>Reading</td>
+                                <td>{{ form.os_eng_read }}{{ form.os_eng_read.errors }}</td>
+                                <td>Writing</td>
+                                <td>{{ form.os_eng_write }}{{ form.os_eng_write.errors }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 <tr>
@@ -106,6 +208,21 @@
                             {{ form.os_seminar }}
                             <label>是否有舉辦外籍生說明會之需求?「是」請打勾。</label>
                         </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>特殊徵才條件</td>
+                    <td>
+                        <p>境外生須具備之能力及相關要求? (例如：領域限制、語言能力、學位別、國籍等)</p>
+                        <p>選填，例如: Malaysian students, Vietnamese language, graduate students</p>
+                        {{ form.os_other_required }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>其他事項</td>
+                    <td>
+                        <p>其他需國際處留意或轉達之處，請留言。</p>
+                        {{ form.os_others }}
                     </td>
                 </tr>
             </table>
