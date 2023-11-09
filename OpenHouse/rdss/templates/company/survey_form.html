@@ -1,7 +1,35 @@
 {% extends 'rdss_base.html' %}
 
 {% block 'custom_head' %}
-    <title>企業滿意度問卷 | OpenHouse 企業校園徵才</title>
+    <title>畢業生滿意度問卷 | OpenHouse 企業校園徵才</title>
+    <script>
+        function init() {
+            var selectedValue = $('#id_os_app_process').val();
+            if (selectedValue === 'online') {
+                    $('#cvUrlField').show();
+            } else if (selectedValue === 'others') {
+                $('#otherField').show();
+            }
+        }
+
+         $(document).ready(function () {
+            init();
+
+            $('#id_os_app_process').change(function () {
+                $('#cvUrlField').hide();
+                $('#otherField').hide();
+        
+                var selectedValue = $(this).val();
+                console.log(selectedValue);
+        
+                if (selectedValue === 'online') {
+                    $('#cvUrlField').show();
+                } else if (selectedValue === 'others') {
+                    $('#otherField').show();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 
@@ -16,9 +44,9 @@
             $('.ui.checkbox').checkbox();
         })
     </script>
-    <h1 class="ui dividing header">Open House 秋季招募 - 國立陽明交通大學畢業生企業滿意度問卷</h1>
+    <h1 class="ui dividing header">Open House 秋季招募 - 國立陽明交通大學畢業生滿意度問卷</h1>
     <div class="ui segment">
-        感謝貴公司長久以來對本校的支持與愛護，本校就業與升學輔導組為了建立校友就業相關資料，以期瞭解業界對本校畢業生的指教，做為本校改善教學以及推展研究的重要參考，<b style=color:red>數據僅作為校內教學研究用途，亦不對外公開。</b>
+        感謝貴公司長久以來對本校的支持與愛護，本校職涯發展組為了建立校友就業相關資料，以期瞭解業界對本校畢業生的指教，做為本校改善教學以及推展研究的重要參考，<b style=color:red>數據僅作為校內教學研究用途，亦不對外公開。</b>
 
         若有任何問題，請致電(03)5131365(林小姐)或03-5712121分機31365(林小姐)、50659(張小姐)，謝謝您的協助！
 
@@ -88,10 +116,121 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>其他能力要求</td>
+                    <td>OpenHouse 應徵方式</td>
                     <td>
-                        <p>境外生須具備之能力及相關要求? (例如：領域限制、語言能力、學位別、國籍等；無則免填)</p>
-                        {{ form.os_other_required }}
+                        <p>若當天有其他應徵方式，請以英文敘明。</p>
+                        {{ form.os_app_process }}
+                        <div id="cvUrlField" style="display: none;">
+                            <label for="{{ form.os_app_cv_url.id_for_label }}">網址:</label>
+                            {{ form.os_app_cv_url }}
+                        </div>
+                        <div id="otherField" style="display: none;">
+                            <label for="{{ form.os_app_other.id_for_label }}">其他:</label>
+                            {{ form.os_app_other }}
+                            {{ form.os_app_other.help_text }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>科系領域</td>
+                    <td>
+                        <p>複選，請勾選開放職缺之相關科系或領域。</p>
+                        <div class="ui checkbox">
+                            {{ form.os_major_ee }}
+                            <label>Electrical Engineering (電子電機)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_po }}
+                            <label>Photonics (光電)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_cs }}
+                            <label>Computer Science (資工)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_me }}
+                            <label>Mechanical Engineering (機械)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_mse }}
+                            <label>Materials Science and Engineering (材料)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_chem }}
+                            <label>Chemistry (化學)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_phys }}
+                            <label>Physics (物理)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_math }}
+                            <label>Mathematics (數學)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_bs }}
+                            <label>Biological Science and Technology (生科)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_ms }}
+                            <label>Management (管理)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_hs }}
+                            <label>Humanities and Social Sciences (人社)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_law }}
+                            <label>Law (法律)</label>
+                        </div>
+                        <div class="ui checkbox">
+                            {{ form.os_major_other }}
+                            <label>Others 其他：</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>中文能力要求</td>
+                    <td>
+                        <p>選填，無特別要求者可跳過。</p>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Listening</td>
+                                <td>{{ form.os_chinese_listen }}{{ form.os_chinese_listen.errors }}</td>
+                                <td>Speaking</td>
+                                <td>{{ form.os_chinese_speak }}{{ form.os_chinese_speak.errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>Reading</td>
+                                <td>{{ form.os_chinese_read }}{{ form.os_chinese_read.errors }}</td>
+                                <td>Writing</td>
+                                <td>{{ form.os_chinese_write }}{{ form.os_chinese_write.errors }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>英文能力要求</td>
+                    <td>
+                        <p>選填，無特別要求者可跳過。</p>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Listening</td>
+                                <td>{{ form.os_eng_listen }}{{ form.os_eng_listen.errors }}</td>
+                                <td>Speaking</td>
+                                <td>{{ form.os_eng_speak }}{{ form.os_eng_speak.errors }}</td>
+                            </tr>
+                            <tr>
+                                <td>Reading</td>
+                                <td>{{ form.os_eng_read }}{{ form.os_eng_read.errors }}</td>
+                                <td>Writing</td>
+                                <td>{{ form.os_eng_write }}{{ form.os_eng_write.errors }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 <tr>
@@ -103,11 +242,26 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>特殊徵才條件</td>
+                    <td>
+                        <p>境外生須具備之能力及相關要求? (例如：領域限制、語言能力、學位別、國籍等)</p>
+                        <p>選填，例如: Malaysian students, Vietnamese language, graduate students</p>
+                        {{ form.os_other_required }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>其他事項</td>
+                    <td>
+                        <p>其他需國際處留意或轉達之處，請留言。</p>
+                        {{ form.os_others }}
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="ui segments">
             <div class="ui segment">
-                <h2 class="ui dividing header" style="color:red">二、企業滿意度問卷 (核心能力與職場表現等)</h2>
+                <h2 class="ui dividing header" style="color:red">二、畢業生滿意度問卷 (核心能力與職場表現等)</h2>
             </div>
             <div class="ui raised segments">
                 <div class="ui teal segment">

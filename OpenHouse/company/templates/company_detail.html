@@ -1,0 +1,107 @@
+{% extends 'company_base.html' %}
+{% load static %}
+
+{% block 'custom_head' %}
+    <title>{{ company_info.shortname }} | OpenHouse 企業校園徵才 </title>
+    <link href={% static "css/company/company_detail.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block 'content' %}
+
+    <div class="ui stackable grid" style="width:90%;margin:auto;">
+        <div class="row">
+            <div class="five wide column center aligned content">
+                <div class="ui centered teal card" style="width: 90%;">
+                    <div class="image">
+                        <img src="{{ company_info.logo.url }}">
+                    </div>
+                    <div class="content">
+                        <a href="{{ company_info.website }}">
+                            <p class="header">{{ company_info.shortname }}</p>
+                            <p class="header">{{ company_info.english_name }}</p>
+                        </a>
+                    </div>
+                    <div class="extra content">
+                        <div class="ui header">公司簡介</div>
+                        <p style="word-wrap: break-word;">{{ company_info.brief }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ten wide column">
+                <div class="ui header">基本資料</div>
+                <div class="ui divider"></div>
+                <table class="ui celled striped table">
+                    <tbody>
+                    <tr>
+                        <td>公司名稱</td>
+                        <td>{{ company_info.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>類別</td>
+                        <td>{{ company_info.category }}</td>
+                    </tr>
+                    <tr>
+                        <td>公司電話</td>
+                        <td>{{ company_info.phone }}</td>
+                    </tr>
+                    <tr>
+                        <td>公司地址</td>
+                        <td>{{ company_info.postal_code }} {{ company_info.address }}</td>
+                    </tr>
+                    <tr>
+                        <td>職缺內容</td>
+                        <td>{{ company_info.recruit_info }}</td>
+                    </tr>
+                    <tr>
+                        <td>應徵方式</td>
+                        <td>{{ company_info.recruit_url }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="ui header">職缺列表</div>
+                <div class="ui divider"></div>
+                <table class="ui celled table">
+                    <thead>
+                        <tr>
+                        <th>名稱</th>
+                        <th>數量</th>
+                        <th>內容</th>
+                        <th>備註</th>
+                        </tr>
+                    </thead>
+                        
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td data-label="名稱">
+                                {{ job.title }}
+                                {% if job.english_title %}
+                                    {{ job.english_title }}
+                                {% endif %}
+                            </td>
+                            <td data-label="數量">{{ job.quantity }}</td>
+                            <td data-label="內容">
+                                {{ job.description }}
+                                {% if job.english_description %}
+                                    {{ job.english_description }}
+                                {% endif %}
+                            </td>
+                            <td data-label="備註">
+                                {{ job.note }}
+                                {% if job.english_note %}
+                                    {{ job.english_note }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                        
+                    </table>
+            </div>
+        </div>            
+    </div>
+{% endblock %}

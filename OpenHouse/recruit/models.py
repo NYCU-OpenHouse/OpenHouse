@@ -97,6 +97,11 @@ class RecruitConfigs(models.Model):
     jobfair_end = models.TimeField(u'實體就博會結束時間', default='00:00')
     jobfair_place = models.CharField(u'實體就博會地點', max_length=150, default="")
     jobfair_info_deadline = models.DateTimeField(u'實體資訊截止填寫時間', default=timezone.now)
+    JOBFAIR_FOOD_CHOICES = (
+        ('lunch_box', u'餐盒(蛋奶素)'),
+        ('bento', u'便當(葷素)')
+    )
+    jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
     # 費用
     jobfair_booth_fee = models.IntegerField(u'實體就博會攤位費用(每攤)', default=0)
 
@@ -117,8 +122,8 @@ class RecruitConfigs(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u'1. 校徵活動設定'
-        verbose_name_plural = u'1. 校徵活動設定'
+        verbose_name = u'1. 春季徵才活動設定'
+        verbose_name_plural = u'1. 春季徵才活動設定'
 
 
 class ECESeminar(models.Model):
@@ -348,13 +353,23 @@ class JobfairInfo(models.Model):
     id = models.AutoField(primary_key=True)
     company = models.OneToOneField(RecruitSignup, verbose_name=u'公司', on_delete=models.CASCADE)
     sign_name = models.CharField(u'攤位招牌名稱', max_length=20)
+    sign_eng_name = models.CharField(u'攤位招牌英文名稱', max_length=10, help_text="請填寫英文名稱, 限制10字元內", default="")
     contact_person = models.CharField(u'聯絡人', max_length=10)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=32)
     contact_email = models.EmailField(u'聯絡人Email', max_length=128)
-    packing_tickets = models.IntegerField(u'停車證數量', default=0)
+    packing_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
+    PARKING_CHOICES = (
+        ('ticket', u'當日索取紙本停車抵用券'),
+        ('register', u'企業事先登記A車車牌號碼')
+    )
+    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True)
     job_number = models.SmallIntegerField(u'職缺人數', default=0)
-    general_lunch_box = models.SmallIntegerField(u'葷食餐點數量', default=0)
-    veget_lunch_box = models.IntegerField(u'素食餐點', default=0)
+
+    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
+    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素")
+    general_lunch_box = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    veget_lunch_box = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
     long_table = models.IntegerField(u'長桌', default=2)
     chair = models.IntegerField(u'椅子', default=5)
@@ -544,8 +559,54 @@ class CompanySurvey(models.Model):
     os_for_intern = models.BooleanField(u'外籍生實習', default=False)
     os_osc_intern = models.BooleanField(u'僑生實習', default=False)
     os_cn_intern = models.BooleanField(u'陸生實習', default=False)
-    os_other_required = models.CharField(u'境外生能力要求', blank=True, null=True, max_length=255)
+
+    # application process
+    APP_PROCESS_CHOICES = (
+        ('literal','Hand over your CV to the HR personnel at the booth. (將協助引導學生至公司攤位)'),
+        ('online', 'Upload your CV to the recruitment website. (請留下應徵網址)'),
+        ('others', '其他')
+    )
+    os_app_process = models.CharField(u'應徵方式 ', max_length=50, choices=APP_PROCESS_CHOICES, null=True)
+    os_app_cv_url = models.CharField(u'網址', max_length=64, blank=True, null=True, default='')
+    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內')
+
+    # major multiple choice field
+    os_major_ee = models.BooleanField(u'電子電機', default=False)
+    os_major_po = models.BooleanField(u'光電', default=False)
+    os_major_cs = models.BooleanField(u'資工', default=False)
+    os_major_me = models.BooleanField(u'機械', default=False)
+    os_major_mse = models.BooleanField(u'材料', default=False)
+    os_major_chem = models.BooleanField(u'化學', default=False)
+    os_major_phys = models.BooleanField(u'物理', default=False)
+    os_major_math = models.BooleanField(u'數學', default=False)
+    os_major_bs = models.BooleanField(u'生科', default=False)
+    os_major_ms = models.BooleanField(u'管理', default=False)
+    os_major_hs = models.BooleanField(u'人社', default=False)
+    os_major_law = models.BooleanField(u'法律', default=False)
+    os_major_ohter = models.CharField(u'其他', max_length=50, blank=True, null=True)
+
+    SKILL_RATING = (
+        (u'native', u'native'),
+        (u'good', u'good'),
+        (u'fair', u'fair'),
+        (u'poor', u'poor'),
+        (u'inapplicable', u'inalpplicable'),
+    )
+    # chinese skill (optional)
+    os_chinese_listen = models.CharField(u'Chinese Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_speak = models.CharField(u'Chinese Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_read = models.CharField(u'Chinese Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_write = models.CharField(u'Chinese Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    # english skill (optional)
+    os_eng_listen = models.CharField(u'English Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_speak = models.CharField(u'English Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_read = models.CharField(u'English Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
     os_seminar = models.BooleanField(u'外籍生說明會', default=False)
+    os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)
 
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
@@ -757,8 +818,8 @@ class CompanySurvey(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"企業滿意度問卷"
-        verbose_name_plural = u"企業滿意度問卷"
+        verbose_name = u"畢業生滿意度問卷"
+        verbose_name_plural = u"畢業生滿意度問卷"
 
 
 class SlotColor(models.Model):

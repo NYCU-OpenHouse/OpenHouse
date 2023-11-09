@@ -21,22 +21,43 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="seven wide column">
-            <div class="ui header">基本資料</div>
+            <div class="ui header">收據相關資料</div>
             <table class="ui celled striped table">
                 <tbody>
                 <tr>
-                    <td>統編</td>
-                    <td>{{ company_info.cid }}</td>
+                    <td>公司收據抬頭</td>
+                    <td>{{ company_info.receipt_title }}</td>
                 </tr>
+                <tr>
+                    <td>收據寄送郵遞區號(3+3)</td>
+                    <td>{{ company_info.receipt_postal_code }}</td>
+                </tr>
+                <tr>
+                    <td>收據寄送地址</td>
+                    <td>{{ company_info.receipt_postal_address }}</td>
+                </tr>
+                <tr>
+                    <td>收據聯絡人姓名</td>
+                    <td>{{ company_info.receipt_contact_name }}</td>
+                </tr>
+                <tr>
+                    <td>收據聯絡人公司電話</td>
+                    <td>{{ company_info.receipt_contact_phone }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="six wide column">
+            <div class="ui header">基本資料</div>
+            <table class="ui celled striped table">
+                <tbody>
                 <tr>
                     <td>公司名稱</td>
                     <td>{{ company_info.name }}</td>
                 </tr>
                 <tr>
-                    <td>公司收據抬頭</td>
-                    <td>{{ company_info.receipt_title }}</td>
+                    <td>公司英文名稱</td>
+                    <td>{{ company_info.english_name }}</td>
                 </tr>
                 <tr>
                     <td>公司簡稱</td>
@@ -60,12 +81,17 @@
                 </tr>
                 <tr>
                     <td><p style="color:red;">以上資料皆會顯示在職缺列表中</p></td>
-                    <td></td>
+                    <td><a class="embla__slide" href="{{ company_info.get_absolute_url }}">職缺列表</a></td>
                 </tr>
                 <tr>
-                    <td>公司英文名稱</td>
-                    <td>{{ company_info.english_name }}</td>
+                    <td>統編</td>
+                    <td>{{ company_info.cid }}</td>
                 </tr>
+                <tr>
+                    <td>公司收據抬頭</td>
+                    <td>{{ company_info.receipt_title }}</td>
+                </tr>
+
                 <tr>
                     <td>營業項目</td>
                     <td>{{ company_info.business_project }}</td>
@@ -125,32 +151,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="five wide column">
-            <div class="ui header">收據相關資料</div>
-            <table class="ui celled striped table">
-                <tbody>
-                <tr>
-                    <td>公司收據抬頭</td>
-                    <td>{{ company_info.receipt_title }}</td>
-                </tr>
-                <tr>
-                    <td>收據寄送郵遞區號(3+3)</td>
-                    <td>{{ company_info.receipt_postal_code }}</td>
-                </tr>
-                <tr>
-                    <td>收據寄送地址</td>
-                    <td>{{ company_info.receipt_postal_address }}</td>
-                </tr>
-                <tr>
-                    <td>收據聯絡人姓名</td>
-                    <td>{{ company_info.receipt_contact_name }}</td>
-                </tr>
-                <tr>
-                    <td>收據聯絡人公司電話</td>
-                    <td>{{ company_info.receipt_contact_phone }}</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="six wide column">
+            
             <div class="ui header">公司介紹</div>
             <div class="ui segment">
                 <div class="ui header">公司簡介</div>
@@ -164,6 +166,47 @@
                 <div class="ui header">應徵方式</div>
                 <p>{{ company_info.recruit_url }}</p>
             </div>
+            <div class="ui header">職缺列表</div>
+            
+            <table class="ui celled table">
+            <thead>
+                <tr>
+                <th>名稱</th>
+                <th>數量</th>
+                <th>內容</th>
+                <th>備註</th>
+                </tr>
+            </thead>
+                
+            <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td data-label="名稱">
+                        {{ job.title }}
+                        {% if job.english_title %}
+                            {{ job.english_title }}
+                        {% endif %}
+                    </td>
+                    <td data-label="數量">{{ job.quantity }}</td>
+                    <td data-label="內容">
+                        {{ job.description }}
+                        {% if job.english_description %}
+                            {{ job.english_description }}
+                        {% endif %}
+                    </td>
+                    <td data-label="備註">
+                        {{ job.note }}
+                        {% if job.english_note %}
+                            {{ job.english_note }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+                
+            </table>
+            
+            <p style="color:red;">以上資料皆會顯示在職缺列表中</p>
         </div>
     </div>
 {% endblock %}

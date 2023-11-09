@@ -1,14 +1,14 @@
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django import forms
-from company.models import Company
+from company.models import Company, Job
 from django.utils import timezone
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.translation import ugettext as _
-
-
+from django.forms import inlineformset_factory, BaseInlineFormSet
+    
 class CompanyCreationForm(forms.ModelForm):
     error_messages = {
         'password_mismatch': ('兩次輸入的密碼不一樣'),
@@ -108,7 +108,6 @@ class CompanyEditForm(forms.ModelForm):
             user.save()
         return user
 
-
 class CompanyPasswordResetForm(PasswordResetForm):
     error_messages = {
         'does_not_exist': _("這個帳號不存在"),
@@ -144,3 +143,42 @@ class CompanyPasswordResetForm(PasswordResetForm):
                 self.error_messages['does_not_exist'],
                 code='does_not_exist')
         return user
+    
+# class JobForm(forms.ModelForm):
+#     class Meta:
+#         model = Job
+#         fields = '__all__'
+#         exclude = ['cid']
+
+# JobFormSet = inlineformset_factory(Company, Job, form=JobForm, extra=1, can_delete=True)
+
+class ItemDeleteBaseInlineFormSet(BaseInlineFormSet):
+    """
+    Makes the delete field a hidden input rather than the default checkbox
+    inlineformset_factory(Book, Page, formset=HiddenDeleteBaseInlineFormSet, can_delete=True)
+    """
+    DELETION_FIELD_NAME = 'DELETE'
+    def add_fields(self, form, index):
+        super(ItemDeleteBaseInlineFormSet, self).add_fields(form, index)
+        if self.can_delete:
+            form.fields['DELETE'] = forms.BooleanField(
+                label=('Delete'),
+                required=False,
+                widget=forms.CheckboxInput(attrs={"class": "btn_delete"})
+            )
+ 
+ 
+ItemModelFormSet = forms.inlineformset_factory(Company,
+                                               Job,
+                                                fields = ('title', 
+                                                          'quantity', 
+                                                          'is_liberal', 
+                                                          'is_foreign', 
+                                                          'description', 
+                                                          'note', 
+                                                          'english_title', 
+                                                          'english_description', 
+                                                          'english_note'),
+                                               extra=1,
+                                               formset=ItemDeleteBaseInlineFormSet,
+                                               )

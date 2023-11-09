@@ -17,5 +17,7 @@ urlpatterns = [
     url(r'^reg_card/$', views.RegisterCard, name='reg_card'),
     url(r'^collect_points/$', views.collect_points, name='collect_points'),
     url(r'^exchange_prize/$', views.exchange_prize, name='exchange_prize'),
+    url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
+
     #export urls are defined in admin.py
 ]

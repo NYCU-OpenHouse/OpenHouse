@@ -506,14 +506,15 @@ def jobfair_info(request):
         
     try:
         deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
+        food_type = RecruitConfigs.objects.values('jobfair_food')[0]['jobfair_food']
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     reach_deadline =timezone.now() > deadline
-    parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=3, extra=3,
+    parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=1, extra=1,
                                              fields=('id', 'license_plate_number', 'info'),
                                              widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
+                                                 attrs={'placeholder': '需要-連字號，例AA-1234、4321-BB'})})
 
     if request.POST:
         if not reach_deadline:
@@ -530,6 +531,7 @@ def jobfair_info(request):
                 return redirect(jobfair_info)
             else:
                 print(form.errors)
+
         else:
             error_msg = "實體就博會資訊填寫時間已截止!若有更改需求，請來信或來電。"
             return render(request, 'recruit/error.html', locals())
@@ -1323,6 +1325,7 @@ def list_jobs(request):
             try:
                 target_company = Company.objects.get(cid=company.cid, category=category_filtered)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
@@ -1340,6 +1343,7 @@ def list_jobs(request):
             try:
                 target_company = Company.objects.get(cid=company.cid)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,

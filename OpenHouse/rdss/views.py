@@ -271,6 +271,8 @@ def JobfairInfo(request):
     sidebar_ui = {'jobfair_info': "active"}
     menu_ui = {'rdss': "active"}
     mycompany = Company.objects.filter(cid=request.user.cid).first()
+    food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
+
     if mycompany.chinese_funded:
         return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
@@ -1053,6 +1055,7 @@ def ListJobs(request):
             try:
                 target_company = company.models.Company.objects.get(cid=signup.cid, category=category_filtered)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
@@ -1070,6 +1073,7 @@ def ListJobs(request):
             try:
                 target_company = company.models.Company.objects.get(cid=signup.cid)
                 companies.append({
+                    'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
                     'category': target_company.category,
