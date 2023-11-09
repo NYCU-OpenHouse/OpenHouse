@@ -96,6 +96,12 @@ class RdssConfigs(models.Model):
     jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
     jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
 
+    JOBFAIR_FOOD_CHOICES = (
+        ('lunch_box', u'餐盒(蛋奶素)'),
+        ('bento', u'便當(葷素)')
+    )
+    jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
+
     class Meta:
         managed = True
 
@@ -412,14 +418,19 @@ class JobfairInfo(models.Model):
     company = models.OneToOneField('Signup', to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE)
-    signname = models.CharField(u'攤位招牌名稱', max_length=30)
+    signname = models.CharField(u'攤位招牌名稱', max_length=20)
+    sign_eng_name = models.CharField(u'攤位招牌英文名稱', max_length=10, help_text="請填寫英文名稱, 限制10字元內", default="")
     disable_proofread = models.BooleanField(u'無需校對', default=False)
     contact = models.CharField(u'聯絡人', max_length=30)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=16,
                                       validators=[validate_mobile])
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
-    meat_lunchbox = models.SmallIntegerField(u'葷食便當數量', default=0)
-    vege_lunchbox = models.SmallIntegerField(u'素食便當數量', default=0)
+    
+    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
+    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素")
+    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0)
+    vege_lunchbox = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0)
+
     power_req = models.CharField(u'用電需求', max_length=256,
                                  help_text="請填寫當天會使用的用電設備")
     ps = models.TextField(u'其它需求', blank=True)

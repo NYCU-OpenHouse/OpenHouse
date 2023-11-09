@@ -26,20 +26,24 @@
             請務必確認攤位招牌名稱中文+英文大小寫是否正確。
             將再自行裝潢者，請務必另勾選無需校對欄位，以確定免除校對流程。
         </p>
-        <div class="fields">
-            <div class="ten wide field required">
-                
-                <label>{{ form.signname.label }} (含英文名稱)</label>
+        <div class="two fields">
+            <div class="field required">
+                <label>{{ form.signname.label }}</label>
                 {{ form.signname }}
-                {{ form.signname.errors }}
+                <p>建議為公司簡稱, 20字內</p>
             </div>
-            <div class="six wide field">
-                <label>  {{ form.disable_proofread.label }}</label>
-                <div class="field">
-                    {{ form.disable_proofread }}
-                    「此招牌名稱僅供我方工作人員辨識用。職發組無須與我校對，可逕自送印」
-                    {{ form.disable_proofread.errors }}
-                </div>
+            <div class="field required">
+                <label>{{ form.sign_eng_name.label }}</label>
+                {{ form.sign_eng_name }}
+                <p>{{ form.sign_eng_name.help_text }}</p>
+            </div>
+        </div>
+        <div class="sixteen wide field">
+            <label>  {{ form.disable_proofread.label }}</label>
+            <div class="field">
+                {{ form.disable_proofread }}
+                「此招牌名稱僅供我方工作人員辨識用。職發組無須與我校對，可逕自送印」
+                {{ form.disable_proofread.errors }}
             </div>
         </div>
         
@@ -65,16 +69,25 @@
         <h3 class="ui dividing header">餐點數量</h3>
         <p>每攤位免費提供<span style="color:red;">最多 3 人份午餐</span>。若超過免費數量，將收取超出的餐點費用。</p>
         <div class="fields">
-            <div class="six wide field required">
-                <label>{{ form.meat_lunchbox.label }} (若不索取，填0即可)</label>
-                {{ form.meat_lunchbox }}
-                {{ form.meat_lunchbox.errors }}
-            </div>
-            <div class="six wide field required">
-                <label>{{ form.vege_lunchbox.label }} (若不索取，填0即可)</label>
-                {{ form.vege_lunchbox }}
-                {{ form.vege_lunchbox.errors }}
-            </div>
+            {% if food_type == 'bento' %}
+                <div class="six wide field required">
+                    <label>{{ form.meat_lunchbox.label }} (若不索取，填0即可)</label>
+                    {{ form.meat_lunchbox }}
+                    {{ form.meat_lunchbox.errors }}
+                </div>
+                <div class="six wide field required">
+                    <label>{{ form.vege_lunchbox.label }} (若不索取，填0即可)</label>
+                    {{ form.vege_lunchbox }}
+                    {{ form.vege_lunchbox.errors }}
+                </div>
+            {% else %}
+                <div class="six wide field required">
+                    <label>{{ form.lunch_box.label }}</label>
+                    {{ form.lunch_box }}
+                    {{ form.lunch_box.help_text }}
+                    {{ form.lunch_box.errors }}
+                </div>
+            {% endif %}
         </div>
         <div class="fields">
             <div class="fourteen wide field required">

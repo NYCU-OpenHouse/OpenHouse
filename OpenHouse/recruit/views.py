@@ -506,6 +506,7 @@ def jobfair_info(request):
         
     try:
         deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
+        food_type = RecruitConfigs.objects.values('jobfair_food')[0]['jobfair_food']
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     

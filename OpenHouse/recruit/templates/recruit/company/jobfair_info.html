@@ -2,25 +2,32 @@
 {% load static %}
 
 {% block 'custom_head' %}
-    <title>實體就博會資訊 | OpenHouse 企業校園徵才</title>
+    <title>就業博覽會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form method="post" class="ui info form" action=".">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 校園徵才 - 實體就博會資訊</h1>
+        <h1 class="ui dividing header">Open House 校園徵才 - 就業博覽會資訊</h1>
         {% if jobfair_info_object %}
             <div class="ui teal compact message">
-                實體就博會資訊填寫已完成，您也可以修改資訊，再次送出。
+                就業博覽會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 {{ deadline }} 前完成「實體就博會資訊」填寫，以進行行政施工等準備作業</h2>
+        <h2 style="color:red">請企業於 {{ deadline }} 前完成「就業博覽會資訊」填寫，以進行行政施工等準備作業</h2>
         <h3 class="ui dividing header">攤位資訊</h3>
-        <div class="field required">
-            <label>{{ form.sign_name.label }}</label>
-            {{ form.sign_name }}
-            <p>建議為公司簡稱</p>
+        <div class="two fields">
+            <div class="field required">
+                <label>{{ form.sign_name.label }}</label>
+                {{ form.sign_name }}
+                <p>建議為公司簡稱, 20字內</p>
+            </div>
+            <div class="field required">
+                <label>{{ form.sign_eng_name.label }}</label>
+                {{ form.sign_eng_name }}
+                <p>{{ form.sign_eng_name.help_text }}</p>
+            </div>
         </div>
         <div class="three fields">
             <div class="field required">
@@ -36,7 +43,9 @@
                 {{ form.contact_email }}
             </div>
         </div>
+
         <div class="three fields">
+            {% if food_type == 'bento' %}
             <div class="field">
                 <label>{{ form.general_lunch_box.label }}</label>
                 {{ form.general_lunch_box }}
@@ -45,6 +54,13 @@
                 <label>{{ form.veget_lunch_box.label }}</label>
                 {{ form.veget_lunch_box }}
             </div>
+            {% else %}
+            <div class="field">
+                <label>{{ form.lunch_box.label }}</label>
+                {{ form.lunch_box }}
+                {{ form.lunch_box.help_text }}
+            </div>
+            {% endif %}
             <div class="field">
                 {% now 'Y' as current_year %}
                 {% now 'm' as current_month %}
@@ -60,8 +76,7 @@
                 </div>
             </div>
         </div>
-
-        <p>每攤位免費提供<span style="color:red;">最多 3 人份午餐</span>。若超過免費數量，將收取超出的餐點費用。</p>
+        <p>每攤位免費提供<span style="color:red;"></span>。</p>
 
         <div class="field">
             <label>{{ form.send_obj.label }}</label>
@@ -96,7 +111,7 @@
                 如企業攤位需請本校施工廠商進行【加價-客製化修改】(例如改為隔間攤位、攤位招牌架高等等，請於本欄位說明，後續將由施工廠商評估是否可施作，並提供進一步報價，費用亦由企業逕付本校施工廠商(非匯給本校)。</p>
         </div>
         <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
-        <p>說明(1)：參加實體就博會之企業，至多提供3部汽車入校停車費抵免；企業可選擇「提供車牌號碼」與「索取紙本停車抵用券」兩種並行。如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
+        <p>說明(1)：參加就業博覽會之企業，至多提供3部汽車入校停車費抵免；企業可選擇「提供車牌號碼」與「索取紙本停車抵用券」兩種並行。如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
         <p>說明(2)：本校進出車輛自2020年1月已改用車號辨識系統，可加速企業同仁離校速度與簡化繳費流程，如選擇此項之車輛須提供完整車號(例AA-1234、4321-BB)；若無法事先確認入校車輛之車牌號碼，請選擇索取紙本汽車抵用券。</p>
         <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
         <div class="field">
