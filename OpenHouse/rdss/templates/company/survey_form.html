@@ -2,6 +2,34 @@
 
 {% block 'custom_head' %}
     <title>畢業生滿意度問卷 | OpenHouse 企業校園徵才</title>
+    <script>
+        function init() {
+            var selectedValue = $('#id_os_app_process').val();
+            if (selectedValue === 'online') {
+                    $('#cvUrlField').show();
+            } else if (selectedValue === 'others') {
+                $('#otherField').show();
+            }
+        }
+
+         $(document).ready(function () {
+            init();
+
+            $('#id_os_app_process').change(function () {
+                $('#cvUrlField').hide();
+                $('#otherField').hide();
+        
+                var selectedValue = $(this).val();
+                console.log(selectedValue);
+        
+                if (selectedValue === 'online') {
+                    $('#cvUrlField').show();
+                } else if (selectedValue === 'others') {
+                    $('#otherField').show();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 
@@ -92,6 +120,15 @@
                     <td>
                         <p>若當天有其他應徵方式，請以英文敘明。</p>
                         {{ form.os_app_process }}
+                        <div id="cvUrlField" style="display: none;">
+                            <label for="{{ form.os_app_cv_url.id_for_label }}">網址:</label>
+                            {{ form.os_app_cv_url }}
+                        </div>
+                        <div id="otherField" style="display: none;">
+                            <label for="{{ form.os_app_other.id_for_label }}">其他:</label>
+                            {{ form.os_app_other }}
+                            {{ form.os_app_other.help_text }}
+                        </div>
                     </td>
                 </tr>
                 <tr>
