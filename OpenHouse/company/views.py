@@ -78,9 +78,6 @@ def CompanyEdit(request):
         
     company_info = company.models.Company.objects.get(cid=request.user.cid)
     jobs = Job.objects.filter(cid=request.user.id)
-    
-    if (len(jobs) == 0):
-        messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')
 
     if request.POST:
         form = CompanyEditForm(request.POST, request.FILES, instance=user)
@@ -111,6 +108,15 @@ def CompanyEdit(request):
         form = CompanyEditForm(instance=user)
         job_formset = ItemModelFormSet(instance=user)
         job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
+    
+    if (len(jobs) == 0):
+        messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')    
+    if (company_info.category == '其他'):
+        print(company_info.category)
+        messages.error(request, '目前公司類別為其他，請至公司主要營業項目修改公司類別')
+
+
+        
 
     return render(request, 'company_edit_form.html', locals())
 
