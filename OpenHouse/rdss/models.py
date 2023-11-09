@@ -427,9 +427,9 @@ class JobfairInfo(models.Model):
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     
     LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
-    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素")
-    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0)
-    vege_lunchbox = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0)
+    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
+    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    vege_lunchbox = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
 
     power_req = models.CharField(u'用電需求', max_length=256,
                                  help_text="請填寫當天會使用的用電設備")
