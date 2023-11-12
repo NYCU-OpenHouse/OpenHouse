@@ -371,26 +371,21 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('cid',)
     filter_horizontal = ()
     inlines = [JobInline]
-    
-    actions = ['update_to_others', 'update_to_gov', 'update_to_legal']
-    # update invalid company category
-    def update_to_others(self, request, queryset):
-        for company in queryset:
-            company.category = "其他"
-            company.save()
-    update_to_others.short_description = "變更類別至 '其他'"
 
-    def update_to_gov(self, request, queryset):
-        for company in queryset:
-            company.category = "公家單位"
-            company.save()
-    update_to_gov.short_description = "變更類別至 '公家單位'"
+    # upadet category action
+    actions = [f'update_to_{category[0]}' for category in Company.CATEGORYS]
+    def generate_update_action(self, new_category):
+        def update_category(self, request, queryset):
+            for company in queryset:
+                company.category = new_category
+                company.save()
+        return update_category
 
-    def update_to_legal(self, request, queryset):
-        for company in queryset:
-            company.category = "財團法人/社團法人"
-            company.save()
-    update_to_legal.short_description = "變更類別至 '財團法人/社團法人'"
+    for category in Company.CATEGORYS:
+        action_name = f'update_to_{category[0]}'
+        action_func = generate_update_action(None, category[0])
+        setattr(UserAdmin, action_name, action_func)
+        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category[1]}'")
 
     def get_urls(self):
         urls = super(UserAdmin, self).get_urls()
