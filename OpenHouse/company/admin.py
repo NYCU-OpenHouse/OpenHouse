@@ -252,6 +252,24 @@ class UserChangeForm(forms.ModelForm):
             # Remove object with old cid from table
             rdss_model.Signup.objects.get(cid=old_cid).delete()
 
+'''
+List all companies not in the category list
+'''
+class InvalidCategoryFilter(admin.SimpleListFilter):
+    title = '非法類別'
+    parameter_name = 'invalid_category_filter'
+
+    def lookups(self, request, model_admin):
+        categories = [category[0] for category in Company.CATEGORYS]
+        companies = Company.objects.values_list('category', flat=True).distinct()
+        invalid_categories = set(companies) - set(categories)
+        return [(category, category) for category in invalid_categories]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category=self.value())
+        return queryset
+
 class JobInline(admin.StackedInline):
     model = Job
     fields = ('title', 'quantity', 'is_liberal', 'is_foreign', 'description', 'note', 'english_title', 'english_description', 'english_note')
@@ -266,7 +284,7 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'jobs_summary', 'last_update')
-    list_filter = ('category',)
+    list_filter = ('category', InvalidCategoryFilter, )
     fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
@@ -353,6 +371,26 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('cid',)
     filter_horizontal = ()
     inlines = [JobInline]
+    
+    actions = ['update_to_others', 'update_to_gov', 'update_to_legal']
+    # update invalid company category
+    def update_to_others(self, request, queryset):
+        for company in queryset:
+            company.category = "其他"
+            company.save()
+    update_to_others.short_description = "變更類別至 '其他'"
+
+    def update_to_gov(self, request, queryset):
+        for company in queryset:
+            company.category = "公家單位"
+            company.save()
+    update_to_gov.short_description = "變更類別至 '公家單位'"
+
+    def update_to_legal(self, request, queryset):
+        for company in queryset:
+            company.category = "財團法人/社團法人"
+            company.save()
+    update_to_legal.short_description = "變更類別至 '財團法人/社團法人'"
 
     def get_urls(self):
         urls = super(UserAdmin, self).get_urls()
