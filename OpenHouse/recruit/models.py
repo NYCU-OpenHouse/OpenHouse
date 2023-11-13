@@ -30,14 +30,19 @@ CATEGORYS = (
     (u'光電光學', u'光電光學'),
     (u'資訊軟體', u'資訊軟體'),
     (u'集團', u'集團'),
-    (u'綜合', u'綜合'),
     (u'人力銀行', u'人力銀行'),
-    (u'機構', u'機構'),
     (u'新創', u'新創'),
-    (u'主辦保留', u'主辦保留'),
     (u'生科醫療', u'生科醫療'),
+    (u'金融/保險/不動產', u'金融/保險/不動產'),
+    (u'出版影音/藝術、娛樂及休閒服務業', u'出版影音/藝術、娛樂及休閒服務業'),
+    (u'醫療保健及社會工作服務業', u'醫療保健及社會工作服務業'),
     (u'公家單位', u'公家單位'),
-    (u'通用', u'通用'),
+    (u'財團/社團/行政法人', u'財團/社團/行政法人'),
+    (u'住宿/餐飲業', u'住宿/餐飲業'),
+    (u'批發及零售/運輸及倉儲業', u'批發及零售/運輸及倉儲業'),
+    (u'電力及燃氣供應業', u'電力及燃氣供應業'),
+    (u'傳統製造業', u'傳統製造業'),
+    (u'其他', u'其他'),
 )
 
 
@@ -813,7 +818,7 @@ class CompanySurvey(models.Model):
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
     # plan_to_recruit     = models.IntegerField(u'2017年預計招募職缺數', help_text="此數據不會對外公開，僅供主辦單位內部作業統計用途。")
     nycu_employees = models.IntegerField(u'本校校友人數', default=0)
-    category = models.CharField(u'企業類別', max_length=10, choices=CATEGORYS)
+    category = models.CharField(u'企業類別', max_length=37, choices=CATEGORYS)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
