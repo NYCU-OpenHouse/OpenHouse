@@ -427,6 +427,12 @@ class JobfairInfo(models.Model):
                                       validators=[validate_mobile])
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     
+    PARKING_CHOICES = (
+        ('ticket', u'當日索取紙本停車抵用券'),
+        ('register', u'企業事先登記A車車牌號碼')
+    )
+    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True, default='ticket')
+    
     LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
     lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
     meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)

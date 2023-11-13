@@ -4,6 +4,29 @@
 {% block 'custom_head' %}
     <title>就博會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/rdss/info.css" %} rel="stylesheet">
+    <script>
+        function init() {
+            var selectedValue = $('#id_parking_type').val();
+            if (selectedValue === 'register') {
+                    $('#registerField').show();
+            }
+        }
+
+         $(document).ready(function () {
+            init();
+
+            $('#id_parking_type').change(function () {
+                $('#registerField').hide();
+        
+                var selectedValue = $(this).val();
+                console.log(selectedValue);
+        
+                if (selectedValue === 'register') {
+                    $('#registerField').show();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block 'content' %}
@@ -103,32 +126,37 @@
         {#     {{ form.ps }}  #}
         {#     {{ form.ps.errors }}  #}
         {# </div>  #}
-        <h3 class="ui dividing header">入校之汽車車號</h3>
+
+        <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
+        <p>說明(1)：參加2023/3/9(六)就業博覽會之企業，至多提供1部汽車入校停車費抵免；企業可選擇「事先登記車牌號碼」與「當日索取紙本停車抵用券」兩種並行。</p>
+        <ul>
+            <li>
+                <span style="color:red; background-color: yellow;">當日索取紙本停車抵用券</span>: 本組當日發放紙本停車證，可免費抵用一台汽車的停車費。
+            </li>
+            <li>
+                <span style="color:red; background-color: yellow;">企業事先登記A車車牌號碼</span>: 本組呈報車號給駐警隊，請駐警隊登記A車免費。活動當天A車免費進出校園一次，若開其他車則須付費。
+            </li>
+        </ul>
+        <p>說明(2)：本校進出車輛自2020年1月已改用車號辨識系統，可加速企業同仁離校速度與簡化繳費流程，如選擇此項之車輛須提供完整車號(需要-連字號，例AA-1234、4321-BB)；若無法事先確認入校車輛之車牌號碼，請選擇索取紙本汽車抵用券。</p>
+        <p>說明(3)：如超過基本提供數量，須自付每部50元之單日計次停車費(備註：無法提供正式收據)，或可選擇每時50元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
+        <!-- <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p> -->
         <div class="field">
-            <p>說明(1)：本校進出車輛自2020年已改用車號辨識系統，為加速企業同仁離校速度與簡化繳費流程，請提供預計入校所有車輛之完整車號(未能於期限前完成者一律提供紙本停車證)。</p>
-            <p>說明(2)：每間企業已提供汽車入校停車費抵免，惟因活動當日為平常上班日，建議多人共乘同部汽車，以免車位難覓。</p>
-            <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p>
-            <p style="color: red">★若不需要停車折抵，留空即可</p>
+            <label>停車證領取方式</label>
+            {{ form.parking_type.errors }}
+            {{ form.parking_type }}
+        </div>
+        <div class="field" id="registerField" style="display: none;">
             {{ formset.management_form }}
             {% for f in formset %}
                 {{ f.id }}
                 {{ f.info }}
                 <label>
-                    {{ f.license_plate_number.label }} {# {{ forloop.counter }} #} {{ f.license_plate_number.errors }}</label>
+                    {{ f.license_plate_number.label }} {{ forloop.counter }} {{ f.license_plate_number.errors }}</label>
                 <div class="fields">
-                    <div class="fourteen wide field">
                         {{ f.license_plate_number }}
-                    </div>
-                    {% if formset.can_delete %}
-                        <div class="two wide field">
-                            <div class="ui checkbox">
-                                {{ f.DELETE }}
-                                <label>刪除</label>
-                            </div>
-                        </div>
-                    {% endif %}
                 </div>
             {% endfor %}
+            <p style="color:red; background-color: yellow;">車輛須提供完整車號(需要-連字號，例AA-1234、4321-BB)</p>
         </div>
         <button class="ui blue button" style="float: right;" type="submit">送出</button>
     </form>
