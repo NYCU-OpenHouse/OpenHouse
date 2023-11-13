@@ -291,7 +291,7 @@ def JobfairInfo(request):
     parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=1, extra=1,
                                              fields=('id', 'license_plate_number', 'info'),
                                              widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
+                                                 attrs={'placeholder': '需要連字號：例AA-1234、4321-BB'})})
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
