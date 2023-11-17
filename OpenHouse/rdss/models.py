@@ -180,9 +180,9 @@ class SeminarSlot(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期')
     session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
-    company = models.OneToOneField('Signup', to_field='cid',
+    company = models.ForeignKey('Signup', to_field='cid',
                                    verbose_name=u'公司',
-                                   on_delete=models.CASCADE, null=True, blank=True)
+                                   on_delete=models.CASCADE, null=True, blank=True, unique=False)
     place = models.ForeignKey('SlotColor', null=True, blank=True,
                         verbose_name=u'場地', on_delete=models.SET_NULL)
     points = models.SmallIntegerField(u'集點點數', default=1)
