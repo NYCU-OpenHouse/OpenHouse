@@ -101,9 +101,7 @@ def recruit_signup(request):
 
     if request.POST:
         data = request.POST.copy()
-        # Because seminar in 2022 is not used, we need to manually set value
-        data['seminar'] = 'none'
-        data['seminar_online'] = 'none'
+        # decide cid in the form
         data['cid'] = request.user.cid
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():
@@ -1217,8 +1215,12 @@ def Status(request):
     mycompany = Company.objects.get(cid=mycid)
     
     try:
-        if signup_data.seminar != 'none':
-            fee += configs.session_fee
+        # session fee calculation
+        if signup_data.seminar == 'attend_short':
+            fee += configs.session_fee_short
+        elif signup_data.seminar == 'attend_long':
+            fee += configs.session_fee_long
+        # ece fee calculation
         num_of_ece = len(signup_data.seminar_ece.all())
         if mycompany.ece_member:
             discount_num_of_ece = 0

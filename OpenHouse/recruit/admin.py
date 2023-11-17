@@ -4,7 +4,7 @@ from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot, \
-    OnlineSeminarOrder, OnlineSeminarInfo, ECESeminar
+    OnlineSeminarOrder, OnlineSeminarInfo, ECESeminar, CompanyCatogories
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -50,6 +50,9 @@ class StudentAdmin(admin.ModelAdmin):
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name', 'ece_member_discount')
 
+@admin.register(CompanyCatogories)
+class CompanyCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount')
 
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
@@ -189,7 +192,7 @@ class JobfairOrderAdmin(admin.ModelAdmin):
 
 @admin.register(JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
-    list_display = ('serial_no', 'category', 'company', 'updated')
+    list_display = ('serial_no', 'company', 'updated')
 
 
 @admin.register(OnlineJobfairSlot)
