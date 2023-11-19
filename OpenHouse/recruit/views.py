@@ -85,6 +85,7 @@ def recruit_signup(request):
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -162,7 +163,7 @@ def seminar_select_form_gen(request):
     for week in range(0, weeks):
         # separate into 5 in each list (there are 5 days in a week)
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
-                              for day in range(0, 5)])
+                              for day in range(0, 4)])
 
     slot_colors = SlotColor.objects.all()
     session_list = [
@@ -729,38 +730,20 @@ def jobfair_select_control(request):
         raise Http404("What are u looking for?")
 
     slot_group = [
-        {"slot_type": "半導體", "display": "半導體", "category": ["半導體"], "slot_list": list(),
+        {"slot_type": "一般企業", "display": "一般企業", 
+         "category": ['None'], 
+         "slot_list": list(),
+         "is_mygroup": True, "color": "purple"},
+
+        {"slot_type": "人文、管理與金融企業", "display": "人文、管理與金融企業", 
+         "category": ['金融/保險/不動產', '出版影音/藝術、娛樂及休閒服務業', '財團/社團/行政法人',
+                      '住宿/餐飲業', '批發及零售/運輸及倉儲業'], 
+         "slot_list": list(),
          "is_mygroup": False, "color": "pink"},
 
-        {"slot_type": "資訊軟體", "display": "資訊軟體", "category": ["資訊軟體"], "slot_list": list(),
+        {"slot_type": "智慧醫療與科技企業", "display": "智慧醫療與科技企業", 
+         "category": ['醫療保健及社會工作服務業'], "slot_list": list(),
          "is_mygroup": False, "color": "blue"},
-
-        {"slot_type": "消費電子", "display": "消費電子", "category": ["消費電子"], "slot_list": list(),
-         "is_mygroup": False, "color": "yellow"},
-
-        {"slot_type": "網路通訊", "display": "網路通訊", "category": ["網路通訊"], "slot_list": list(),
-         "is_mygroup": False, "color": "teal"},
-
-        {"slot_type": "光電光學", "display": "光電光學", "category": ["光電光學"], "slot_list": list(),
-         "is_mygroup": False, "color": "grey"},
-
-        {"slot_type": "綜合", "display": "綜合(綜合、集團、機構、人力銀行)"
-            , "category": ["綜合", "集團", "機構", "人力銀行"],
-         "slot_list": list(), "is_mygroup": False, "color": "purple"},
-
-        {"slot_type": "新創", "display": "新創", "category": ["新創"], "slot_list": list(),
-         "is_mygroup": False, "color": "brown"},
-        {"slot_type": "主辦保留", "display": "主辦保留", "category": ["主辦保留"], "slot_list": list(),
-         "is_mygroup": False, "color": "olive"},
-
-        {"slot_type": "生科醫療", "display": "生科醫療", "category": ["生科醫療"], "slot_list": list(),
-         "is_mygroup": False, "color": "red"},
-        
-        {"slot_type": "公家單位", "display": "公家單位", "category": ["公家單位"], "slot_list": list(),
-         "is_mygroup": False, "color": "green"},
-        {"slot_type": "通用", "display": "通用", "category": ["通用"], "slot_list": list(),
-         "is_mygroup": True, "color": "purple"},
-        
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -769,7 +752,8 @@ def jobfair_select_control(request):
         ret['success'] = False
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
-    # 把自己的group enable並放到最前面顯示
+    
+    # 找到自己的group enable並放到最前面顯示
     try:
         company_category = my_signup.get_company().category
         my_slot_group = next(group for group in slot_group if company_category in group['category'])
@@ -779,17 +763,24 @@ def jobfair_select_control(request):
     except StopIteration:
         pass
 
-    
     if action == "query":
         companyname = dict(Company.objects.values_list('cid', 'shortname'))
+
+        handled_slots = set()
         for group in slot_group:
-            slot_list = JobfairSlot.objects.filter(category__in=group["category"])
+            if (group["category"] == ['None']):
+                slot_list = JobfairSlot.objects.filter(category__isnull=True)
+            else: 
+                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"])
             for slot in slot_list:
+                if slot.serial_no in handled_slots:
+                    continue
                 slot_info = dict()
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
                     companyname[slot.company_id]
                 group['slot_list'].append(slot_info)
+                handled_slots.add(slot.serial_no)
 
         # remove those slot list is equal to 0
         for group in slot_group.copy():
@@ -852,13 +843,10 @@ def jobfair_select_control(request):
 
         try:
             my_slot_group = next(group for group in slot_group if company_category in group['category'])
-            if slot.category not in my_slot_group['category'] and slot.category != "通用":
+            if slot.category.exists() and company_category not in my_slot_group['category']:
                 return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
         except StopIteration:
             pass
-            
-        if slot.category == '主辦保留':
-            return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
 
         slot.company = my_signup
         slot.save()
@@ -947,7 +935,7 @@ def Sponsor(request):
     try:
         sponsor = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
-        error_msg = "貴公司尚未報名本次「校園徵才」活動，請於左方點選「填寫報名資料」"
+        error_msg = "貴公司尚未報名本次「春季徵才」活動，請於左方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
 
     if request.POST:
@@ -1152,10 +1140,8 @@ def Status(request):
 
     slot_info = {
         "seminar_select_time": "選位時間正在排定中",
-        "online_seminar_select_time": "選位時間正在排定中",
         "jobfair_select_time": "選位時間正在排定中",
         "seminar_slot": "-",
-        "online_seminar_slot": "-",
         "jobfair_slot": "-",
     }
     seminar_session_display = {
@@ -1166,13 +1152,7 @@ def Status(request):
         "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
         "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
     }
-    seminar_online_session_display = {
-        "noon1": "{}~{}".format(configs.session_online_1_start, configs.session_online_1_end),
-        "noon2": "{}~{}".format(configs.session_online_2_start, configs.session_online_2_end),
-        "evening1": "{}~{}".format(configs.session_online_3_start, configs.session_online_3_end),
-        "evening2": "{}~{}".format(configs.session_online_4_start, configs.session_online_4_end),
-        "evening3": "{}~{}".format(configs.session_online_5_start, configs.session_online_5_end),
-    }
+
     # 問卷狀況
     try:
         recruit.models.CompanySurvey.objects.get(cid=request.user.cid)
@@ -1182,28 +1162,19 @@ def Status(request):
 
     # 選位時間和數量狀態
     seminar_select_time = recruit.models.SeminarOrder.objects.filter(company=mycid).first()
-    online_seminar_select_time = recruit.models.OnlineSeminarOrder.objects.filter(company=mycid).first()
     jobfair_select_time = recruit.models.JobfairOrder.objects.filter(company=mycid).first()
     if seminar_select_time:
         slot_info['seminar_select_time'] = seminar_select_time.time
-    if online_seminar_select_time:
-        slot_info['online_seminar_select_time'] = online_seminar_select_time.time
     if jobfair_select_time:
         slot_info['jobfair_select_time'] = jobfair_select_time.time
 
     seminar_slot = recruit.models.SeminarSlot.objects.filter(company=mycid).first()
-    online_seminar_slot = recruit.models.OnlineSeminarSlot.objects.filter(company=mycid).first()
     jobfair_slot = recruit.models.JobfairSlot.objects.filter(company=mycid)
     if not seminar_slot:
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
     else:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
                                                    seminar_session_display[seminar_slot.session])
-    if not online_seminar_slot:
-        slot_info['online_seminar_slot'] = "請依時段於左方選單選位"
-    else:
-        slot_info['online_seminar_slot'] = "{} {}".format(online_seminar_slot.date,
-                                                          seminar_online_session_display[online_seminar_slot.session])
     if not jobfair_slot:
         slot_info['jobfair_slot'] = "請依時段於左方選單選位"
     else:
@@ -1212,6 +1183,7 @@ def Status(request):
     # Fee display
     fee = 0
     discount = 0
+    discount_text = ""
     mycompany = Company.objects.get(cid=mycid)
     
     try:
@@ -1220,6 +1192,7 @@ def Status(request):
             fee += configs.session_fee_short
         elif signup_data.seminar == 'attend_long':
             fee += configs.session_fee_long
+
         # ece fee calculation
         num_of_ece = len(signup_data.seminar_ece.all())
         if mycompany.ece_member:
@@ -1230,17 +1203,25 @@ def Status(request):
             discount += configs.session_ece_fee * discount_num_of_ece
         if num_of_ece:
             fee += configs.session_ece_fee * num_of_ece
-        if signup_data.seminar_online != "none":
-            fee += configs.session_online_fee
+
+        # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
+                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             elif mycompany.gloria_startup:
+                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+            elif signup_data.first_participation:
+                discount_text = "貴公司為首次參加本活動，可享有第一攤免費優惠"
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+            elif signup_data.zone and signup_data.zone != '一般企業':
+                discount_text = "貴公司為{}專區，可享有第一攤免費優惠".format(signup_data.zone)
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             fee += signup_data.jobfair * configs.jobfair_booth_fee
-        if signup_data.jobfair_online:
-            fee += configs.jobfair_online_fee
+
         if mycompany.category == '公家單位':
+            discount_text = "貴公司為公家單位，可享有免費優惠"
             discount = fee
     except AttributeError:
         # Company has not sign up
@@ -1265,16 +1246,11 @@ def Status(request):
         except ObjectDoesNotExist:
             seminar_info = None
         try:
-            online_seminar_info = recruit.models.OnlineSeminarInfo.objects.get(company=request.user.cid)
-        except ObjectDoesNotExist:
-            online_seminar_info = None
-        try:
             jobfair_info = JobfairInfo.objects.get(company=company)
         except ObjectDoesNotExist:
             jobfair_info = None
     else:
         seminar_info = None
-        online_seminar_info = None
         jobfair_info = None
         
     # check recepit information whether submit or not
@@ -1296,8 +1272,6 @@ def Status(request):
     menu_ui = {'recruit': "active"}
 
     step_ui[0] = "completed" if signup_data else "active"
-    step_ui[1] = "completed" if jobfair_slot or seminar_slot or online_seminar_slot else "active"
-    step_ui[2] = "completed" if jobfair_info or seminar_info or online_seminar_info else "active"
 
     return render(request, 'recruit/company/status.html', locals())
 

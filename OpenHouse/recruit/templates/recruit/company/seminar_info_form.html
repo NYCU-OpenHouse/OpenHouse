@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block 'custom_head' %}
-    <title>實體說明會資訊 | OpenHouse 企業校園徵才</title>
+    <title>說明會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/recruit/info.css" %} rel="stylesheet">
 {% endblock %}
 
 {% block 'content' %}
     <form class="ui info form" method="POST" action="{% url 'recruit_seminar_info' %}">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 校園徵才 - 實體說明會資訊</h1>
+        <h1 class="ui dividing header">Open House 春季徵才 - 說明會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
@@ -30,10 +30,10 @@
             </div>
         {% elif seminar_info_object %}
             <div class="ui teal compact message">
-                實體說明會資訊填寫已完成，您也可以修改資訊，再次送出。
+                說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 1/9 前完成「實體說明會資訊填寫」，以利活動宣傳</h2>
+        <h2 style="color:red">請企業於 1/8 前完成「說明會資訊填寫」，以利活動宣傳</h2>
         <h3 class="ui dividing header">主題資訊</h3>
         <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>
@@ -81,14 +81,14 @@
                 </div>
             </div>
         </div>
-        <div class="three fields">
-            <div class="field">
+        <div class="two fields">
+            <!-- <div class="field">
                 <label>{{ form.snack_box.label }}{{ form.snack_box.errors }}</label>
                 <p>基本提供50份餐點給參與同學(費用已含在活動費用中)，企業可加碼付費增加數量</p>
                 <div class="field">
                     {{ form.snack_box }}
                 </div>
-            </div>
+            </div> -->
             <div class="field">
                 <label>{{ form.hr_food.label }}{{ form.hr_food.errors }}</label>
                 <p>{{ form.hr_food.help_text }}</p>
