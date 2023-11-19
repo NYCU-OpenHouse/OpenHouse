@@ -199,8 +199,12 @@ class JobfairOrderAdmin(admin.ModelAdmin):
 
 @admin.register(JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
-    list_display = ('serial_no', 'company', 'updated')
+    list_display = ('serial_no', 'company', 'display_categories', 'updated')
+    list_filter = ('category', )
+    def display_categories(self, obj):
+        return ', '.join(category.name for category in obj.category.all())
 
+    display_categories.short_description = 'Categories'
 
 # @admin.register(OnlineJobfairSlot)
 # class OnlineJobfairSlotAdmin(admin.ModelAdmin):

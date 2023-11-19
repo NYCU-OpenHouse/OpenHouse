@@ -730,38 +730,20 @@ def jobfair_select_control(request):
         raise Http404("What are u looking for?")
 
     slot_group = [
-        {"slot_type": "半導體", "display": "半導體", "category": ["半導體"], "slot_list": list(),
+        {"slot_type": "一般企業", "display": "一般企業", 
+         "category": ['None'], 
+         "slot_list": list(),
+         "is_mygroup": True, "color": "purple"},
+
+        {"slot_type": "人文、管理與金融企業", "display": "人文、管理與金融企業", 
+         "category": ['金融/保險/不動產', '出版影音/藝術、娛樂及休閒服務業', '財團/社團/行政法人',
+                      '住宿/餐飲業', '批發及零售/運輸及倉儲業'], 
+         "slot_list": list(),
          "is_mygroup": False, "color": "pink"},
 
-        {"slot_type": "資訊軟體", "display": "資訊軟體", "category": ["資訊軟體"], "slot_list": list(),
+        {"slot_type": "智慧醫療與科技企業", "display": "智慧醫療與科技企業", 
+         "category": ['醫療保健及社會工作服務業'], "slot_list": list(),
          "is_mygroup": False, "color": "blue"},
-
-        {"slot_type": "消費電子", "display": "消費電子", "category": ["消費電子"], "slot_list": list(),
-         "is_mygroup": False, "color": "yellow"},
-
-        {"slot_type": "網路通訊", "display": "網路通訊", "category": ["網路通訊"], "slot_list": list(),
-         "is_mygroup": False, "color": "teal"},
-
-        {"slot_type": "光電光學", "display": "光電光學", "category": ["光電光學"], "slot_list": list(),
-         "is_mygroup": False, "color": "grey"},
-
-        {"slot_type": "綜合", "display": "綜合(綜合、集團、機構、人力銀行)"
-            , "category": ["綜合", "集團", "機構", "人力銀行"],
-         "slot_list": list(), "is_mygroup": False, "color": "purple"},
-
-        {"slot_type": "新創", "display": "新創", "category": ["新創"], "slot_list": list(),
-         "is_mygroup": False, "color": "brown"},
-        {"slot_type": "主辦保留", "display": "主辦保留", "category": ["主辦保留"], "slot_list": list(),
-         "is_mygroup": False, "color": "olive"},
-
-        {"slot_type": "生科醫療", "display": "生科醫療", "category": ["生科醫療"], "slot_list": list(),
-         "is_mygroup": False, "color": "red"},
-        
-        {"slot_type": "公家單位", "display": "公家單位", "category": ["公家單位"], "slot_list": list(),
-         "is_mygroup": False, "color": "green"},
-        {"slot_type": "通用", "display": "通用", "category": ["通用"], "slot_list": list(),
-         "is_mygroup": True, "color": "purple"},
-        
     ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
@@ -770,7 +752,8 @@ def jobfair_select_control(request):
         ret['success'] = False
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
-    # 把自己的group enable並放到最前面顯示
+    
+    # 找到自己的group enable並放到最前面顯示
     try:
         company_category = my_signup.get_company().category
         my_slot_group = next(group for group in slot_group if company_category in group['category'])
@@ -780,17 +763,24 @@ def jobfair_select_control(request):
     except StopIteration:
         pass
 
-    
     if action == "query":
         companyname = dict(Company.objects.values_list('cid', 'shortname'))
+
+        handled_slots = set()
         for group in slot_group:
-            slot_list = JobfairSlot.objects.filter(category__in=group["category"])
+            if (group["category"] == ['None']):
+                slot_list = JobfairSlot.objects.filter(category__isnull=True)
+            else: 
+                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"])
             for slot in slot_list:
+                if slot.serial_no in handled_slots:
+                    continue
                 slot_info = dict()
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
                     companyname[slot.company_id]
                 group['slot_list'].append(slot_info)
+                handled_slots.add(slot.serial_no)
 
         # remove those slot list is equal to 0
         for group in slot_group.copy():
@@ -853,13 +843,10 @@ def jobfair_select_control(request):
 
         try:
             my_slot_group = next(group for group in slot_group if company_category in group['category'])
-            if slot.category not in my_slot_group['category'] and slot.category != "通用":
+            if slot.category.exists() and company_category not in my_slot_group['category']:
                 return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
         except StopIteration:
             pass
-            
-        if slot.category == '主辦保留':
-            return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
 
         slot.company = my_signup
         slot.save()

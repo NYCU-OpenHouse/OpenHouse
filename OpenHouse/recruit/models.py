@@ -26,7 +26,7 @@ CATEGORYS = (
     (u'半導體', u'半導體'),
     (u'消費電子', u'消費電子'),
     (u'網路通訊', u'網路通訊'),
-    (u'網路通訊', u'光電光學'),
+    (u'光電光學', u'光電光學'),
     (u'資訊軟體', u'資訊軟體'),
     (u'集團', u'集團'),
     (u'人力銀行', u'人力銀行'),
@@ -261,8 +261,7 @@ class Files(models.Model):
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
-    # category = models.ManyToManyField('CompanyCatogories', verbose_name=u'公司類別', blank=True)
-    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, null=True, default=None)
+    category = models.ManyToManyField('CompanyCatogories', verbose_name=u'公司類別', blank=True)
     company = models.ForeignKey('RecruitSignup', to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE, blank=True, null=True)
