@@ -14,17 +14,17 @@ from django.forms import ModelForm
 class RecruitSignupForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(RecruitSignupForm, self).__init__(*args, **kwargs)
+        self.fields['history'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
         self.fields['seminar'].widget.attrs.update({
             'class': 'ui dropdown',
         })
         self.fields['seminar_ece'].widget.attrs.update({
             'class': 'ui dropdown',
         })
-        self.fields['seminar_online'].widget.attrs.update({
-            'class': 'ui dropdown',
-        })
         self.fields['jobfair'].widget.attrs.update({
-            'max' : '4',
+            'max' : '6',
             'min' : '0'
         })
 

@@ -10,7 +10,7 @@
     <form class="ui form" method="POST" action="{% url 'recruit_signup' %}">
         {% csrf_token %}
 
-        <h1 class="ui dividing header">Open House 校園徵才 - 活動報名</h1>
+        <h1 class="ui dividing header">Open House 春季徵才 - 活動報名</h1>
 
         {% if signup_info %}
             <div class="ui compact teal message">
@@ -26,6 +26,40 @@
 
         <div class="ui divider"></div>
 
+        <div class="ui yellow inverted segment">
+            <h1 class="ui inverted header">
+                <i class="certificate icon" style="color:white"></i>
+                企業參與調查
+            </h1>
+
+            <table class="ui celled table">
+                <tr>
+                    <td style="width: 6em;">首次參展</td>
+                    <td>
+                        是否為首次參展？
+                        {{ form.first_participation }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>專區調查</td>
+                    <td>
+                        攤位區域分為「一般企業」、「智慧醫療與科技企業、人文、管理與金融企業」、「智慧醫療與科技企業」
+                        <br/>請選擇貴公司所屬專區
+                        {{ form.zone }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>過往參與調查</td>
+                    <td>
+                        <p>是否曾參加2023年春、秋就業博覽會、企業說明會</p>
+                        {{ form.history }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="ui divider"></div>
+
         <div class="ui violet inverted segment">
             <h1 class="ui inverted header">
                 <i class="calendar icon" style="color:white"></i>
@@ -35,8 +69,9 @@
             <table class="ui celled table">
                 <tr>
                     <td style="width: 6em;">活動日期</td>
-                    <td>{{ configs.seminar_ece_start_date|date:"Y年m月d日(D)" }} ~
-                        {{ configs.seminar_ece_end_date|date:"Y年m月d日(D)" }}</td>
+                    <td>2024年3月~2024年5月 電子所、電機系將再另行公告</td>
+                    <!-- <td>{{ configs.seminar_ece_start_date|date:"Y年m月d日(D)" }} ~
+                        {{ configs.seminar_ece_end_date|date:"Y年m月d日(D)" }}</td> -->
                 </tr>
                 <tr>
                     <td>活動內容</td>
@@ -52,6 +87,18 @@
                             <li>可容納約180人之國際會議廳或階梯教室。</li>
                             <li>單槍投影機、投影布幕、麥克風、筆記型電腦、簡報滑鼠等。</li>
                         </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>會員確認聯絡資訊</td>
+                    <td>
+                            電機資源產學聯盟
+                            聯絡人：
+                            電機系
+                            馬駿亞小姐
+                            ethel@nycu.edu.tw
+                            (03)5712121#54072
+                            <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
                     </td>
                 </tr>
             </table>
@@ -70,13 +117,14 @@
         <div class="ui blue inverted segment">
             <h1 class="ui inverted header">
                 <i class="info circle icon" style="color:white"></i>
-                實體企業說明會
+                企業說明會
             </h1>
             <table class="ui celled table">
                 <tr>
                     <td style="width: 6em;">活動日期</td>
                     <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
                         ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
+                        <br/> ★ 3月8日周五整日不排場次
                     </td>
 
                 </tr>
@@ -84,15 +132,15 @@
                     <td>活動時間</td>
                     <td>
                         <ul class="ui list">
-                            <li>中午場次 12:10~13:00</li>
-                            <li>其餘場次 10:10~11:00、15:30~16:20 (每場 50 分鐘)</li>
+                            <li>(每場 50 分鐘) 12:20-13:10、14:20-15:10、15:30-16:20、16:30-17:20</li>
+                            <li>(每場 90 分鐘) 18:00-19:30</li>
                         </ul>
                     </td>
 
                 </tr>
                 <tr>
                     <td>活動地點</td>
-                    <td>本校國際會議廳 (浩然圖書館、交映樓、工程四館合勤講堂、資訊館)</td>
+                    <td>交映樓國際會議廳</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
@@ -111,17 +159,22 @@
                     <td>提供服務</td>
                     <td>
                         <ol class="ui list">
-                            <li>每場說明會由工作人員協助會場地布置、資料發放、會場拍照 等事宜,並協助場內活動進行及突發狀況處理。</li>
-                            <li>提供企業人資至多 2 份餐點與飲水、2 張免費校內停車證。</li>
-                            <li>提供 50 份餐點給參與同學(費用已含在報名活動費中,企業可加碼付費提供餐點數量)。</li>
+                            <li>本校工作人員協助報到引導及處理隨機狀況</li>
+                            <li>每場將現場提供二份免費餐點和飲水，以及二張免費汽車停車證。</li>
+                            <li>提供基本連線投影設備(筆記型電腦/簡報筆)，若有其他需求(線材/接頭為
+                                USB-C/Thunderbolt 等特殊規格、考慮公司資訊安全等) ，請您再自行準備。</li>
                         </ol>
                     </td>
                 </tr>
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">選取欲報名實體說明會時段</h3>
-                <p>活動費用： {{ configs.session_fee }} 元</p>
+                <h3 class="ui header">選取欲報名說明會時段</h3>
+                <p>活動費用：</p>
+                <ul>
+                    <li>50 min: {{ configs.session_fee_short }} 元</li>
+                    <li>90 min: {{ configs.session_fee_long }} 元</li>
+                </ul>
                 {{ form.seminar }}
             </div>
         </div>
@@ -172,8 +225,8 @@
 
         <div class="ui green inverted segment">
             <h1 class="ui header">
-                <i class="student icon"></i>
-                實體就業博覽會
+                <i class="student icon" style="color:white"></i>
+                就業博覽會
             </h1>
             <table class="ui celled table">
                 <tr>
@@ -182,7 +235,7 @@
                 </tr>
                 <tr>
                     <td>活動時間</td>
-                    <td>{{ configs.jobfair_start }} ~ {{ configs.jobfair_end }}</td>
+                    <td>{{ configs.jobfair_start }} ~ {{ configs.jobfair_end }}  (09-10點為開幕式)</td>
                 </tr>
                 <tr>
                     <td>活動地點</td>
@@ -211,11 +264,12 @@
                 <h3 class="ui header">報名實體就博會</h3>
                 <ol class="ui list">
                     <li>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</li>
-                    <li>同集團數量上限為4攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
+                    <li>同集團數量上限為6攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
+                    <li> 欲參加之「人文、管理與金融專區」或「智慧醫療與科技專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】之「所營事業資料」進行覆核。</li>
                 </ol>
                 <div class="ui labeled input">
                     <div class="ui label">
-                        實體就博會攤位數量
+                        就博會攤位數量
                     </div>
                     {{ form.jobfair }}
                 </div>
@@ -306,8 +360,8 @@
         {#</div>#}
 
         {#<div class="ui divider"></div>#}
-        
-        <div class="ui teal inverted segment">
+        <!-- 就職講座 -->
+        <!-- <div class="ui teal inverted segment">
             <h1>
                 <i class="laptop icon"></i>
                 就職講座
@@ -349,50 +403,84 @@
                     <label style="color:black">{{form.lecture.label}}</label>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-        <div class="ui divider"></div>
+        <!-- <div class="ui divider"></div> -->
 
-        <div class="ui brown inverted segment">
+        <!-- 諮詢服務 -->
+        <div class="ui black inverted segment">
             <h1 class="ui header">
-                <i class="briefcase icon" style="color:white"></i>
-                企業參訪/諮詢服務 (2選1)
+                <i class="users icon" style="color:white"></i>
+                諮詢服務
             </h1>
             <table class="ui celled table">
                 <tr>
-                    <td style="width: 6em;">活動內容</td>
-                    <td>
-                        <strong>參訪內容</strong>
-                        <p>
-                        由企業自行規劃、以公司內部參觀為主，讓學生多了解企業實際運行狀況。
-                        人數至少可接受 30 人以上之同學進行參訪，單趟車程不超過 1.5 小時為宜。
-                        </p>
+                    <td style="width:6em">活動日期</td>
+                    <td>2024年3月~6月</td>
+                </tr>
 
-                        <strong>諮詢內容</strong>
-                        <p>
-                        擬邀請駐點業師，以一對一遠距指導方式，提供同學職涯諮詢指導、履歷寫
-                        作、面試技巧等，期讓學生模擬面談真實情況並更了解企業運作、讓學生發
-                        掘自我潛能並在起跑點上更具備潛在優勢。
-                        </p>
+                <tr>
+                    <td>活動內容</td>
+                    <td>
+                        擬邀請駐點業師，以一對一指導方式，提供同學職涯諮詢指導、履歷寫作、面試技巧等，期讓學生模擬面談真實情況並更了解企業運作、讓學生發掘自我潛能並在起跑點上更具備潛在優勢。
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>業師單次駐點3小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師者可為人資或是各部門技術及行政主管。</li>
+                            <li>同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約；主辦單位保留最終邀請企業職涯導師名單之權利，將擇期再連絡後續事宜。</li>
+                        </ol>
                     </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>
+                        企業若勾選本次活動，並在12/8(五)前來信說明欲辦理日期，即可增加選位積分3000分。
+                    </td>
+                </tr>
+            </table>
+
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
+                <div class="ui checkbox">
+                    {{ form.career_tutor }}
+                    <label style="color:black">{{ form.career_tutor.label }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="ui divider"></div>
+
+        <!-- 企業參訪 -->
+        <div class="ui brown inverted segment">
+            <h1 class="ui header">
+                <i class="briefcase icon" style="color:white"></i>
+                企業參訪
+            </h1>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:6em">活動日期</td>
+                    <td>2024年3月~6月</td>
+                </tr>
+                <tr>
+                    <td >活動內容</td>
+                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
                 </tr>
                 <tr>
                     <td>活動說明</td>
                     <td>
                         <ol class="ui list">
                             <li>
-                                於報名系統上勾選擔任「企業參訪/諮詢服務」意願，擔任企業導師可為
-                                企業人資、各部門技術或行政主管(至少提供2小時諮詢)。
+                                企業於報名系統上勾選「企業參訪」意願，參訪內容可由企業自行規劃，以公司內部參觀為主，希望能讓本校學生多了解企業實際運行狀況。
                             </li>
-                            <li>請企業錄取後主動來信可提供參訪/諮詢日期及時段。</li>
+                            <li>企業應能接待至少30名以上的學生，並且單程車程時間應不超過1.5小時。車資將由主辦單位補助，上限為1萬元（超過此上限的部分需由企業自行承擔）。</li>
+                            <li><strong>主辦單位保留最終邀請參訪名單之權利，將擇期再連絡後續事宜。</strong></li>
                         </ol>
-
-
                     </td>
                 </tr>
                 <tr>
                     <td>回饋方案</td>
-                    <td>企業參與本次活動可增加 1000 分；未主動聯繫之企業下期將不加分。</td>
+                    <td>企業若勾選本次活動，並在12/8(五)前來信說明欲辦理日期，即可增加選位積分3000分。</td>
                 </tr>
             </table>
             <div class="ui segment">
@@ -404,7 +492,7 @@
             </div>
         </div>
 
-        <div class="ui divider"></div>
+        <!-- <div class="ui divider"></div>
 
         <div class="ui orange inverted segment">
             <h1 class="ui header">
@@ -428,7 +516,7 @@
                 {{ form.receipt_year }}
                 {{ form.receipt_year.help_text }}
             </div>
-        </div>
+        </div> -->
 
 
         <button class="ui blue button" style="float: right;" type="submit">送出資料</button>

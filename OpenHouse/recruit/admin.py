@@ -3,8 +3,8 @@ from django.conf.urls import url
 from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
-    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, OnlineSeminarSlot, OnlineJobfairSlot, \
-    OnlineSeminarOrder, OnlineSeminarInfo, ECESeminar, CompanyCatogories
+    StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, \
+    ECESeminar, CompanyCatogories, ZoneCatogories, HistoryParticipation
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -45,7 +45,6 @@ class StudentAdmin(admin.ModelAdmin):
     inlines = (StuAttendanceInline,)
     list_display = ('card_num', 'student_id', 'name', 'phone')
 
-
 @admin.register(ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name', 'ece_member_discount')
@@ -54,12 +53,20 @@ class ECESeminarAdmin(admin.ModelAdmin):
 class CompanyCategoriesAdmin(admin.ModelAdmin):
     list_display = ('name', 'discount')
 
+@admin.register(ZoneCatogories)
+class ZoneCatogoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount')
+
+@admin.register(HistoryParticipation)
+class HistoryParticipationAdmin(admin.ModelAdmin):
+    fields = ('name',)
+
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'seminar', 'jobfair',)
     list_display = ('cid', 'company_name', 'seminar', 'jobfair',
                     'company_visit', 'lecture', 'payment')
-    list_filter = ('seminar', 'seminar_online', 'jobfair', 'jobfair_online', 'payment',)
+    list_filter = ('seminar', 'jobfair', 'payment',)
     inlines = (SponsorshipInline,)
 
     # custom search the company name field in other db
@@ -82,10 +89,10 @@ class SeminarSlotAdmin(admin.ModelAdmin):
     raw_id_fields = ("company",)
 
 
-@admin.register(OnlineSeminarSlot)
-class OnlineSeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'session', 'company')
-    raw_id_fields = ("company",)
+# @admin.register(OnlineSeminarSlot)
+# class OnlineSeminarSlotAdmin(admin.ModelAdmin):
+#     list_display = ('date', 'session', 'company')
+#     raw_id_fields = ("company",)
 
 
 @admin.register(SeminarOrder)
@@ -94,10 +101,10 @@ class SeminarOrderAdmin(admin.ModelAdmin):
     raw_id_fields = ("company",)
 
 
-@admin.register(OnlineSeminarOrder)
-class OnlineSeminarOrderAdmin(admin.ModelAdmin):
-    list_display = ("company", "time", "updated")
-    raw_id_fields = ("company",)
+# @admin.register(OnlineSeminarOrder)
+# class OnlineSeminarOrderAdmin(admin.ModelAdmin):
+#     list_display = ("company", "time", "updated")
+#     raw_id_fields = ("company",)
 
 
 class SeminarParkingInline(admin.StackedInline):
@@ -113,10 +120,10 @@ class SeminarInfoAdmin(admin.ModelAdmin):
                     'contact_email', 'contact_mobile', 'updated')
 
 
-@admin.register(OnlineSeminarInfo)
-class OnlineSeminarInfoAdmin(admin.ModelAdmin):
-    list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
-                    'contact_email', 'contact_mobile', 'updated')
+# @admin.register(OnlineSeminarInfo)
+# class OnlineSeminarInfoAdmin(admin.ModelAdmin):
+#     list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
+#                     'contact_email', 'contact_mobile', 'updated')
 
 
 @admin.register(SeminarParking)
@@ -195,9 +202,9 @@ class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'company', 'updated')
 
 
-@admin.register(OnlineJobfairSlot)
-class OnlineJobfairSlotAdmin(admin.ModelAdmin):
-    list_display = ('serial_no', 'category', 'company', 'updated')
+# @admin.register(OnlineJobfairSlot)
+# class OnlineJobfairSlotAdmin(admin.ModelAdmin):
+#     list_display = ('serial_no', 'category', 'company', 'updated')
 
 
 class JobfairParkingInline(admin.StackedInline):
@@ -289,15 +296,15 @@ class RecruitJobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(models.RecruitOnlineJobfairInfo)
-class RecruitOnlineJobfairContentAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+# @admin.register(models.RecruitOnlineJobfairInfo)
+# class RecruitOnlineJobfairContentAdmin(admin.ModelAdmin):
+#     list_display = ('title',)
 
-    def has_add_permission(self, request):
-        count = models.RecruitOnlineJobfairInfo.objects.all().count()
-        if count == 0:
-            return True
-        return False
+#     def has_add_permission(self, request):
+#         count = models.RecruitOnlineJobfairInfo.objects.all().count()
+#         if count == 0:
+#             return True
+#         return False
 
 
 @admin.register(models.RecruitSeminarInfo)
@@ -322,12 +329,12 @@ class RecruitECESeminarContentAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(models.RecruitOnlineSeminarInfo)
-class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+# @admin.register(models.RecruitOnlineSeminarInfo)
+# class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
+#     list_display = ('title',)
 
-    def has_add_permission(self, request):
-        count = models.RecruitOnlineSeminarInfo.objects.all().count()
-        if count == 0:
-            return True
-        return False
+#     def has_add_permission(self, request):
+#         count = models.RecruitOnlineSeminarInfo.objects.all().count()
+#         if count == 0:
+#             return True
+#         return False

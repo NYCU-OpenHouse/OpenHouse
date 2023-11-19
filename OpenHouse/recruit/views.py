@@ -85,6 +85,7 @@ def recruit_signup(request):
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -162,7 +163,7 @@ def seminar_select_form_gen(request):
     for week in range(0, weeks):
         # separate into 5 in each list (there are 5 days in a week)
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
-                              for day in range(0, 5)])
+                              for day in range(0, 4)])
 
     slot_colors = SlotColor.objects.all()
     session_list = [
@@ -947,7 +948,7 @@ def Sponsor(request):
     try:
         sponsor = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
-        error_msg = "貴公司尚未報名本次「校園徵才」活動，請於左方點選「填寫報名資料」"
+        error_msg = "貴公司尚未報名本次「春季徵才」活動，請於左方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
 
     if request.POST:
@@ -1152,10 +1153,8 @@ def Status(request):
 
     slot_info = {
         "seminar_select_time": "選位時間正在排定中",
-        "online_seminar_select_time": "選位時間正在排定中",
         "jobfair_select_time": "選位時間正在排定中",
         "seminar_slot": "-",
-        "online_seminar_slot": "-",
         "jobfair_slot": "-",
     }
     seminar_session_display = {
@@ -1166,13 +1165,7 @@ def Status(request):
         "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
         "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
     }
-    seminar_online_session_display = {
-        "noon1": "{}~{}".format(configs.session_online_1_start, configs.session_online_1_end),
-        "noon2": "{}~{}".format(configs.session_online_2_start, configs.session_online_2_end),
-        "evening1": "{}~{}".format(configs.session_online_3_start, configs.session_online_3_end),
-        "evening2": "{}~{}".format(configs.session_online_4_start, configs.session_online_4_end),
-        "evening3": "{}~{}".format(configs.session_online_5_start, configs.session_online_5_end),
-    }
+
     # 問卷狀況
     try:
         recruit.models.CompanySurvey.objects.get(cid=request.user.cid)
@@ -1182,28 +1175,19 @@ def Status(request):
 
     # 選位時間和數量狀態
     seminar_select_time = recruit.models.SeminarOrder.objects.filter(company=mycid).first()
-    online_seminar_select_time = recruit.models.OnlineSeminarOrder.objects.filter(company=mycid).first()
     jobfair_select_time = recruit.models.JobfairOrder.objects.filter(company=mycid).first()
     if seminar_select_time:
         slot_info['seminar_select_time'] = seminar_select_time.time
-    if online_seminar_select_time:
-        slot_info['online_seminar_select_time'] = online_seminar_select_time.time
     if jobfair_select_time:
         slot_info['jobfair_select_time'] = jobfair_select_time.time
 
     seminar_slot = recruit.models.SeminarSlot.objects.filter(company=mycid).first()
-    online_seminar_slot = recruit.models.OnlineSeminarSlot.objects.filter(company=mycid).first()
     jobfair_slot = recruit.models.JobfairSlot.objects.filter(company=mycid)
     if not seminar_slot:
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
     else:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
                                                    seminar_session_display[seminar_slot.session])
-    if not online_seminar_slot:
-        slot_info['online_seminar_slot'] = "請依時段於左方選單選位"
-    else:
-        slot_info['online_seminar_slot'] = "{} {}".format(online_seminar_slot.date,
-                                                          seminar_online_session_display[online_seminar_slot.session])
     if not jobfair_slot:
         slot_info['jobfair_slot'] = "請依時段於左方選單選位"
     else:
@@ -1212,6 +1196,7 @@ def Status(request):
     # Fee display
     fee = 0
     discount = 0
+    discount_text = ""
     mycompany = Company.objects.get(cid=mycid)
     
     try:
@@ -1220,6 +1205,7 @@ def Status(request):
             fee += configs.session_fee_short
         elif signup_data.seminar == 'attend_long':
             fee += configs.session_fee_long
+
         # ece fee calculation
         num_of_ece = len(signup_data.seminar_ece.all())
         if mycompany.ece_member:
@@ -1230,17 +1216,25 @@ def Status(request):
             discount += configs.session_ece_fee * discount_num_of_ece
         if num_of_ece:
             fee += configs.session_ece_fee * num_of_ece
-        if signup_data.seminar_online != "none":
-            fee += configs.session_online_fee
+
+        # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
+                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             elif mycompany.gloria_startup:
+                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+            elif signup_data.first_participation:
+                discount_text = "貴公司為首次參加本活動，可享有第一攤免費優惠"
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+            elif signup_data.zone and signup_data.zone != '一般企業':
+                discount_text = "貴公司為{}專區，可享有第一攤免費優惠".format(signup_data.zone)
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             fee += signup_data.jobfair * configs.jobfair_booth_fee
-        if signup_data.jobfair_online:
-            fee += configs.jobfair_online_fee
+
         if mycompany.category == '公家單位':
+            discount_text = "貴公司為公家單位，可享有免費優惠"
             discount = fee
     except AttributeError:
         # Company has not sign up
@@ -1265,16 +1259,11 @@ def Status(request):
         except ObjectDoesNotExist:
             seminar_info = None
         try:
-            online_seminar_info = recruit.models.OnlineSeminarInfo.objects.get(company=request.user.cid)
-        except ObjectDoesNotExist:
-            online_seminar_info = None
-        try:
             jobfair_info = JobfairInfo.objects.get(company=company)
         except ObjectDoesNotExist:
             jobfair_info = None
     else:
         seminar_info = None
-        online_seminar_info = None
         jobfair_info = None
         
     # check recepit information whether submit or not
@@ -1296,8 +1285,6 @@ def Status(request):
     menu_ui = {'recruit': "active"}
 
     step_ui[0] = "completed" if signup_data else "active"
-    step_ui[1] = "completed" if jobfair_slot or seminar_slot or online_seminar_slot else "active"
-    step_ui[2] = "completed" if jobfair_info or seminar_info or online_seminar_info else "active"
 
     return render(request, 'recruit/company/status.html', locals())
 

@@ -32,7 +32,7 @@
 {% block 'content' %}
     <form method="post" class="ui info form error" action=".">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 校園徵才 - 就業博覽會資訊</h1>
+        <h1 class="ui dividing header">Open House 春季徵才 - 就業博覽會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
@@ -56,6 +56,14 @@
                 <label>{{ form.sign_eng_name.label }}</label>
                 {{ form.sign_eng_name }}
                 <p>{{ form.sign_eng_name.help_text }}</p>
+            </div>
+        </div>
+        <div class="sixteen wide field">
+            <label>  {{ form.disable_proofread.label }}</label>
+            <div class="field">
+                {{ form.disable_proofread }}
+                「此招牌名稱僅供我方工作人員辨識用。職發組無須與我校對，可逕自送印」
+                {{ form.disable_proofread.errors }}
             </div>
         </div>
         <div class="three fields">
@@ -116,7 +124,8 @@
             {{ form.power_req }}
             <p>攤位用電建議500瓦以內，請填寫預計使用電器(如筆電、音響等)，如有模擬機、爆米花機、可樂機等耗電設備，請務必填寫並須由企業自行負擔小型發電機費用</p>
         </div>
-        <div class="ui field">
+        <!-- 2024 spring 藏起來下方截圖+所有可變動的欄位 -->
+        <!-- <div class="ui field">
             <label class="ui">攤位實際需求桌椅數</label>
             <div class="ui teal segment">
                 <label>{{ form.long_table.label }}</label>
@@ -132,13 +141,13 @@
                 <p>
                     每個攤位基本提供2長桌5椅1桌巾，為讓實際使用數量貼近企業需求，免去搬運勞務之苦，請協助填寫。如超過原定數量，會議桌每張加收300元/張、椅子50元/張、紅桌巾100元/件、旗桿座組100元/組、白光探照燈400元/盞，由企業自備現金於現場繳納給施工廠商並領取發票。</p>
             </div>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
             <label>{{ form.ps.label }}</label>
             {{ form.ps }}
             <p>
                 如企業攤位需請本校施工廠商進行【加價-客製化修改】(例如改為隔間攤位、攤位招牌架高等等，請於本欄位說明，後續將由施工廠商評估是否可施作，並提供進一步報價，費用亦由企業逕付本校施工廠商(非匯給本校)。)</p>
-        </div>
+        </div> -->
         <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
         <p>說明(1)：參加2023/3/9(六)就業博覽會之企業，至多提供1部汽車入校停車費抵免；企業可選擇「事先登記車牌號碼」與「當日索取紙本停車抵用券」兩種並行。</p>
         <ul>
