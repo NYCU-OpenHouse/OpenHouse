@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 校園徵才 - 實體就博會選位</h1>
+    <h1 class="ui dividing header">Open House 春季徵才 - 實體就博會選位</h1>
     <h2 class="ui dividing header">選位注意事項</h2>
     <div class="ui message">
         <div class="ui bulleted list">
@@ -57,7 +57,7 @@
                     貴公司攤位數量為：{{ my_signup.jobfair }}
                 </div>
             </div>
-        </div>
+        </div> 
         <div class="ui segment" ng-repeat="group in ctrl.slot_group">
             <h3 class="ui dividing header">{$ group.display$}</h3>
             <p ng-if="!group.is_mygroup">非貴公司類別</p>
