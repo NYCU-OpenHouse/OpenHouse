@@ -1214,10 +1214,10 @@ def Status(request):
                 discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
             elif signup_data.first_participation:
                 discount_text = "貴公司為首次參加本活動，可享有第一攤半價優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee / 2
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
             elif signup_data.zone and signup_data.zone != '一般企業':
                 discount_text = "貴公司為{}專區，可享有第一攤半價優惠".format(signup_data.zone)
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee / 2
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
             fee += signup_data.jobfair * configs.jobfair_booth_fee
 
         if mycompany.category == '公家單位':
