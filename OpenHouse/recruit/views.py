@@ -769,9 +769,9 @@ def jobfair_select_control(request):
         handled_slots = set()
         for group in slot_group:
             if (group["category"] == ['None']):
-                slot_list = JobfairSlot.objects.filter(category__isnull=True)
+                slot_list = JobfairSlot.objects.filter(category__isnull=True).order_by('serial_no')
             else: 
-                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"])
+                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"]).order_by('serial_no')
             for slot in slot_list:
                 if slot.serial_no in handled_slots:
                     continue
