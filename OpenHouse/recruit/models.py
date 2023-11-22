@@ -420,11 +420,11 @@ class JobfairInfo(models.Model):
     veget_lunch_box = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
 
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
-    long_table = models.IntegerField(u'長桌', default=2)
-    chair = models.IntegerField(u'椅子', default=5)
-    doily = models.IntegerField(u'紅桌巾', default=1)
-    flag_pole_socket = models.IntegerField(u'旗桿座組', default=0)
-    searchlight = models.IntegerField(u'攤位頂部白光探照燈', default=0)
+    long_table = models.IntegerField(u'長桌', default=2, blank=True, null=True)
+    chair = models.IntegerField(u'椅子', default=5, blank=True, null=True)
+    doily = models.IntegerField(u'紅桌巾', default=1, blank=True, null=True)
+    flag_pole_socket = models.IntegerField(u'旗桿座組', default=0, blank=True, null=True)
+    searchlight = models.IntegerField(u'攤位頂部白光探照燈', default=0, blank=True, null=True)
     ps = models.CharField(u'備註', max_length=128, blank=True, null=True)
 
     class Meta:
