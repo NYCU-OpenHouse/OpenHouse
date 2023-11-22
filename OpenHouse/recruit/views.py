@@ -972,6 +972,8 @@ def SponsorAdmin(request):
         sponsorships = SponsorShip.objects.filter(company=c)
         counts = [SponsorShip.objects.filter(company=c, sponsor_item=item).count() for item in sponsor_items]
         amount = 0
+        latest_sponsorship = SponsorShip.objects.filter(company=c).order_by('-updated').first()
+
         for s in sponsorships:
             amount += s.sponsor_item.price
         sponsorships_list.append({
@@ -979,6 +981,7 @@ def SponsorAdmin(request):
             "counts": counts,
             "amount": amount,
             "shortname": shortname,
+            "update_time": latest_sponsorship.updated if latest_sponsorship else None,
             "id": c.id,
             "change_url": reverse('admin:recruit_recruitsignup_change',
                                                args=(c.id,))
@@ -1215,7 +1218,7 @@ def Status(request):
             elif signup_data.first_participation:
                 discount_text = "貴公司為首次參加本活動，可享有第一攤半價優惠"
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
-            elif signup_data.zone and signup_data.zone != '一般企業':
+            elif signup_data.zone and signup_data.zone.name != '一般企業':
                 discount_text = "貴公司為{}專區，可享有第一攤半價優惠".format(signup_data.zone)
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
             fee += signup_data.jobfair * configs.jobfair_booth_fee
