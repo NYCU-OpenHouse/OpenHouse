@@ -102,14 +102,14 @@ def ExportAll(request):
         {'fieldname': 'shortname', 'title': '公司簡稱'},
         {'fieldname': 'seminar', 'title': '實體說明會場次'},
         {'fieldname': 'seminar_ece', 'title': '實體ECE說明會'},
-        {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
+        # {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
         {'fieldname': 'jobfair', 'title': '實體就博會攤位數'},
-        {'fieldname': 'jobfair_online', 'title': '線上就博會'},
+        # {'fieldname': 'jobfair_online', 'title': '線上就博會'},
         {'fieldname': 'company_visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
         {'fieldname': 'lecture', 'title': '提供就業講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
-        {'fieldname': 'receipt_year', 'title': '收據年份'},
+        # {'fieldname': 'receipt_year', 'title': '收據年份'},
         {'fieldname': 'ps', 'title': '備註'},
     ]
 
@@ -133,9 +133,9 @@ def ExportAll(request):
             elif pairs['fieldname'] == 'seminar_ece':
                 signup_worksheet.write(row_count + 1, col_count,
                                        ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
-            elif pairs['fieldname'] == 'seminar_online':
-                signup_worksheet.write(row_count + 1, col_count,
-                                       signup.get_seminar_online_display())
+            # elif pairs['fieldname'] == 'seminar_online':
+            #     signup_worksheet.write(row_count + 1, col_count,
+            #                            signup.get_seminar_online_display())
             else:
                 signup_worksheet.write(row_count + 1, col_count,
                                        signup_dict[pairs['fieldname']])
@@ -152,7 +152,7 @@ def ExportAll(request):
         {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
         {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},
         {'fieldname': 'receipt_contact_phone', 'title': '收據聯絡人公司電話'},
-        {'fieldname': 'receipt_year', 'title': '收據年份'},
+        # {'fieldname': 'receipt_year', 'title': '收據年份'},
     ]
 
     for index, pair in enumerate(receipt_title_pairs):
