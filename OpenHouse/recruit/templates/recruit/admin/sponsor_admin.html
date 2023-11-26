@@ -5,13 +5,14 @@
 <div id="content-main">
 	<table class="ui celled table">
 		<thead>
+			<th>更新時間</th>
 			<th> CID </th>
 			<th> Company Name </th>
 			{% for item in sponsor_items %}
 			<th> {{ item.name }} </th>
 			{% endfor %}
 			<th>Amount </th>
-			<th>更新時間</th>
+			
 		</thead>
 		<tbody>
 
@@ -25,13 +26,13 @@
 
 			{% for company in sponsorships_list %}
 			<tr>
+				<td>{{ company.update_time }}</td>
         		<td><a href="{{company.change_url}}#sponsorship_set-group">{{company.cid}}</a></td>
 				<td>{{company.shortname}}</td>
 				{% for item_num in company.counts%}
 					<td>{{item_num}}</td>
 				{% endfor %}
 				<td>{{company.amount}}</td>
-				<td>{{ company.update_time }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>

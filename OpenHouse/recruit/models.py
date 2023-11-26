@@ -225,6 +225,13 @@ class RecruitSignup(models.Model):
     def get_company_name(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
+    
+    def company_join_date(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        if com:
+            return com.date_join 
+        else:
+            return None
 
     def get_company(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
