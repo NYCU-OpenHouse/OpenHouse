@@ -63,22 +63,25 @@ class HistoryParticipationAdmin(admin.ModelAdmin):
 
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
-    search_fields = ('cid', 'seminar', 'jobfair',)
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair',
+    search_fields = ('cid', 'seminar', 'jobfair')
+    list_display = ('cid', 'company_name', 'company_join_date', 'seminar', 'jobfair',
                     'company_visit', 'lecture', 'payment')
-    list_filter = ('seminar', 'jobfair', 'payment',)
+    list_filter = ('seminar', 'jobfair', 'payment', 'first_participation', 'zone')
     inlines = (SponsorshipInline,)
-
+    
     # custom search the company name field in other db
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super(RecruitSignupAdmin, self).get_search_results(request, queryset, search_term)
 
-        company_list = Company.objects.filter(name__icontains=search_term)
-        company_list |= Company.objects.filter(shortname__icontains=search_term)
-        for company in company_list:
-            queryset |= self.model.objects.filter(cid=company.cid)
-        return queryset, use_distinct
+        # Check if search_term is empty or not
+        if search_term:
+            company_list = Company.objects.filter(name__icontains=search_term)
+            company_list |= Company.objects.filter(shortname__icontains=search_term)
+            for company in company_list:
+                queryset |= self.model.objects.filter(cid=company.cid)
 
+        return queryset, use_distinct
+    
     def company_name(self, obj):
         return obj.get_company_name()
 
