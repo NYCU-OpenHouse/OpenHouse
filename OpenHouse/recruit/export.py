@@ -100,6 +100,9 @@ def ExportAll(request):
     title_pairs = [
         {'fieldname': 'cid', 'title': '公司統一編號'},
         {'fieldname': 'shortname', 'title': '公司簡稱'},
+        {'fieldname': 'first_participation', 'title': '首次參加'},
+        {'fieldname': 'zone', 'title': '專區類別'},
+        {'fieldname': 'history', 'title': '歷史參加調查'},
         {'fieldname': 'seminar', 'title': '實體說明會場次'},
         {'fieldname': 'seminar_ece', 'title': '實體ECE說明會'},
         # {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
@@ -133,6 +136,12 @@ def ExportAll(request):
             elif pairs['fieldname'] == 'seminar_ece':
                 signup_worksheet.write(row_count + 1, col_count,
                                        ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
+            elif pairs['fieldname'] == 'zone':
+                zone_name_first_two_chars = signup.zone.name[:2]
+                signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
+            elif pairs['fieldname'] == 'history':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       ', '.join(h.short_name for h in signup.history.all()))
             # elif pairs['fieldname'] == 'seminar_online':
             #     signup_worksheet.write(row_count + 1, col_count,
             #                            signup.get_seminar_online_display())
