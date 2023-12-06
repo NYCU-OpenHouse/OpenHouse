@@ -596,26 +596,18 @@ def seminar_info(request):
     except ObjectDoesNotExist:
         seminar_info_object = None
 
-    parking_form_set = inlineformset_factory(SeminarInfo, SeminarParking, max_num=2, extra=2,
-                                             fields=('id', 'license_plate_number', 'info'),
-                                             widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '例AA-1234、4321-BB'})})
-
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
         form = SeminarInfoCreationForm(data=data, instance=seminar_info_object)
-        formset = parking_form_set(data=data, instance=seminar_info_object)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             form.save()
-            formset.save()
             # return render(request, 'recruit/company/success.html', locals())
             return redirect(seminar_info)
         else:
             print(form.errors)
     else:
         form = SeminarInfoCreationForm(instance=seminar_info_object)
-        formset = parking_form_set(instance=seminar_info_object)
 
     return render(request, 'recruit/company/seminar_info_form.html', locals())
 
