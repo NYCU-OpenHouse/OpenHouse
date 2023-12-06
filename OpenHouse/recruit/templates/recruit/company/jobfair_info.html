@@ -96,7 +96,9 @@
                 <label>{{ form.lunch_box.label }}</label>
                 {{ form.lunch_box }}
                 {{ form.lunch_box.help_text }}
+                <p>每攤位免費提供<span style="color:red;">至多3份午餐</span>。</p>
             </div>
+            
             {% endif %}
             <div class="field">
                 {% now 'Y' as current_year %}
@@ -113,7 +115,6 @@
                 </div>
             </div>
         </div>
-        <p>每攤位免費提供<span style="color:red;"></span>。</p>
 
         <div class="field">
             <label>{{ form.send_obj.label }}</label>

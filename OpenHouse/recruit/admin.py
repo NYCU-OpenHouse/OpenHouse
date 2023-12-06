@@ -59,7 +59,7 @@ class ZoneCatogoriesAdmin(admin.ModelAdmin):
 
 @admin.register(HistoryParticipation)
 class HistoryParticipationAdmin(admin.ModelAdmin):
-    fields = ('name',)
+    fields = ('name', 'short_name')
 
 @admin.register(RecruitSignup)
 class RecruitSignupAdmin(admin.ModelAdmin):
