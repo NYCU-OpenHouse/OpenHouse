@@ -498,11 +498,6 @@ class SeminarInfo(models.Model):
         verbose_name = u"說明會資訊"
         verbose_name_plural = u"說明會資訊"
 
-
-
-
-
-
 class SeminarParking(models.Model):
     id = models.AutoField(primary_key=True)
     license_plate_number = models.CharField(u'車牌號碼', max_length=8, validators=[validate_license_plate_number])
