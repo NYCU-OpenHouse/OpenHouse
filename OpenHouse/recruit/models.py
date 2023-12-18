@@ -82,6 +82,8 @@ class RecruitConfigs(models.Model):
     session_5_end = models.TimeField(u'說明會場次5_結束時間', default='00:00')
     session_6_start = models.TimeField(u'說明會場次6_開始時間', default='00:00')
     session_6_end = models.TimeField(u'說明會場次6_結束時間', default='00:00')
+    session_7_start = models.TimeField(u'說明會場次7(90min)_開始時間', default='00:00')
+    session_7_end = models.TimeField(u'說明會場次7(90min)_結束時間', default='00:00')
     # 費用
     session_fee_short = models.IntegerField(u'說明會場次(50min)_費用', default=0)
     session_fee_long = models.IntegerField(u'說明會場次(90min)_費用', default=0)
@@ -312,6 +314,7 @@ class SeminarSlot(models.Model):
         ("evening1", "晚場1"),
         ("evening2", "晚場2"),
         ("evening3", "晚場3"),
+        ("evening4", "晚場4(90min)"),
     )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期', default=datetime.date.today)
@@ -319,8 +322,7 @@ class SeminarSlot(models.Model):
     company = models.ForeignKey('RecruitSignup', to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True, unique=False)
-    place = models.ForeignKey('SlotColor', null=True, blank=True,
-                      verbose_name=u'場地', on_delete=models.SET_NULL)
+    place = models.ForeignKey('SlotColor', verbose_name=u'場地', on_delete=models.CASCADE, default=1)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
