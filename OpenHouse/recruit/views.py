@@ -157,11 +157,11 @@ def seminar_select_form_gen(request):
     # find the nearest Monday
     while (table_start_date.weekday() != 0):
         table_start_date -= datetime.timedelta(days=1)
-    # make the length to 5 multiples
+    # make the length to 4 multiples
     dates_in_week = list()
     weeks = seminar_end_date.isocalendar()[1] - seminar_start_date.isocalendar()[1] + 1
     for week in range(0, weeks):
-        # separate into 5 in each list (there are 5 days in a week)
+        # separate into 4 in each list (there are 4 days in a week for seminar)
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
                               for day in range(0, 4)])
 
@@ -173,6 +173,7 @@ def seminar_select_form_gen(request):
         {"name": "evening1", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
         {"name": "evening2", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
         {"name": "evening3", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+        {"name": "evening4", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
     ]
     for session in session_list:
         delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
@@ -202,7 +203,7 @@ def seminar_select_control(request):
         return_data = {}
         for s in slots:
             # make index first night1_20160707
-            index = "{}_{}".format(s.session, s.date.strftime("%Y%m%d"))
+            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
             # dict for return data
             return_data[index] = {}
 
@@ -260,10 +261,10 @@ def seminar_select_control(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str = post_data.get("slot").split('_')
+        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
         try:
-            slot = SeminarSlot.objects.get(date=slot_date, session=slot_session)
+            slot = SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
             my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         except:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
