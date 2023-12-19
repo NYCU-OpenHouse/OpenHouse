@@ -84,6 +84,8 @@ class RecruitConfigs(models.Model):
     session_6_end = models.TimeField(u'說明會場次6_結束時間', default='00:00')
     session_7_start = models.TimeField(u'說明會場次7(90min)_開始時間', default='00:00')
     session_7_end = models.TimeField(u'說明會場次7(90min)_結束時間', default='00:00')
+    session_8_start = models.TimeField(u'說明會場次8(午場4)_開始時間', default='00:00')
+    session_8_end = models.TimeField(u'說明會場次8(午場4)_結束時間', default='00:00')
     # 費用
     session_fee_short = models.IntegerField(u'說明會場次(50min)_費用', default=0)
     session_fee_long = models.IntegerField(u'說明會場次(90min)_費用', default=0)
@@ -311,6 +313,7 @@ class SeminarSlot(models.Model):
         ("noon1", "中午場1"),
         ("noon2", "中午場2"),
         ("noon3", "中午場3"),
+        ("noon4", "中午場4"),
         ("evening1", "晚場1"),
         ("evening2", "晚場2"),
         ("evening3", "晚場3"),
