@@ -170,6 +170,7 @@ def seminar_select_form_gen(request):
         {"name": "noon1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
         {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
         {"name": "noon3", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
+        {"name": "noon4", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
         {"name": "evening1", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
         {"name": "evening2", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
         {"name": "evening3", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
@@ -1144,9 +1145,11 @@ def Status(request):
         "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
         "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
         "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end), # 2024 spring added
         "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
         "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
         "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
     }
 
     # 問卷狀況
@@ -1372,9 +1375,11 @@ def seminar(request):
             noon1 = SeminarSlot.objects.filter(date=today, session='noon1').first()
             noon2 = SeminarSlot.objects.filter(date=today, session='noon2').first()
             noon3 = SeminarSlot.objects.filter(date=today, session='noon3').first()
+            noon4 = SeminarSlot.objects.filter(date=today, session='noon4').first()
             evening1 = SeminarSlot.objects.filter(date=today, session='evening1').first()
             evening2 = SeminarSlot.objects.filter(date=today, session='evening2').first()
             evening3 = SeminarSlot.objects.filter(date=today, session='evening3').first()
+            evening4 = SeminarSlot.objects.filter(date=today, session='evening4').first()
             week_slot_info.append(
                 {
                     'date': today,
@@ -1393,6 +1398,11 @@ def seminar(request):
                         'company': noon3.company.get_company_name(),
                         'place_color': noon3.place.css_color if noon3.place else None
                     },
+                    'noon4': '' if not noon4 or not noon4.company else
+                    {
+                        'company': noon4.company.get_company_name(),
+                        'place_color': noon4.place.css_color if noon4.place else None
+                    },
                     'evening1': '' if not evening1 or not evening1.company else
                     {
                         'company': evening1.company.get_company_name(),
@@ -1407,6 +1417,11 @@ def seminar(request):
                     {
                         'company': evening3.company.get_company_name(),
                         'place_color': evening3.place.css_color if evening3.place else None
+                    },
+                    'evening4': '' if not evening4 or not evening4.company else
+                    {
+                        'company': evening4.company.get_company_name(),
+                        'place_color': evening4.place.css_color if evening4.place else None
                     },
                 }
             )
