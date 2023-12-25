@@ -201,17 +201,18 @@ def ExportAll(request):
     spon_worksheet = workbook.add_worksheet("贊助")
     spon_worksheet.write(0, 0, "廠商/贊助品")
     spon_worksheet.write(1, 0, "目前數量/上限")
-    spon_worksheet.write(0, len(sponsor_items) + 1, "贊助額")
+    spon_worksheet.write(0, len(sponsor_items) + 2, "贊助額")
     for index, item in enumerate(sponsor_items):
-        spon_worksheet.write(0, index + 1, item.name)
-        spon_worksheet.write(1, index + 1, "{}/{}".format(item.num_sponsor, item.number_limit))
+        spon_worksheet.write(0, index + 2, item.name)
+        spon_worksheet.write(1, index + 2, "{}/{}".format(item.num_sponsor, item.number_limit))
 
     row_offset = 2
     for row_count, com in enumerate(sponsorships_list):
         spon_worksheet.write(row_count + row_offset, 0, com['shortname'])
+        spon_worksheet.write(row_count + row_offset, 1, com['cid'])
         for col_count, count in enumerate(com['counts']):
-            spon_worksheet.write(row_count + row_offset, col_count + 1, count)
-        spon_worksheet.write(row_count + row_offset, len(com['counts']) + 1, com['amount'])
+            spon_worksheet.write(row_count + row_offset, col_count + 2, count)
+        spon_worksheet.write(row_count + row_offset, len(com['counts']) + 2, com['amount'])
 
     # ece seminar information
     
@@ -434,18 +435,22 @@ def ExportSurvey(request):
     workbook = xlsxwriter.Workbook(response)
 
     survey_worksheet = workbook.add_worksheet("廠商滿意度問卷")
-    survey_worksheet.write(0, 0, "廠商")
+    survey_worksheet.write(0, 0, "公司簡稱")
+    survey_worksheet.write(0, 1, "公司統一編號")
     # start from index 1 because I don't want id field
     fields = recruit.models.CompanySurvey._meta.get_fields()[1:]
     for index, field in enumerate(fields):
-        survey_worksheet.write(0, index + 1, field.verbose_name)
+        survey_worksheet.write(0, index + 2, field.verbose_name)
 
     survey_list = recruit.models.CompanySurvey.objects.all()
     for row_count, survey in enumerate(survey_list):
-        survey_worksheet.write(row_count + 1, 0, survey.company)
+        # find company short name by cid
+        shortname = company.models.Company.objects.filter(cid=survey.cid).first().shortname
+        survey_worksheet.write(row_count + 1, 0, shortname)
+        survey_worksheet.write(row_count + 1, 1, survey.cid)
         # export timestamp cause problem, TODO:FIX the fields[:-1] to fields
         for col_count, field in enumerate(fields[:-1]):
-            survey_worksheet.write(row_count + 1, col_count + 1, getattr(survey, field.name))
+            survey_worksheet.write(row_count + 1, col_count + 2, getattr(survey, field.name))
 
     workbook.close()
     return response
