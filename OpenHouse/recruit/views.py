@@ -205,6 +205,10 @@ def seminar_select_control(request):
         slots = SeminarSlot.objects.all()
         return_data = {}
         for s in slots:
+            # (2024 spring) only specific company can see place 2
+            # cid: 5052322、04231910、16844527、86517384、51811609、28454066、80328219、80333183、70827383
+            if s.place and s.place.id == 2 and request.user.cid not in ['5052322', '04231910', '16844527', '86517384', '51811609', '28454066', '80328219', '80333183', '70827383', '77777777']:
+                continue
             # make index first night1_20160707
             index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
             # dict for return data
