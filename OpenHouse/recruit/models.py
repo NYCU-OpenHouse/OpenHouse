@@ -86,6 +86,10 @@ class RecruitConfigs(models.Model):
     session_7_end = models.TimeField(u'說明會場次7(90min)_結束時間', default='00:00')
     session_8_start = models.TimeField(u'說明會場次8(午場4)_開始時間', default='00:00')
     session_8_end = models.TimeField(u'說明會場次8(午場4)_結束時間', default='00:00')
+    session_9_start = models.TimeField(u'說明會場次9(早場1)_開始時間', default='00:00')
+    session_9_end = models.TimeField(u'說明會場次9(早場1)_結束時間', default='00:00')
+    session_10_start = models.TimeField(u'說明會場次10(備用場次)_開始時間', default='00:00')
+    session_10_end = models.TimeField(u'說明會場次10(備用場次)_結束時間', default='00:00')
     # 費用
     session_fee_short = models.IntegerField(u'說明會場次(50min)_費用', default=0)
     session_fee_long = models.IntegerField(u'說明會場次(90min)_費用', default=0)
@@ -310,6 +314,7 @@ class OnlineJobfairSlot(models.Model):
 class SeminarSlot(models.Model):
     # (value in db, display name)
     SESSIONS = (
+        ("morning1", "早上場1"),
         ("noon1", "中午場1"),
         ("noon2", "中午場2"),
         ("noon3", "中午場3"),
@@ -318,6 +323,7 @@ class SeminarSlot(models.Model):
         ("evening2", "晚場2"),
         ("evening3", "晚場3"),
         ("evening4", "晚場4(90min)"),
+        ("add1", "備用場1"),
     )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期', default=datetime.date.today)
