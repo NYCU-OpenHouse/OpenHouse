@@ -75,7 +75,15 @@ class NavbarConfigs(models.Model):
         verbose_name = "公開頁面連結設定"
         verbose_name_plural = "公開頁面連結設定"
 
-class FAQ(models.Model):
+# class FAQ(models.Model):
+#     content = RichTextUploadingField(u'內容')
+    
+#     class Meta:
+#         verbose_name = "常見問題"
+#         verbose_name_plural = "常見問題"
+
+class FAQ_new(models.Model):
+    id = models.AutoField(primary_key=True)
     content = RichTextUploadingField(u'內容')
     
     class Meta:
