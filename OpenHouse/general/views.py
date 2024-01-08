@@ -80,8 +80,8 @@ def GetCompanyNewsList(request):
 
 def FAQ(request):
     try:
-        FAQ = models.FAQ.objects.order_by('id').first()
-    except models.FAQ.DoesNotExist:
+        FAQ = models.FAQ_new.objects.order_by('id').first()
+    except models.FAQ_new.DoesNotExist:
         error_msg = '常見問題尚未建立，敬請等待!'
         return render(request, 'general/error.html', locals())
     return render(request, 'general/FAQ.html', locals())
