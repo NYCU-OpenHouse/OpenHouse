@@ -106,12 +106,20 @@ class JobfairInfoForm(ModelForm):
         fields = '__all__'
         exclude = ['company']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, max_num=None, **kwargs):
         super(JobfairInfoForm, self).__init__(*args, **kwargs)
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
-
+        print(max_num)
+        self.fields['lunch_box'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+        self.fields['parking_tickets'].widget.attrs.update({
+            'max' : max_num,
+            'min' : '0'
+        })
 
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):
