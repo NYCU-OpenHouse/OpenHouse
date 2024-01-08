@@ -502,6 +502,8 @@ def jobfair_info(request):
 
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
+        booth_num = company.jobfair
+        booth_quantity = booth_num * 3
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
@@ -514,6 +516,7 @@ def jobfair_info(request):
     try:
         deadline = RecruitConfigs.objects.values('jobfair_info_deadline')[0]['jobfair_info_deadline']
         food_type = RecruitConfigs.objects.values('jobfair_food')[0]['jobfair_food']
+        food_info = RecruitConfigs.objects.values('jobfair_food_info')[0]['jobfair_food_info']
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
@@ -526,7 +529,7 @@ def jobfair_info(request):
     if request.POST:
         if not reach_deadline:
             data = request.POST.copy()
-            form = JobfairInfoForm(data=data, instance=jobfair_info_object)
+            form = JobfairInfoForm(data=data, instance=jobfair_info_object, max_num=booth_num)
             formset = parking_form_set(data=data, instance=jobfair_info_object)
             if form.is_valid() and formset.is_valid():
                 new_info = form.save(commit=False)
@@ -544,7 +547,7 @@ def jobfair_info(request):
             return render(request, 'recruit/error.html', locals())
 
     else:
-        form = JobfairInfoForm(instance=jobfair_info_object)
+        form = JobfairInfoForm(instance=jobfair_info_object, max_num=booth_num)
         formset = parking_form_set(instance=jobfair_info_object)
 
     return render(request, 'recruit/company/jobfair_info.html', locals())

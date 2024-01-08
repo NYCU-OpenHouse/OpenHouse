@@ -9,6 +9,8 @@
             var selectedValue = $('#id_parking_type').val();
             if (selectedValue === 'register') {
                     $('#registerField').show();
+            } else if (selectedValue === 'ticket') {
+                    $('#ticketField').show();
             }
         }
 
@@ -17,12 +19,15 @@
 
             $('#id_parking_type').change(function () {
                 $('#registerField').hide();
+                $('#ticketField').hide();
         
                 var selectedValue = $(this).val();
                 console.log(selectedValue);
         
                 if (selectedValue === 'register') {
                     $('#registerField').show();
+                } else if (selectedValue === 'ticket') {
+                    $('#ticketField').show();
                 }
             });
         });
@@ -96,10 +101,15 @@
                 <label>{{ form.lunch_box.label }}</label>
                 {{ form.lunch_box }}
                 {{ form.lunch_box.help_text }}
-                <p>每攤位免費提供<span style="color:red;">至多3份午餐</span>。</p>
+                <p>每攤位免費提供至多3份午餐。<span style="color:red;">貴公司至多 {{ booth_quantity }} 份。</span></p>
             </div>
-            
             {% endif %}
+
+            <div class="field">
+                <label>餐點注意事項</label>
+                {{ food_info | safe }}
+            </div>
+
             <div class="field">
                 {% now 'Y' as current_year %}
                 {% now 'm' as current_month %}
@@ -167,6 +177,14 @@
             {{ form.parking_type.errors }}
             {{ form.parking_type }}
         </div>
+        <div class="three fields" id="ticketField" style="display: none;">
+            <div class="field">
+                <label>{{ form.parking_tickets.label }}</label>
+                {{ form.parking_tickets }}
+                <p>每攤位免費提供1張停車證。<span style="color:red;">貴公司至多 {{ booth_num }} 張。</span></p>
+            </div>
+        </div>
+
         <div class="field" id="registerField" style="display: none;">
             {{ formset.management_form }}
             {% for f in formset %}
