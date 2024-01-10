@@ -1,11 +1,11 @@
 {% extends 'recruit_base.html' %}
 
 {% block 'custom_head' %}
-    <title>校園徵才 | OpenHouse 企業校園徵才</title>
+    <title>春季徵才 | OpenHouse 企業校園徵才</title>
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 校園徵才</h1>
+    <h1 class="ui dividing header">Open House 春季徵才</h1>
     <div class="ui segment">
         {% for company_info in recruit_company_info %}
             {{ company_info.content|safe }}
@@ -65,7 +65,7 @@
       <li><strong>企業參訪(5%)</strong>：
         提升陽明交大同學對企業的實際瞭解，對籌劃未來生涯與職涯藍圖有所助益。</li>
 
-		<li><strong>企業滿意度問卷(15%)</strong>: 可於左方填寫,為建立校友就業相關資料,以期瞭解業界對本校畢業生的評價,做為本校改善教
+		<li><strong>畢業生滿意度問卷(15%)</strong>: 可於左方填寫,為建立校友就業相關資料,以期瞭解業界對本校畢業生的評價,做為本校改善教
 			學以及推展研究的重要參考依據。</li>
 
 		<li><strong>其他(5%)</strong>: 此項評分為廠商歷年參展之互動紀錄,如有延遲繳費、中途退出活動、遲到並影響活動形象等狀況,將斟酌減分。</li>

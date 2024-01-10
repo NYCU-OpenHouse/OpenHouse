@@ -1,7 +1,6 @@
 $( document ).ready(function() {
   $('.dropdown').dropdown();
 
-
   $('.ui.form')
 	.form({
 	  fields: {
@@ -159,5 +158,4 @@ $( document ).ready(function() {
 		},
 	  }
 	}) ;
-
 });

@@ -113,6 +113,45 @@ def Export_Company(request):
     workbook.close()
     return response
 
+@staff_member_required
+def ExportJobs(request):
+    if request.user and request.user.is_authenticated:
+        if not request.user.is_superuser:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=403)
+
+    filename = "rdss_jobs_{}.xlsx".format(
+        timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+
+    company_list = [company_obj for company_obj in company.models.Company.objects.filter(cid__in=[s.cid for s in rdss.models.Signup.objects.all()])]
+
+    fieldname_list = ['title', 'is_liberal', 'is_foreign', 
+                    'description', 'quantity', 'note', 
+                    'english_title', 'english_description','english_note']
+
+    title_pairs = dict()
+    for fieldname in fieldname_list:
+        title_pairs[fieldname] = company.models.Job._meta.get_field(fieldname).verbose_name
+
+    workbook = xlsxwriter.Workbook(response)
+    
+    for company_obj in company_list:
+        worksheet = workbook.add_worksheet(company_obj.shortname)
+
+        for index, fieldname in enumerate(fieldname_list):
+            worksheet.write(0, index, title_pairs[fieldname])
+
+        job_listings = company.models.Job.objects.filter(cid=company_obj)
+
+        for row_count, job_obj in enumerate(job_listings):
+            for col_count, fieldname in enumerate(fieldname_list):
+                worksheet.write(row_count + 1, col_count, getattr(job_obj, fieldname))
+
+    workbook.close()
+    return response
 
 @staff_member_required
 def ExportAll(request):
@@ -144,6 +183,18 @@ def ExportAll(request):
     title_pairs = dict()
     for fieldname in fieldname_list:
         title_pairs[fieldname] = company.models.Company._meta.get_field(fieldname).verbose_name
+    # add job related fields
+    fieldname_list += [
+        'foreign_job_types', 'foreign_jobs', 'liberal_job_types', 'liberal_jobs', 'total_job_types', 'total_jobs'
+    ]
+    title_pairs.update({
+        'foreign_job_types': '外籍職缺種類',
+        'foreign_jobs': '外籍職缺數量',
+        'liberal_job_types': '文組職缺種類',
+        'liberal_jobs': '文組職缺數量',
+        'total_job_types': '總職缺種類',
+        'total_jobs': '總職缺數量'
+    })
 
     info_worksheet = workbook.add_worksheet("廠商資料")
 
@@ -151,8 +202,34 @@ def ExportAll(request):
         info_worksheet.write(0, index, title_pairs[fieldname])
 
     for row_count, company_obj in enumerate(company_list):
+        jobs = company.models.Job.objects.filter(cid=company_obj)
+
+        foreign_jobs = jobs.filter(is_foreign=True)
+        liberal_jobs = jobs.filter(is_liberal=True)
+
+        foreign_job_types = foreign_jobs.values('title').distinct().count()
+        foreign_jobs_quantity = foreign_jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        liberal_job_types = liberal_jobs.values('title').distinct().count()
+        liberal_jobs_quantity = liberal_jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        total_jobs_quantity = jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        total_job_types = jobs.values('title').distinct().count()
+
         for col_count, fieldname in enumerate(fieldname_list):
-            info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
+            if fieldname == 'foreign_job_types':
+                info_worksheet.write(row_count + 1, col_count, foreign_job_types)
+            elif fieldname == 'foreign_jobs':
+                info_worksheet.write(row_count + 1, col_count, foreign_jobs_quantity)
+            elif fieldname == 'liberal_job_types':
+                info_worksheet.write(row_count + 1, col_count, liberal_job_types)
+            elif fieldname == 'liberal_jobs':
+                info_worksheet.write(row_count + 1, col_count, liberal_jobs_quantity)
+            elif fieldname == 'total_job_types':
+                info_worksheet.write(row_count + 1, col_count, total_job_types)
+            elif fieldname == 'total_jobs':
+                info_worksheet.write(row_count + 1, col_count, total_jobs_quantity)
+            else:
+                info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
+
     # ============= end of company basic info =============
 
     # Company Signup

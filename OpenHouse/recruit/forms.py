@@ -14,17 +14,17 @@ from django.forms import ModelForm
 class RecruitSignupForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(RecruitSignupForm, self).__init__(*args, **kwargs)
+        self.fields['history'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
         self.fields['seminar'].widget.attrs.update({
             'class': 'ui dropdown',
         })
         self.fields['seminar_ece'].widget.attrs.update({
             'class': 'ui dropdown',
         })
-        self.fields['seminar_online'].widget.attrs.update({
-            'class': 'ui dropdown',
-        })
         self.fields['jobfair'].widget.attrs.update({
-            'max' : '4',
+            'max' : '6',
             'min' : '0'
         })
 
@@ -106,12 +106,20 @@ class JobfairInfoForm(ModelForm):
         fields = '__all__'
         exclude = ['company']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, max_num=None, **kwargs):
         super(JobfairInfoForm, self).__init__(*args, **kwargs)
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
-
+        print(max_num)
+        self.fields['lunch_box'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+        self.fields['parking_tickets'].widget.attrs.update({
+            'max' : max_num,
+            'min' : '0'
+        })
 
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):

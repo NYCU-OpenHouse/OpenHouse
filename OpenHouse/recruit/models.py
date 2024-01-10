@@ -7,6 +7,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 import datetime
 import company.models
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 def validate_license_plate_number(string):
@@ -22,7 +23,6 @@ def validate_license_plate_number(string):
             err = e
     raise err
 
-
 CATEGORYS = (
     (u'半導體', u'半導體'),
     (u'消費電子', u'消費電子'),
@@ -30,16 +30,33 @@ CATEGORYS = (
     (u'光電光學', u'光電光學'),
     (u'資訊軟體', u'資訊軟體'),
     (u'集團', u'集團'),
-    (u'綜合', u'綜合'),
     (u'人力銀行', u'人力銀行'),
-    (u'機構', u'機構'),
     (u'新創', u'新創'),
-    (u'主辦保留', u'主辦保留'),
     (u'生科醫療', u'生科醫療'),
+    (u'金融/保險/不動產', u'金融/保險/不動產'),
+    (u'出版影音/藝術、娛樂及休閒服務業', u'出版影音/藝術、娛樂及休閒服務業'),
+    (u'醫療保健及社會工作服務業', u'醫療保健及社會工作服務業'),
     (u'公家單位', u'公家單位'),
-    (u'通用', u'通用'),
+    (u'財團/社團/行政法人', u'財團/社團/行政法人'),
+    (u'住宿/餐飲業', u'住宿/餐飲業'),
+    (u'批發及零售/運輸及倉儲業', u'批發及零售/運輸及倉儲業'),
+    (u'電力及燃氣供應業', u'電力及燃氣供應業'),
+    (u'傳統製造業', u'傳統製造業'),
+    (u'其他', u'其他'),
 )
 
+class CompanyCatogories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'公司類別名稱', max_length=50)
+    discount = models.BooleanField(u'公家機關優惠', default=False)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'公司類別設定'
+        verbose_name_plural = u'公司類別設定'
 
 class RecruitConfigs(models.Model):
     id = models.AutoField(primary_key=True)
@@ -51,79 +68,95 @@ class RecruitConfigs(models.Model):
     survey_start = models.DateTimeField(u'滿意度問卷開始填答')
     survey_end = models.DateTimeField(u'滿意度問卷結束填答')
 
-    # 實體說明會相關
-    seminar_start_date = models.DateField(u'實體說明會開始日期', default=datetime.date.today)
-    seminar_end_date = models.DateField(u'實體說明會結束日期', default=datetime.date.today)
-    session_1_start = models.TimeField(u'實體說明會場次1_開始時間', default='00:00')
-    session_1_end = models.TimeField(u'實體說明會場次1_結束時間', default='00:00')
-    session_2_start = models.TimeField(u'實體說明會場次2_開始時間', default='00:00')
-    session_2_end = models.TimeField(u'實體說明會場次2_結束時間', default='00:00')
-    session_3_start = models.TimeField(u'實體說明會場次3_開始時間', default='00:00')
-    session_3_end = models.TimeField(u'實體說明會場次3_結束時間', default='00:00')
-    session_4_start = models.TimeField(u'實體說明會場次4_開始時間', default='00:00')
-    session_4_end = models.TimeField(u'實體說明會場次4_結束時間', default='00:00')
-    session_5_start = models.TimeField(u'實體說明會場次5_開始時間', default='00:00')
-    session_5_end = models.TimeField(u'實體說明會場次5_結束時間', default='00:00')
-    session_6_start = models.TimeField(u'實體說明會場次6_開始時間', default='00:00')
-    session_6_end = models.TimeField(u'實體說明會場次6_結束時間', default='00:00')
+    # 說明會相關
+    seminar_start_date = models.DateField(u'說明會開始日期', default=datetime.date.today)
+    seminar_end_date = models.DateField(u'說明會結束日期', default=datetime.date.today)
+    session_1_start = models.TimeField(u'說明會場次1_開始時間', default='00:00')
+    session_1_end = models.TimeField(u'說明會場次1_結束時間', default='00:00')
+    session_2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
+    session_2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
+    session_3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
+    session_3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
+    session_4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
+    session_4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
+    session_5_start = models.TimeField(u'說明會場次5_開始時間', default='00:00')
+    session_5_end = models.TimeField(u'說明會場次5_結束時間', default='00:00')
+    session_6_start = models.TimeField(u'說明會場次6_開始時間', default='00:00')
+    session_6_end = models.TimeField(u'說明會場次6_結束時間', default='00:00')
+    session_7_start = models.TimeField(u'說明會場次7(90min)_開始時間', default='00:00')
+    session_7_end = models.TimeField(u'說明會場次7(90min)_結束時間', default='00:00')
+    session_8_start = models.TimeField(u'說明會場次8(午場4)_開始時間', default='00:00')
+    session_8_end = models.TimeField(u'說明會場次8(午場4)_結束時間', default='00:00')
+    session_9_start = models.TimeField(u'說明會場次9(早場1)_開始時間', default='00:00')
+    session_9_end = models.TimeField(u'說明會場次9(早場1)_結束時間', default='00:00')
+    session_10_start = models.TimeField(u'說明會場次10(備用場次)_開始時間', default='00:00')
+    session_10_end = models.TimeField(u'說明會場次10(備用場次)_結束時間', default='00:00')
     # 費用
-    session_fee = models.IntegerField(u'實體說明會場次_費用', default=0)
+    session_fee_short = models.IntegerField(u'說明會場次(50min)_費用', default=0)
+    session_fee_long = models.IntegerField(u'說明會場次(90min)_費用', default=0)
 
-    # 實體ECE說明會相關
-    seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
-    seminar_ece_end_date = models.DateField(u'實體ECE說明會結束日期', default=datetime.date.today)
+    # ECE說明會相關
+    seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
+    seminar_ece_end_date = models.DateField(u'ECE說明會結束日期', default=datetime.date.today)
     # 費用
-    session_ece_fee = models.IntegerField(u'實體ECE說明會_費用', default=0)
+    session_ece_fee = models.IntegerField(u'ECE說明會_費用', default=0)
 
     # 線上說明會相關
-    seminar_online_start_date = models.DateField(u'線上說明會開始日期', default=datetime.date.today)
-    seminar_online_end_date = models.DateField(u'線上說明會結束日期', default=datetime.date.today)
-    session_online_1_start = models.TimeField(u'線上說明會場次1_開始時間', default='00:00')
-    session_online_1_end = models.TimeField(u'線上說明會場次1_結束時間', default='00:00')
-    session_online_2_start = models.TimeField(u'線上說明會場次2_開始時間', default='00:00')
-    session_online_2_end = models.TimeField(u'線上說明會場次2_結束時間', default='00:00')
-    session_online_3_start = models.TimeField(u'線上說明會場次3_開始時間', default='00:00')
-    session_online_3_end = models.TimeField(u'線上說明會場次3_結束時間', default='00:00')
-    session_online_4_start = models.TimeField(u'線上說明會場次4_開始時間', default='00:00')
-    session_online_4_end = models.TimeField(u'線上說明會場次4_結束時間', default='00:00')
-    session_online_5_start = models.TimeField(u'線上說明會場次5_開始時間', default='00:00')
-    session_online_5_end = models.TimeField(u'線上說明會場次5_結束時間', default='00:00')
+    # seminar_online_start_date = models.DateField(u'線上說明會開始日期', default=datetime.date.today)
+    # seminar_online_end_date = models.DateField(u'線上說明會結束日期', default=datetime.date.today)
+    # session_online_1_start = models.TimeField(u'線上說明會場次1_開始時間', default='00:00')
+    # session_online_1_end = models.TimeField(u'線上說明會場次1_結束時間', default='00:00')
+    # session_online_2_start = models.TimeField(u'線上說明會場次2_開始時間', default='00:00')
+    # session_online_2_end = models.TimeField(u'線上說明會場次2_結束時間', default='00:00')
+    # session_online_3_start = models.TimeField(u'線上說明會場次3_開始時間', default='00:00')
+    # session_online_3_end = models.TimeField(u'線上說明會場次3_結束時間', default='00:00')
+    # session_online_4_start = models.TimeField(u'線上說明會場次4_開始時間', default='00:00')
+    # session_online_4_end = models.TimeField(u'線上說明會場次4_結束時間', default='00:00')
+    # session_online_5_start = models.TimeField(u'線上說明會場次5_開始時間', default='00:00')
+    # session_online_5_end = models.TimeField(u'線上說明會場次5_結束時間', default='00:00')
     # 費用
-    session_online_fee = models.IntegerField(u'線上說明會場次_費用', default=0)
+    # session_online_fee = models.IntegerField(u'線上說明會場次_費用', default=0)
 
-    # 實體就博會相關
-    jobfair_date = models.DateField(u'實體就博會日期', default=datetime.date.today)
-    jobfair_start = models.TimeField(u'實體就博會開始時間', default='00:00')
-    jobfair_end = models.TimeField(u'實體就博會結束時間', default='00:00')
-    jobfair_place = models.CharField(u'實體就博會地點', max_length=150, default="")
-    jobfair_info_deadline = models.DateTimeField(u'實體資訊截止填寫時間', default=timezone.now)
+    # 就博會相關
+    jobfair_date = models.DateField(u'就博會日期', default=datetime.date.today)
+    jobfair_start = models.TimeField(u'就博會開始時間', default='00:00')
+    jobfair_end = models.TimeField(u'就博會結束時間', default='00:00')
+    jobfair_place = models.CharField(u'就博會地點', max_length=150, default="")
+    jobfair_info_deadline = models.DateTimeField(u'資訊截止填寫時間', default=timezone.now)
+    JOBFAIR_FOOD_CHOICES = (
+        ('lunch_box', u'餐盒(蛋奶素)'),
+        ('bento', u'便當(葷素)')
+    )
+    jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
+    jobfair_food_info = RichTextUploadingField(u'餐點注意事項', max_length=128, blank=True, null=True)
     # 費用
-    jobfair_booth_fee = models.IntegerField(u'實體就博會攤位費用(每攤)', default=0)
+    jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
 
     # 線上就博會相關
-    jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
-    jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
-    jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
-    jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
-    # 費用
-    jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
+    # jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
+    # jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
+    # jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
+    # jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
 
-    seminar_btn_start = models.DateField(u'實體說明會按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'實體說明會按鈕關閉日期', null=True)
-    seminar_online_btn_start = models.DateField(u'線上說明會按鈕開啟日期', null=True)
-    seminar_online_btn_end = models.DateField(u'線上說明會按鈕關閉日期', null=True)
-    jobfair_btn_start = models.DateField(u'實體就博會按鈕開啟日期', null=True)
-    jobfair_btn_end = models.DateField(u'實體就博會按鈕關閉日期', null=True)
+    # 費用
+    # jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
+
+    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
+    # seminar_online_btn_start = models.DateField(u'線上說明會按鈕開啟日期', null=True)
+    # seminar_online_btn_end = models.DateField(u'線上說明會按鈕關閉日期', null=True)
+    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
+    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
 
     class Meta:
         managed = True
-        verbose_name = u'1. 校徵活動設定'
-        verbose_name_plural = u'1. 校徵活動設定'
+        verbose_name = u'1. 春季徵才活動設定'
+        verbose_name_plural = u'1. 春季徵才活動設定'
 
 
 class ECESeminar(models.Model):
     id = models.AutoField(primary_key=True)
-    seminar_name = models.CharField(u'實體ECE說明會名稱', max_length=50)
+    seminar_name = models.CharField(u'ECE說明會名稱', max_length=50)
     ece_member_discount = models.BooleanField(u'電機資源產學聯盟優惠', default=False)
 
     def __str__(self):
@@ -131,32 +164,60 @@ class ECESeminar(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u'3. 實體ECE說明會設定'
-        verbose_name_plural = u'3. 實體ECE說明會設定'
+        verbose_name = u'3. ECE說明會設定'
+        verbose_name_plural = u'3. ECE說明會設定'
 
+class ZoneCatogories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'專區名稱', max_length=20)
+    discount = models.IntegerField(u'專區優惠', default=0)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'專區設定'
+        verbose_name_plural = u'專區設定'
+
+class HistoryParticipation(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'過往參加活動名稱', max_length=30)
+    short_name = models.CharField(u'過往參加活動簡稱', max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'過往參加活動調查選項設定'
+        verbose_name_plural = u'過往參加活動調查選項設定'
 
 class RecruitSignup(models.Model):
     SEMINAR_CHOICES = (
-        (u'none', u'不參加實體說明會'),
-        (u'attend', u'參加實體說明會'),
+        (u'none', u'不參加說明會'),
+        (u'attend_short', u'參加說明會(50min)'),
+        (u'attend_long', u'參加說明會(90min)'),
     )
-    SEMINAR_ONLINE_CHOICES = (
-        (u'none', u'不參加線上說明會'),
-        (u'attend', u'參加線上說明會'),
-    )
+    
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
-    seminar = models.CharField(u'實體說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
-    seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
-    seminar_online = models.CharField(u'線上說明會場次', choices=SEMINAR_ONLINE_CHOICES, max_length=15, default='none')
-    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MaxValueValidator(4), MinValueValidator(0)])
-    jobfair_online = models.BooleanField(u'線上就博會', default=False)
-    career_tutor = models.BooleanField(u'企業職場導師', default=False)
-    company_visit = models.BooleanField(u'企業參訪/諮詢服務', default=False)
+    first_participation = models.BooleanField(u'首次參加', default=False)
+    zone = models.ForeignKey('ZoneCatogories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
+    history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
+    seminar = models.CharField(u'說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none')
+    seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'ECE說明會場次', blank=True)
+    # SEMINAR_ONLINE_CHOICES = (
+    #     (u'none', u'不參加線上說明會'),
+    #     (u'attend', u'參加線上說明會'),
+    # )
+    # seminar_online = models.CharField(u'線上說明會場次', choices=SEMINAR_ONLINE_CHOICES, max_length=15, default='none')
+    jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MinValueValidator(0)])
+    # jobfair_online = models.BooleanField(u'線上就博會', default=False)
+    career_tutor = models.BooleanField(u'諮詢服務', default=False)
+    company_visit = models.BooleanField(u'企業參訪', default=False)
     lecture = models.BooleanField(u'就職講座', default=False)
     payment = models.BooleanField(u'完成付款', default=False)
-    receipt_no = models.CharField(u'收據號碼', blank=True, null=True, max_length=50)
-    receipt_year = models.CharField(u'收據年份', max_length=4, default="", help_text="例如: 2022或111，須先完成繳費方可開立收據")
     ps = models.TextField(u'備註', blank=True, null=True)
     added = models.TimeField(u'報名時間', auto_now_add=True)
     updated = models.TimeField(u'更新時間', auto_now=True)
@@ -167,10 +228,21 @@ class RecruitSignup(models.Model):
         except:
             return "資料庫不同步，請連絡資訊組"
         return com.shortname
+    
+    def clean(self):
+        if  self.cid != '77777777' and self.jobfair > 6:
+            raise ValidationError('企業攤位範圍為6攤')
 
     def get_company_name(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
+    
+    def company_join_date(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        if com:
+            return com.date_join 
+        else:
+            return None
 
     def get_company(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
@@ -204,11 +276,10 @@ class Files(models.Model):
         verbose_name = u"活動檔案"
         verbose_name_plural = u"活動檔案"
 
-
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
-    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS)
+    category = models.ManyToManyField('CompanyCatogories', verbose_name=u'公司類別', blank=True)
     company = models.ForeignKey('RecruitSignup', to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE, blank=True, null=True)
@@ -216,13 +287,13 @@ class JobfairSlot(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u'實體就博會攤位'
-        verbose_name_plural = u'實體就博會攤位'
+        verbose_name = u'就博會攤位'
+        verbose_name_plural = u'就博會攤位'
 
     def __str__(self):
         return self.serial_no
 
-
+# 線上就博會攤位
 class OnlineJobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
@@ -245,33 +316,36 @@ class OnlineJobfairSlot(models.Model):
 class SeminarSlot(models.Model):
     # (value in db, display name)
     SESSIONS = (
+        ("morning1", "早上場1"),
         ("noon1", "中午場1"),
         ("noon2", "中午場2"),
         ("noon3", "中午場3"),
+        ("noon4", "中午場4"),
         ("evening1", "晚場1"),
         ("evening2", "晚場2"),
         ("evening3", "晚場3"),
+        ("evening4", "晚場4(90min)"),
+        ("add1", "備用場1"),
     )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期', default=datetime.date.today)
     session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
-    company = models.OneToOneField('RecruitSignup', to_field='cid',
+    company = models.ForeignKey('RecruitSignup', to_field='cid',
                                    verbose_name=u'公司',
-                                   on_delete=models.CASCADE, null=True, blank=True)
-    place = models.ForeignKey('SlotColor', null=True, blank=True,
-                      verbose_name=u'場地', on_delete=models.SET_NULL)
+                                   on_delete=models.CASCADE, null=True, blank=True, unique=False)
+    place = models.ForeignKey('SlotColor', verbose_name=u'場地', on_delete=models.CASCADE, default=1)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
         managed = True
-        verbose_name = u"實體說明會場次"
-        verbose_name_plural = u"實體說明會場次"
+        verbose_name = u"說明會場次"
+        verbose_name_plural = u"說明會場次"
 
     def __str__(self):
         return '{} {}'.format(self.date, self.session)
 
-
+# 線上說明會場次
 class OnlineSeminarSlot(models.Model):
     # (value in db, display name)
     SESSIONS = (
@@ -310,10 +384,10 @@ class SeminarOrder(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體說明會選位順序"
-        verbose_name_plural = u"實體說明會選位順序"
+        verbose_name = u"說明會選位順序"
+        verbose_name_plural = u"說明會選位順序"
 
-
+# 線上說明會選位順序
 class OnlineSeminarOrder(models.Model):
     id = models.AutoField(primary_key=True)
     time = models.DateTimeField(u'選位開始時間')
@@ -340,33 +414,45 @@ class JobfairOrder(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體就博會選位順序"
-        verbose_name_plural = u"實體就博會選位順序"
+        verbose_name = u"就博會選位順序"
+        verbose_name_plural = u"就博會選位順序"
 
 
 class JobfairInfo(models.Model):
     id = models.AutoField(primary_key=True)
     company = models.OneToOneField(RecruitSignup, verbose_name=u'公司', on_delete=models.CASCADE)
     sign_name = models.CharField(u'攤位招牌名稱', max_length=20)
+    sign_eng_name = models.CharField(u'攤位招牌英文名稱', max_length=50, help_text="請填寫英文名稱, 限制50字元內", default="")
+    disable_proofread = models.BooleanField(u'無需校對', default=False)
     contact_person = models.CharField(u'聯絡人', max_length=10)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=32)
     contact_email = models.EmailField(u'聯絡人Email', max_length=128)
-    packing_tickets = models.IntegerField(u'停車證數量', default=0)
+    packing_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
+    PARKING_CHOICES = (
+        ('ticket', u'當日索取紙本停車抵用券'),
+        ('register', u'企業事先登記A車車牌號碼')
+    )
+    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True)
+    parking_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
     job_number = models.SmallIntegerField(u'職缺人數', default=0)
-    general_lunch_box = models.SmallIntegerField(u'葷食餐點數量', default=0)
-    veget_lunch_box = models.IntegerField(u'素食餐點', default=0)
+
+    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
+    lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素")
+    general_lunch_box = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    veget_lunch_box = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
-    long_table = models.IntegerField(u'長桌', default=2)
-    chair = models.IntegerField(u'椅子', default=5)
-    doily = models.IntegerField(u'紅桌巾', default=1)
-    flag_pole_socket = models.IntegerField(u'旗桿座組', default=0)
-    searchlight = models.IntegerField(u'攤位頂部白光探照燈', default=0)
+    long_table = models.IntegerField(u'長桌', default=2, blank=True, null=True)
+    chair = models.IntegerField(u'椅子', default=5, blank=True, null=True)
+    doily = models.IntegerField(u'紅桌巾', default=1, blank=True, null=True)
+    flag_pole_socket = models.IntegerField(u'旗桿座組', default=0, blank=True, null=True)
+    searchlight = models.IntegerField(u'攤位頂部白光探照燈', default=0, blank=True, null=True)
     ps = models.CharField(u'備註', max_length=128, blank=True, null=True)
 
     class Meta:
         managed = True
-        verbose_name = u'實體就博會資訊'
-        verbose_name_plural = u'實體就博會資訊'
+        verbose_name = u'就博會資訊'
+        verbose_name_plural = u'就博會資訊'
 
 
 class JobfairParking(models.Model):
@@ -378,8 +464,8 @@ class JobfairParking(models.Model):
         return self.license_plate_number
 
     class Meta:
-        verbose_name = u"實體就博會車牌號碼"
-        verbose_name_plural = u"實體就博會車牌號碼"
+        verbose_name = u"就博會車牌號碼"
+        verbose_name_plural = u"就博會車牌號碼"
 
 
 class JobfairInfoTemp(models.Model):
@@ -412,11 +498,9 @@ class SeminarInfo(models.Model):
     attend_prize = models.CharField(u'參加獎獎品', max_length=254,
                                     null=True, blank=True)
     attend_prize_amount = models.SmallIntegerField(u'參加獎獎品數量', default=0)
-    snack_box = models.SmallIntegerField(u'加碼餐盒數量', default=0)
     contact = models.CharField(u'聯絡人', max_length=30)
     contact_mobile = models.CharField(u'聯絡人手機', max_length=16)
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
-    parking_cards = models.SmallIntegerField(u'汽車停車卡數量', default=0)
     job_number = models.SmallIntegerField(u'職缺人數', default=0)
     hr_food = models.CharField(u'人資餐點', max_length=30, null=True, blank=True,
                                help_text=" 提供免費2份餐點與飲水給企業人資或講者，如需素食或特殊飲食請於本欄備註說明")
@@ -425,9 +509,8 @@ class SeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體說明會資訊"
-        verbose_name_plural = u"實體說明會資訊"
-
+        verbose_name = u"說明會資訊"
+        verbose_name_plural = u"說明會資訊"
 
 class SeminarParking(models.Model):
     id = models.AutoField(primary_key=True)
@@ -438,8 +521,8 @@ class SeminarParking(models.Model):
         return self.license_plate_number
 
     class Meta:
-        verbose_name = u"實體說明會車牌號碼"
-        verbose_name_plural = u"實體說明會車牌號碼"
+        verbose_name = u"說明會車牌號碼"
+        verbose_name_plural = u"說明會車牌號碼"
 
 
 class OnlineSeminarInfo(models.Model):
@@ -544,8 +627,54 @@ class CompanySurvey(models.Model):
     os_for_intern = models.BooleanField(u'外籍生實習', default=False)
     os_osc_intern = models.BooleanField(u'僑生實習', default=False)
     os_cn_intern = models.BooleanField(u'陸生實習', default=False)
-    os_other_required = models.CharField(u'境外生能力要求', blank=True, null=True, max_length=255)
+
+    # application process
+    APP_PROCESS_CHOICES = (
+        ('literal','Hand over your CV to the HR personnel at the booth. (將協助引導學生至公司攤位)'),
+        ('online', 'Upload your CV to the recruitment website. (請留下應徵網址)'),
+        ('others', '其他')
+    )
+    os_app_process = models.CharField(u'應徵方式 ', max_length=50, choices=APP_PROCESS_CHOICES, null=True)
+    os_app_cv_url = models.CharField(u'網址', max_length=64, blank=True, null=True, default='')
+    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內')
+
+    # major multiple choice field
+    os_major_ee = models.BooleanField(u'電子電機', default=False)
+    os_major_po = models.BooleanField(u'光電', default=False)
+    os_major_cs = models.BooleanField(u'資工', default=False)
+    os_major_me = models.BooleanField(u'機械', default=False)
+    os_major_mse = models.BooleanField(u'材料', default=False)
+    os_major_chem = models.BooleanField(u'化學', default=False)
+    os_major_phys = models.BooleanField(u'物理', default=False)
+    os_major_math = models.BooleanField(u'數學', default=False)
+    os_major_bs = models.BooleanField(u'生科', default=False)
+    os_major_ms = models.BooleanField(u'管理', default=False)
+    os_major_hs = models.BooleanField(u'人社', default=False)
+    os_major_law = models.BooleanField(u'法律', default=False)
+    os_major_ohter = models.CharField(u'其他', max_length=50, blank=True, null=True)
+
+    SKILL_RATING = (
+        (u'native', u'native'),
+        (u'good', u'good'),
+        (u'fair', u'fair'),
+        (u'poor', u'poor'),
+        (u'inapplicable', u'inalpplicable'),
+    )
+    # chinese skill (optional)
+    os_chinese_listen = models.CharField(u'Chinese Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_speak = models.CharField(u'Chinese Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_read = models.CharField(u'Chinese Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_chinese_write = models.CharField(u'Chinese Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    # english skill (optional)
+    os_eng_listen = models.CharField(u'English Listening', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_speak = models.CharField(u'English Speaking', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_read = models.CharField(u'English Reading', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+    os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
+
+    os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
     os_seminar = models.BooleanField(u'外籍生說明會', default=False)
+    os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)
 
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
@@ -752,13 +881,13 @@ class CompanySurvey(models.Model):
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
     # plan_to_recruit     = models.IntegerField(u'2017年預計招募職缺數', help_text="此數據不會對外公開，僅供主辦單位內部作業統計用途。")
     nycu_employees = models.IntegerField(u'本校校友人數', default=0)
-    category = models.CharField(u'企業類別', max_length=10, choices=CATEGORYS)
+    category = models.CharField(u'企業類別', max_length=37, choices=CATEGORYS)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
         managed = True
-        verbose_name = u"企業滿意度問卷"
-        verbose_name_plural = u"企業滿意度問卷"
+        verbose_name = u"畢業生滿意度問卷"
+        verbose_name_plural = u"畢業生滿意度問卷"
 
 
 class SlotColor(models.Model):
@@ -871,8 +1000,8 @@ class RecruitSeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體說明會資訊編輯頁面 (學生)"
-        verbose_name_plural = u"實體說明會資訊編輯頁面 (學生)"
+        verbose_name = u"說明會資訊編輯頁面 (學生)"
+        verbose_name_plural = u"說明會資訊編輯頁面 (學生)"
 
 
 class RecruitECESeminarInfo(models.Model):
@@ -886,8 +1015,8 @@ class RecruitECESeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體ECE說明會資訊編輯頁面 (學生)"
-        verbose_name_plural = u"實體ECE說明會資訊編輯頁面 (學生)"
+        verbose_name = u"ECE說明會資訊編輯頁面 (學生)"
+        verbose_name_plural = u"ECE說明會資訊編輯頁面 (學生)"
 
 
 class RecruitOnlineSeminarInfo(models.Model):
@@ -916,8 +1045,8 @@ class RecruitJobfairInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"實體就博會資訊編輯頁面 (學生)"
-        verbose_name_plural = u"實體就博會資訊編輯頁面 (學生)"
+        verbose_name = u"就博會資訊編輯頁面 (學生)"
+        verbose_name_plural = u"就博會資訊編輯頁面 (學生)"
 
 
 class RecruitOnlineJobfairInfo(models.Model):

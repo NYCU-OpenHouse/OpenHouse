@@ -36,7 +36,7 @@ class CustomDashboard(Dashboard):
             order=0
         ))
         self.children.append(modules.LinkList(
-            _('校徵匯出'),
+            _('春徵匯出'),
             children=[
                 {
                     'title': _('匯出全部資料'),
@@ -69,6 +69,11 @@ class CustomDashboard(Dashboard):
                     'url': '/admin/recruit/companysurvey/export/',
                     'external': False,
                 },
+                {
+                    'title': _('廠商職缺匯出'),
+                    'url': '/admin/recruit/export_jobs/',
+                    'external': False,
+                },
             ],
             column=2,
             order=1
@@ -98,10 +103,10 @@ class CustomDashboard(Dashboard):
             order=1
         ))
         self.children.append(modules.LinkList(
-            _('校徵集點'),
+            _('春徵集點'),
             children=[
                 {
-                    'title': _('校徵說明會集點'),
+                    'title': _('春徵說明會集點'),
                     'url': '/admin/recruit/collect_points/',
                     'external': False,
                 },
@@ -120,7 +125,7 @@ class CustomDashboard(Dashboard):
             order=1
         ))
         self.children.append(modules.LinkList(
-            _('研替匯出'),
+            _('秋招匯出'),
             children=[
                 {
                     'title': _('匯出全部資料'),
@@ -152,15 +157,20 @@ class CustomDashboard(Dashboard):
                     'url': '/admin/rdss/export_jobfair/',
                     'external': False,
                 },
+                {
+                    'title': _('廠商職缺匯出'),
+                    'url': '/admin/rdss/export_jobs/',
+                    'external': False,
+                },
             ],
             column=2,
             order=1
         ))
         self.children.append(modules.LinkList(
-            _('研替集點'),
+            _('秋招集點'),
             children=[
                 {
-                    'title': _('研替說明會集點'),
+                    'title': _('秋招說明會集點'),
                     'url': '/admin/rdss/collect_points/',
                     'external': False,
                 },

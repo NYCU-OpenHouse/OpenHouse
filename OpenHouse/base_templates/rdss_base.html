@@ -15,30 +15,30 @@
                         <div class="header">活動報名相關</div>
                         <div class="menu">
                             <a class="{{ sidebar_ui.status }} item big" href="{% url 'rdss_status' %}">
-                                報名狀況總覽
+                                A 報名狀況總覽
                             </a>
                             <a class="{{ sidebar_ui.signup }} item big" href="{% url 'rdss_signup' %}">
-                                填寫報名資料
+                                B 填寫報名資料
                             </a>
                             <a class="{{ sidebar_ui.survey }} item big" href="{% url 'rdss_company_survey' %}">
-                                企業滿意度問卷
+                                C 畢業生滿意度問卷
                             </a>
                             <a class="{{ sidebar_ui.sponsor }} item big" href="{% url 'rdss_sponsor' %}">
-                                活動贊助
+                                D 活動贊助
                             </a>
                         </div>
                     </div>
                     <a class="{{ sidebar_ui.seminar_select }} item" href="{% url 'rdss_seminar_select' %}">
-                        企業說明會選位
+                        E 企業說明會選位
                     </a>
                     <a class="{{ sidebar_ui.seminar_info }} item" href="{% url 'rdss_seminar_info' %}">
-                        企業說明會資訊填寫
+                        F 企業說明會資訊填寫
                     </a>
                     <a class="{{ sidebar_ui.jobfair_select }} item" href="{% url 'rdss_jobfair_select' %}">
-                        實體就博會選位
+                        G 就業博覽會選位
                     </a>
                     <a class="{{ sidebar_ui.jobfair_info }} item" href="{% url 'rdss_jobfair_info' %}">
-                        實體就博會資訊填寫
+                        H 就業博覽會資訊填寫
                     </a>
                 {% else %}
                     <!-- public view -->
@@ -55,7 +55,7 @@
                     {# {% endif %} #}
                     {# {% if nav_configs.show_rdss_jobfair %} #}
                     {#     <a class="{{ sidebar_ui.jobfair }} item" href="{% url 'jobfair_public' %}"> #}
-                    {#         實體就博會 #}
+                    {#         就業博覽會 #}
                     {#     </a> #}
                     {# {% endif %} #}
                     {# {% if nav_configs.show_rdss_online_jobfair %} #}

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.forms.models import model_to_dict
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.conf import settings
 import xlsxwriter
 import json
@@ -45,6 +45,18 @@ def ExportAll(request):
     title_pairs = dict()
     for fieldname in fieldname_list:
         title_pairs[fieldname] = company.models.Company._meta.get_field(fieldname).verbose_name
+    # add job related fields
+    fieldname_list += [
+        'foreign_job_types', 'foreign_jobs', 'liberal_job_types', 'liberal_jobs', 'total_job_types', 'total_jobs'
+    ]
+    title_pairs.update({
+        'foreign_job_types': '外籍職缺種類',
+        'foreign_jobs': '外籍職缺數量',
+        'liberal_job_types': '文組職缺種類',
+        'liberal_jobs': '文組職缺數量',
+        'total_job_types': '總職缺種類',
+        'total_jobs': '總職缺數量'
+    })
 
     info_worksheet = workbook.add_worksheet("廠商資料")
 
@@ -52,9 +64,35 @@ def ExportAll(request):
         info_worksheet.write(0, index, title_pairs[fieldname])
 
     for row_count, company_obj in enumerate(company_list):
+        jobs = company.models.Job.objects.filter(cid=company_obj)
+
+        foreign_jobs = jobs.filter(is_foreign=True)
+        liberal_jobs = jobs.filter(is_liberal=True)
+
+        foreign_job_types = foreign_jobs.values('title').distinct().count()
+        foreign_jobs_quantity = foreign_jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        liberal_job_types = liberal_jobs.values('title').distinct().count()
+        liberal_jobs_quantity = liberal_jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        total_jobs_quantity = jobs.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+        total_job_types = jobs.values('title').distinct().count()
+
         for col_count, fieldname in enumerate(fieldname_list):
-            info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
-    # ============= end of company basic info =============
+            if fieldname == 'foreign_job_types':
+                info_worksheet.write(row_count + 1, col_count, foreign_job_types)
+            elif fieldname == 'foreign_jobs':
+                info_worksheet.write(row_count + 1, col_count, foreign_jobs_quantity)
+            elif fieldname == 'liberal_job_types':
+                info_worksheet.write(row_count + 1, col_count, liberal_job_types)
+            elif fieldname == 'liberal_jobs':
+                info_worksheet.write(row_count + 1, col_count, liberal_jobs_quantity)
+            elif fieldname == 'total_job_types':
+                info_worksheet.write(row_count + 1, col_count, total_job_types)
+            elif fieldname == 'total_jobs':
+                info_worksheet.write(row_count + 1, col_count, total_jobs_quantity)
+            else:
+                info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
+
+     # ============= end of company basic info =============
 
     # Company Signup
     signups = recruit.models.RecruitSignup.objects.all()
@@ -62,16 +100,19 @@ def ExportAll(request):
     title_pairs = [
         {'fieldname': 'cid', 'title': '公司統一編號'},
         {'fieldname': 'shortname', 'title': '公司簡稱'},
+        {'fieldname': 'first_participation', 'title': '首次參加'},
+        {'fieldname': 'zone', 'title': '專區類別'},
+        {'fieldname': 'history', 'title': '歷史參加調查'},
         {'fieldname': 'seminar', 'title': '實體說明會場次'},
         {'fieldname': 'seminar_ece', 'title': '實體ECE說明會'},
-        {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
+        # {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
         {'fieldname': 'jobfair', 'title': '實體就博會攤位數'},
-        {'fieldname': 'jobfair_online', 'title': '線上就博會'},
+        # {'fieldname': 'jobfair_online', 'title': '線上就博會'},
         {'fieldname': 'company_visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
         {'fieldname': 'lecture', 'title': '提供就業講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
-        {'fieldname': 'receipt_year', 'title': '收據年份'},
+        # {'fieldname': 'receipt_year', 'title': '收據年份'},
         {'fieldname': 'ps', 'title': '備註'},
     ]
 
@@ -95,9 +136,15 @@ def ExportAll(request):
             elif pairs['fieldname'] == 'seminar_ece':
                 signup_worksheet.write(row_count + 1, col_count,
                                        ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
-            elif pairs['fieldname'] == 'seminar_online':
+            elif pairs['fieldname'] == 'zone':
+                zone_name_first_two_chars = signup.zone.name[:2]
+                signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
+            elif pairs['fieldname'] == 'history':
                 signup_worksheet.write(row_count + 1, col_count,
-                                       signup.get_seminar_online_display())
+                                       ', '.join(h.short_name for h in signup.history.all()))
+            # elif pairs['fieldname'] == 'seminar_online':
+            #     signup_worksheet.write(row_count + 1, col_count,
+            #                            signup.get_seminar_online_display())
             else:
                 signup_worksheet.write(row_count + 1, col_count,
                                        signup_dict[pairs['fieldname']])
@@ -114,7 +161,7 @@ def ExportAll(request):
         {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
         {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},
         {'fieldname': 'receipt_contact_phone', 'title': '收據聯絡人公司電話'},
-        {'fieldname': 'receipt_year', 'title': '收據年份'},
+        # {'fieldname': 'receipt_year', 'title': '收據年份'},
     ]
 
     for index, pair in enumerate(receipt_title_pairs):
@@ -154,17 +201,18 @@ def ExportAll(request):
     spon_worksheet = workbook.add_worksheet("贊助")
     spon_worksheet.write(0, 0, "廠商/贊助品")
     spon_worksheet.write(1, 0, "目前數量/上限")
-    spon_worksheet.write(0, len(sponsor_items) + 1, "贊助額")
+    spon_worksheet.write(0, len(sponsor_items) + 2, "贊助額")
     for index, item in enumerate(sponsor_items):
-        spon_worksheet.write(0, index + 1, item.name)
-        spon_worksheet.write(1, index + 1, "{}/{}".format(item.num_sponsor, item.number_limit))
+        spon_worksheet.write(0, index + 2, item.name)
+        spon_worksheet.write(1, index + 2, "{}/{}".format(item.num_sponsor, item.number_limit))
 
     row_offset = 2
     for row_count, com in enumerate(sponsorships_list):
         spon_worksheet.write(row_count + row_offset, 0, com['shortname'])
+        spon_worksheet.write(row_count + row_offset, 1, com['cid'])
         for col_count, count in enumerate(com['counts']):
-            spon_worksheet.write(row_count + row_offset, col_count + 1, count)
-        spon_worksheet.write(row_count + row_offset, len(com['counts']) + 1, com['amount'])
+            spon_worksheet.write(row_count + row_offset, col_count + 2, count)
+        spon_worksheet.write(row_count + row_offset, len(com['counts']) + 2, com['amount'])
 
     # ece seminar information
     
@@ -250,6 +298,49 @@ def export_seminar_info(request):
     workbook.close()
     return response
 
+@staff_member_required
+def ExportJobs(request):
+    if request.user and request.user.is_authenticated:
+        if not request.user.is_superuser:
+            return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=403)
+
+    filename = "recruit_jobs_{}.xlsx".format(
+        timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+
+    signup_cid_list = [s.cid for s in recruit.models.RecruitSignup.objects.all()]
+    company_list = list()
+    for cid in signup_cid_list:
+        company_list.append(
+            company.models.Company.objects.filter(cid=cid).first())
+
+    fieldname_list = ['title', 'is_liberal', 'is_foreign', 
+                    'description', 'quantity', 'note', 
+                    'english_title', 'english_description','english_note']
+
+    title_pairs = dict()
+    for fieldname in fieldname_list:
+        title_pairs[fieldname] = company.models.Job._meta.get_field(fieldname).verbose_name
+
+    workbook = xlsxwriter.Workbook(response)
+    
+    for company_obj in company_list:
+        worksheet = workbook.add_worksheet(company_obj.shortname)
+
+        for index, fieldname in enumerate(fieldname_list):
+            worksheet.write(0, index, title_pairs[fieldname])
+
+        job_listings = company.models.Job.objects.filter(cid=company_obj)
+
+        for row_count, job_obj in enumerate(job_listings):
+            for col_count, fieldname in enumerate(fieldname_list):
+                worksheet.write(row_count + 1, col_count, getattr(job_obj, fieldname))
+
+    workbook.close()
+    return response
 
 @staff_member_required
 def export_online_seminar_info(request):
@@ -344,18 +435,22 @@ def ExportSurvey(request):
     workbook = xlsxwriter.Workbook(response)
 
     survey_worksheet = workbook.add_worksheet("廠商滿意度問卷")
-    survey_worksheet.write(0, 0, "廠商")
+    survey_worksheet.write(0, 0, "公司簡稱")
+    survey_worksheet.write(0, 1, "公司統一編號")
     # start from index 1 because I don't want id field
     fields = recruit.models.CompanySurvey._meta.get_fields()[1:]
     for index, field in enumerate(fields):
-        survey_worksheet.write(0, index + 1, field.verbose_name)
+        survey_worksheet.write(0, index + 2, field.verbose_name)
 
     survey_list = recruit.models.CompanySurvey.objects.all()
     for row_count, survey in enumerate(survey_list):
-        survey_worksheet.write(row_count + 1, 0, survey.company)
+        # find company short name by cid
+        shortname = company.models.Company.objects.filter(cid=survey.cid).first().shortname
+        survey_worksheet.write(row_count + 1, 0, shortname)
+        survey_worksheet.write(row_count + 1, 1, survey.cid)
         # export timestamp cause problem, TODO:FIX the fields[:-1] to fields
         for col_count, field in enumerate(fields[:-1]):
-            survey_worksheet.write(row_count + 1, col_count + 1, getattr(survey, field.name))
+            survey_worksheet.write(row_count + 1, col_count + 2, getattr(survey, field.name))
 
     workbook.close()
     return response

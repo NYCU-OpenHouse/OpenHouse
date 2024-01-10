@@ -1,5 +1,5 @@
 from django.contrib import admin
-from company.models import Company, ChineseFundedCompany
+from company.models import Company, ChineseFundedCompany, Job
 from recruit import models as recruit_model
 from careermentor.models import Mentor
 from rdss import models as rdss_model
@@ -252,6 +252,28 @@ class UserChangeForm(forms.ModelForm):
             # Remove object with old cid from table
             rdss_model.Signup.objects.get(cid=old_cid).delete()
 
+'''
+List all companies not in the category list
+'''
+class InvalidCategoryFilter(admin.SimpleListFilter):
+    title = '非法類別'
+    parameter_name = 'invalid_category_filter'
+
+    def lookups(self, request, model_admin):
+        categories = [category[0] for category in Company.CATEGORYS]
+        companies = Company.objects.values_list('category', flat=True).distinct()
+        invalid_categories = set(companies) - set(categories)
+        return [(category, category) for category in invalid_categories]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category=self.value())
+        return queryset
+
+class JobInline(admin.StackedInline):
+    model = Job
+    fields = ('title', 'quantity', 'is_liberal', 'is_foreign', 'description', 'note', 'english_title', 'english_description', 'english_note')
+    extra = 0
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -261,8 +283,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'last_update')
-    list_filter = ()
+    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'jobs_summary', 'last_update', 'date_join')
+    list_filter = ('category', InvalidCategoryFilter, 'chinese_funded',)
     fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
@@ -348,6 +370,22 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('cid', 'name', 'english_name', 'shortname')
     ordering = ('cid',)
     filter_horizontal = ()
+    inlines = [JobInline]
+
+    # upadet category action
+    actions = [f'update_to_{category[0]}' for category in Company.CATEGORYS]
+    def generate_update_action(self, new_category):
+        def update_category(self, request, queryset):
+            for company in queryset:
+                company.category = new_category
+                company.save()
+        return update_category
+
+    for category in Company.CATEGORYS:
+        action_name = f'update_to_{category[0]}'
+        action_func = generate_update_action(None, category[0])
+        setattr(UserAdmin, action_name, action_func)
+        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category[1]}'")
 
     def get_urls(self):
         urls = super(UserAdmin, self).get_urls()
@@ -356,7 +394,23 @@ class UserAdmin(BaseUserAdmin):
             url(r'^registered_chinese_funded_company/$',views.regitered_chinese_funded_company),  
         ]
         return my_urls + urls
+    
+    def total_jobs(self, obj):
+        return obj.company_job_set.count()
 
+    def liberal_jobs(self, obj):
+        return obj.company_job_set.filter(is_liberal=True).count()
+
+    def foreign_jobs(self, obj):
+        return obj.company_job_set.filter(is_foreign=True).count()
+    
+    def jobs_summary(self, obj):
+        total = self.total_jobs(obj)
+        liberal = self.liberal_jobs(obj)
+        foreign = self.foreign_jobs(obj)
+        return f'職缺數: {total}, 文組職缺: {liberal}, 外籍職缺: {foreign}'
+    
+    jobs_summary.short_description = '職缺概覽'
 
 # Now register the new UserAdmin...
 admin.site.register(Company, UserAdmin)

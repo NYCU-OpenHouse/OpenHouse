@@ -17,7 +17,7 @@
         </a>
         {% if nav_configs.show_recruit %}
             <a class="{{ menu_ui.recruit }} item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
-                校園徵才
+                春季徵才
             </a>
         {% endif %}
         {% if nav_configs.show_rdss %}
@@ -36,7 +36,7 @@
     {% else %}
         {% if nav_configs.show_recruit %}
             <div class="ui simple dropdown item" id="recruit_navtop_dropdown">
-                校園徵才
+                春季徵才
                 <i class="dropdown inverted icon"></i>
                 <div class="menu">
                     <a class="item" href="{% url 'public' %}">

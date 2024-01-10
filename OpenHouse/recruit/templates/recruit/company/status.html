@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 校園徵才 - 報名狀況</h1>
+    <h1 class="ui dividing header">Open House 春季徵才 - 報名狀況</h1>
     <h3 class="ui dividing header">
-        國立陽明交通大學OpenHouse 校園徵才 活動報名流程
+        國立陽明交通大學OpenHouse 春季徵才 活動報名流程
     </h3>
 
     <div class="ui ordered steps">
@@ -50,7 +50,7 @@
             <i class="warning icon"></i>
             <div class="content">
                 <div class="header">
-                    貴公司尚未報名本年度「校園徵才」活動
+                    貴公司尚未報名本年度「春季徵才」活動
                 </div>
                 <p><a href="{% url 'recruit_signup' %}">點此前往活動報名頁面</a>，活動將於{{ configs.recruit_signup_end }}截止報名</p>
                 <p>報名線上企業說明會、實體ECE說明會之企業，請於說明會選位與場次排定後，再「列印繳費金額」進行繳費 (建議列印時間：11月30日)</p>
@@ -81,7 +81,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>企業滿意度問卷</td>
+                    <td>畢業生滿意度問卷</td>
                     <td>
                         {% if fill_survey %}
                             <i class="large green check icon"></i>
@@ -90,6 +90,12 @@
                             <i class="large red x icon"></i>
                             <a href="{% url 'recruit_survey' %}">點此填寫問卷</a>
                         {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>參展專區</td>
+                    <td>
+                        {{ signup_data.zone }}
                     </td>
                 </tr>
                 <tr>
@@ -109,18 +115,18 @@
                         {% endif %}
                     </td>
                 </tr>
-                {#<tr>#}
-                {#    <td>實體企業說明會</td>#}
-                {#    <td>#}
-                {#        {% if signup_data and signup_data.seminar != 'none' %}#}
-                {#            <i class="large green check icon"></i>#}
-                {#            <b>參加</b>#}
-                {#        {% else %}#}
-                {#            <i class="large red x icon"></i>#}
-                {#            <b>不參加</b>#}
-                {#        {% endif %}#}
-                {#    </td>#}
-                {#</tr>#}
+                <tr>
+                    <td>實體企業說明會</td>
+                    <td>
+                        {% if signup_data and signup_data.seminar != 'none' %}
+                            <i class="large green check icon"></i>
+                            <b>參加</b>
+                        {% else %}
+                            <i class="large red x icon"></i>
+                            <b>不參加</b>
+                        {% endif %}
+                    </td>
+                </tr>
                 {#<tr>#}
                 {#    <td>線上說明會</td>#}
                 {#    <td>#}
@@ -160,7 +166,7 @@
                 {#         {% endif %}#}
                 {#     </td>#}
                 {# </tr>#}
-                <tr>
+                <!-- <tr>
                     <td>提供 就業講座</td>
                     <td>
                         {% if signup_data.lecture %}
@@ -170,12 +176,25 @@
                             <b>不提供</b>
                         {% endif %}
                     </td>
+                </tr> -->
+                <tr>
+                    <td>提供 諮詢服務</td>
+                    <td>
+                        {% if signup_data.career_tutor %}
+                            <i class="large green checkmark icon"></i>
+                            <b>提供</b>
+                        {% else %}
+                            <i class="large red x icon"></i>
+                            <b>不提供</b>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
-                    <td>提供 企業參訪/諮詢服務</td>
+                    <td>提供 企業參訪</td>
                     <td>
                         {% if signup_data.company_visit %}
                             <i class="large green checkmark icon"></i>
+                            <b>提供</b>
                         {% else %}
                             <i class="large red x icon"></i>
                             <b>不提供</b>
@@ -197,7 +216,8 @@
                 <tr>
                     <td>折扣費用</td>
                     <td>
-                        -{{ discount }} 元
+                        -{{ discount }} 元 <br/>
+                        {{ discount_text }}
                     </td>
                 </tr>
                 </tbody>
@@ -213,43 +233,43 @@
                 </tr>
                 </thead>
                 <tbody>
-                {#<tr>#}
-                {#    <td>實體說明會選位時間</td>#}
-                {#    <td>{{ slot_info.seminar_select_time }}</td>#}
-                {#</tr>#}
-                {#<tr>#}
-                {#    <td>線上說明會選位開始時間</td>#}
-                {#    <td>{{ slot_info.online_seminar_select_time }}</td>#}
-                {#</tr>#}
                 <tr>
-                    <td>實體就博會選位開始時間</td>
+                    <td>說明會選位時間</td>
+                    <td>{{ slot_info.seminar_select_time }}</td>
+                </tr>
+                <!-- <tr>
+                    <td>線上說明會選位開始時間</td>
+                    <td>{{ slot_info.online_seminar_select_time }}</td>
+                </tr> -->
+                <tr>
+                    <td>就博會選位開始時間</td>
                     <td>{{ slot_info.jobfair_select_time }}</td>
                 </tr>
-                {#<tr>#}
-                {#    <td>實體說明會已選場次</td>#}
-                {#    <td>{{ slot_info.seminar_slot }}</td>#}
-                {#</tr>#}
-                {#<tr>#}
-                {#    <td>線上說明會已選場次</td>#}
-                {#    <td>{{ slot_info.online_seminar_slot }}</td>#}
-                {#</tr>#}
                 <tr>
-                    <td>實體就博會已選攤位</td>
+                    <td>說明會已選場次</td>
+                    <td>{{ slot_info.seminar_slot }}</td>
+                </tr>
+                <!-- <tr>
+                    <td>線上說明會已選場次</td>
+                    <td>{{ slot_info.online_seminar_slot }}</td>
+                </tr> -->
+                <tr>
+                    <td>就博會已選攤位</td>
                     <td>編號： {{ slot_info.jobfair_slot }}</td>
                 </tr>
 
-                {#<tr>#}
-                {#    <td>實體說明會資訊</td>#}
-                {#    <td>#}
-                {#        {% if seminar_info %}#}
-                {#            <i class="large green checkmark icon"></i>#}
-                {#            已填寫#}
-                {#        {% else %}#}
-                {#            <i class="large red remove icon"></i>#}
-                {#            <a href="{% url 'recruit_seminar_info' %}">點此填寫</a>#}
-                {#        {% endif %}#}
-                {#    </td>#}
-                {#</tr>#}
+                <tr>
+                    <td>說明會資訊</td>
+                    <td>
+                        {% if seminar_info %}
+                            <i class="large green checkmark icon"></i>
+                            已填寫
+                        {% else %}
+                            <i class="large red remove icon"></i>
+                            <a href="{% url 'recruit_seminar_info' %}">點此填寫</a>
+                        {% endif %}
+                   </td>
+                </tr>
                 {# <tr> #}
                 {#     <td>線上說明會資訊</td> #}
                 {#     <td> #}
@@ -263,7 +283,7 @@
                 {#     </td>#}
                 {# </tr>#}
                 <tr>
-                    <td>實體就博會資訊</td>
+                    <td>就博會資訊</td>
                     <td>
                         {% if jobfair_info %}
                             <i class="large green check icon"></i>
