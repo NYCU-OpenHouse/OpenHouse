@@ -10,13 +10,14 @@ from django.utils.http import urlsafe_base64_decode
 from .models import Company, ChineseFundedCompany, Job
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
-from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet
+from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet, JobUploadForm
 import rdss.models
 import recruit.models
 import company.models
 from oauth2_provider.decorators import protected_resource
 from oauth.models import CustomAccessToken
 from django.http import Http404
+from openpyxl import load_workbook
 
 
 # Create your views here.
@@ -92,31 +93,50 @@ def CompanyEdit(request):
 
             user = form.save()
             job_formset = ItemModelFormSet(request.POST, instance=user)
+            job_upload_form = JobUploadForm(request.POST, request.FILES)
             if job_formset.is_valid():
                 job_formset.save()
             else:
                 print(job_formset.errors)
-                messages.error(request, '填入資料有誤，請重新修改公司資料')
+                messages.error(request, '「職缺列表」填入資料有誤，請重新修改公司資料')
+                return render(request, 'company_edit_form.html', locals())
+            
+            if job_upload_form.is_valid():
+                try:
+                    wb = load_workbook(job_upload_form.cleaned_data['file'])
+                    ws = wb.active
+                    for row in ws.iter_rows(min_row=2):
+                        job = Job()
+                        job.cid = user
+                        job.name = row[0].value
+                        job.number = row[1].value
+                        job.save()
+                except Exception as e:
+                    print(e)
+                    messages.error(request, '填入資料有誤，請重新修改公司資料')
+                    return render(request, 'company_edit_form.html', locals())
+            else:
+                print(job_upload_form.errors)
+                messages.error(request, '「職缺上傳檔案」有誤，請重新修改公司資料')
                 return render(request, 'company_edit_form.html', locals())
 
             # messages.success(request, _("User '{0}' created.").format(user))
             return redirect(CompanyInfo)
         else:
-            messages.error(request, '填入資料有誤，請重新修改公司資料')
+            messages.error(request, '「公司資料」填入資料有誤，請重新修改公司資料')
             return render(request, 'company_edit_form.html', locals())
     else:
         form = CompanyEditForm(instance=user)
         job_formset = ItemModelFormSet(instance=user)
         job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
+        job_upload_form = JobUploadForm()
+
     
     if (len(jobs) == 0):
         messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')    
     if (company_info.category == '其他'):
         print(company_info.category)
         messages.error(request, '目前公司類別為其他，請至公司主要營業項目修改公司類別')
-
-
-        
 
     return render(request, 'company_edit_form.html', locals())
 
