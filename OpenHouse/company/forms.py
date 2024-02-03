@@ -144,14 +144,6 @@ class CompanyPasswordResetForm(PasswordResetForm):
                 code='does_not_exist')
         return user
     
-# class JobForm(forms.ModelForm):
-#     class Meta:
-#         model = Job
-#         fields = '__all__'
-#         exclude = ['cid']
-
-# JobFormSet = inlineformset_factory(Company, Job, form=JobForm, extra=1, can_delete=True)
-
 class ItemDeleteBaseInlineFormSet(BaseInlineFormSet):
     """
     Makes the delete field a hidden input rather than the default checkbox
@@ -166,8 +158,7 @@ class ItemDeleteBaseInlineFormSet(BaseInlineFormSet):
                 required=False,
                 widget=forms.CheckboxInput(attrs={"class": "btn_delete"})
             )
- 
- 
+
 ItemModelFormSet = forms.inlineformset_factory(Company,
                                                Job,
                                                 fields = ('title', 
