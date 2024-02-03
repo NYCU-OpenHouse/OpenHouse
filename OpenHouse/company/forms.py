@@ -159,9 +159,6 @@ class ItemDeleteBaseInlineFormSet(BaseInlineFormSet):
                 widget=forms.CheckboxInput(attrs={"class": "btn_delete"})
             )
 
-class JobUploadForm(forms.Form):
-    file = forms.FileField(label='Upload Jobs XLSX File')
-
 ItemModelFormSet = forms.inlineformset_factory(Company,
                                                Job,
                                                 fields = ('title', 

@@ -3,7 +3,6 @@
 
 {% block 'custom_head' %}
     {{ form.media }}
-    {% load static %}
     {{ form.media.js }}
     <title>公司資料修改 | OpenHouse 企業校園徵才 </title>
     <script type="text/javascript">
@@ -127,7 +126,6 @@
         });
  
     </script>
-    <script src={% static "js/company/company_edit_form.js" %}></script>
 {% endblock %}
 
 {% block 'content' %}
@@ -327,6 +325,21 @@
             </div>
         </div>
         <div class="ui three column grid" style="width:90%;margin:auto">
+            <div class="ui dividing header">Excel 檔案匯入職缺（若不需要可略過）</div>
+            <div class="row">
+                <div class="eight wide column">
+                    <p>請下載表格填入職缺內容，完成一次性職缺上傳。</p>
+                    <p>注意若重複上傳檔案中有相同職缺，系統會建立重複職缺，例如兩次檔案都有「測試工程師」職位，系統會重複建立「兩個測試工程師」欄位。
+                        <strong>建議第一次上傳職缺成功後，後續可直接在網頁上進行微調。</strong></p>
+                </div>
+                <div class="eight wide column">
+                    <a href="{% static 'file/oh_job_upload.xlsx' %}" download>職缺上傳範例表格（點此下載）</a>
+                    <input type="file" name="excel_file" accept=".xlsx"><br/><br>
+                    <button type="submit" class="ui primary button">確認上傳檔案</button>
+                </div>
+            </div>
+        </div>
+        <div class="ui three column grid" style="width:90%;margin:auto">
             <div class="ui dividing header">職缺列表</div>
                 {{ job_formset.management_form }}
                 {{ job_formset.non_form_errors }}
@@ -358,16 +371,23 @@
                         <div class="column" id="chinese-fields-{{ form.prefix }}">
                             <div class="required field">
                                 <label>{{ form.description.label_tag }}</label>
+                                限制260字以內
                                 {{ form.description.errors }}
                                 {{ form.description }}
                             </div>
-                            {{ form.note.label_tag }} {{ form.note }}
+                            {{ form.note.label_tag }}
+                            限制260字以內
+                            {{ form.note }}
                         </div> 
 
                         <div class="column" id="english-fields">
-                            {{ form.english_title.label_tag }}: {{ form.english_title }}
-                            {{ form.english_description.label_tag }}: {{ form.english_description }}
-                            {{ form.english_note.label_tag }}: {{ form.english_note }}
+                            {{ form.english_title.label_tag }} {{ form.english_title }}
+                            {{ form.english_description.label_tag }}
+                            Up to 260 words
+                            {{ form.english_description }}
+                            {{ form.english_note.label_tag }}
+                            Up to 260 words
+                            {{ form.english_note }}
                         </div>
                     </div>
                     <div class="ui divider"></div>

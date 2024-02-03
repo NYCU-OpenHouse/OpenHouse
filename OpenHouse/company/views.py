@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_decode
 from .models import Company, ChineseFundedCompany, Job
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
-from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet, JobUploadForm
+from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet
 import rdss.models
 import recruit.models
 import company.models
@@ -93,7 +93,6 @@ def CompanyEdit(request):
 
             user = form.save()
             job_formset = ItemModelFormSet(request.POST, instance=user)
-            job_upload_form = JobUploadForm(request.POST, request.FILES)
             if job_formset.is_valid():
                 job_formset.save()
             else:
@@ -101,26 +100,44 @@ def CompanyEdit(request):
                 messages.error(request, '「職缺列表」填入資料有誤，請重新修改公司資料')
                 return render(request, 'company_edit_form.html', locals())
             
-            if job_upload_form.is_valid():
+            excel_file = request.FILES.get('excel_file')
+            MAX_DESCRIPTION_LENGTH = 260
+            if excel_file:
                 try:
-                    wb = load_workbook(job_upload_form.cleaned_data['file'])
+                    wb = load_workbook(excel_file)
                     ws = wb.active
-                    for row in ws.iter_rows(min_row=2):
-                        job = Job()
-                        job.cid = user
-                        job.name = row[0].value
-                        job.number = row[1].value
-                        job.save()
-                except Exception as e:
-                    print(e)
-                    messages.error(request, '填入資料有誤，請重新修改公司資料')
-                    return render(request, 'company_edit_form.html', locals())
-            else:
-                print(job_upload_form.errors)
-                messages.error(request, '「職缺上傳檔案」有誤，請重新修改公司資料')
-                return render(request, 'company_edit_form.html', locals())
+                    for row in ws.iter_rows(min_row=2, values_only=True):
 
-            # messages.success(request, _("User '{0}' created.").format(user))
+                        if not any(row):
+                            continue
+                        title, quantity, is_liberal, is_foreign, description, note, english_title, english_description, english_note = row
+                        
+                        description = description[:MAX_DESCRIPTION_LENGTH]
+                        note = note[:MAX_DESCRIPTION_LENGTH] if note is not None else ""
+                        english_title = english_title if english_title is not None else ""
+                        english_description = english_description[:MAX_DESCRIPTION_LENGTH] if english_description is not None else ""
+                        english_note = english_note[:MAX_DESCRIPTION_LENGTH] if english_note is not None else ""
+                        
+                        Job.objects.create(
+                            cid=company_info, 
+                            title=title, 
+                            is_liberal=is_liberal, 
+                            is_foreign=is_foreign, 
+                            description=description, 
+                            quantity=quantity, 
+                            note=note, 
+                            english_title=english_title, 
+                            english_description=english_description, 
+                            english_note=english_note
+                        )
+                    messages.success(request, '「職缺上傳檔案」成功，請確認內容並再次送出修改公司資料，注意中英文欄位「職缺內容、備註」只會存取前260個字元')
+                    return redirect('company_edit')
+                
+                except Exception as e:
+                    print(f"Error during job creation: {e}")
+                    messages.error(request, f"「職缺上傳檔案」填入資料有誤，請注意欄位「職缺名稱、職缺數量、是否為文組職缺、是否開放外籍生投遞、職缺內容為必填欄位」。錯誤內容：{e}")
+                    return render(request, 'company_edit_form.html', locals())
+                
             return redirect(CompanyInfo)
         else:
             messages.error(request, '「公司資料」填入資料有誤，請重新修改公司資料')
@@ -129,8 +146,6 @@ def CompanyEdit(request):
         form = CompanyEditForm(instance=user)
         job_formset = ItemModelFormSet(instance=user)
         job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
-        job_upload_form = JobUploadForm()
-
     
     if (len(jobs) == 0):
         messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')    
