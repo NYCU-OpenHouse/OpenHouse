@@ -64,3 +64,16 @@ body
     padding: 0px;
   }
 }
+
+.ui.pantone.button {
+  background-color: #0033A0;
+  color: #fff;
+}
+
+.ui.inverted.pantone.segment {
+  background-color: #0033A0;
+  color: #fff;
+}
+.ui.inverted.pantone.menu{
+  background-color: #0033A0;
+}
