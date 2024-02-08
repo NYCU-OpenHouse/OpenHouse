@@ -13,7 +13,7 @@
                 {% for general_news in general_news_page %}
                     <tr>
                         <td>
-                            <div>
+                            <div class="link news title">
                                 <a href="/news/{{ general_news.id }}/"> {{ general_news.title }} </a>
                             </div>
                             <div class="right aligned collapsed">
@@ -36,7 +36,7 @@
 
                             {% if general_news_page.has_previous %}
                                 <a class="icon item" href="?page={{ general_news_page.previous_page_number }}">
-                                    <i class="left chevron icon"></i>
+                                    <i class="left chevron icon black"></i>
                                 </a>
                             {% endif %}
 
@@ -46,7 +46,7 @@
 
                             {% if general_news_page.has_next %}
                                 <a class="icon item" href="?page={{ general_news_page.next_page_number }}">
-                                    <i class="right chevron icon"></i>
+                                    <i class="right chevron icon black"></i>
                                 </a>
                             {% endif %}
                         </div>

@@ -2,6 +2,7 @@
   width:90%;
   margin:auto;
   margin-top:2em;
+  font-size: 14px;
 }
 
 #success_info{
@@ -9,11 +10,6 @@
   margin:auto;
   margin-top:2em;
 }
-a.item{
-  font-size: 14px;
-}
-
-
 
 @media only screen and (max-device-width: 480px) {
   #mentor_seg{
@@ -21,9 +17,9 @@ a.item{
     margin-top:5em;
     margin:auto;
   }
-#success_info{
-  width:100%;
-  margin:auto;
-  margin-top:2em;
-}
+  #success_info{
+    width:100%;
+    margin:auto;
+    margin-top:2em;
+  }
 }

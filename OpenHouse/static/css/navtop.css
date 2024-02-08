@@ -8,9 +8,22 @@
   margin-bottom:0;
 }
 
-a {
-  font-size:13pt;
-}
 .ui.segment{
   margin-top:0;
+}
+
+body > .skiptranslate {
+  display: none;
+}
+.goog-logo-link {
+  display: none !important;
+}
+.goog-te-gadget {
+  color: transparent !important;
+}
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+a[href="https://translate.google.com"] {
+  display: none !important;
 }

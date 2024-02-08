@@ -6,6 +6,7 @@ html,body
 body
 {
   display:table;
+  top:0 !important;
 }
 #full
 {
@@ -15,6 +16,9 @@ body
 
 }
 
+.ui.header{
+  font-size: 16px !important;
+}
 
 #footer{
   margin:auto;
@@ -24,7 +28,11 @@ body
 #news{
   width:90%;
   margin:auto;
-  margin-top:4em
+  margin-top:4em;
+}
+
+.news.title {
+  font-size: 16px;
 }
 
 .ui.segment.slider_seg{
@@ -76,4 +84,6 @@ body
 }
 .ui.inverted.pantone.menu{
   background-color: #0033A0;
+  margin: 0 0 1rem 0;
+  font-size : 16px;
 }
