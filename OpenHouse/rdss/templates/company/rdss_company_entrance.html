@@ -20,6 +20,6 @@
         <p style="color:red">報名時間為 {{ configs.rdss_signup_start }} 到 {{ configs.rdss_signup_end }}</p>
         <p style="color:red">活動詳細內容及規範皆載於企畫書，報名前請務必詳細閱讀</p>
         <a class="ui blue button" href={{ plan_file.upload_file.url }} target="_blank">{{ plan_file.title }}</a>
-        <a class="ui teal button" href={% url 'rdss_signup' %}>填寫報名資料</a>
+        <a class="ui pantone button" href={% url 'rdss_signup' %}>填寫報名資料</a>
     </div>
 {% endblock %}

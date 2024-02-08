@@ -1,41 +1,85 @@
 {% load static %}
+<!-- Google Translate -->
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'zh-TW',
+            autoDisplay: false,
+            includedLanguages: 'zh-TW,zh-CN,en,ja,ko',
+            layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+        }, 'google_translate_element');
+    }
 
-<div class="ui inverted teal stackable borderless menu">
-    <h3 class="header item"><a href="/">Open House 陽明交通大學 企業校園徵才</a></h3>
+    $(window).load(function() {
+        $('.goog-te-gadget').html($('.goog-te-gadget div'));
+    });
+
+    $(function(){
+        $('.selectpicker').selectpicker();
+        $('#sidebar-toggle').click(function() {
+            $('.hidden-on-mobile').toggleClass('hidden');
+        });
+    });
+
+    function goTranslate(lang) {
+        $('.goog-te-combo').val(lang);
+
+        const triggerEvent = (element, eventName) => {
+            const event = new Event(eventName);
+            element.dispatchEvent(event);
+        };
+        triggerEvent(document.querySelector('.goog-te-combo'), 'change');
+    }
+
+</script>
+<style>
+    @media (max-width: 990px) {
+        .hidden-on-mobile {
+            display: none !important;
+        }
+    }
+    @media (min-width: 990px) {
+        .visible-on-mobile {
+            display: none !important;
+        }
+    }
+</style>
+<div class="ui inverted pantone menu borderless">
+    <div class="oh-image">
+        <a href="/">
+            <img src={% static 'images/oh_logo_2023_blue.png' %} alt="校園徵才" style="height: 64px; padding-right: 1rem;">
+        </a>
+    </div>
     <!--公司部份!-->
     {% if user.is_authenticated and user.is_company %}
-        <!--
-        <a class="item" href="/">
-          首頁
-        </a>
-        -->
-        <a class="{{ menu_ui.index }} item" href="{% url 'company_index' %}">
+        <a class="{{ menu_ui.index }} item hidden-on-mobile" href="{% url 'company_index' %}">
             廠商入口
         </a>
-        <a class="{{ menu_ui.info }} item" href="{% url 'info' %}">
+        <a class="{{ menu_ui.info }} item hidden-on-mobile" href="{% url 'info' %}">
             公司資料
         </a>
         {% if nav_configs.show_recruit %}
-            <a class="{{ menu_ui.recruit }} item" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
+            <a class="{{ menu_ui.recruit }} item hidden-on-mobile" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
                 春季徵才
             </a>
         {% endif %}
         {% if nav_configs.show_rdss %}
-            <a class="{{ menu_ui.rdss }} item" href="{% url 'rdss_company_index' %}">
+            <a class="{{ menu_ui.rdss }} item hidden-on-mobile" href="{% url 'rdss_company_index' %}">
                 秋季招募
             </a>
         {% endif %}
-        <a class="item" id="navtop_faq_btn" href="{% url 'FAQ' %}">
+        <a class="item" id="navtop_faq_btn hidden-on-mobile" href="{% url 'FAQ' %}">
             常見問題
         </a>
-        <a class="right item" href="{% url 'logout' %}">
+        <a class="right item hidden-on-mobile" href="{% url 'logout' %}">
             登出 {{ request.user.username }}
         </a>
 
-        <!--一般使用者(學生)!-->
+    <!--一般使用者(學生)!-->
     {% else %}
         {% if nav_configs.show_recruit %}
-            <div class="ui simple dropdown item" id="recruit_navtop_dropdown">
+            <div class="ui simple dropdown item hidden-on-mobile" id="recruit_navtop_dropdown" style="font-size: 13pt;">
                 春季徵才
                 <i class="dropdown inverted icon"></i>
                 <div class="menu">
@@ -45,41 +89,120 @@
                     <a class="item" href="{% url 'list_jobs' %}">
                         職缺列表
                     </a>
-                    {# {% if nav_configs.show_seminar %} #}
-                    {#     <a class="item" href="{% url 'seminar' %}"> #}
-                    {#         實體說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_ece_seminar %} #}
-                    {#     <a class="{{ sidebar_ui.ece_seminar }} item" href="{% url 'recruit_seminar_ece' %}"> #}
-                    {#         實體ECE說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_online_seminar %} #}
-                    {#     <a class="item" href="{% url 'recruit_seminar_online' %}"> #}
-                    {#         線上說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_jobfair %} #}
-                    {#     <a class="item" href="{% url 'jobfair' %}"> #}
-                    {#         實體就博會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_online_jobfair %} #}
-                    {#     <a class="item" href="{% url 'recruit_jobfair_online' %}"> #}
-                    {#         線上就博會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
                     {#                <a class="item" href="{% url 'query_points' %}">#}
                     {#                    查集點#}
                     {#                </a>#}
+                </div>
+            </div>
+        {% endif %}
+        {% if nav_configs.show_rdss %}
+            <div class="ui simple dropdown item hidden-on-mobile" id="rdss_navtop_dropdown">
+                秋季招募
+                <i class="dropdown inverted icon"></i>
+                <div class="menu">
+                    <a class="item" href="{% url 'rdss_index' %}">
+                        活動資訊
+                    </a>
+                    <a class="item" href="{% url 'rdss_jobs' %}">
+                        職缺列表
+                    </a>
+                    {# <a class="item" href="{% url 'rdss_querypts' %}"> #}
+                    {#     查集點 #}
+                    {# </a> #}
+                </div>
+            </div>
+        {% endif %}
+        <a class="item navtop_rdss_popup hidden-on-mobile" href="{% url 'mentor_index' %}">
+            職涯服務
+        </a>
+        <a class="item hidden-on-mobile" href="{% url 'company_visit_index' %}">
+            企業參訪
+        </a>
+        <a class="item hidden-on-mobile" href="{% url 'monograph_index' %}">
+            專刊
+        </a>
+        <a class="item hidden-on-mobile" href="{% url 'FAQ' %}">
+            常見問題
+        </a>
+        {% if user.is_authenticated and user.is_staff %}
+            <!--工作人員!-->
+            <a class="item hidden-on-mobile" href="/admin">
+                工作人員後端
+            </a>
+            <a class="right item hidden-on-mobile" href="{% url 'logout' %}">
+                登出 {{ request.user.username }}
+            </a>
+        {% else %}
+            <a class="right item hidden-on-mobile" href="{% url 'login' %}">
+                廠商入口
+            </a>
+        {% endif %}
+    {% endif %}
+    
+    <div class="item ui dropdown item nav-translation-menu" id="translate_dropdown" style="font-size: 13pt;">
+        <div id="google_translate_element" style="display: none;"></div>
+        <div class="text">語言</div>
+        <div class="menu notranslate">
+            <div class="item nav-translation-menu" data-value="zh-TW" onclick="goTranslate('zh-TW')">繁體中文</div>
+            <div class="item nav-translation-menu" data-value="zh-CN" onclick="goTranslate('zh-CN')">简体中文</div>
+            <div class="item nav-translation-menu" data-value="en" onclick="goTranslate('en')">English</div>
+            <div class="item nav-translation-menu" data-value="ja" onclick="goTranslate('ja')">日本語</div>
+            <div class="item nav-translation-menu" data-value="ko" onclick="goTranslate('ko')">한국어</div>
+        </div>
+        <i class="dropdown icon"></i>
+    </div>
+    
+    <div class="right item ui dropdown visible-on-mobile">
+        <div class="icon">
+            <i class="sidebar icon visible-on-mobile"></i>
+        </div>
+        <div class="menu">
+        <!--公司部份!-->
+        {% if user.is_authenticated and user.is_company %}
+            <a class="{{ menu_ui.index }} item visible-on-mobile" href="{% url 'company_index' %}">
+                廠商入口
+            </a>
+            <a class="{{ menu_ui.info }} item visible-on-mobile" href="{% url 'info' %}">
+                公司資料
+            </a>
+            {% if nav_configs.show_recruit %}
+                <a class="{{ menu_ui.recruit }} item visible-on-mobile" id="navtop_rdss_btn" href="{% url 'recruit_company_index' %}">
+                    春季徵才
+                </a>
+            {% endif %}
+            {% if nav_configs.show_rdss %}
+                <a class="{{ menu_ui.rdss }} item visible-on-mobile" href="{% url 'rdss_company_index' %}">
+                    秋季招募
+                </a>
+            {% endif %}
+            <a class="item visible-on-mobile" id="navtop_faq_btn" href="{% url 'FAQ' %}">
+                常見問題
+            </a>
+            <a class="item visible-on-mobile" href="{% url 'logout' %}">
+                登出 {{ request.user.username }}
+            </a>
+
+        <!--一般使用者(學生)!-->
+        {% else %}
+            {% if nav_configs.show_recruit %}
+                <div class="ui simple dropdown item visible-on-mobile" id="recruit_navtop_dropdown" style="font-size: 13pt;">
+                    ▶ 春季徵才
+                    <div class="menu">
+                        <a class="item" href="{% url 'public' %}">
+                            活動資訊
+                        </a>
+                        <a class="item" href="{% url 'list_jobs' %}">
+                            職缺列表
+                        </a>
+                        {#                <a class="item" href="{% url 'query_points' %}">#}
+                        {#                    查集點#}
+                        {#                </a>#}
                     </div>
                 </div>
             {% endif %}
             {% if nav_configs.show_rdss %}
-                <div class="ui simple dropdown item" id="rdss_navtop_dropdown">
-                    秋季招募
-                    <i class="dropdown inverted icon"></i>
+                <div class="ui simple dropdown item visible-on-mobile" id="rdss_navtop_dropdown">
+                    ▶ 秋季招募
                     <div class="menu">
                         <a class="item" href="{% url 'rdss_index' %}">
                             活動資訊
@@ -87,69 +210,38 @@
                         <a class="item" href="{% url 'rdss_jobs' %}">
                             職缺列表
                         </a>
-                        {# {% if nav_configs.show_rdss_seminar %} #}
-                        {#     <a class="item" href="{% url 'seminar_public' %}"> #}
-                        {#         線上說明會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# {% if nav_configs.show_rdss_jobfair %} #}
-                        {#     <a class="item" href="{% url 'jobfair_public' %}"> #}
-                        {#         實體就博會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# {% if nav_configs.show_rdss_online_jobfair %} #}
-                        {#     <a class="item" href="{% url 'jobfair_online' %}"> #}
-                        {#         線上就博會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# <a class="item" href="https://openhouse.act.nycu.edu.tw" target="_blank"> #}
-                        {#     線上就博會系統 #}
+                        {# <a class="item" href="{% url 'rdss_querypts' %}"> #}
+                        {#     查集點 #}
                         {# </a> #}
-                                        {# <a class="item" href="{% url 'rdss_querypts' %}"> #}
-                                        {#     查集點 #}
-                                        {# </a> #}
                     </div>
                 </div>
             {% endif %}
-        <a class="item navtop_rdss_popup" href="{% url 'mentor_index' %}">
-            職涯相關服務
-        </a>
-        <a class="item" href="{% url 'company_visit_index' %}">
-            企業參訪
-        </a>
-        <!--<div class="ui dropdown item" id="rdss_navtop_dropdown">
-                簡報大賽
-                <i class="dropdown inverted icon"></i>
-                <div class="menu">
-                    <a class="item" href="{#% url 'vote_index' %#}">
-                        活動資訊
-                    </a>
-                    <a class="item" href="{#% url 'vote' %#}">
-                        投票系統
-                    </a>
-                </div>
-            </div>-->
-        <a class="item" href="{% url 'monograph_index' %}">
-            專刊
-        </a>
-
-        <a class="item" href="{% url 'FAQ' %}">
-            常見問題
-        </a>
-        {% if user.is_authenticated and user.is_staff %}
-            <!--工作人員!-->
-            <a class="item" href="/admin">
-                工作人員後端
+            <a class="item navtop_rdss_popup visible-on-mobile" href="{% url 'mentor_index' %}">
+                職涯服務
             </a>
-            <a class="right item" href="{% url 'logout' %}">
-                登出 {{ request.user.username }}
+            <a class="item visible-on-mobile" href="{% url 'company_visit_index' %}">
+                企業參訪
             </a>
-        {% else %}
-            <a class="right item" href="{% url 'login' %}">
-                廠商入口
+            <a class="item visible-on-mobile" href="{% url 'monograph_index' %}">
+                專刊
             </a>
+            <a class="item visible-on-mobile" href="{% url 'FAQ' %}">
+                常見問題
+            </a>
+            {% if user.is_authenticated and user.is_staff %}
+                <!--工作人員!-->
+                <a class="item visible-on-mobile" href="/admin">
+                    工作人員後端
+                </a>
+                <a class="item visible-on-mobile" href="{% url 'logout' %}">
+                    登出 {{ request.user.username }}
+                </a>
+            {% else %}
+                <a class="item visible-on-mobile" href="{% url 'login' %}">
+                    廠商入口
+                </a>
+            {% endif %}
         {% endif %}
-
-    {% endif %}
+        </div>
+    </div>
 </div>
-

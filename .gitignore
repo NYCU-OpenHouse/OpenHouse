@@ -10,9 +10,9 @@ OpenHouse/media/*
 !OpenHouse/static/js/
 OpenHouse/static/Ideal-Image-Slider
 .ropeproject/
-<<<<<<< HEAD
 *.log
 *.sqlite3
 .idea/
 semantic/
 semantic.json
+OpenHouse/*/migrations/

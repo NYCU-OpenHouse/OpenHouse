@@ -1,10 +1,9 @@
 .content{
-	color: black;
+	color:white !important;
 }
 .icon{
-	color: black;
+	color: white !important;
 }
-
 .tech-logo-wrapper{
 	position:absolute;
 	bottom:1em;
@@ -12,4 +11,12 @@
 }
 .tech-logo-wrapper img{
 	max-height: 25px;
+}
+
+.ui.white.header{
+    color:white !important;
+}
+
+.link.light.blue {
+	color: #ADD8E6 !important;
 }

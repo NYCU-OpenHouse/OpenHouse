@@ -9,11 +9,9 @@
   margin:auto;
   margin-top:2em;
 }
-a.item{
-  font-size: 14px;
+.mentor-link{
+  font-size: 14px !important;
 }
-
-
 
 @media only screen and (max-device-width: 480px) {
   #mentor_seg{
