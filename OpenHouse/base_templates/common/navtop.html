@@ -1,6 +1,36 @@
 {% load static %}
+<!-- Google Translate -->
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'zh-TW',
+            autoDisplay: false,
+            includedLanguages: 'zh-TW,zh-CN,en,ja,ko',
+            layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+        }, 'google_translate_element');
+    }
+
+    $(window).load(function() {
+        $('.goog-te-gadget').html($('.goog-te-gadget div'));
+    });
+
+    $(function(){
+        $('.selectpicker').selectpicker();
+    });
+
+    function goTranslate(lang) {
+        $('.goog-te-combo').val(lang);
+
+        const triggerEvent = (element, eventName) => {
+            const event = new Event(eventName);
+            element.dispatchEvent(event);
+        };
+        triggerEvent(document.querySelector('.goog-te-combo'), 'change');
+    }
+</script>
 <div class="ui inverted pantone menu borderless stackable">
-    <div class="oh image title">
+    <div class="oh-image">
         <a href="/">
             <img src={% static 'images/oh_logo_2023_blue.png' %} alt="校園徵才" style="height: 64px; padding-right: 1rem;">
         </a>
@@ -30,7 +60,7 @@
             登出 {{ request.user.username }}
         </a>
 
-        <!--一般使用者(學生)!-->
+    <!--一般使用者(學生)!-->
     {% else %}
         {% if nav_configs.show_recruit %}
             <div class="ui simple dropdown item" id="recruit_navtop_dropdown" style="font-size: 13pt;">
@@ -43,31 +73,6 @@
                     <a class="item" href="{% url 'list_jobs' %}">
                         職缺列表
                     </a>
-                    {# {% if nav_configs.show_seminar %} #}
-                    {#     <a class="item" href="{% url 'seminar' %}"> #}
-                    {#         實體說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_ece_seminar %} #}
-                    {#     <a class="{{ sidebar_ui.ece_seminar }} item" href="{% url 'recruit_seminar_ece' %}"> #}
-                    {#         實體ECE說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_online_seminar %} #}
-                    {#     <a class="item" href="{% url 'recruit_seminar_online' %}"> #}
-                    {#         線上說明會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_jobfair %} #}
-                    {#     <a class="item" href="{% url 'jobfair' %}"> #}
-                    {#         實體就博會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
-                    {# {% if nav_configs.show_recruit_online_jobfair %} #}
-                    {#     <a class="item" href="{% url 'recruit_jobfair_online' %}"> #}
-                    {#         線上就博會 #}
-                    {#     </a> #}
-                    {# {% endif %} #}
                     {#                <a class="item" href="{% url 'query_points' %}">#}
                     {#                    查集點#}
                     {#                </a>#}
@@ -85,52 +90,21 @@
                         <a class="item" href="{% url 'rdss_jobs' %}">
                             職缺列表
                         </a>
-                        {# {% if nav_configs.show_rdss_seminar %} #}
-                        {#     <a class="item" href="{% url 'seminar_public' %}"> #}
-                        {#         線上說明會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# {% if nav_configs.show_rdss_jobfair %} #}
-                        {#     <a class="item" href="{% url 'jobfair_public' %}"> #}
-                        {#         實體就博會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# {% if nav_configs.show_rdss_online_jobfair %} #}
-                        {#     <a class="item" href="{% url 'jobfair_online' %}"> #}
-                        {#         線上就博會 #}
-                        {#     </a> #}
-                        {# {% endif %} #}
-                        {# <a class="item" href="https://openhouse.act.nycu.edu.tw" target="_blank"> #}
-                        {#     線上就博會系統 #}
+                        {# <a class="item" href="{% url 'rdss_querypts' %}"> #}
+                        {#     查集點 #}
                         {# </a> #}
-                                        {# <a class="item" href="{% url 'rdss_querypts' %}"> #}
-                                        {#     查集點 #}
-                                        {# </a> #}
                     </div>
                 </div>
             {% endif %}
         <a class="item navtop_rdss_popup" href="{% url 'mentor_index' %}">
-            職涯相關服務
+            職涯服務
         </a>
         <a class="item" href="{% url 'company_visit_index' %}">
             企業參訪
         </a>
-        <!--<div class="ui dropdown item" id="rdss_navtop_dropdown">
-                簡報大賽
-                <i class="dropdown inverted icon"></i>
-                <div class="menu">
-                    <a class="item" href="{#% url 'vote_index' %#}">
-                        活動資訊
-                    </a>
-                    <a class="item" href="{#% url 'vote' %#}">
-                        投票系統
-                    </a>
-                </div>
-            </div>-->
         <a class="item" href="{% url 'monograph_index' %}">
             專刊
         </a>
-
         <a class="item" href="{% url 'FAQ' %}">
             常見問題
         </a>
@@ -147,8 +121,19 @@
                 廠商入口
             </a>
         {% endif %}
-
     {% endif %}
-    {% include 'common/translate.html'%}
+    
+    <div class="item ui dropdown item nav-translation-menu" id="translate_dropdown" style="font-size: 13pt;">
+        <div id="google_translate_element" style="display: none;"></div>
+        <div class="text">語言</div>
+        <div class="menu notranslate">
+            <div class="item nav-translation-menu" data-value="zh-TW" onclick="goTranslate('zh-TW')">繁體中文</div>
+            <div class="item nav-translation-menu" data-value="zh-CN" onclick="goTranslate('zh-CN')">简体中文</div>
+            <div class="item nav-translation-menu" data-value="en" onclick="goTranslate('en')">English</div>
+            <div class="item nav-translation-menu" data-value="ja" onclick="goTranslate('ja')">日本語</div>
+            <div class="item nav-translation-menu" data-value="ko" onclick="goTranslate('ko')">한국어</div>
+        </div>
+        <i class="dropdown icon"></i>
+    </div>
 </div>
 
