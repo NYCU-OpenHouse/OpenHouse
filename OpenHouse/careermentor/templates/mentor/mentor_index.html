@@ -48,7 +48,7 @@
             <tbody>
             {% for event in mentor_events %}
                 <tr>
-                    <td><a href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
+                    <td><a class="mentor-link" href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
                     <td>{{ event.company }}</td>
                     <td>{{ event.mentor }} {{ event.mentor_title }}</td>
                     <td>{{ event.date | date:'Y-m-d' }} {{ event.start_time }} - {{ event.end_time }}</td>
@@ -65,9 +65,9 @@
                     <td>
                         <div class="ui list">
                             {% if not event.full %}
-                            <a class="item" href={% url 'mentor_signup' event.id %}>報名(Register)</a>
+                            <a class="mentor-link" href={% url 'mentor_signup' event.id %}>報名(Register)</a><br/>
                             {% endif %}
-                            <a class="item" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
+                            <a class="mentor-link" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
                         </div>
                     </td>
                 </tr>
@@ -93,7 +93,7 @@
             <tbody>
             {% for event in career_events %}
                 <tr>
-                    <td><a href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
+                    <td><a class="mentor-link" href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
                     <td>{{ event.company }}</td>
                     <td>{{ event.mentor }} {{ event.mentor_title }}</td>
                     <td>{{ event.date }} {{ event.start_time }} - {{ event.end_time }}</td>
@@ -110,9 +110,9 @@
                     <td>
                         <div class="ui list">
                             {% if not event.full %}
-                            <a class="item" href={% url 'mentor_signup' event.id %}>報名(Register)</a>
+                            <a class="mentor-link" href={% url 'mentor_signup' event.id %}>報名(Register)</a>
                             {% endif %}
-                            <a class="item" href={% url 'mentor_signup' event.id %}>查詢報名狀態(Registration Status)</a>
+                            <a class="mentor-link" href={% url 'mentor_signup' event.id %}>查詢報名狀態(Registration Status)</a>
                         </div>
                     </td>
                 </tr>
@@ -138,7 +138,7 @@
             <tbody>
             {% for event in career_seminar %}
                 <tr>
-                    <td><a href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
+                    <td><a class="mentor-link" href={% url 'event_info' event.id %}>{{ event.title }}</a></td>
                     <td>{{ event.company }}</td>
                     <td>{{ event.mentor }} {{ event.mentor_title }}</td>
                     <td>{{ event.date }} {{ event.start_time }} - {{ event.end_time }}</td>
@@ -155,9 +155,9 @@
                     <td>
                         <div class="ui list">
                             {% if not event.full %}
-                                <a class="item" href={% url 'career_seminar_signup' event.id %}>報名(Register)</a>
+                                <a class="mentor-link" href={% url 'career_seminar_signup' event.id %}>報名(Register)</a>
                             {% endif %}
-                            <a class="item" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
+                            <a class="mentor-link" href={% url 'mentor_status' event.id %}>查詢報名狀態(Registration Status)</a>
                         </div>
                     </td>
                 </tr>

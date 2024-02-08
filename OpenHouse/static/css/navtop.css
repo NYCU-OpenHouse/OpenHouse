@@ -14,3 +14,23 @@ a {
 .ui.segment{
   margin-top:0;
 }
+
+/* for google translate plugin */
+body > .skiptranslate {
+  display: none;
+}
+.goog-logo-link {
+  display: none !important;
+}
+.goog-te-gadget {
+  color: transparent !important;
+}
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+} */
+a[href="https://translate.google.com"] {
+  display: none !important;
+}
+.nav.translate.button {
+  padding: 1.5rem 1rem 0 1rem !important;
+}

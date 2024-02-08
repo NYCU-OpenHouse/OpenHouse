@@ -6,6 +6,7 @@ html,body
 body
 {
   display:table;
+  top:0 !important;
 }
 #full
 {
@@ -76,4 +77,5 @@ body
 }
 .ui.inverted.pantone.menu{
   background-color: #0033A0;
+  margin: 0 0 1rem 0;
 }

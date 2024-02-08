@@ -1,14 +1,12 @@
 {% load static %}
-
 <div class="ui inverted pantone menu borderless stackable">
-    <h3 class="header item"><a href="/">Open House 陽明交通大學 企業校園徵才</a></h3>
+    <div class="oh image title">
+        <a href="/">
+            <img src={% static 'images/oh_logo_2023_blue.png' %} alt="校園徵才" style="height: 64px; padding-right: 1rem;">
+        </a>
+    </div>
     <!--公司部份!-->
     {% if user.is_authenticated and user.is_company %}
-        <!--
-        <a class="item" href="/">
-          首頁
-        </a>
-        -->
         <a class="{{ menu_ui.index }} item" href="{% url 'company_index' %}">
             廠商入口
         </a>
@@ -35,7 +33,7 @@
         <!--一般使用者(學生)!-->
     {% else %}
         {% if nav_configs.show_recruit %}
-            <div class="ui simple dropdown item" id="recruit_navtop_dropdown">
+            <div class="ui simple dropdown item" id="recruit_navtop_dropdown" style="font-size: 13pt;">
                 春季徵才
                 <i class="dropdown inverted icon"></i>
                 <div class="menu">
@@ -151,5 +149,6 @@
         {% endif %}
 
     {% endif %}
+    {% include 'common/translate.html'%}
 </div>
 
