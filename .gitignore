@@ -17,3 +17,4 @@ semantic/
 semantic.json
 OpenHouse/*/migrations/
 grafana_data/
+.env

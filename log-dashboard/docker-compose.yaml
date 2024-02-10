@@ -16,11 +16,13 @@ services:
     volumes:
       - ./grafana_data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=pass
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL}
     ports:
       - "3000:3000"
     networks: 
       - loki_net
+      - openhouse_backend
 
   promtail:
     image: grafana/promtail:2.8.0
@@ -30,8 +32,12 @@ services:
       - loki_net
     volumes:
       - ./config/promtail-config.yaml:/etc/promtail/config.yml
-      - ../log/nginx:/var/log/nginx
+      - ${NGINX_LOG_DIR}:/var/log/nginx:ro
+      - ${DJANGO_LOG_DIR}:/var/log/openhouse:ro
+      - ${SYSTEMLOG_FILE}:/var/log/sys/server-sys.log:ro
 
 networks:
   loki_net:
     driver: bridge
+  openhouse_backend:
+    external: true
