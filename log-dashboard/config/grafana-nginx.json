@@ -24,7 +24,7 @@
     "gnetId": 12559,
     "graphTooltip": 0,
     "id": 1,
-    "iteration": 1707591095447,
+    "iteration": 1707595718790,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -66,7 +66,7 @@
         },
         "gridPos": {
           "h": 4,
-          "w": 5,
+          "w": 8,
           "x": 0,
           "y": 1
         },
@@ -132,7 +132,7 @@
         "gridPos": {
           "h": 8,
           "w": 7,
-          "x": 5,
+          "x": 8,
           "y": 1
         },
         "id": 5,
@@ -195,7 +195,7 @@
         "gridPos": {
           "h": 4,
           "w": 3,
-          "x": 12,
+          "x": 15,
           "y": 1
         },
         "id": 30,
@@ -232,6 +232,7 @@
         "type": "stat"
       },
       {
+        "cacheTimeout": null,
         "datasource": "$datasource",
         "description": "",
         "fieldConfig": {
@@ -239,28 +240,37 @@
             "color": {
               "mode": "thresholds"
             },
+            "decimals": 1,
             "mappings": [],
+            "max": 100,
+            "min": 0,
             "thresholds": {
               "mode": "absolute",
               "steps": [
                 {
                   "color": "purple",
                   "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
                 }
               ]
             },
-            "unit": "decbytes"
+            "unit": "percent"
           },
           "overrides": []
         },
         "gridPos": {
           "h": 4,
           "w": 3,
-          "x": 15,
+          "x": 18,
           "y": 1
         },
-        "id": 8,
+        "hideTimeOverride": true,
+        "id": 32,
         "interval": null,
+        "links": [],
         "maxDataPoints": 1,
         "options": {
           "colorMode": "background",
@@ -269,7 +279,7 @@
           "orientation": "auto",
           "reduceOptions": {
             "calcs": [
-              "sum"
+              "max"
             ],
             "fields": "",
             "values": false
@@ -280,17 +290,16 @@
         "pluginVersion": "8.2.5",
         "targets": [
           {
-            "expr": "sum by (host) (sum_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | unwrap body_bytes_sent |  __error__=\"\" [$__interval]))",
-            "instant": true,
-            "legendFormat": "Bytes sent",
-            "range": false,
+            "expr": "sum(count_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | status >= 400 |__error__=\"\"[$__interval])) / (sum(count_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | __error__=\"\"[$__interval]))/ 100)",
+            "instant": false,
+            "legendFormat": "",
+            "range": true,
             "refId": "A"
           }
         ],
-        "timeFrom": null,
+        "timeFrom": "1h",
         "timeShift": null,
-        "title": "Total Bytes Sent",
-        "transformations": [],
+        "title": "% of 4xx  & 5xx requests ",
         "type": "stat"
       },
       {
@@ -320,8 +329,8 @@
         },
         "gridPos": {
           "h": 4,
-          "w": 6,
-          "x": 18,
+          "w": 3,
+          "x": 21,
           "y": 1
         },
         "hideTimeOverride": true,
@@ -382,7 +391,7 @@
         },
         "gridPos": {
           "h": 4,
-          "w": 5,
+          "w": 8,
           "x": 0,
           "y": 5
         },
@@ -445,7 +454,7 @@
         "gridPos": {
           "h": 4,
           "w": 3,
-          "x": 12,
+          "x": 15,
           "y": 5
         },
         "id": 31,
@@ -481,7 +490,6 @@
         "type": "stat"
       },
       {
-        "cacheTimeout": null,
         "datasource": "$datasource",
         "description": "",
         "fieldConfig": {
@@ -489,37 +497,28 @@
             "color": {
               "mode": "thresholds"
             },
-            "decimals": 1,
             "mappings": [],
-            "max": 100,
-            "min": 0,
             "thresholds": {
               "mode": "absolute",
               "steps": [
                 {
                   "color": "purple",
                   "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
                 }
               ]
             },
-            "unit": "percent"
+            "unit": "decbytes"
           },
           "overrides": []
         },
         "gridPos": {
           "h": 4,
           "w": 3,
-          "x": 15,
+          "x": 18,
           "y": 5
         },
-        "hideTimeOverride": true,
-        "id": 32,
+        "id": 8,
         "interval": null,
-        "links": [],
         "maxDataPoints": 1,
         "options": {
           "colorMode": "background",
@@ -528,7 +527,7 @@
           "orientation": "auto",
           "reduceOptions": {
             "calcs": [
-              "max"
+              "sum"
             ],
             "fields": "",
             "values": false
@@ -539,16 +538,17 @@
         "pluginVersion": "8.2.5",
         "targets": [
           {
-            "expr": "sum(count_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | status >= 400 |__error__=\"\"[$__interval])) / (sum(count_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | __error__=\"\"[$__interval]))/ 100)",
-            "instant": false,
-            "legendFormat": "",
-            "range": true,
+            "expr": "sum by (host) (sum_over_time({$label_name=~\"$label_value\", job=~\"$job\", instance=~\"$instance\"} | json | unwrap body_bytes_sent |  __error__=\"\" [$__interval]))",
+            "instant": true,
+            "legendFormat": "Bytes sent",
+            "range": false,
             "refId": "A"
           }
         ],
-        "timeFrom": "1h",
+        "timeFrom": null,
         "timeShift": null,
-        "title": "% of 4xx  & 5xx requests ",
+        "title": "Total Bytes Sent",
+        "transformations": [],
         "type": "stat"
       },
       {
@@ -584,7 +584,7 @@
         "gridPos": {
           "h": 4,
           "w": 3,
-          "x": 18,
+          "x": 21,
           "y": 5
         },
         "hideTimeOverride": true,
@@ -1664,5 +1664,5 @@
     "timezone": "",
     "title": "Grafana Loki Dashboard for NGINX Service Mesh",
     "uid": "Nz6kKgtGj",
-    "version": 44
+    "version": 2
   }
