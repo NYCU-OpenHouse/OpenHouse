@@ -19,6 +19,16 @@ scrape_configs:
       agent: promtail
       __path__: /var/log/nginx/error.log #change with system log path
 
+- job_name: oh
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: oh_django
+      host: localhost
+      agent: promtail
+      __path__: /var/log/openhouse/*.log #change with django log path
+
 - job_name: nginx
   static_configs:
   - targets:
