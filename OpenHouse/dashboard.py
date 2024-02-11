@@ -25,7 +25,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=0
         ))
         self.children.append(modules.LinkList(
@@ -37,7 +37,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=0
         ))
         self.children.append(modules.LinkList(
@@ -49,7 +49,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=0
         ))
         self.children.append(modules.LinkList(
@@ -92,7 +92,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=1,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -104,7 +104,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -116,7 +116,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -138,7 +138,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=1,
             order=1
         ))
         self.children.append(modules.LinkList(
