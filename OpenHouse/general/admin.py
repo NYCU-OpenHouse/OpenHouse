@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.conf.urls import url,include
 from general import models
-import rdss.models
 
 class NewsFileInline(admin.TabularInline):
     model = models.NewsFile
@@ -18,11 +17,6 @@ class NewsAdmin(admin.ModelAdmin):
         list_display=('title','category','created_time','updated_time')
         search_fields=('title','content')
         inlines = [NewsFileInline]
-
-@admin.register(models.News_try)
-class NewsTryAdmin(admin.ModelAdmin):
-    list_display=('title','category','created_time','updated_time')
-    search_fields=('title','content')
 
 @admin.register(models.PhotoSlide)
 class PhotoSlideAdmin(admin.ModelAdmin):
