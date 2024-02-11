@@ -12,6 +12,23 @@ class CustomDashboard(Dashboard):
 
     def add_export_dashboard(self):
         self.children.append(modules.LinkList(
+            _('網站監控'),
+            children=[
+                {
+                    'title': _('網站流量監控(Nginx)'),
+                    'url': '/grafana/d/Nz6kKgtGj/grafana-loki-dashboard-for-nginx-service-mesh?orgId=1',
+                    'external': False,
+                },
+                {
+                    'title': _('網站操作監控(Django)'),
+                    'url': '/grafana/d/hchV4t2Iz/oh_django?orgId=1',
+                    'external': False,
+                },
+            ],
+            column=2,
+            order=0
+        ))
+        self.children.append(modules.LinkList(
             _('企業列表'),
             children=[
                 {
