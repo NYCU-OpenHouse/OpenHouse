@@ -11,7 +11,7 @@ services:
     volumes:
       - oh_volume:/var/lib/mysql
     networks:
-      - db_network
+      - backend
 
   oh:
     container_name: oh
@@ -24,18 +24,31 @@ services:
     volumes:
       - ./OpenHouse:/oh
     networks:
-      - db_network
+      - backend
     environment:
       - DEBUG=True
       - MYSQL_HOST=oh_mysql
       - MYSQL_PASSWORD=mypw
+
+  nginx:
+    build :
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    container_name: nginx
+    ports:
+      - '80:80'
+    networks:
+      - backend
+    volumes:
+      - ./log/nginx:/var/log/nginx
+    depends_on:
+      - oh
 
 volumes:
   oh_volume:
       external: true
       name: oh_volume
 
-
 networks:
-  db_network:
+  backend:
     driver: bridge
