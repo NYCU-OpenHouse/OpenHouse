@@ -12,6 +12,23 @@ class CustomDashboard(Dashboard):
 
     def add_export_dashboard(self):
         self.children.append(modules.LinkList(
+            _('網站監控'),
+            children=[
+                {
+                    'title': _('網站流量監控(Nginx)'),
+                    'url': '/grafana/d/Nz6kKgtGj/grafana-loki-dashboard-for-nginx-service-mesh?orgId=1',
+                    'external': False,
+                },
+                {
+                    'title': _('網站操作監控(Django)'),
+                    'url': '/grafana/d/hchV4t2Iz/oh_django?orgId=1',
+                    'external': False,
+                },
+            ],
+            column=0,
+            order=0
+        ))
+        self.children.append(modules.LinkList(
             _('企業列表'),
             children=[
                 {
@@ -20,7 +37,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=0
         ))
         self.children.append(modules.LinkList(
@@ -32,7 +49,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=0
         ))
         self.children.append(modules.LinkList(
@@ -75,7 +92,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=1,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -87,7 +104,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -99,7 +116,7 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
             ],
-            column=2,
+            column=0,
             order=1
         ))
         self.children.append(modules.LinkList(
@@ -120,8 +137,23 @@ class CustomDashboard(Dashboard):
                     'url': '/admin/recruit/exchange_prize',
                     'external': False,
                 },
+                {
+                    'title': _('各場次學生登記總覽'),
+                    'url': '/admin/recruit/seminar_attended_student/',
+                    'external': False,
+                },
+                {
+                    'title': _('匯出集點資料'),
+                    'url': '/admin/recruit/export_points_info/',
+                    'external': False,
+                },
+                {
+                    'title': _('讀卡程式及驅動'),
+                    'url': '/media/data/apps/card_reader.zip',
+                    'external': False,
+                },
             ],
-            column=2,
+            column=1,
             order=1
         ))
         self.children.append(modules.LinkList(

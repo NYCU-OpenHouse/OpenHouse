@@ -763,7 +763,7 @@ def CompanySurvey(request):
 def CollectPoints(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
-    title = "說明會集點"
+    title = "秋招說明會集點"
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
@@ -772,22 +772,35 @@ def CollectPoints(request):
     today = datetime.datetime.now().date()
     now = datetime.datetime.now()
 
-    # Find the suitable session
-    if (now - timedelta(minutes=20)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
-        current_session = 'forenoon'
-    elif (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
-        current_session = 'noon'
-    elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
-        current_session = 'night1'
-    elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
-        current_session = 'night2'
-    elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
-        current_session = 'night3'
-    else:
-        current_session = ''
-
+    # Find place of session
+    seminar_places = rdss.models.SlotColor.objects.all()
     seminar_list = rdss.models.SeminarSlot.objects.filter(date=today)
-    current_seminar = seminar_list.filter(session=current_session).first()
+    seminar_place_id = request.GET.get('seminar_place', '')
+
+    if seminar_place_id:
+        seminar_list = seminar_list.filter(place=seminar_place_id)
+        seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
+        
+        # Find the suitable session
+        if (now - timedelta(minutes=20)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
+            current_session = 'forenoon'
+        elif (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
+            current_session = 'noon'
+        elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
+            current_session = 'night1'
+        elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
+            current_session = 'night2'
+        elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
+            current_session = 'night3'
+        else:
+            current_session = ''
+
+        current_seminar = seminar_list.filter(session=current_session).first()
+        if seminar_list and current_seminar in seminar_list:
+            # put current seminar to the default
+            seminar_list = list(seminar_list)
+            seminar_list.remove(current_seminar)
+            seminar_list.insert(0, current_seminar)
 
     if request.method == "POST":
         idcard_no = request.POST['idcard_no']
@@ -807,14 +820,7 @@ def CollectPoints(request):
         # maintain current seminar from post
         current_seminar = seminar_obj
 
-    if seminar_list and current_seminar in seminar_list:
-        # put current seminar to the default
-        seminar_list = list(seminar_list)
-        seminar_list.remove(current_seminar)
-        seminar_list.insert(0, current_seminar)
-
     return render(request, 'admin/collect_points.html', locals())
-
 
 @staff_member_required
 def RedeemPrize(request):
@@ -877,7 +883,7 @@ def RegisterCard(request):
                                                                  data['phone']))
         else:
             print(form.errors)
-            ui_message = {"type": "error", "msg": "註冊失敗"}
+            ui_message = {"type": "red", "msg": "註冊失敗"}
 
     form = rdss.forms.StudentForm()
     return render(request, 'admin/reg_card.html', locals())
@@ -906,9 +912,7 @@ def SeminarAttendedStudent(request):
         student_count = rdss.models.StuAttendance.objects.filter(seminar=ele).count()
         ele.time = seminar_session_display[ele.session]
         ele.student_count = student_count
-    
-    
-    
+
     return render(request, 'admin/seminar_attended_student.html', locals())
 
 @staff_member_required

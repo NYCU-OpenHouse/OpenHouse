@@ -2,9 +2,10 @@
 {% load i18n static %}
 {% block extrastyle %}{{ block.super }}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <link href={% static "node_modules/semantic-ui/dist/semantic.min.css" %} rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+
     <link href={% static "css/rdss/collect_points.css" %} rel="stylesheet">
-    <script src={% static "node_modules/semantic-ui/dist/semantic.min.js" %}></script>
     <script src={% static "js/collect_points.js" %}></script>
 {% endblock %}
 
@@ -12,23 +13,46 @@
     <div>
         <h1 class="ui dividing header">OpenHouse 說明會集點</h1>
         <div class="ui segment">
-            <div class="ui two column middle aligned relaxed stackable grid">
+            <div class="ui two column grid">
                 <div class="column">
+                    <h3>場地</h3>
+                    <form class="ui form" method="GET" id="seminar_place">
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="seminar_place">
+                            <i class="dropdown icon"></i>
+                            <div class="text">{{ seminar_place_name }}</div>
+                            <div class="menu">
+                                {% for place in seminar_places %}
+                                <div class="item" data-value="{{ place.id }}">
+                                    {{ place.place }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button type="submit" class="ui button">提交</button>
+                    </form>
+
+                    <h3>場次</h3>
+                    {% if seminar_place_id %}
                     <form class="ui form" method="POST" id="collect_form">
                         {% csrf_token %}
                         <div class="field">
-                            <label>場次</label>
-                            <select class="ui dropdown" name="seminar_id">
-                                {% for seminar in seminar_list %}
-                                    <option value={{ seminar.id }}>
+                            <div class="ui selection dropdown">
+                                <input type="hidden" name="seminar_id" value="{{ seminar_list.0.id }}">
+                                <i class="dropdown icon"></i>
+                                <div class="text">{{ seminar_list.0.date|date:"m/d (D)" }}-{{ seminar_list.0.session }}({{ seminar_list.0.place }})-{{ seminar_list.0.company }}</div>
+                                <div class="menu">
+                                    {% for seminar in seminar_list %}
+                                    <div class="item" data-value="{{ seminar.id }}">
                                         {{ seminar.date|date:"m/d (D)" }}-{{ seminar.session }}({{ seminar.place }})-{{ seminar.company }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                             <p style="color:red">
                                 系統會自動抓取目前場次，換場時請點選下方按鈕   
                             </p>
-                            <a class="ui red submit button" href="/admin/rdss/collect_points/">重整頁面</a>
+                            <a class="ui red submit button" href="/admin/rdss/collect_points/?seminar_place={{ seminar_place_id }}">重整頁面</a>
                         </div>
                         <div class="field">
                             <label>學生證卡號</label>
@@ -39,8 +63,11 @@
                         </div>
                         <button class="ui blue submit button" type="submit">集點</button>
                     </form>
+                    {% else %}
+                    <h3 style="color:red">請選擇場地</h3>
+                    {% endif %}
                 </div>
-                <div class="ui vertical divider"></div>
+
                 <div class="center aligned column">
                     {% if msg %}
                         <div class="ui {{ msg.type }} message">

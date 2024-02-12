@@ -909,11 +909,13 @@ class SlotColor(models.Model):
 
 class Student(models.Model):
     card_num = models.CharField(u'學生證卡號', max_length=20, primary_key=True)
+    attendance = models.ManyToManyField(SeminarSlot, through='StuAttendance')
     student_id = models.CharField(u'學號', max_length=10, blank=True, null=True)
-    phone = models.CharField(u'手機', max_length=15, blank=True, null=True)
+    
+    phone = models.CharField(u'手機', max_length=15, blank=True, null=True, help_text='格式：0987654321')
     name = models.CharField(u'姓名', max_length=30, blank=True, null=True)
     department = models.CharField(u'系級', max_length=20, blank=True, null=True)
-    attendance = models.ManyToManyField(SeminarSlot, through='StuAttendance')
+    email = models.EmailField(u'Email', max_length=64, blank=True)
 
     def get_redeem_points(self):
         redeem_records = ExchangePrize.objects.filter(student=self)
@@ -926,33 +928,46 @@ class Student(models.Model):
         redeem_points = sum([i.points for i in redeem_records])
         return points - redeem_points
 
-    def redeem_points(self):
-        redeem_records = ExchangePrize.objects.filter(student=self)
-        redeem_points = sum([i.points for i in redeem_records])
-        return redeem_points
-
     class Meta:
         verbose_name = u'說明會學生'
         verbose_name_plural = u'說明會學生'
 
     def __str__(self):
-        return self.card_num
+        return self.card_num if not self.student_id else self.student_id
 
 
 class StuAttendance(models.Model):
     id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, to_field='card_num', on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, to_field='card_num', verbose_name=u'學生證卡號', on_delete=models.CASCADE)
     seminar = models.ForeignKey(SeminarSlot, to_field='id', on_delete=models.CASCADE)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+    
+    def get_company(self):
+        if self.seminar.company is None:
+            return "None"
+        return self.seminar.company.get_company_name()
+    get_company.short_description = "說明會企業"
+
+    def get_student_id(self):
+        return self.student.student_id
+    get_student_id.short_description = "學號"
+
+    def get_student_name(self):
+        return self.student.name
+    get_student_name.short_description = "姓名"
 
     class Meta:
         unique_together = ('student', 'seminar')
+        verbose_name = u"說明會參加記錄"
+        verbose_name_plural = u"說明會參加記錄"
 
 
 class ExchangePrize(models.Model):
     id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, to_field='card_num', verbose_name='u學生證卡號', on_delete=models.CASCADE)
-    points = models.IntegerField(u'所需點數')
-    prize = models.CharField(u'獎品', max_length=100)
+    student = models.ForeignKey(Student, to_field='card_num', verbose_name='學生證卡號', on_delete=models.CASCADE)
+    points = models.IntegerField(u'所需點數', default=0, blank=True)
+    prize = models.CharField(u'獎品', max_length=100, default='', blank=True)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
         verbose_name = u'兌獎紀錄'

@@ -124,7 +124,7 @@
     {% endif %}
     <div class="right menu">
         <!-- dropdown menu for mobile mode -->
-        <div class="item ui dropdown visible-on-mobile">
+        <div class="item ui dropdown visible-on-mobile" style="font-size: 13pt;">
             <div class="icon">
                 <i class="sidebar icon visible-on-mobile"></i>
             </div>
@@ -241,7 +241,7 @@
         {% endif %}
         <div class="item ui dropdown item nav-translation-menu" id="translate_dropdown" style="font-size: 13pt;">
             <div id="google_translate_element" style="display: none;"></div>
-            <div class="text">語言</div>
+            <div class="icon"><i class="globe icon"></i><i class="dropdown icon"></i></div>
             <div class="menu notranslate">
                 <div class="item nav-translation-menu" data-value="zh-TW" onclick="goTranslate('zh-TW')">繁體中文</div>
                 <div class="item nav-translation-menu" data-value="zh-CN" onclick="goTranslate('zh-CN')">简体中文</div>
@@ -249,7 +249,6 @@
                 <div class="item nav-translation-menu" data-value="ja" onclick="goTranslate('ja')">日本語</div>
                 <div class="item nav-translation-menu" data-value="ko" onclick="goTranslate('ko')">한국어</div>
             </div>
-            <i class="dropdown icon"></i>
         </div>
     </div>
 </div>
