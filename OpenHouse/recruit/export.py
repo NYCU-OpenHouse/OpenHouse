@@ -571,3 +571,34 @@ def PayInfo(request):
         response['content_type'] = 'application/pdf'
         response['Content-Disposition'] = 'attachment;filename=payinfo.doc'
     return response
+
+@staff_member_required
+def ExportPointsInfo(request):
+
+    filename = "recruit_points_info_{}.xlsx".format(timezone.localtime(timezone.now()).strftime("%m%d-%H%M"))
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+    workbook = xlsxwriter.Workbook(response)
+    worksheet = workbook.add_worksheet("春徵集點總覽")
+    
+    student_list = recruit.models.Student.objects.annotate(
+                points=Sum('attendance__points')).order_by('-points')
+    
+    fields = recruit.models.Student._meta.get_fields()[3:8]
+    
+    for index, field in enumerate(fields):
+        worksheet.write(0, index, field.verbose_name)
+    worksheet.write(0, index, "累積點數")
+    
+    for row_count, info in enumerate(student_list):
+        col_count = 0
+        for col_count, field in enumerate(fields):
+            worksheet.write(row_count + 1, col_count , getattr(info, field.name))
+        if getattr(info, "points") is None:
+            worksheet.write(row_count + 1, col_count, 0)
+        else:
+            worksheet.write(row_count + 1, col_count, getattr(info, "points"))
+            
+
+    workbook.close()
+    return response

@@ -1,0 +1,28 @@
+{% extends 'admin/base_site.html' %}
+{% block extrastyle %}{{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div id="content-main">
+	<a href="/admin/recruit/seminar_attended_student">返回登記總覽</a>
+	<h2>說明會企業 :  {{ seminar.company }} </h2>
+	<table class="ui celled table">
+		<thead>
+			<th> 已集點學生姓名 </th>
+		</thead>
+		<tbody>
+
+			{% for attendance in attendances %}
+			<tr>
+                <td>{{ attendance.student.name }}</td>
+			</tr>
+			{% endfor %}
+
+		</tbody>
+	</table>
+	
+</div>
+{% endblock %}
+

@@ -15,15 +15,13 @@ urlpatterns = [
     url(r'^export_online_seminar_info/$', export.export_online_seminar_info, name="recruit_export_online_seminar_info"),
     url(r'^export_jobfair_info/$', export.export_jobfair_info, name="recruit_export_jobfair_info"),
     
-    url(r'^reg_card/$', views.RegisterCard, name='reg_card'),
+    url(r'^reg_card/$', views.RegisterCard, name='recruit_reg_card'),
     url(r'^collect_points/$', views.CollectPoints, name='collect_points'),
     url(r'^exchange_prize/$', views.ExchangePrize, name='exchange_prize'),
-    url(r'^reg_card/$', views.RegisterCard, name="rdss_reg_card"),
-    # url(r'export_points_info/$', export.ExportPointsInfo, name='rdss_export_points_info'),
-    # url(r'^seminar_attended_student/$', views.SeminarAttendedStudent, name='rdss_seminar_attended_student'),
-    # url(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='rdss_seminar_attended_student_detail'),
-    
-    
+    url(r'export_points_info/$', export.ExportPointsInfo, name='rdss_export_points_info'),
+    url(r'^seminar_attended_student/$', views.SeminarAttendedStudent, name='recruit_seminar_attended_student'),
+    url(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='recruit_seminar_attended_student_detail'),
+
     url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
 
     #export urls are defined in admin.py

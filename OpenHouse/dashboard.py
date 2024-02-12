@@ -137,6 +137,21 @@ class CustomDashboard(Dashboard):
                     'url': '/admin/recruit/exchange_prize',
                     'external': False,
                 },
+                {
+                    'title': _('各場次學生登記總覽'),
+                    'url': '/admin/recruit/seminar_attended_student/',
+                    'external': False,
+                },
+                {
+                    'title': _('匯出集點資料'),
+                    'url': '/admin/recruit/export_points_info/',
+                    'external': False,
+                },
+                {
+                    'title': _('讀卡程式及驅動'),
+                    'url': '/media/data/apps/card_reader.zip',
+                    'external': False,
+                },
             ],
             column=1,
             order=1

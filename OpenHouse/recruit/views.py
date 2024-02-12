@@ -1047,6 +1047,9 @@ def sponsorship_admin(request):
 
 @staff_member_required
 def RegisterCard(request):
+    site_header = "OpenHouse 管理後台"
+    site_title = "OpenHouse"
+    title = "學生證註冊"
     if request.method == "POST":
         data = request.POST.copy()
         instance = recruit.models.Student.objects.filter(card_num=data['card_num']).first()
@@ -1054,8 +1057,9 @@ def RegisterCard(request):
         if form.is_valid():
             form.save()
             ui_message = {"type": "green", "msg": "註冊成功"}
+            collect_pts_logger.info('{} registered {} {}'.format(data['card_num'], data['student_id'], data['phone']))
         else:
-            ui_message = {"type": "error", "msg": "註冊失敗"}
+            ui_message = {"type": "red", "msg": "註冊失敗"}
     else:
         form = StudentForm()
     return render(request, 'recruit/admin/reg_card.html', locals())
@@ -1182,6 +1186,46 @@ def ExchangePrize(request):
         student_form = StudentForm(instance=student_obj)
 
     return render(request, 'recruit/admin/exchange_prize.html', locals())
+
+
+@staff_member_required
+def SeminarAttendedStudent(request):
+    seminars = recruit.models.SeminarSlot.objects.all()
+    try:
+        configs = recruit.models.RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
+    seminar_session_display = {
+        "morning1": "{}~{}".format(configs.session_9_start, configs.session_9_end),
+        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end),
+        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
+    }
+    
+    for ele in seminars:
+        student_count = recruit.models.StuAttendance.objects.filter(seminar=ele).count()
+        ele.time = seminar_session_display[ele.session]
+        ele.student_count = student_count
+
+    return render(request, 'admin/seminar_attended_student.html', locals())
+
+@staff_member_required
+def SeminarAttendedStudentDetail(request, seminar_id):
+    try:
+        seminar = recruit.models.SeminarSlot.objects.get(id=seminar_id)
+    except recruit.models.SeminarSlot.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    attendances = recruit.models.StuAttendance.objects.filter(seminar=seminar)
+    
+    return render(request, 'admin/seminar_attended_student_detail.html', locals())
 
 
 @login_required(login_url='/company/login/')
