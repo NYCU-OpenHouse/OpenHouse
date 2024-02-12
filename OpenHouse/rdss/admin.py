@@ -35,13 +35,15 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ('idcard_no' ,'name', 'student_id')
     list_display = ('idcard_no', 'student_id', 'name', 'phone')
 
-@admin.register(models.ECESeminar)
-class ECESeminarAdmin(admin.ModelAdmin):
-    list_display = ('seminar_name','ece_member_discount',)
 
 @admin.register(models.RedeemPrize)
 class RedeemAdmin(admin.ModelAdmin):
     list_display = ('student', 'prize', 'points', 'updated')
+
+
+@admin.register(models.ECESeminar)
+class ECESeminarAdmin(admin.ModelAdmin):
+    list_display = ('seminar_name','ece_member_discount',)
 
 
 @admin.register(models.SeminarSlot)

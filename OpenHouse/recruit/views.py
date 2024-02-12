@@ -17,7 +17,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from django import forms
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 import datetime
 import json
 import logging
@@ -27,9 +27,10 @@ from datetime import timedelta
 import recruit.models
 from urllib.parse import urlparse, parse_qs
 import re
+import recruit.models
 
 logger = logging.getLogger('recruit')
-
+collect_pts_logger = logging.getLogger('stu_attend')
 
 def parse_YT_video(url):
     """ Parse video ID from the given url """
@@ -1061,68 +1062,125 @@ def RegisterCard(request):
 
 
 @staff_member_required
-def collect_points(request):
-    """
-    Select today session and place current session in first place
-    """
-    students = Student.objects.all()
-    today = datetime.datetime.now().date()
+def CollectPoints(request):
+    site_header = "OpenHouse 管理後台"
+    site_title = "OpenHouse"
+    title = "春徵說明會集點"
+
     try:
-        config = RecruitConfigs.objects.all()[0]
+        configs = RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-
-    # Find the suitable session
+    today = datetime.datetime.now().date()
     now = datetime.datetime.now()
-    if (now - timedelta(minutes=20)).time() < config.session_1_end < (now + timedelta(minutes=20)).time():
-        current_session = 'other1'
-    elif (now - timedelta(minutes=20)).time() < config.session_2_end < (now + timedelta(minutes=20)).time():
-        current_session = 'noon2'
-    elif (now - timedelta(minutes=20)).time() < config.session_3_end < (now + timedelta(minutes=20)).time():
-        current_session = 'other2'
-    elif (now - timedelta(minutes=20)).time() < config.session_4_end < (now + timedelta(minutes=20)).time():
-        current_session = 'other3'
-    elif (now - timedelta(minutes=20)).time() < config.session_5_end < (now + timedelta(minutes=20)).time():
-        current_session = 'other4'
-    elif (now - timedelta(minutes=20)).time() < config.session_6_end < (now + timedelta(minutes=20)).time():
-        current_session = 'other5'
-    else:
-        current_session = ''
 
-    current_seminar = SeminarSlot.objects.filter(date=today, session=current_session).first()
+    # Find place of session
+    seminar_places = SlotColor.objects.all()
+    seminar_list = SeminarSlot.objects.filter(date=today)
+    seminar_place_id = request.GET.get('seminar_place', '')
 
-    seminars = SeminarSlot.objects.filter(date=today)
-    if (request.POST):
-        card_num = request.POST['card_num']
+    if seminar_place_id:
+        seminar_list = seminar_list.filter(place=seminar_place_id)
+        seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
+        
+        # Find the suitable session
+        if (now - timedelta(minutes=20)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
+            current_session = 'morning1'
+        elif (now - timedelta(minutes=20)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
+            current_session = 'noon1'
+        elif (now - timedelta(minutes=20)).time() < configs.session_2_end < (now + timedelta(minutes=20)).time():
+            current_session = 'noon2'
+        elif (now - timedelta(minutes=20)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
+            current_session = 'noon3'
+        elif (now - timedelta(minutes=20)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
+            current_session = 'noon4'
+        elif (now - timedelta(minutes=20)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening1'
+        elif (now - timedelta(minutes=20)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening2'
+        elif (now - timedelta(minutes=20)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening3'
+        elif (now - timedelta(minutes=20)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening4'
+        elif (now - timedelta(minutes=20)).time() < configs.session_10_end < (now + timedelta(minutes=20)).time():
+            current_session = 'add1'
+        else:
+            current_session = ''
+
+        current_seminar = seminar_list.filter(session=current_session).first()
+        if seminar_list and current_seminar in seminar_list:
+            # put current seminar to the default
+            seminar_list = list(seminar_list)
+            seminar_list.remove(current_seminar)
+            seminar_list.insert(0, current_seminar)
+
+    if request.method == "POST":
+        idcard_no = request.POST['idcard_no']
         seminar_id = request.POST['seminar_id']
-        student_obj, create = Student.objects.get_or_create(card_num=card_num)
         seminar_obj = SeminarSlot.objects.get(id=seminar_id)
-        StuAttendance.objects.get_or_create(student=student_obj, seminar=seminar_obj)
-    seminar_list = list(seminars)
-    if (current_seminar):
-        seminar_list.remove(current_seminar)
-        seminar_list.insert(0, current_seminar)
+        student_obj, created = Student.objects.get_or_create(
+            card_num=idcard_no
+        )
+        attendance_obj, created = StuAttendance.objects.get_or_create(
+            student=student_obj,
+            seminar=seminar_obj
+        )
+        student_obj = Student.objects.filter(card_num=idcard_no).annotate(
+            points=Sum('attendance__points')).first()
+        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+
+        # maintain current seminar from post
+        current_seminar = seminar_obj
+
     return render(request, 'recruit/admin/collect_points.html', locals())
 
 
 @staff_member_required
-def exchange_prize(request):
-    if (request.GET):
-        if 'card_num' in request.GET:
-            student = Student.objects.filter(card_num=request.GET['card_num']).first()
-            form = StudentForm(instance=student)
-            exchange_form = ExchangeForm()
+def ExchangePrize(request):
+    site_header = "OpenHouse 管理後台"
+    site_title = "OpenHouse"
+    title = "春徵集點兌換"
+    if request.method == "GET":
+        idcard_no = request.GET.get('idcard_no', '')
+        print(idcard_no)
+        if idcard_no:
+            student_obj = Student.objects.filter(card_num=idcard_no).annotate(
+                points=Sum('attendance__points')).first()
 
-    if (request.POST):
-        student = Student.objects.filter(card_num=request.POST['card_num']).first()
-        form = StudentForm(request.POST, instance=student)
+            if student_obj:
+                student_form = StudentForm(instance=student_obj)
+                exchange_form = ExchangeForm()
+
+    if request.method == "POST":
+        data = request.POST.copy()
+        print(data)
+        student_obj = Student.objects.filter(card_num=data['card_num']).first()
+        form = StudentForm(data, instance=student_obj)
         if form.is_valid():
             form.save()
-        data = request.POST.copy()
-        data['student'] = student
-        exchange_form = ExchangeForm(data)
-        if exchange_form.is_valid():
-            exchange_form.save()
+        else:
+            ui_message = {"type": "red", "msg": "註冊失敗"}
+        # check if the student has enough points
+        if (int(student_obj.get_points()) - int(data['points'])) < 0:
+            ui_message = {"type": "red", "msg": "兌換失敗，點數不足"}
+            exchange_form = ExchangeForm()
+        
+        else:
+            exchange_obj = recruit.models.ExchangePrize.objects.create(
+                student=student_obj
+            )
+            exchange_form = ExchangeForm(data, instance=exchange_obj)
+            if exchange_form.is_valid():
+                exchange_form.save()
+                ui_message = {"type": "green", "msg": "儲存成功，已兌換{}，花費{}點".format(
+                    data['prize'], data['points'])}
+                exchange_form = ExchangeForm()
+            else:
+                print(exchange_form.errors)
+                ui_message = {"type": "red", "msg": "註冊失敗"}
+        
+        student_form = StudentForm(instance=student_obj)
+
     return render(request, 'recruit/admin/exchange_prize.html', locals())
 
 

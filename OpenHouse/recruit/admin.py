@@ -14,7 +14,25 @@ import recruit.models as models
 
 @admin.register(ExchangePrize)
 class ExchangePrizeAdmin(admin.ModelAdmin):
-    list_display = ['student', 'prize', 'points']
+    list_display = ['student', 'prize', 'points', 'updated']
+
+
+class StuAttendanceInline(admin.TabularInline):
+    model = StuAttendance
+    extra = 0
+
+
+@admin.register(StuAttendance)
+class StuAttendanceAdmin(admin.ModelAdmin):
+    list_display = ['seminar', 'get_company', 'get_student_id', 'get_student_name',]
+    search_fields = ('student__student_id', 'student__name')
+
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    inlines = (StuAttendanceInline,)
+    search_fields = ('card_num' ,'name', 'student_id')
+    list_display = ('card_num', 'student_id', 'name', 'phone')
 
 
 class SponsorshipInline(admin.TabularInline):
@@ -28,22 +46,6 @@ class RecruitConfigAdmin(admin.ModelAdmin):
 
     def title(self, obj):
         return '活動設定'
-
-
-class StuAttendanceInline(admin.TabularInline):
-    model = StuAttendance
-    extra = 0
-
-
-@admin.register(StuAttendance)
-class StuAttendanceAdmin(admin.ModelAdmin):
-    list_display = ['seminar']
-
-
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    inlines = (StuAttendanceInline,)
-    list_display = ('card_num', 'student_id', 'name', 'phone')
 
 @admin.register(ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):

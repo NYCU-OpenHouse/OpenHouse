@@ -763,7 +763,7 @@ def CompanySurvey(request):
 def CollectPoints(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
-    title = "說明會集點"
+    title = "秋招說明會集點"
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]

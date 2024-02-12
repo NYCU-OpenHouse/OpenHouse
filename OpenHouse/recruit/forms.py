@@ -154,12 +154,32 @@ class SurveyForm(forms.ModelForm):
 
 
 class StudentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(StudentForm, self).__init__(*args, **kwargs)
+        self.fields['card_num'].widget.attrs['autofocus'] = True
+
     class Meta:
         model = Student
-        fields = ['card_num', 'student_id', 'phone', 'name', 'department']
+        fields = ['card_num', 'student_id', 'phone', 'name', 'department', 'email']
+    
+    def save(self, commit=True):
+        form = super(StudentForm, self).save(commit=False)
+        if commit:
+            form.save()
+        return form
 
 
 class ExchangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ExchangeForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = ExchangePrize
         fields = '__all__'
+        exclude = ['updated', 'student']
+
+    def save(self, commit=True):
+        form = super(ExchangeForm, self).save(commit=False)
+        if commit:
+            form.save()
+        return form
