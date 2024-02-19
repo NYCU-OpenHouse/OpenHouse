@@ -1,4 +1,6 @@
 from django.conf.urls import url
+from django.urls import path
+
 import recruit.views as views
 import recruit.export as export
 
@@ -20,7 +22,7 @@ urlpatterns = [
     url(r'^exchange_prize/$', views.ExchangePrize, name='exchange_prize'),
     url(r'export_points_info/$', export.ExportPointsInfo, name='rdss_export_points_info'),
     url(r'^seminar_attended_student/$', views.SeminarAttendedStudent, name='recruit_seminar_attended_student'),
-    url(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='recruit_seminar_attended_student_detail'),
+    path(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='recruit_seminar_attended_student_detail'),
 
     url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
 

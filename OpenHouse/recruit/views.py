@@ -1214,7 +1214,7 @@ def SeminarAttendedStudent(request):
         ele.time = seminar_session_display[ele.session]
         ele.student_count = student_count
 
-    return render(request, 'admin/seminar_attended_student.html', locals())
+    return render(request, 'recruit/admin/seminar_attended_student.html', locals())
 
 @staff_member_required
 def SeminarAttendedStudentDetail(request, seminar_id):
@@ -1225,7 +1225,7 @@ def SeminarAttendedStudentDetail(request, seminar_id):
     
     attendances = recruit.models.StuAttendance.objects.filter(seminar=seminar)
     
-    return render(request, 'admin/seminar_attended_student_detail.html', locals())
+    return render(request, 'recruit/admin/seminar_attended_student_detail.html', locals())
 
 
 @login_required(login_url='/company/login/')
