@@ -1,0 +1,56 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n static %}
+{% block extrastyle %}{{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div id="content-main">
+    <h2 class="ui header">秋招匯入學生卡號資訊</h2>
+    <h4 class="ui red header"> 匯入資料格式由第一行至第三行依序為 : 學號、卡號、姓名</h4>
+    {% if success %}
+        <div class="ui green message">
+            匯入成功
+        </div>
+    {% else %}
+        {% if error_message%}
+            <div class="ui red message">
+                匯入失敗({{ error_message }})
+            </div>
+        {% endif %}
+    {% endif %}
+    
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %} 
+        {{ form }}
+        <input type="submit" value="提交">
+    </form>
+    
+    <div class="ui divider"></div>
+
+    <button class="ui button red" type="button" id="delete">清空學生卡號資訊</button>
+    <div class="ui tiny modal">
+        <div class="header">
+          刪除全部學生卡號資訊?
+        </div>
+        <div class="actions">
+          <div class="ui cancel button">取消</div>
+          <a href="/admin/rdss/clear_student_info/"><div class="ui red button" >刪除</div></a>
+        </div>
+      </div>
+</div>
+
+<!-- modal initial -->
+<script type="text/javascript">
+  $(function(){
+	$("#delete").click(function(){
+		$(".ui.tiny.modal").modal({
+		closable: true
+	    }).modal('show');
+	});
+
+});
+</script>
+
+{% endblock %}

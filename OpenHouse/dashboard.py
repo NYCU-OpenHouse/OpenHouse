@@ -212,6 +212,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('批量操作學生卡號資訊'),
+                    'url': '/admin/rdss/import_student_card_info/',
+                    'external': False,
+                },
+                {
                     'title': _('兌獎'),
                     'url': '/admin/rdss/redeem/',
                     'external': False,

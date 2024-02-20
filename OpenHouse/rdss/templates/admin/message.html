@@ -1,0 +1,22 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n static %}
+{% block extrastyle %}{{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div id="content-main">
+    {% if success %}
+        <div class="ui green message">
+            {{ message }}
+        </div>
+    {% else %}
+        <div class="ui red message">
+            {{ message }}({{ error_message }})
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
