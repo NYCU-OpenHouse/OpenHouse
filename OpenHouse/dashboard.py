@@ -133,6 +133,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('批量操作學生卡號資訊'),
+                    'url': '/admin/recruit/import_student_card_info/',
+                    'external': False,
+                },
+                {
                     'title': _('兌換獎品'),
                     'url': '/admin/recruit/exchange_prize',
                     'external': False,
