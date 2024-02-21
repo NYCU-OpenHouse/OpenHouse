@@ -2,7 +2,8 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RecruitSignupForm, JobfairInfoForm, SeminarInfoCreationForm, StudentForm, ExchangeForm, \
-    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm, OnlineSeminarInfoCreationForm
+    SeminarInfoTemporaryCreationForm, JobfairInfoTempForm, SurveyForm, OnlineSeminarInfoCreationForm, \
+    ImportStudentCardInfoForm
 from .models import RecruitConfigs, SponsorItem, Files, ExchangePrize
 from .models import RecruitSignup, SponsorShip, CompanySurvey, RecruitOnlineSeminarInfo, RecruitOnlineJobfairInfo
 from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJobfairInfo, SeminarInfoTemporary
@@ -28,6 +29,8 @@ import recruit.models
 from urllib.parse import urlparse, parse_qs
 import re
 import recruit.models
+from .data_import import ImportStudentCardID
+from django.db.utils import IntegrityError
 
 logger = logging.getLogger('recruit')
 collect_pts_logger = logging.getLogger('stu_attend')
@@ -1226,6 +1229,46 @@ def SeminarAttendedStudentDetail(request, seminar_id):
     attendances = recruit.models.StuAttendance.objects.filter(seminar=seminar)
     
     return render(request, 'admin/seminar_attended_student_detail.html', locals())
+
+# Import Student Card Information from excel file
+@staff_member_required
+def ImportStudentCardInfo(request):
+
+    if request.method == "POST":
+        
+        form = ImportStudentCardInfoForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            if not request.FILES["excel_file"].name.endswith('.xlsx'):
+                success = False
+                error_message = "只接受 .xlsx 副檔名"
+                return render(request, 'recruit/admin/import_student_card_info.html', locals())
+
+
+            try:
+                ImportStudentCardID(request.FILES["excel_file"])
+                success = True
+            except IntegrityError as e:
+                if e.args[0] == 1062:
+                    success = False
+                    error_message = "請確認是否有相同卡號，但是姓名或學號不同的資料"
+            except Exception as ee:
+                success = False
+                error_message = f"{ee}"
+            
+    
+    else:
+        form = ImportStudentCardInfoForm()
+
+    return render(request, 'recruit/admin/import_student_card_info.html', locals())
+
+@staff_member_required
+def ClearStudentInfo(request):
+    Student.objects.all().delete()
+    success = True
+    message = "刪除成功！"
+
+    return render(request, 'recruit/admin/message.html', locals())
 
 
 @login_required(login_url='/company/login/')

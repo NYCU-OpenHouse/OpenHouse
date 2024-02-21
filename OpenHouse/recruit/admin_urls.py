@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'export_points_info/$', export.ExportPointsInfo, name='rdss_export_points_info'),
     url(r'^seminar_attended_student/$', views.SeminarAttendedStudent, name='recruit_seminar_attended_student'),
     url(r'seminar_attended_student/detail/<int:seminar_id>', views.SeminarAttendedStudentDetail, name='recruit_seminar_attended_student_detail'),
+    url(r'import_student_card_info/$', views.ImportStudentCardInfo, name='recruit_import_student_card_info'),
+    url(r'clear_student_info/$', views.ClearStudentInfo, name='recruit_clear_student_info'),
 
     url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
 

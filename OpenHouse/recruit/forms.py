@@ -183,3 +183,10 @@ class ExchangeForm(forms.ModelForm):
         if commit:
             form.save()
         return form
+
+class ImportStudentCardInfoForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['excel_file'].label = u'檔案上傳'
+    
+    excel_file = forms.FileField()

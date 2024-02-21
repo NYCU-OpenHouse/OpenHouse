@@ -13,6 +13,8 @@ from datetime import timedelta
 from company.models import Company
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Sum
+from .data_import import ImportStudentCardID
+from django.db.utils import IntegrityError
 from django.urls import reverse
 import re
 # for logging
@@ -925,6 +927,46 @@ def SeminarAttendedStudentDetail(request, seminar_id):
     attendances = rdss.models.StuAttendance.objects.filter(seminar=seminar)
     
     return render(request, 'admin/seminar_attended_student_detail.html', locals())
+
+# Import Student Card Information from excel file
+@staff_member_required
+def ImportStudentCardInfo(request):
+
+    if request.method == "POST":
+        
+        form = rdss.forms.ImportStudentCardInfoForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            if not request.FILES["excel_file"].name.endswith('.xlsx'):
+                success = False
+                error_message = "只接受 .xlsx 副檔名"
+                return render(request, 'admin/import_student_card_info.html', locals())
+
+
+            try:
+                ImportStudentCardID(request.FILES["excel_file"])
+                success = True
+            except IntegrityError as e:
+                if e.args[0] == 1062:
+                    success = False
+                    error_message = "請確認是否有相同卡號，但是姓名或學號不同的資料"
+            except Exception as ee:
+                success = False
+                error_message = f"{ee}"
+            
+    
+    else:
+        form = rdss.forms.ImportStudentCardInfoForm()
+
+    return render(request, 'admin/import_student_card_info.html', locals())
+
+@staff_member_required
+def ClearStudentInfo(request):
+    rdss.models.Student.objects.all().delete()
+    success = True
+    message = "刪除成功！"
+
+    return render(request, 'admin/message.html', locals())
 
 
 # ========================RDSS public view=================
