@@ -11,12 +11,14 @@
 	<table class="ui celled table">
 		<thead>
 			<th> 已集點學生姓名 </th>
+			<th> 學號 </th>
 		</thead>
 		<tbody>
 
 			{% for attendance in attendances %}
 			<tr>
                 <td>{{ attendance.student.name }}</td>
+				<td>{{ attendance.student.student_id }}</td>
 			</tr>
 			{% endfor %}
 
