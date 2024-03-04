@@ -1091,25 +1091,25 @@ def CollectPoints(request):
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
         
         # Find the suitable session
-        if (now - timedelta(minutes=20)).time() < configs.session_9_end < (now + timedelta(minutes=40)).time():
+        if (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
             current_session = 'morning1'
-        elif (now - timedelta(minutes=20)).time() < configs.session_1_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon1'
-        elif (now - timedelta(minutes=20)).time() < configs.session_2_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_2_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon2'
-        elif (now - timedelta(minutes=20)).time() < configs.session_3_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon3'
-        elif (now - timedelta(minutes=20)).time() < configs.session_8_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon4'
-        elif (now - timedelta(minutes=20)).time() < configs.session_4_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening1'
-        elif (now - timedelta(minutes=20)).time() < configs.session_5_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening2'
-        elif (now - timedelta(minutes=20)).time() < configs.session_6_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening3'
-        elif (now - timedelta(minutes=20)).time() < configs.session_7_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening4'
-        elif (now - timedelta(minutes=20)).time() < configs.session_10_end < (now + timedelta(minutes=40)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session_10_end < (now + timedelta(minutes=20)).time():
             current_session = 'add1'
         else:
             current_session = ''
