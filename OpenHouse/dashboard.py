@@ -154,8 +154,8 @@ class CustomDashboard(Dashboard):
                 },
                 {
                     'title': _('讀卡程式及驅動'),
-                    'url': '/media/data/apps/card_reader.zip',
-                    'external': False,
+                    'url': 'http://web.infothink.com.tw/tw/download',
+                    'external': True,
                 },
             ],
             column=1,
@@ -238,8 +238,8 @@ class CustomDashboard(Dashboard):
                 },
                 {
                     'title': _('讀卡程式及驅動'),
-                    'url': '/media/data/apps/card_reader.zip',
-                    'external': False,
+                    'url': 'http://web.infothink.com.tw/tw/download',
+                    'external': True,
                 },
             ],
             column=2,
