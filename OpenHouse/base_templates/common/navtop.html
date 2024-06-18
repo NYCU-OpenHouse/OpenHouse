@@ -65,7 +65,7 @@
             </a>
         {% endif %}
         {% if nav_configs.show_rdss %}
-            <a class="{{ menu_ui.rdss }} item hidden-on-mobile" href="{% url 'rdss_company_index' %}">
+            <a class="{{ menu_ui.rdss }} item hidden-on-mobile" id="navtop_rdss_btn" href="{% url 'rdss_company_index' %}">
                 秋季招募
             </a>
         {% endif %}
@@ -93,7 +93,7 @@
             </div>
         {% endif %}
         {% if nav_configs.show_rdss %}
-            <div class="ui simple dropdown item hidden-on-mobile" id="rdss_navtop_dropdown">
+            <div class="ui simple dropdown item hidden-on-mobile" id="rdss_navtop_dropdown" style="font-size: 13pt;">
                 秋季招募
                 <i class="dropdown inverted icon"></i>
                 <div class="menu">

@@ -272,14 +272,23 @@ def JobfairInfo(request):
     # semantic ui control
     sidebar_ui = {'jobfair_info': "active"}
     menu_ui = {'rdss': "active"}
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+        food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
+        food_info = rdss.models.RdssConfigs.objects.values('jobfair_food_info')[0]['jobfair_food_info']
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
+    try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
+        booth_num = company.jobfair
+        booth_quantity = booth_num * 3
+        booth_parking_tickets = booth_num * 2
     except Exception as e:
         error_msg = "貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request, 'error.html', locals())
@@ -290,22 +299,19 @@ def JobfairInfo(request):
     except ObjectDoesNotExist:
         jobfair_info = None
 
-    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=1, extra=1,
-                                             fields=('id', 'license_plate_number', 'info'),
-                                             widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '需要連字號：例AA-1234、4321-BB'})})
     if request.POST:
         data = request.POST.copy()
-        data['company'] = company.cid
-        form = rdss.forms.JobfairInfoCreationForm(data=data, instance=jobfair_info)
-        formset = parking_form_set(data=data, instance=jobfair_info)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
+        form = rdss.forms.JobfairInfoCreationForm(data=data, instance=jobfair_info, max_num=booth_num)
+        if form.is_valid():
+            new_info = form.save(commit=False)
+            company = rdss.models.Signup.objects.get(cid=request.user.cid)
+            new_info.company = company
+            new_info.save()
             return redirect(JobfairInfo)
+        else:
+            print(form.errors)
     else:
-        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info)
-        formset = parking_form_set(instance=jobfair_info)
+        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num)
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}

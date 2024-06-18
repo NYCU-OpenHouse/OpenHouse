@@ -84,32 +84,29 @@ class JobfairInfoCreationForm(forms.ModelForm):
     class Meta:
         model = rdss.models.JobfairInfo
         fields = '__all__'
-        exclude = ['cid', 'ps']
+        exclude = ['company']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, max_num=None, **kwargs):
         super(JobfairInfoCreationForm, self).__init__(*args, **kwargs)
+        self.fields['lunch_box'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+        self.fields['parking_tickets'].widget.attrs.update({
+            'max' : max_num*2,
+            'min' : '0'
+        })
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
         self.fields['meat_lunchbox'].widget.attrs.update({
-            'placeholder': '若不索取，填0即可',
+            'max' : max_num*3,
+            'min' : '0'
         })
         self.fields['vege_lunchbox'].widget.attrs.update({
-            'placeholder': '若不索取，填0即可',
+            'max' : max_num*3,
+            'min' : '0'
         })      
-
-    # def clean_cid(self):
-    #       raise forms.ValidationError(
-    #               self.error_messages['cid_error'],
-    #               code='cid_error'
-    #               )
-    #       return cid
-
-    def save(self, commit=True):
-        record = super(JobfairInfoCreationForm, self).save(commit=False)
-        if commit:
-            record.save()
-        return record
 
 
 class EmailPostForm(forms.Form):

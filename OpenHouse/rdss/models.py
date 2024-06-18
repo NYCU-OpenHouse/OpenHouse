@@ -102,6 +102,7 @@ class RdssConfigs(models.Model):
         ('bento', u'便當(葷素)')
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
+    jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -427,16 +428,10 @@ class JobfairInfo(models.Model):
                                       validators=[validate_mobile])
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     
-    PARKING_CHOICES = (
-        ('ticket', u'當日索取紙本停車抵用券'),
-        ('register', u'企業事先登記A車車牌號碼')
-    )
-    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True, default='ticket')
-    
-    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
-    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
-    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
-    vege_lunchbox = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    parking_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
+    lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
+    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', default=0, blank=True, null=True)
+    vege_lunchbox = models.SmallIntegerField(u'素食餐點', default=0, blank=True, null=True)
 
     power_req = models.CharField(u'用電需求', max_length=256,
                                  help_text="請填寫當天會使用的用電設備")

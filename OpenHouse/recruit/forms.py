@@ -111,7 +111,6 @@ class JobfairInfoForm(ModelForm):
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
-        print(max_num)
         self.fields['lunch_box'].widget.attrs.update({
             'max' : max_num*3,
             'min' : '0'
