@@ -102,6 +102,7 @@ def Status(request):
     # Fee display
     total_fee = 0
     discount = 0
+    discount_text = ""
     fee = 0
     try:
         if signup_data.seminar != "none":
@@ -115,21 +116,31 @@ def Status(request):
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
         num_of_ece = len(signup_data.seminar_ece.all())
-        fee += configs.session_ece_fee * num_of_ece
+        if num_of_ece:
+            fee += configs.session_ece_fee * num_of_ece
 
-        # jobfair fee
+        # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
+                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             elif mycompany.gloria_startup:
+                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
-
+            elif signup_data.zone and signup_data.zone.name != '一般企業':
+                discount_text = "貴公司為{}專區，可享有優惠減免{}元".format(signup_data.zone, signup_data.zone.discount)
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+            
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
         
-        if mycompany.category == '公家單位':
+        rdss_mycompany_category = rdss.models.CompanyCatogories.objects.get(name=mycompany.category)
+
+        if rdss_mycompany_category.discount:
+            discount_text = "貴公司為公家單位，可享有免費優惠"
             discount = fee
+
     except AttributeError:
         pass
 
