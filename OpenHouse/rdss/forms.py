@@ -14,6 +14,10 @@ class SignupCreationForm(forms.ModelForm):
         self.fields['seminar_ece'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['jobfair'].widget.attrs.update({
+            'max' : '6',
+            'min' : '0'
+        })
 
     class Meta:
         model = rdss.models.Signup
@@ -22,33 +26,6 @@ class SignupCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         record = super(SignupCreationForm, self).save(commit=False)
-        if commit:
-            record.save()
-        return record
-
-
-class SignupEditForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(SignupCreationForm, self).__init__(*args, **kwargs)
-        self.fields['seminar'].widget.attrs.update({
-            'class': 'ui dropdown',
-        })
-
-    class Meta:
-        model = rdss.models.Signup
-        fields = '__all__'
-        exclude = ['payment', 'receipt_no', 'ps']
-
-    # def clean_cid(self):
-    #       raise forms.ValidationError(
-    #               self.error_messages['cid_error'],
-    #               code='cid_error'
-    #               )
-    #       return cid
-
-    def save(self, commit=True):
-        record = super(SignupEditForm, self).save(commit=False)
         if commit:
             record.save()
         return record
