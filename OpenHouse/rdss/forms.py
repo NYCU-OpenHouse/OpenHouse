@@ -14,6 +14,10 @@ class SignupCreationForm(forms.ModelForm):
         self.fields['seminar_ece'].widget.attrs.update({
             'class': 'ui dropdown',
         })
+        self.fields['jobfair'].widget.attrs.update({
+            'max' : '6',
+            'min' : '0'
+        })
 
     class Meta:
         model = rdss.models.Signup
@@ -22,33 +26,6 @@ class SignupCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         record = super(SignupCreationForm, self).save(commit=False)
-        if commit:
-            record.save()
-        return record
-
-
-class SignupEditForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(SignupCreationForm, self).__init__(*args, **kwargs)
-        self.fields['seminar'].widget.attrs.update({
-            'class': 'ui dropdown',
-        })
-
-    class Meta:
-        model = rdss.models.Signup
-        fields = '__all__'
-        exclude = ['payment', 'receipt_no', 'ps']
-
-    # def clean_cid(self):
-    #       raise forms.ValidationError(
-    #               self.error_messages['cid_error'],
-    #               code='cid_error'
-    #               )
-    #       return cid
-
-    def save(self, commit=True):
-        record = super(SignupEditForm, self).save(commit=False)
         if commit:
             record.save()
         return record
@@ -84,32 +61,29 @@ class JobfairInfoCreationForm(forms.ModelForm):
     class Meta:
         model = rdss.models.JobfairInfo
         fields = '__all__'
-        exclude = ['cid', 'ps']
+        exclude = ['company']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, max_num=None, **kwargs):
         super(JobfairInfoCreationForm, self).__init__(*args, **kwargs)
+        self.fields['lunch_box'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+        self.fields['parking_tickets'].widget.attrs.update({
+            'max' : max_num*2,
+            'min' : '0'
+        })
         self.fields['contact_mobile'].widget.attrs.update({
             'placeholder': '格式：0912-345678',
         })
         self.fields['meat_lunchbox'].widget.attrs.update({
-            'placeholder': '若不索取，填0即可',
+            'max' : max_num*3,
+            'min' : '0'
         })
         self.fields['vege_lunchbox'].widget.attrs.update({
-            'placeholder': '若不索取，填0即可',
+            'max' : max_num*3,
+            'min' : '0'
         })      
-
-    # def clean_cid(self):
-    #       raise forms.ValidationError(
-    #               self.error_messages['cid_error'],
-    #               code='cid_error'
-    #               )
-    #       return cid
-
-    def save(self, commit=True):
-        record = super(JobfairInfoCreationForm, self).save(commit=False)
-        if commit:
-            record.save()
-        return record
 
 
 class EmailPostForm(forms.Form):

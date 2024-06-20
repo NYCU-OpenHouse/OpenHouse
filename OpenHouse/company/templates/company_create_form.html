@@ -171,11 +171,15 @@
             {{ form.receipt_title }}
         </div>
         <div class="required field">
+            <label>{{ form.receipt_code.label_tag }}</label>
+            {{ form.receipt_code }}
+        </div>
+        <div class="required field">
             <label>{{ form.receipt_postal_code.label_tag }} {{ form.receipt_postal_code.help_text }}</label>
             {{ form.receipt_postal_code }}
         </div>
         <div class="required field">
-            <label>{{ form.receipt_postal_address.label_tag }} ({{ form.receipt_postal_address.help_text }})</label>
+            <label>{{ form.receipt_postal_address.label_tag }} {{ form.receipt_postal_address.help_text }}</label>
             {{ form.receipt_postal_address }}
         </div>
         <div class="required field">

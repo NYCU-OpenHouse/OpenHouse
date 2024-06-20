@@ -45,6 +45,18 @@ class RedeemAdmin(admin.ModelAdmin):
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name','ece_member_discount',)
 
+@admin.register(models.CompanyCatogories)
+class CompanyCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount')
+
+@admin.register(models.ZoneCatogories)
+class ZoneCatogoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount', 'display_categories')
+    list_filter = ('category', )
+    def display_categories(self, obj):
+        return ', '.join(category.name for category in obj.category.all())
+
+    display_categories.short_description = 'Categories'
 
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
@@ -64,7 +76,7 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Signup)
 class SignupAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'jobfair_online', 'career_tutor', 'visit', 'lecture', 'payment')
+    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'visit', 'lecture', 'payment')
     inlines = (SponsorshipInline,)
     search_fields = ('cid',)
 
@@ -276,15 +288,15 @@ class JobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(models.RdssOnlineJobfairInfo)
-class OnlineJobfairContentAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+# @admin.register(models.RdssOnlineJobfairInfo)
+# class OnlineJobfairContentAdmin(admin.ModelAdmin):
+#     list_display = ('title',)
 
-    def has_add_permission(self, request):
-        count = rdss.models.RdssOnlineJobfairInfo.objects.all().count()
-        if count == 0:
-            return True
-        return False
+#     def has_add_permission(self, request):
+#         count = rdss.models.RdssOnlineJobfairInfo.objects.all().count()
+#         if count == 0:
+#             return True
+#         return False
 
 
 @admin.register(models.Sponsorship)
@@ -296,4 +308,4 @@ class SponsorshipAdmin(admin.ModelAdmin):
 # Register your models here.
 # admin.site.register(models.Sponsorship)
 admin.site.register(models.JobfairSlot)
-admin.site.register(models.OnlineJobfairSlot)
+# admin.site.register(models.OnlineJobfairSlot)

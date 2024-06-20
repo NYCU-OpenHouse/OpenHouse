@@ -102,6 +102,7 @@ def Status(request):
     # Fee display
     total_fee = 0
     discount = 0
+    discount_text = ""
     fee = 0
     try:
         if signup_data.seminar != "none":
@@ -115,21 +116,31 @@ def Status(request):
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
         num_of_ece = len(signup_data.seminar_ece.all())
-        fee += configs.session_ece_fee * num_of_ece
+        if num_of_ece:
+            fee += configs.session_ece_fee * num_of_ece
 
-        # jobfair fee
+        # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
+                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
             elif mycompany.gloria_startup:
+                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
                 discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
-
+            elif signup_data.zone and signup_data.zone.name != '一般企業':
+                discount_text = "貴公司為{}專區，可享有優惠減免{}元".format(signup_data.zone, signup_data.zone.discount)
+                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+            
             fee += signup_data.jobfair * configs.jobfair_booth_fee
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
         
-        if mycompany.category == '公家單位':
+        rdss_mycompany_category = rdss.models.CompanyCatogories.objects.get(name=mycompany.category)
+
+        if rdss_mycompany_category.discount:
+            discount_text = "貴公司為公家單位，可享有免費優惠"
             discount = fee
+
     except AttributeError:
         pass
 
@@ -272,14 +283,23 @@ def JobfairInfo(request):
     # semantic ui control
     sidebar_ui = {'jobfair_info': "active"}
     menu_ui = {'rdss': "active"}
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
 
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+        food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
+        food_info = rdss.models.RdssConfigs.objects.values('jobfair_food_info')[0]['jobfair_food_info']
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
+    try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
+        booth_num = company.jobfair
+        booth_quantity = booth_num * 3
+        booth_parking_tickets = booth_num * 2
     except Exception as e:
         error_msg = "貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request, 'error.html', locals())
@@ -290,22 +310,19 @@ def JobfairInfo(request):
     except ObjectDoesNotExist:
         jobfair_info = None
 
-    parking_form_set = inlineformset_factory(rdss.models.JobfairInfo, rdss.models.JobfairParking, max_num=1, extra=1,
-                                             fields=('id', 'license_plate_number', 'info'),
-                                             widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '需要連字號：例AA-1234、4321-BB'})})
     if request.POST:
         data = request.POST.copy()
-        data['company'] = company.cid
-        form = rdss.forms.JobfairInfoCreationForm(data=data, instance=jobfair_info)
-        formset = parking_form_set(data=data, instance=jobfair_info)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
+        form = rdss.forms.JobfairInfoCreationForm(data=data, instance=jobfair_info, max_num=booth_num)
+        if form.is_valid():
+            new_info = form.save(commit=False)
+            company = rdss.models.Signup.objects.get(cid=request.user.cid)
+            new_info.company = company
+            new_info.save()
             return redirect(JobfairInfo)
+        else:
+            print(form.errors)
     else:
-        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info)
-        formset = parking_form_set(instance=jobfair_info)
+        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num)
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}

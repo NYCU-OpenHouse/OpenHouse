@@ -274,6 +274,7 @@ def ExportAll(request):
         {'fieldname': 'shortname', 'title': '公司簡稱'},
         {'fieldname': 'english_name', 'title': '公司英文名稱'},
         {'fieldname': 'receipt_title', 'title': '公司收據抬頭'},
+        {'fieldname': 'receipt_code', 'title': '公司收據統編'},
         {'fieldname': 'receipt_postal_code', 'title': '收據寄送郵遞區號'},
         {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
         {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},

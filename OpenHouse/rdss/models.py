@@ -47,6 +47,32 @@ CATEGORYS = (
     (u'其他', u'其他'),
 )
 
+class CompanyCatogories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'公司類別名稱', max_length=50)
+    discount = models.BooleanField(u'公家機關優惠', default=False)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'公司類別設定'
+        verbose_name_plural = u'公司類別設定'
+
+class ZoneCatogories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'專區名稱', max_length=20)
+    discount = models.IntegerField(u'專區優惠', default=0)
+    category = models.ManyToManyField('CompanyCatogories', verbose_name=u'公司類別', blank=True)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'專區設定'
+        verbose_name_plural = u'專區設定'
 
 class RdssConfigs(models.Model):
     id = models.AutoField(primary_key=True)
@@ -86,11 +112,13 @@ class RdssConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-    jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
-    jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
-    jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
-    jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
-    jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
+    
+    # 線上就博會相關
+    # jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
+    # jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
+    # jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
+    # jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
+    # jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
 
     seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
@@ -102,6 +130,7 @@ class RdssConfigs(models.Model):
         ('bento', u'便當(葷素)')
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
+    jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -130,6 +159,7 @@ class Signup(models.Model):
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
+    zone = models.ForeignKey('ZoneCatogories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
@@ -427,16 +457,10 @@ class JobfairInfo(models.Model):
                                       validators=[validate_mobile])
     contact_email = models.EmailField(u'聯絡人Email', max_length=254)
     
-    PARKING_CHOICES = (
-        ('ticket', u'當日索取紙本停車抵用券'),
-        ('register', u'企業事先登記A車車牌號碼')
-    )
-    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True, default='ticket')
-    
-    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
-    lunch_box = models.SmallIntegerField(u'餐盒數量', choices=LUNCH_BOX_CHOICES, default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
-    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
-    vege_lunchbox = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    parking_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
+    lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
+    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', default=0, blank=True, null=True)
+    vege_lunchbox = models.SmallIntegerField(u'素食餐點', default=0, blank=True, null=True)
 
     power_req = models.CharField(u'用電需求', max_length=256,
                                  help_text="請填寫當天會使用的用電設備")
