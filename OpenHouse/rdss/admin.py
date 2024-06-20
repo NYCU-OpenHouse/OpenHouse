@@ -45,6 +45,18 @@ class RedeemAdmin(admin.ModelAdmin):
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name','ece_member_discount',)
 
+@admin.register(models.CompanyCatogories)
+class CompanyCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount')
+
+@admin.register(models.ZoneCatogories)
+class ZoneCatogoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount', 'display_categories')
+    list_filter = ('category', )
+    def display_categories(self, obj):
+        return ', '.join(category.name for category in obj.category.all())
+
+    display_categories.short_description = 'Categories'
 
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
