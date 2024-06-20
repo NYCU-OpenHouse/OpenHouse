@@ -315,7 +315,7 @@ class UserAdmin(BaseUserAdmin):
          ),
          ("收據資訊", {
             'classes': ('wide',),
-            'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
+            'fields': ('receipt_title', 'receipt_code', 'receipt_postal_code', 'receipt_postal_address',
                        'receipt_contact_name', 'receipt_contact_email', 'receipt_contact_phone')
         }
          ),
@@ -357,7 +357,7 @@ class UserAdmin(BaseUserAdmin):
          ),
          ("收據資訊", {
             'classes': ('wide',),
-            'fields': ('receipt_title', 'receipt_postal_code', 'receipt_postal_address',
+            'fields': ('receipt_title', 'receipt_code', 'receipt_postal_code', 'receipt_postal_address',
                        'receipt_contact_name', 'receipt_contact_email', 'receipt_contact_phone')
         }
          ),

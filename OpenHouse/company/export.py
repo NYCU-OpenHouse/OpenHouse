@@ -31,7 +31,7 @@ def Export_Company(request):
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
-                      'brief', 'recruit_info', 'receipt_title', 'receipt_postal_code',
+                      'brief', 'recruit_info', 'receipt_title', 'receipt_code', 'receipt_postal_code',
                       'receipt_postal_address', 'receipt_contact_name', 'receipt_contact_phone',
                       'total_jobs_types', 'total_jobs',
                       'foreign_job_types', 'foreign_jobs', 'liberal_job_types', 'liberal_jobs']

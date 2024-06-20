@@ -1412,7 +1412,8 @@ def Status(request):
     
     target_company = Company.objects.get(cid=mycid)
     
-    if target_company.receipt_title == ""  or target_company.receipt_postal_code == ""  \
+    if target_company.receipt_title == "" or target_company.receipt_code == "" \
+        or target_company.receipt_postal_code == ""  \
         or target_company.receipt_postal_address == ""  or target_company.receipt_contact_name == ""  \
         or target_company.receipt_contact_phone == "" :
         fill_receipt = False

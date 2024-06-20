@@ -87,9 +87,10 @@ class Company(AbstractBaseUser):
     gloria_startup = models.BooleanField(u'國際產學聯盟總中心_國際新創會員', default=False)
 
     # receipt information
-    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="", help_text="ex. 12345678國立陽明交通大學")
+    receipt_title = models.CharField(u'公司收據抬頭', max_length=80, default="", help_text="ex. 國立陽明交通大學")
+    receipt_code = models.CharField(u'公司收據統編', max_length=8, default="", help_text="ex. 12345678")
     receipt_postal_code = models.CharField(u'收據寄送郵遞區號(3+3)',help_text='ex:300123', max_length=6, default="",  validators=[validate_all_num])
-    receipt_postal_address = models.CharField(u'收據寄送地址', max_length=128, default="", help_text="另註公司名尤佳")
+    receipt_postal_address = models.CharField(u'收據寄送地址', max_length=128, default="", help_text="")
     receipt_contact_name =  models.CharField(u'收據聯絡人姓名', max_length=10, default="")
     receipt_contact_email =  models.CharField(u'收據聯絡人Email', max_length=64, default="", validators=[validate_email])
     receipt_contact_phone = models.CharField(u'收據聯絡人公司電話', max_length=32, default="", help_text='格式: 區碼-號碼#分機')
