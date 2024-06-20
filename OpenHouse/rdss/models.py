@@ -112,11 +112,13 @@ class RdssConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-    jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
-    jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
-    jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
-    jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
-    jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
+    
+    # 線上就博會相關
+    # jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
+    # jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
+    # jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
+    # jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
+    # jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
 
     seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
