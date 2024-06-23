@@ -307,5 +307,11 @@ class SponsorshipAdmin(admin.ModelAdmin):
 
 # Register your models here.
 # admin.site.register(models.Sponsorship)
-admin.site.register(models.JobfairSlot)
+
+@admin.register(models.JobfairSlot)
+class JobfairSlotAdmin(admin.ModelAdmin):
+    list_display = ('serial_no', 'zone', 'company', 'updated')
+    change_list_template = "admin/jobfairslot_change_list.html"
+    zones = rdss.models.ZoneCatogories.objects.all()
+    
 # admin.site.register(models.OnlineJobfairSlot)

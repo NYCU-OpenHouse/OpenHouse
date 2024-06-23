@@ -7,7 +7,6 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 import datetime
 import company.models
-from ckeditor_uploader.fields import RichTextUploadingField
 
 
 def validate_license_plate_number(string):
@@ -128,7 +127,7 @@ class RecruitConfigs(models.Model):
         ('bento', u'便當(葷素)')
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
-    jobfair_food_info = RichTextUploadingField(u'餐點注意事項', max_length=128, blank=True, null=True)
+    jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
     # 費用
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
 

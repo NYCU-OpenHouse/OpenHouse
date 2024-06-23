@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 import company.models
 import datetime
 
@@ -394,7 +395,7 @@ class SeminarParking(models.Model):
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
-    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, default='通用')
+    zone = models.ForeignKey('ZoneCatogories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     company = models.ForeignKey('Signup', to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE, blank=True, null=True)
@@ -854,7 +855,7 @@ class CompanySurvey(models.Model):
 class RdssInfo(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
-    content = RichTextField(u'內容', default='', null=True, blank=True)
+    content = RichTextUploadingField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     def __str__(self):
@@ -869,7 +870,7 @@ class RdssInfo(models.Model):
 class RdssCompanyInfo(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
-    content = RichTextField(u'內容', default='', null=True, blank=True)
+    content = RichTextUploadingField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     def __str__(self):
@@ -884,7 +885,7 @@ class RdssCompanyInfo(models.Model):
 class RdssSeminarInfo(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
-    content = RichTextField(u'內容', default='', null=True, blank=True)
+    content = RichTextUploadingField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     def __str__(self):
@@ -899,7 +900,7 @@ class RdssSeminarInfo(models.Model):
 class RdssJobfairInfo(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(u'標題', default='', max_length=10)
-    content = RichTextField(u'內容', default='', null=True, blank=True)
+    content = RichTextUploadingField(u'內容', default='', null=True, blank=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     def __str__(self):
