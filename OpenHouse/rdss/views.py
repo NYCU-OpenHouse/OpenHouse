@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, Http404, HttpResponse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
@@ -985,7 +986,24 @@ def ClearStudentInfo(request):
 
     return render(request, 'admin/message.html', locals())
 
+@staff_member_required
+def bulk_add_jobfairslot(request):
+    zones = rdss.models.ZoneCatogories.objects.all()
+    if request.method == 'POST':
+        number = int(request.POST.get('number'))
+        zone_id = int(request.POST.get('zone'))
+        zone = rdss.models.ZoneCatogories.objects.get(id=zone_id)
+        max_serial_no = rdss.models.JobfairSlot.objects.all().last()
+        max_serial_no = (int(max_serial_no.serial_no)) if max_serial_no else 0
 
+        for i in range(1, number + 1):
+            new_serial_no = max_serial_no + i
+            rdss.models.JobfairSlot.objects.create(serial_no=str(new_serial_no), zone=zone)
+
+        messages.success(request, f'Successfully added {number} new JobfairSlots of {zone}.')
+        return redirect('/admin/rdss/jobfairslot/')
+
+    return render(request, 'admin/bulk_add_jobfairslot.html', locals())
 # ========================RDSS public view=================
 
 

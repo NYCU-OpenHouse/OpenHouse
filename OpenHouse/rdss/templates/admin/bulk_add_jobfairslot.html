@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block extrastyle %}{{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+
+    <script>
+      $(document).ready(function () {
+        $('.ui.dropdown').dropdown();
+      });
+    </script>
+{% endblock %}
+
+{% block content %}
+<h1>批量新增就博會攤位</h1>
+
+<form method="post">{% csrf_token %}
+    <div>
+        <label for="number">新增幾個攤位：</label>
+        <input type="number" name="number" id="number" min="1" required>
+    </div>
+    <div class="field">
+      <label for="zone">選擇專區類別：</label>
+      <div class="ui selection dropdown">
+          <input type="hidden" name="zone" value="{{ zones.0.id }}">
+          <div class="text">{{ zones.0.name }}</div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+              {% for zone in zones %}
+              <div class="item" data-value="{{ zone.id }}">
+                  {{ zone.name }}
+              </div>
+              {% endfor %}
+          </div>
+      </div>
+    </div>
+    <button type="submit" class="button">新增</button>
+</form>
+{% endblock %}
