@@ -1125,8 +1125,7 @@ def QueryPoints(request):
 def ListJobs(request):
     # semantic ui control
     sidebar_ui = {'list_jobs': "active"}
-
-    categories = [category[0] for category in Company.CATEGORYS]
+    categories = [category.name for category in company.models.CompanyCatogories.objects.all()]
     companies = []
     category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
     if category_filtered and category_filtered != 'all':

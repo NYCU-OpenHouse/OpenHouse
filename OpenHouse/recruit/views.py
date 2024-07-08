@@ -23,12 +23,12 @@ import datetime
 import json
 import logging
 from ipware.ip import get_client_ip
-from company.models import Company
 from datetime import timedelta
 import recruit.models
 from urllib.parse import urlparse, parse_qs
 import re
 import recruit.models
+import company.models
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
 
@@ -1447,7 +1447,8 @@ def list_jobs(request):
     # semantic ui control
     sidebar_ui = {'list_jobs': "active"}
 
-    categories = [category[0] for category in Company.CATEGORYS]
+    categories = [category.name for category in company.models.CompanyCatogories.objects.all()]
+    # categories = [category[0] for category in Company.CATEGORYS]
     companies = []
     category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
     if category_filtered and category_filtered != 'all':
