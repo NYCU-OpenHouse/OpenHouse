@@ -12,6 +12,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.conf.urls import url, include
 from . import export
 from . import views
+from company import models
 
 
 class UserCreationForm(forms.ModelForm):
@@ -260,7 +261,7 @@ class InvalidCategoryFilter(admin.SimpleListFilter):
     parameter_name = 'invalid_category_filter'
 
     def lookups(self, request, model_admin):
-        categories = [category[0] for category in Company.CATEGORYS]
+        categories = [category.name for category in models.CompanyCatogories.objects.all()]
         companies = Company.objects.values_list('category', flat=True).distinct()
         invalid_categories = set(companies) - set(categories)
         return [(category, category) for category in invalid_categories]
@@ -373,7 +374,8 @@ class UserAdmin(BaseUserAdmin):
     inlines = [JobInline]
 
     # upadet category action
-    actions = [f'update_to_{category[0]}' for category in Company.CATEGORYS]
+    categories =  models.CompanyCatogories.objects.all()
+    actions = [f'update_to_{category.name}' for category in categories]
     def generate_update_action(self, new_category):
         def update_category(self, request, queryset):
             for company in queryset:
@@ -381,11 +383,11 @@ class UserAdmin(BaseUserAdmin):
                 company.save()
         return update_category
 
-    for category in Company.CATEGORYS:
-        action_name = f'update_to_{category[0]}'
-        action_func = generate_update_action(None, category[0])
+    for category in categories:
+        action_name = f'update_to_{category.name}'
+        action_func = generate_update_action(None, category)
         setattr(UserAdmin, action_name, action_func)
-        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category[1]}'")
+        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category.name}'")
 
     def get_urls(self):
         urls = super(UserAdmin, self).get_urls()
@@ -422,3 +424,11 @@ admin.site.register(Company, UserAdmin)
 class ChineseFundedCompanyAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'name')
     list_display = ('cid', 'name','updated_time')
+
+@admin.register(models.CompanyCatogories)
+class CompanyCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'company_count', 'discount')
+
+    def company_count(self, obj):
+        return obj.company_set.count()
+    company_count.short_description = 'Company Count'
