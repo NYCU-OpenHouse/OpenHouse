@@ -64,6 +64,7 @@ class Company(AbstractBaseUser):
     english_name = models.CharField(u'公司英文完整名稱', max_length=100, default='None')
     shortname = models.CharField(u'公司簡稱', max_length=20)
     category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, help_text='公司主要事業類別')
+    categories = models.ForeignKey('CompanyCategories', verbose_name=u'公司類別', on_delete=models.PROTECT, null=True, default=1)
     phone = models.CharField(u'公司電話', max_length=32, help_text='格式: 區碼-號碼#分機')
     postal_code = models.CharField(u'郵遞區號(3+3)', max_length=6,help_text='ex:300123', validators=[validate_all_num])
     address = models.CharField(u'公司地址', max_length=128)
