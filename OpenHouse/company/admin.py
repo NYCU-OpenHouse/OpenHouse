@@ -1,5 +1,5 @@
 from django.contrib import admin
-from company.models import Company, ChineseFundedCompany, Job
+from company.models import Company, ChineseFundedCompany, Job, CompanyCategories
 from recruit import models as recruit_model
 from careermentor.models import Mentor
 from rdss import models as rdss_model
@@ -422,3 +422,7 @@ admin.site.register(Company, UserAdmin)
 class ChineseFundedCompanyAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'name')
     list_display = ('cid', 'name','updated_time')
+
+@admin.register(CompanyCategories)
+class CompanyCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'discount')
