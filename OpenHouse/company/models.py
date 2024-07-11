@@ -21,6 +21,20 @@ def validate_phone(string):
     RegexValidator(regex='^\d+-\d+(#\d+)?$', message='電話/傳真格式為：區碼-號碼#分機')(string)
 
 
+class CompanyCategories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'公司類別名稱', max_length=50, unique=True)
+    discount = models.BooleanField(u'公家機關優惠', default=False, help_text='勾選後該類別參展免費')
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'公司類別設定'
+        verbose_name_plural = u'公司類別設定'
+
+
 class Company(AbstractBaseUser):
     CATEGORYS = (
         (u'半導體', u'半導體'),
