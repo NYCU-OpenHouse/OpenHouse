@@ -260,9 +260,10 @@ class InvalidCategoryFilter(admin.SimpleListFilter):
     parameter_name = 'invalid_category_filter'
 
     def lookups(self, request, model_admin):
-        categories = [category[0] for category in Company.CATEGORYS]
-        companies = Company.objects.values_list('category', flat=True).distinct()
-        invalid_categories = set(companies) - set(categories)
+        categories = CompanyCategories.objects.all()
+        companies_distinct_categories_ids = Company.objects.values_list('categories', flat=True).distinct()
+        companies_distinct_categories = [CompanyCategories.objects.get(id=id) for id in companies_distinct_categories_ids]
+        invalid_categories = set(companies_distinct_categories) - set(categories)
         return [(category, category) for category in invalid_categories]
 
     def queryset(self, request, queryset):
@@ -283,12 +284,12 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('cid', 'name', 'category', 'categories', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'jobs_summary', 'last_update', 'date_join')
-    list_filter = ('category', InvalidCategoryFilter, 'chinese_funded',)
+    list_display = ('cid', 'name', 'categories', 'hr_name', 'hr_phone', 'hr_email', 'chinese_funded', 'jobs_summary', 'last_update', 'date_join')
+    list_filter = (InvalidCategoryFilter, 'chinese_funded', 'categories',)
     fieldsets = (
         ("基本資料", {
             'classes': ('wide',),
-            'fields': ('cid', 'password', 'name', 'english_name', 'shortname', 'category', 'phone',
+            'fields': ('cid', 'password', 'name', 'english_name', 'shortname', 'categories', 'phone',
                        'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo', 'recruit_url',
                        'business_project', 'relation_business', 'subsidiary')
         }
@@ -331,7 +332,7 @@ class UserAdmin(BaseUserAdmin):
         ("基本資料", {
             'classes': ('wide',),
             'fields': ('cid', 'password1', 'password2', 'name', 'english_name', 'shortname',
-                       'category', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
+                       'categories', 'phone', 'postal_code', 'address', 'website', 'brief', 'recruit_info', 'logo',
                        'recruit_url', 'business_project', 'relation_business', 'subsidiary')
         }
          ),
@@ -373,21 +374,22 @@ class UserAdmin(BaseUserAdmin):
     inlines = [JobInline]
 
     # upadet category action
-    actions = [f'update_to_{category[0]}' for category in Company.CATEGORYS]
+    categories = CompanyCategories.objects.all()
+    actions = [f'update_to_{category.name}' for category in categories]
     def generate_update_action(self, new_category):
         def update_category(self, request, queryset):
             for company in queryset:
-                company.category = new_category
+                company.categories = new_category
                 company.save()
         return update_category
 
-    for category in Company.CATEGORYS:
-        action_name = f'update_to_{category[0]}'
-        action_func = generate_update_action(None, category[0])
+    for category in categories:
+        action_name = f'update_to_{category.name}'
+        action_func = generate_update_action(None, category)
         setattr(UserAdmin, action_name, action_func)
-        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category[1]}'")
+        setattr(getattr(UserAdmin, action_name), 'short_description', f"變更類別至 '{category.name}'")
 
-    # migrate category to categories action
+    # (for 2024 rdss) migrate category to categories action
     def migrate_category_to_categories(self, request, queryset):
         for company in queryset:
             try:
