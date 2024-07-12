@@ -21,6 +21,20 @@ def validate_phone(string):
     RegexValidator(regex='^\d+-\d+(#\d+)?$', message='電話/傳真格式為：區碼-號碼#分機')(string)
 
 
+class CompanyCategories(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'公司類別名稱', max_length=50, unique=True)
+    discount = models.BooleanField(u'公家機關優惠', default=False, help_text='勾選後該類別參展免費')
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'公司類別設定'
+        verbose_name_plural = u'公司類別設定'
+
+
 class Company(AbstractBaseUser):
     CATEGORYS = (
         (u'半導體', u'半導體'),
@@ -49,13 +63,14 @@ class Company(AbstractBaseUser):
     name = models.CharField(u'公司名稱', max_length=64)
     english_name = models.CharField(u'公司英文完整名稱', max_length=100, default='None')
     shortname = models.CharField(u'公司簡稱', max_length=20)
-    category = models.CharField(u'類別', max_length=37, choices=CATEGORYS, help_text='公司主要事業類別')
+    category = models.CharField(u'類別', max_length=37, help_text='公司主要事業類別', blank=True, null=True)
+    categories = models.ForeignKey('CompanyCategories', verbose_name=u'公司類別', on_delete=models.PROTECT, null=True, default=1, help_text='公司主要事業類別')
     phone = models.CharField(u'公司電話', max_length=32, help_text='格式: 區碼-號碼#分機')
     postal_code = models.CharField(u'郵遞區號(3+3)', max_length=6,help_text='ex:300123', validators=[validate_all_num])
     address = models.CharField(u'公司地址', max_length=128)
     website = models.CharField(u'公司網站', max_length=64)
     brief = models.CharField(u'公司簡介', max_length=200, help_text='為了印刷效果，限200字內')
-    business_project = models.CharField(u'營業項目', max_length=100, default="", blank=True)
+    business_project = models.CharField(u'營業項目', max_length=100, default="", blank=True, help_text='公司主要營業項目, 若無可免填')
     relation_business = models.CharField(u'關係企業', max_length=64, help_text='若無, 可免填', blank=True, default="")
     subsidiary = models.CharField(u'分公司', max_length=64, help_text='若無, 可免填', blank=True, default="")
     hr_name = models.CharField(u'人資姓名', max_length=32)
