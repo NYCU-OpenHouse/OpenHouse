@@ -82,22 +82,14 @@ def CompanyEdit(request):
 
     if request.POST:
         form = CompanyEditForm(request.POST, request.FILES, instance=user)
-
+        
         if form.is_valid():
-            if user and (form.data["cid"] != user.cid or form.data["category"] != user.category):
-                if not user.is_staff:
-                    # only staff can change cid & category
-                    form = CompanyEditForm(instance=user)
-                    job_formset = ItemModelFormSet(instance=user)
-                    job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
-
             user = form.save()
             job_formset = ItemModelFormSet(request.POST, instance=user)
             if job_formset.is_valid():
                 job_formset.save()
             else:
-                print(job_formset.errors)
-                messages.error(request, '「職缺列表」填入資料有誤，請重新修改公司資料')
+                messages.error(request, "「職缺列表」填入資料有誤，請重新修改公司資料。錯誤內容：{job_formset.errors}")
                 return render(request, 'company_edit_form.html', locals())
             
             excel_file = request.FILES.get('excel_file')
@@ -140,7 +132,7 @@ def CompanyEdit(request):
                 
             return redirect(CompanyInfo)
         else:
-            messages.error(request, '「公司資料」填入資料有誤，請重新修改公司資料')
+            messages.error(request, f"「公司資料」填入資料有誤，請重新修改公司資料。錯誤內容：{form.errors}")
             return render(request, 'company_edit_form.html', locals())
     else:
         form = CompanyEditForm(instance=user)
@@ -148,10 +140,9 @@ def CompanyEdit(request):
         job_formset.extra = 1 if job_formset.queryset.count() < 1 else 0
     
     if (len(jobs) == 0):
-        messages.info(request, '目前沒有招募職缺，請新增公司招募職缺')    
-    if (company_info.category == '其他'):
-        print(company_info.category)
-        messages.error(request, '目前公司類別為其他，請至公司主要營業項目修改公司類別')
+        messages.info(request, '目前沒有招募職缺，請新增公司招募職缺') 
+    if (company_info.categories.name == '其他'):
+        messages.error(request, '目前公司類別為其他，請修改公司類別')
 
     return render(request, 'company_edit_form.html', locals())
 
