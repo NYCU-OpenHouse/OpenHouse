@@ -24,7 +24,7 @@ class CompanyCreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CompanyCreationForm, self).__init__(*args, **kwargs)
-        self.fields['category'].widget.attrs.update({
+        self.fields['categories'].widget.attrs.update({
             'class': 'ui dropdown',
         })
 
@@ -75,7 +75,7 @@ class CompanyCreationForm(forms.ModelForm):
 class CompanyEditForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CompanyEditForm, self).__init__(*args, **kwargs)
-        self.fields['category'].widget.attrs.update({
+        self.fields['categories'].widget.attrs.update({
             'class': 'ui dropdown',
         })
         self.fields['cid'].widget.attrs['readonly'] = True
