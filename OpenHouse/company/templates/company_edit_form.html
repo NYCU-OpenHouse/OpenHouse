@@ -191,10 +191,14 @@
                         <label>{{ form.shortname.label_tag }}</label>
                         {{ form.shortname }}
                     </div>
-                    <div class="required field">
+                    <!-- <div class="required field">
                         <label>{{ form.categories.label_tag }}</label>
                         <input value="{{ company_info.categories }}" readonly />
                         {{ form.categories.as_hidden }}
+                    </div> -->
+                    <div class="required field">
+                        <label>{{ form.categories.label_tag }}</label>
+                        {{ form.categories }}
                     </div>
                     <div class="required field">
                         <label>{{ form.phone.label_tag }}</label>
