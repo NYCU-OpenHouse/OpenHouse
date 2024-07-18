@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^export_seminar/$', export.ExportSeminar,name="rdss_export_seminar"),
     url(r'^export_jobs/$', export.ExportJobs,name="rdss_export_jobs"),
     path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='bulk_add_jobfairslot'),
-
+    path(r'companycategories/sync', views.sync_company_categories, name='sync_company_categories'),
 
 	#export urls are defined in admin.py
 ]

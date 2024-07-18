@@ -136,7 +136,7 @@ def Status(request):
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
         
-        rdss_mycompany_category = rdss.models.CompanyCatogories.objects.get(name=mycompany.category)
+        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.category)
 
         if rdss_mycompany_category.discount:
             discount_text = "貴公司為公家單位，可享有免費優惠"
@@ -988,11 +988,11 @@ def ClearStudentInfo(request):
 
 @staff_member_required
 def bulk_add_jobfairslot(request):
-    zones = rdss.models.ZoneCatogories.objects.all()
+    zones = rdss.models.ZoneCategories.objects.all()
     if request.method == 'POST':
         number = int(request.POST.get('number'))
         zone_id = int(request.POST.get('zone'))
-        zone = rdss.models.ZoneCatogories.objects.get(id=zone_id)
+        zone = rdss.models.ZoneCategories.objects.get(id=zone_id)
         max_serial_no = rdss.models.JobfairSlot.objects.all().last()
         max_serial_no = (int(max_serial_no.serial_no)) if max_serial_no else 0
 
@@ -1004,6 +1004,25 @@ def bulk_add_jobfairslot(request):
         return redirect('/admin/rdss/jobfairslot/')
 
     return render(request, 'admin/bulk_add_jobfairslot.html', locals())
+
+@staff_member_required
+def sync_company_categories(request):
+    try:
+        company_categories = company.models.CompanyCategories.objects.all()
+        for category in company_categories:
+            rdss.models.CompanyCategories.objects.update_or_create(
+                id=category.id,
+                defaults={
+                    'name': category.name,
+                    'discount': category.discount,
+                }
+            )
+        messages.success(request, f'Successfully synchronized company categories')
+        return redirect('/admin/rdss/companycategories/')
+    except Exception as e:
+        messages.error(request, f'Failed to synchronize company categories: {e}')
+        return redirect('/admin/rdss/companycategories/')
+
 # ========================RDSS public view=================
 
 

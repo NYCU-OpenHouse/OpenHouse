@@ -45,12 +45,21 @@ class RedeemAdmin(admin.ModelAdmin):
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name','ece_member_discount',)
 
-@admin.register(models.CompanyCatogories)
+@admin.register(models.CompanyCategories)
 class CompanyCategoriesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'discount')
+    list_display = ('id', 'name', 'discount')
+    # disable add button
+    def has_add_permission(self, request):
+        return False
 
-@admin.register(models.ZoneCatogories)
-class ZoneCatogoriesAdmin(admin.ModelAdmin):
+    # disable delete button
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    change_list_template = "admin/companycategories_change_list.html"
+
+@admin.register(models.ZoneCategories)
+class ZoneCategoriesAdmin(admin.ModelAdmin):
     list_display = ('name', 'discount', 'display_categories')
     list_filter = ('category', )
     def display_categories(self, obj):
@@ -312,6 +321,6 @@ class SponsorshipAdmin(admin.ModelAdmin):
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'zone', 'company', 'updated')
     change_list_template = "admin/jobfairslot_change_list.html"
-    zones = rdss.models.ZoneCatogories.objects.all()
+    zones = models.ZoneCategories.objects.all()
     
 # admin.site.register(models.OnlineJobfairSlot)

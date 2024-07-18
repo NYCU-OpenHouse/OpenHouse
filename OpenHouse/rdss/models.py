@@ -48,7 +48,7 @@ CATEGORYS = (
     (u'其他', u'其他'),
 )
 
-class CompanyCatogories(models.Model):
+class CompanyCategories(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(u'公司類別名稱', max_length=50)
     discount = models.BooleanField(u'公家機關優惠', default=False)
@@ -61,12 +61,12 @@ class CompanyCatogories(models.Model):
         verbose_name = u'公司類別設定'
         verbose_name_plural = u'公司類別設定'
 
-class ZoneCatogories(models.Model):
+class ZoneCategories(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(u'專區名稱', max_length=20)
     discount = models.IntegerField(u'專區優惠', default=0)
-    category = models.ManyToManyField('CompanyCatogories', verbose_name=u'公司類別', blank=True)
-
+    category = models.ManyToManyField('CompanyCategories', verbose_name=u'公司類別', blank=True)
+    
     def __str__(self):
         return u'{}'.format(self.name)
 
@@ -160,7 +160,7 @@ class Signup(models.Model):
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
-    zone = models.ForeignKey('ZoneCatogories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
+    zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
@@ -395,7 +395,7 @@ class SeminarParking(models.Model):
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
     serial_no = models.CharField(u'攤位編號', max_length=10)
-    zone = models.ForeignKey('ZoneCatogories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
+    zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     company = models.ForeignKey('Signup', to_field='cid',
                                 verbose_name=u'公司',
                                 on_delete=models.CASCADE, blank=True, null=True)
