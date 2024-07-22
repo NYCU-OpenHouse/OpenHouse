@@ -101,6 +101,7 @@ class RdssConfigs(models.Model):
     session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
     # 費用
     session_fee = models.IntegerField(u'說明會場次_費用', default=0)
+    session_fee_noon = models.IntegerField(u'說明會場次_中午場費用', default=0)
 
     # 實體ECE說明會相關
     seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
