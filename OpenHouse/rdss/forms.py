@@ -8,6 +8,12 @@ class SignupCreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SignupCreationForm, self).__init__(*args, **kwargs)
+        self.fields['zone'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
+        self.fields['history'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
         self.fields['seminar'].widget.attrs.update({
             'class': 'ui dropdown',
         })
