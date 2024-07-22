@@ -136,7 +136,7 @@ def Status(request):
         else:
             fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
         
-        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.category)
+        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
 
         if rdss_mycompany_category.discount:
             discount_text = "貴公司為公家單位，可享有免費優惠"
