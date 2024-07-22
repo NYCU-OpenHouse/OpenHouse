@@ -35,9 +35,16 @@
                 <tr>
                     <td>專區調查</td>
                     <td>
-                        攤位區域分為「一般企業」、「多元企業」、「生技專區」
+                        攤位區域分為「一般企業」、「多元職涯專區」
                         <br/>請選擇貴公司欲參加專區
                         {{ form.zone }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>過往參與調查</td>
+                    <td>
+                        <p>是否曾參加2024年春季就業博覽會、企業說明會</p>
+                        {{ form.history }}
                     </td>
                 </tr>
             </table>
@@ -75,26 +82,17 @@
                 <tr>
                     <td>說明會時間和地點</td>
                     <td>
-                        <ul class="ui list">
-                            <li>電子所固態：10/24(二) </li>
-                            <li>電子所類比+系統：10/24(二)、11/7(二) </li>
-                            <li>電機：11/15(三)、11/22(三) </li>
-                            <li>電控：11/15(三)、11/22(三) </li>
-                            <li>電信：11/15(三) </li>
-                        </ul>
                         <p><strong>※實體ECE電機企業說明會日期及時間將依企業實際報名情況再做調整</strong></p>
                     </td>
                 </tr>
                 <tr>
                     <td>會員確認聯絡資訊</td>
                     <td>
-                            電機資源產學聯盟
-                            聯絡人：
-                            電子所
-                            翁珮婷小姐
-                            heyrebecca@nycu.edu.tw 
-                            (03)5712121#54103
-                            <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
+                        <ul class="ui list">
+                            <li>電機資源產學聯盟聯絡人：電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072</li>
+                            <li>電子所活動聯絡人：電子所 翁珮婷小姐 heyrebecca@nycu.edu.tw (03)5712121#54103</li>
+                        </ul>
+                        <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
                     </td>
                 </tr>
             </table>
@@ -132,15 +130,19 @@
                 <tr>
                     <td>舉辦時段</td>
                     <td>
-                        10/2(一)至10/6(五)於交映樓1樓國際會議廳進行，每場次50分鐘。時段：
-                        11:10-12:00、12:20-13:10、13:20-14:10、14:20-15:10、15:30-16:20
+                        9/30(一)至10/9(三) 於交映樓1樓國際會議廳進行，每場次50分鐘。時段：
+                        12:20-13:10、13:20-14:10、14:20-15:10
                     </td>
                 </tr>
             </table>
 
             <div class="ui segment">
                 <h3 class="ui header">選取欲報名線上企業說明會時段</h3>
-                <p>活動費用： {{ configs.session_fee }} 元</p>
+                <p>活動費用：</p>
+                <ul>
+                    <li>下午場: {{ configs.session_fee }} 元</li>
+                    <li>中午場: {{ configs.session_fee_noon }} 元</li>
+                </ul>
                 {{ form.seminar }}
             </div>
         </div>
@@ -150,7 +152,7 @@
         <div class="ui green inverted segment">
             <h1 class="ui header">
                 <i class="student icon"></i>
-                實體就業博覽會
+                就業博覽會
             </h1>
 
             <table class="ui celled table">
@@ -189,18 +191,13 @@
                             <li>
                                 電機資源產學聯盟
                                 聯絡人：
-                                電子所
-                                翁珮婷小姐
-                                heyrebecca@nycu.edu.tw
-                                (03)5712121#54103
+                                電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072
                                 <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
-                                
                             </li>
-                            <li>國際產學聯盟總中心 (GLORIA)
+                            <li>
+                                國際產學聯盟總中心 (GLORIA)
                                 聯絡人： 
-                                Winnie 黃心崴小姐
-                                winniehuang@nycu.edu.tw
-                                (03)5712121#71121
+                                Peggy陸長欣小姐 peggylu@nycu.edu.tw (03)5712121#71108 (手機)0905-939-103
                                 <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
                             </li>
                         </ol>
@@ -209,12 +206,15 @@
             </table>
 
             <div class="ui segment">
-                <h3 class="ui header">報名實體就業博覽會</h3>
-                <p>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元， {# 線上+實體就業博覽會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。 #} </p>
-                <br>
+                <h3 class="ui header">報名就業博覽會</h3>
+                <ol class="ui list">
+                    <li>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</li>
+                    <li>同集團數量上限為6攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
+                    <li> 欲參加之「多元職涯專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】之「所營事業資料」進行覆核。</li>
+                </ol>
                 <div class="ui labeled input">
                     <div class="ui label">
-                        實體就業博覽會攤位數量
+                        就業博覽會攤位數量
                     </div>
                     {{ form.jobfair }}
                 </div>
@@ -286,21 +286,15 @@
                     <td>活動說明</td>
                     <td>
                         <ol class="ui list">
-                            <li>業師單次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師者可為人資或是各部門技術及行政主管。</li>
+                            <li>業師單次駐點至少2小時，企業可於報名系統上勾選「諮詢服務」意願，擔任諮詢導師者可為人資或是各部門技術及行政主管。</li>
                             <li>同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約；主辦單位保留最終邀請企業職涯導師名單之權利，將擇期再連絡後續事宜。</li>
                         </ol>
                     </td>
                 </tr>
-                {# <tr> #}
-                {#     <td>活動對象</td> #}
-                {#     <td> #}
-                {#         陽明交大全體學生，以具秋季招募申請資格之學生優先。 #}
-                {#     </td> #}
-                {# </tr> #}
                 <tr>
                     <td>回饋方案</td>
                     <td>
-                        企業若勾選本次活動，並在8/20(日)前來信說明欲辦理日期，即可增加選位積分3000分。
+                        企業若勾選本次活動，並在8/14(三)前來信說明欲辦理日期，即可增加選位積分4000分。
                     </td>
                 </tr>
             </table>
@@ -313,47 +307,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="ui brown inverted segment">
-            <h1 class="ui header">
-                <i class="briefcase icon" style="color:white"></i>
-                企業參訪
-            </h1>
-            <table class="ui celled table">
-                <tr>
-                    <td style="width:6em">活動日期</td>
-                    <td>9月~隔年1月；星期三或星期五下午13:00 ~ 17:00</td>
-                </tr>
-                <tr>
-                    <td >活動內容</td>
-                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
-                </tr>
-                <tr>
-                    <td>活動說明</td>
-                    <td>
-                        <ol class="ui list">
-                            <li>
-                                企業於報名系統上勾選「企業參訪」意願，參訪內容可由企業自行規劃，以公司內部參觀為主，希望能讓本校學生多了解企業實際運行狀況。
-                            </li>
-                            <li>參訪人數至少可接受30位以上同學進行參訪，單趟車程不宜超過1.5小時。</li>
-                            <li><strong>主辦單位保留最終邀請參訪名單之權利，將擇期再連絡後續事宜。</strong></li>
-                        </ol>
-                    </td>
-                </tr>
-                <tr>
-                    <td>回饋方案</td>
-                    <td>企業若勾選本次活動，並在8/20(日)前來信說明欲辦理日期，即可增加選位積分3000分。</td>
-                </tr>
-            </table>
-            <div class="ui segment">
-                <h3 class="ui header">願意提供</h3>
-                <div class="ui checked checkbox">
-                    {{ form.visit }}
-                    <label style="color:black">{{ form.visit.label }}</label>
-                </div>
-            </div>
-        </div>
-
         <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
     </form>
 
