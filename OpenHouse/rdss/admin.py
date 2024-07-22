@@ -67,6 +67,10 @@ class ZoneCategoriesAdmin(admin.ModelAdmin):
 
     display_categories.short_description = 'Categories'
 
+@admin.register(models.HistoryParticipation)
+class HistoryParticipationAdmin(admin.ModelAdmin):
+    fields = ('name', 'short_name')
+
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
     list_display = ('date', 'session', 'company', 'place')

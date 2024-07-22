@@ -75,6 +75,19 @@ class ZoneCategories(models.Model):
         verbose_name = u'專區設定'
         verbose_name_plural = u'專區設定'
 
+class HistoryParticipation(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(u'過往參加活動名稱', max_length=30)
+    short_name = models.CharField(u'過往參加活動簡稱', max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return u'{}'.format(self.name)
+
+    class Meta:
+        managed = True
+        verbose_name = u'過往參加活動調查選項設定'
+        verbose_name_plural = u'過往參加活動調查選項設定'
+
 class RdssConfigs(models.Model):
     id = models.AutoField(primary_key=True)
     register_start = models.DateTimeField(u'廠商註冊開始時間')
@@ -157,11 +170,13 @@ class ECESeminar(models.Model):
 class Signup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加企業說明會'),
-        (u'attend', u'參加企業說明會'),
+        (u'attend', u'參加企業說明會(下午場 $10000)'),
+        (u'attend_noon', u'參加企業說明會(中午場 $12000)'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
     zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
+    history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
