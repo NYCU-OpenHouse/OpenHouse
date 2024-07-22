@@ -27,8 +27,8 @@
         <!--專刊贊助品群客製區-->
         <table class="ui celled table">
             <tbody>
-            <tr>
-                <!--專刊欄-->
+            <!--專刊欄-->
+            <!-- <tr>
                 <td><strong>贊助品</strong></td>
                 <td colspan=5>活動專刊</td>
                 <td rowspan={{ monograph_items.count|add:2 }} style="width:25%">
@@ -45,7 +45,7 @@
                     <p>規格：{{ monograph_main.spec }}</p>
                     <p>備註：{{ monograph_main.ps }}</p>
                 </td>
-            </tr>
+            </tr> -->
             <!--專刊相關內容(封面、封底等)-->
             {% for i in monograph_items %}
                 <tr>
