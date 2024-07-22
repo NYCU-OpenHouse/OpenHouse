@@ -22,6 +22,9 @@
                 說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
+        <div class="ui error message">
+            未填寫者視同放棄正名權利，由本組自行填寫，企業不得有異議。 主題_留空
+        </div>
         <h3 class="ui dividing header">主題資訊</h3>
         <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>

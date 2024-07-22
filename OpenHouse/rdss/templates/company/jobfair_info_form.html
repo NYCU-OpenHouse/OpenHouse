@@ -21,6 +21,9 @@
                 就業博覽會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
+        <div class="ui error message">
+            未填寫者視同放棄正名權利，由本組自行填寫，企業不得有異議。 招牌_網路上找到的名稱
+        </div>
         <h3 class="ui dividing header">攤位資訊</h3>
         <p>
             請務必確認攤位招牌名稱中文+英文大小寫是否正確。
@@ -90,7 +93,12 @@
             </div>
             <br/>
         </div>
-        <p>每攤位免費提供至多3份午餐。<span style="color:red;">貴公司至多 {{ booth_quantity }} 份。</span></p>
+        <p style="font-size: larger; font-weight: bold;">
+            每攤位免費提供至多3份午餐。
+            <span style="color:red; background-color: yellow;">
+                貴公司至多 {{ booth_quantity }} 份。
+            </span>
+        </p>
 
         <div class="fields">
             <div class="fourteen wide field required">
@@ -103,7 +111,7 @@
         </div>
 
         <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
-        <p>說明(1)：參加2024/(   )就業博覽會之企業，每攤提供2部汽車入校停車費抵免；企業可選擇需要索取多少紙本停車抵用券，活動當日發放。</p>
+        <p>說明(1)：參加2024/10/16就業博覽會之企業，每攤提供2部汽車入校停車費抵免；企業可選擇需要索取多少紙本停車抵用券，活動當日發放。</p>
         <ul>
             <li>
                 <span style="color:red; background-color: yellow;">每攤至多提供2張</span>紙本停車抵用券</span>
@@ -118,7 +126,7 @@
             <div class="field">
                 <label>{{ form.parking_tickets.label }}</label>
                 {{ form.parking_tickets }}
-                <p>每攤位免費提供1張停車證。<span style="color:red;">貴公司至多 {{ booth_parking_tickets }} 張。</span></p>
+                <p>每攤位免費提供2張停車證。<span style="color:red;">貴公司至多 {{ booth_parking_tickets }} 張。</span></p>
             </div>
         </div>
         <button class="ui blue button" style="float: right;" type="submit">送出</button>
