@@ -467,10 +467,10 @@ def SeminarSelectControl(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str = post_data.get("slot").split('_')
+        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
         try:
-            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session=slot_session)
+            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
             my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         except:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
