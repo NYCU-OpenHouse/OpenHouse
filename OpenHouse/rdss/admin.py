@@ -214,7 +214,7 @@ class RDSSFilesAdmin(admin.ModelAdmin):
 
 @admin.register(models.SlotColor)
 class SlotColorAdmin(admin.ModelAdmin):
-    list_display = ('place', 'css_color', 'place_info')
+    list_display = ('id', 'place', 'css_color', 'place_info')
 
 
 class SeminarParkingInline(admin.StackedInline):
