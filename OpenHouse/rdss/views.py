@@ -374,14 +374,29 @@ def SeminarSelectFormGen(request):
         table_start_date -= datetime.timedelta(days=1)
     # make the length to 5 multiples
     # table_days = seminar_days + (seminar_days % 7) + 7
-    table_days = seminar_days + (seminar_days % 7)
     dates_in_week = list()
-    for week in range(0, int(table_days / 7)):
+    weeks = seminar_end_date.isocalendar()[1] - seminar_start_date.isocalendar()[1] + 1
+    for week in range(0, weeks):
         # separate into 5 in each list (there are 5 days in a week)
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
                               for day in range(0, 5)])
 
     slot_colors = rdss.models.SlotColor.objects.all()
+
+    session_list = [
+        {"name": "forenoon", "start_time": configs.session0_start, "end_time": configs.session0_end},
+        {"name": "noon", "start_time": configs.session1_start, "end_time": configs.session1_end},
+        {"name": "night1", "start_time": configs.session2_start, "end_time": configs.session2_end},
+        {"name": "night2", "start_time": configs.session3_start, "end_time": configs.session3_end},
+        {"name": "night3", "start_time": configs.session4_start, "end_time": configs.session4_end},
+    ]
+    for session in session_list:
+        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
+                datetime.datetime.combine(datetime.date.today(), session["start_time"])
+        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
+            session["valid"] = True
+        else:
+            session["valid"] = False
     return render(request, 'company/seminar_select.html', locals())
 
 
@@ -401,26 +416,17 @@ def SeminarSelectControl(request):
     if action == "query":
         slots = rdss.models.SeminarSlot.objects.all()
         return_data = {}
-        for slot in slots:
-            # night1_20160707
-            index = "{}_{}".format(slot.session, slot.date.strftime("%Y%m%d"))
+        for s in slots:
+            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 1)
             return_data[index] = {}
 
-            return_data[index]['place_color'] = None if not slot.place else \
-                slot.place.css_color
-            return_data[index]["cid"] = "None" if not slot.company else \
-                slot.company.get_company_name()
+            return_data[index]['place_color'] = None if not s.place else \
+                s.place.css_color
+            return_data[index]["cid"] = "None" if not s.company else \
+                s.company.get_company_name()
 
             my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
-            # session wrong (signup noon but choose night)
-            # and noon is not full yet
-            # if (my_seminar_session not in slot.session) and \
-            #         (rdss.models.SeminarSlot.objects.filter(session__contains=my_seminar_session,
-            #                                                 company=None).exists()):
-            #     # 選別人的時段，而且自己的時段還沒滿
-            #     return_data[index]['valid'] = False
-            # else:
-            #     return_data[index]['valid'] = True
+
             return_data[index]['valid'] = True if len(my_seminar_session) > 0 else False
 
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()

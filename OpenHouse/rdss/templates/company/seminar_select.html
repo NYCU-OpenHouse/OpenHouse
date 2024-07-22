@@ -14,7 +14,6 @@
             <div class="item">
                 於貴公司選位時間開始後，至所有廠商選位截止前，皆可自由更動位置。唯改變位置前，<strong>需先放棄已選的位置，才能重新選擇。</strong>
             </div>
-            <div class="item">若上午或下午場次已滿，系統將開放另一時段的場次給貴公司選擇。</div>
             <div class="item">
                 由於部分時段有多廠商同時選位之情況，若出現多廠商選取同場次的情況，系統將分發給最早送出之廠商。
             </div>
@@ -25,7 +24,7 @@
                 從表格選擇場次後，請務必按下最下方「送出」按鈕，並於送出後看到該場次顯示貴公司名稱才算選位成功。
             </div>
             <div class="item">
-                如有任何問題，請立刻撥打活動專線：(03)5131365(林小姐) 或 (03)5712121分機31365(林小姐)、50659(張小姐)
+                如有任何問題，請立刻撥打活動專線：(03)5131365 或 (03)5712121分機31365、50659
             </div>
         </div>
     </div>
@@ -35,21 +34,18 @@
         <div ng-if="ctrl.select_ctrl.display" class="ui compact warning message">{$ ctrl.select_ctrl.msg$}</div>
         <div class="ui list">
             <div class="item">
-                <i class="users icon"></i>
-                <div class="content">
-                    貴公司選位開始時間為：{{ seminar_select_time }}
-                </div>
+                <i class="black users icon"></i>
+                貴公司選位開始時間為：{{ seminar_select_time }}
             </div>
             <div class="item">
-                <i class="marker icon"></i>
-                <div class="content">
-                    貴公司說明會時段為：{{ seminar_session }}
-                </div>
+                <i class="black marker icon"></i>
+                貴公司說明會時段為：{{ seminar_session }}
             </div>
         </div>
 
         <h2 class="ui dividing header">說明會時間表</h2>
-        {# <h3 class="ui dividing header">時段場地及顏色</h3> #}
+        <!-- <h3 class="ui dividing header">時段場地及顏色</h3>
+        <p>可選時段會以顏色標記場地，請自行參考以下對照表</p> -->
         <p>可選時段請自行參考以下時間表</p>
         <ul class="ui list">
             {% for slot_color in slot_colors %}
@@ -58,146 +54,56 @@
                 </li>
             {% endfor %}
         </ul>
-        <table class="ui celled striped table" style="text-align:center">
-            {% for week in dates_in_week %}
-                <thead>
-                <tr>
-                    <th>時間</th>
-                    {% for day in week %}
-                        <th>{{ day|date:"m/d (D)" }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
 
-                <tr>
-                    <td>{{ configs.session0_start }}~{{ configs.session0_end }}</td>
-                    {% for day in week %}
-                        <td>
+        {% for week in dates_in_week %}  <!--一週一單位-->
+            <table class="ui celled striped table" style="text-align:center">
+            <thead>
+            <tr>
+                <th>時間</th>
+                {% for day in week %} <!--一週中的日期-->
+                    <th>{{ day|date:"m/d (D)" }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
 
-                            <div class="ui radio checkbox" ng-if="ctrl.slot.forenoon_{{ day|date:"Ymd" }}.cid == 'None' &&
-						ctrl.slot.forenoon_{{ day|date:"Ymd" }}.valid">
-                                <input ng-model="ctrl.selected" value="forenoon_{{ day|date:"Ymd" }}" type="radio">
-                                <label style="color:{$ ctrl.slot.forenoon_{{ day|date:"Ymd" }}.place_color$}">可選時段</label>
-                            </div>
-
-                            <p ng-if="ctrl.slot.forenoon_{{ day|date:"Ymd" }}.cid == 'None' &&
-					!ctrl.slot.forenoon_{{ day|date:"Ymd" }}.valid">非貴公司時段</p>
-
-                            <p ng-if="ctrl.slot.forenoon_{{ day|date:"Ymd" }}.cid != 'None'"
-                               style="color:{$ ctrl.slot.forenoon_{{ day|date:"Ymd" }}.place_color$}">
-                                {$ ctrl.slot.forenoon_{{ day|date:"Ymd" }}.cid $}
-                            </p>
-
-                            <p ng-if="ctrl.slot.forenoon_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
-
-                        </td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <td>{{ configs.session1_start }}~{{ configs.session1_end }}</td>
-                    {% for day in week %}
-                        <td>
-
-                            <div class="ui radio checkbox" ng-if="ctrl.slot.noon_{{ day|date:"Ymd" }}.cid == 'None' &&
-						ctrl.slot.noon_{{ day|date:"Ymd" }}.valid">
-                                <input ng-model="ctrl.selected" value="noon_{{ day|date:"Ymd" }}" type="radio">
-                                <label style="color:{$ ctrl.slot.noon_{{ day|date:"Ymd" }}.place_color$}">可選時段</label>
-                            </div>
-
-                            <p ng-if="ctrl.slot.noon_{{ day|date:"Ymd" }}.cid == 'None' &&
-					!ctrl.slot.noon_{{ day|date:"Ymd" }}.valid">非貴公司時段</p>
-
-                            <p ng-if="ctrl.slot.noon_{{ day|date:"Ymd" }}.cid != 'None'"
-                               style="color:{$ ctrl.slot.noon_{{ day|date:"Ymd" }}.place_color$}">
-                                {$ ctrl.slot.noon_{{ day|date:"Ymd" }}.cid $}
-                            </p>
-
-                            <p ng-if="ctrl.slot.noon_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
-
-                        </td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <td>{{ configs.session2_start }}~{{ configs.session2_end }}</td>
-                    {% for day in week %}
-                        <td>
-
-                            <div class="ui radio checkbox" ng-if="ctrl.slot.night1_{{ day|date:"Ymd" }}.cid =='None' &&
-						ctrl.slot.night1_{{ day|date:"Ymd" }}.valid">
-                                <input ng-model="ctrl.selected" value="night1_{{ day|date:"Ymd" }}" type="radio">
-                                <label style="color:{$ ctrl.slot.night1_{{ day|date:"Ymd" }}.place_color$}">可選時段</label>
-                            </div>
-
-                            <p ng-if="ctrl.slot.night1_{{ day|date:"Ymd" }}.cid == 'None' &&
-					!ctrl.slot.night1_{{ day|date:"Ymd" }}.valid">非貴公司時段</p>
-
-                            <p ng-if="ctrl.slot.night1_{{ day|date:"Ymd" }}.cid != 'None'"
-                               style="color:{$ ctrl.slot.night1_{{ day|date:"Ymd" }}.place_color$}">
-                                {$ ctrl.slot.night1_{{ day|date:"Ymd" }}.cid $}
-                            </p>
-
-                            <p ng-if="ctrl.slot.night1_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
-
-                        </td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <td>{{ configs.session3_start }}~{{ configs.session3_end }}</td>
-                    {% for day in week %}
-                        <td>
-
-                            <div class="ui radio checkbox" ng-if="ctrl.slot.night2_{{ day|date:"Ymd" }}.cid=='None' &&
-						ctrl.slot.night2_{{ day|date:"Ymd" }}.valid">
-                                <input ng-model="ctrl.selected" value="night2_{{ day|date:"Ymd" }}" type="radio">
-                                <label style="color:{$ ctrl.slot.night2_{{ day|date:"Ymd" }}.place_color$}">可選時段</label>
-                            </div>
-
-                            <p ng-if="ctrl.slot.night2_{{ day|date:"Ymd" }}.cid == 'None' &&
-					!ctrl.slot.night2_{{ day|date:"Ymd" }}.valid">非貴公司時段</p>
-
-                            <p ng-if="ctrl.slot.night2_{{ day|date:"Ymd" }}.cid != 'None'"
-                               style="color:{$ ctrl.slot.night2_{{ day|date:"Ymd" }}.place_color$}">
-                                {$ ctrl.slot.night2_{{ day|date:"Ymd" }}.cid $}
-                            </p>
-
-                            <p ng-if="ctrl.slot.night2_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
-
-                        </td>
-                    {% endfor %}
-                </tr>
-
-                <tr>
-                    <td>{{ configs.session4_start }}~{{ configs.session4_end }}</td>
-                    {% for day in week %}
-                        <td>
-
-                            <div class="ui radio checkbox" ng-if="ctrl.slot.night3_{{ day|date:"Ymd" }}.cid=='None' &&
-						ctrl.slot.night3_{{ day|date:"Ymd" }}.valid">
-                                <input ng-model="ctrl.selected" value="night3_{{ day|date:"Ymd" }}" type="radio">
-                                <label style="color:{$ ctrl.slot.night3_{{ day|date:"Ymd" }}.place_color$}">可選時段</label>
-                            </div>
-
-                            <p ng-if="ctrl.slot.night3_{{ day|date:"Ymd" }}.cid == 'None' &&
-					!ctrl.slot.night3_{{ day|date:"Ymd" }}.valid">非貴公司時段</p>
-
-                            <p ng-if="ctrl.slot.night3_{{ day|date:"Ymd" }}.cid != 'None'"
-                               style="color:{$ ctrl.slot.night3_{{ day|date:"Ymd" }}.place_color$}">
-                                {$ ctrl.slot.night3_{{ day|date:"Ymd" }}.cid $}
-                            </p>
-
-                            <p ng-if="ctrl.slot.night3_{{ day|date:"Ymd" }} == undefined">無活動安排</p>
-
-                        </td>
-                    {% endfor %}
-                </tr>
-
-                </tbody>
+            {% for session in session_list %} <!--一週中的場次-->
+                {% if session.valid %}
+                    <tr>
+                        <td>{{ session.start_time }}~{{ session.end_time }}</td>
+                        {% for day in week %}
+                            <td>
+                                {% for slot_color in slot_colors %}
+                                    <!--有空位且公司可以選-->
+                                    <div class="ui radio checkbox" ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.cid == 'None' &&
+                                        ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.valid">
+                                            <input ng-model="ctrl.selected" value="{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}"
+                                                    type="radio">
+                                            <label style="color:{$ ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.place_color$}">可選時段</label>
+                                        </div>
+        
+                                        <!--有空位但公司不能選-->
+                                        <p ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.cid == 'None' &&
+                                            !ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.valid">非貴公司時段</p>
+        
+                                        <!--有公司選了，顯示他的名字-->
+                                        <p ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.cid != 'None'"
+                                            style="color:{$ ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.place_color$}">
+                                            {$ ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}.cid $}
+                                        </p>
+        
+                                        <p ng-if="ctrl.slot.{{ session.name }}_{{ day|date:"Ymd" }}_{{ slot_color.id }}== undefined"></p>
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
             {% endfor %}
+
+            </tbody>
+        {% endfor %}
         </table>
+
         <div ng-if="ctrl.select_ctrl.select_btn">
             <div ng-if="ctrl.select_ctrl.btn_display">
                 <div class="ui blue button" style="float: right;" ng-if="!ctrl.slot.my_slot" ng-click="ctrl.submit()">
