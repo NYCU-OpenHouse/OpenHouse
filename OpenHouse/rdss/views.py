@@ -17,8 +17,6 @@ from django.db.models import Count, Sum
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
 from django.urls import reverse
-from django.db.models import IntegerField
-from django.db.models.functions import Cast
 import re
 # for logging
 import logging
@@ -566,34 +564,32 @@ def JobfairSelectControl(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
-    zones = rdss.models.ZoneCategories.objects.all()
-    slot_group = list()
-    for zone in zones:
-        slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone).annotate(
-            serial_no_as_int=Cast('serial_no', IntegerField())
-        ).order_by('serial_no_as_int')
-        return_data = list()
-        for slot in slot_list:
-            slot_info = dict()
-            slot_info["serial_no"] = slot.serial_no
-            slot_info["company"] = None if not slot.company_id else \
-                slot.company.get_company_name()
-            return_data.append(slot_info)
-
-        is_myzone = (
-            (rdss.models.Signup.objects.filter(cid=request.user.cid).first().zone == zone) 
-            or 
-            (zone.name == '一般企業')
-        )
-        
-        slot_group.append({
-            'slot_type': zone.id,
-            'display': zone.name,
-            'slot_list': return_data,
-            'is_myzone': bool(is_myzone),
-        })
-
     if action == "query":
+        zones = rdss.models.ZoneCategories.objects.all()
+        slot_group = list()
+        for zone in zones:
+            slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone)
+            return_data = list()
+            for slot in slot_list:
+                slot_info = dict()
+                slot_info["serial_no"] = slot.serial_no
+                slot_info["company"] = None if not slot.company_id else \
+                    slot.company.get_company_name()
+                return_data.append(slot_info)
+
+            is_myzone = (
+                (rdss.models.Signup.objects.filter(cid=request.user.cid).first().zone == zone) 
+                or 
+                (zone.name == '一般企業')
+            )
+            
+            slot_group.append({
+                'slot_type': zone.id,
+                'display': zone.name,
+                'slot_list': return_data,
+                'is_myzone': bool(is_myzone),
+            })
+
         my_slot_list = [slot.serial_no for slot in
                         rdss.models.JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
