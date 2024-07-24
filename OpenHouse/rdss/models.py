@@ -409,6 +409,7 @@ class SeminarParking(models.Model):
 
 class JobfairSlot(models.Model):
     id = models.AutoField(primary_key=True)
+    # TODO: investigate if we can use int for serial_no
     serial_no = models.CharField(u'攤位編號', max_length=10)
     zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     company = models.ForeignKey('Signup', to_field='cid',

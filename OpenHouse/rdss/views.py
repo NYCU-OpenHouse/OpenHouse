@@ -17,6 +17,8 @@ from django.db.models import Count, Sum
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
 from django.urls import reverse
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 import re
 # for logging
 import logging
@@ -552,18 +554,46 @@ def JobfairSelectControl(request):
         raise Http404("What are u looking for?")
     
     try:
+        my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
+    except:
+        ret = dict()
+        ret['success'] = False
+        ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
+        return JsonResponse(ret)
+    
+    try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    if action == "query":
-        slot_list = rdss.models.JobfairSlot.objects.all()
-        slot_list_return = list()
+    
+    zones = rdss.models.ZoneCategories.objects.all()
+    slot_group = list()
+    for zone in zones:
+        slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone).annotate(
+            serial_no_as_int=Cast('serial_no', IntegerField())
+        ).order_by('serial_no_as_int')
+        return_data = list()
         for slot in slot_list:
-            return_data = dict()
-            return_data["serial_no"] = slot.serial_no
-            return_data["company"] = None if not slot.company else \
+            slot_info = dict()
+            slot_info["serial_no"] = slot.serial_no
+            slot_info["company"] = None if not slot.company_id else \
                 slot.company.get_company_name()
-            slot_list_return.append(return_data)
+            return_data.append(slot_info)
+
+        is_myzone = (
+            (rdss.models.Signup.objects.filter(cid=request.user.cid).first().zone == zone) 
+            or 
+            (zone.name == '一般企業')
+        )
+        
+        slot_group.append({
+            'slot_type': zone.id,
+            'display': zone.name,
+            'slot_list': return_data,
+            'is_myzone': bool(is_myzone),
+        })
+
+    if action == "query":
         my_slot_list = [slot.serial_no for slot in
                         rdss.models.JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
@@ -577,20 +607,24 @@ def JobfairSelectControl(request):
             select_ctrl = dict()
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
+            select_ctrl['select_enable'] = False
             select_ctrl['select_btn'] = False
         else:
             select_ctrl = dict()
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
+            select_ctrl['select_enable'] = True
             today = timezone.now().date()
             if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
 
-        return JsonResponse(
-            {"success": True, "data": slot_list_return, "my_slot_list": my_slot_list, "select_ctrl": select_ctrl})
-
+        return JsonResponse({"success": True,
+                             "data": slot_group,
+                             "my_slot_list": my_slot_list,
+                             "select_ctrl": select_ctrl})
+    
     elif action == "select":
         try:
             slot = rdss.models.JobfairSlot.objects.get(serial_no=post_data.get('slot'))
