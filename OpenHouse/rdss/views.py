@@ -1065,14 +1065,17 @@ def sync_company_categories(request):
 def RDSSPublicIndex(request):
     # semantic ui control
     sidebar_ui = {'index': "active"}
-
-    all_company = company.models.Company.objects.all()
-    rdss_company = rdss.models.Signup.objects.all()
-    rdss_info = rdss.models.RdssInfo.objects.all()
-    company_list = [
-        all_company.get(cid=com.cid) for com in rdss_company
-    ]
-    company_list.sort(key=lambda item: getattr(item, 'categories'))
+    try:
+        all_company = company.models.Company.objects.all()
+        rdss_company = rdss.models.Signup.objects.all()
+        rdss_info = rdss.models.RdssInfo.objects.all()
+        company_list = [
+            all_company.get(cid=com.cid) for com in rdss_company
+        ]
+        company_list.sort(key=lambda item: getattr(item, 'categories'))
+    except Exception as e:
+        error_msg = f"error: {e}"
+        return render(request, 'error.html', locals())
     return render(request, 'public/rdss_index.html', locals())
 
 
