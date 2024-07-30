@@ -91,7 +91,7 @@ def Export_Company(request):
         company_list.append(
             company.models.Company.objects.filter(cid=cid).first())
 
-    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'category', 'phone',
+    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'categories', 'phone',
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
@@ -173,7 +173,7 @@ def ExportAll(request):
         company_list.append(
             company.models.Company.objects.filter(cid=cid).first())
 
-    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'category', 'phone',
+    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'categories', 'phone',
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
@@ -227,6 +227,8 @@ def ExportAll(request):
                 info_worksheet.write(row_count + 1, col_count, total_job_types)
             elif fieldname == 'total_jobs':
                 info_worksheet.write(row_count + 1, col_count, total_jobs_quantity)
+            elif fieldname == 'categories':
+                info_worksheet.write(row_count + 1, col_count, company_obj.categories.name)
             else:
                 info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
 
@@ -246,14 +248,14 @@ def ExportAll(request):
     title_pairs = [
         {'fieldname': 'cid', 'title': '公司統一編號'},
         {'fieldname': 'shortname', 'title': '公司簡稱'},
+        {'fieldname': 'zone', 'title': '專區類別'},
+        {'fieldname': 'history', 'title': '歷史參加調查'},
         {'fieldname': 'seminar', 'title': '說明會場次'},
         {'fieldname': 'jobfair', 'title': '就博會攤位數'},
-        {'fieldname': 'jobfair_online', 'title': '參加線上就博會'},
+        {'fieldname': 'seminar_ece', 'title': 'ECE說明會'},
         {'fieldname': 'visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供諮詢服務'},
-        {'fieldname': 'lecture', 'title': '提供就業力講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
-        {'fieldname': 'updated', 'title': '更新時間'},
     ]
 
     signup_worksheet = workbook.add_worksheet("廠商報名情況")
@@ -261,10 +263,32 @@ def ExportAll(request):
     for index, pair in enumerate(title_pairs):
         signup_worksheet.write(0, index, pair['title'])
 
-    for row_count, signup in enumerate(signups_dict):
+    for row_count, signup in enumerate(signups):
+        signup_dict = model_to_dict(signup)
+        # join company info
+        company_obj = company.models.Company.objects.get(
+            cid=signup_dict['cid'])
+        company_dict = model_to_dict(company_obj)
+        for key, value in company_dict.items():
+            signup_dict[key] = value
         for col_count, pairs in enumerate(title_pairs):
-            signup_worksheet.write(row_count + 1, col_count,
-                                   signup['fields'][pairs['fieldname']])
+            # signup_worksheet.write(row_count + 1, col_count,
+            #                        signup['fields'][pairs['fieldname']])
+            if pairs['fieldname'] == 'seminar':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup.get_seminar_display())
+            elif pairs['fieldname'] == 'seminar_ece':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
+            elif pairs['fieldname'] == 'zone':
+                zone_name_first_two_chars = signup.zone.name[:2]
+                signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
+            elif pairs['fieldname'] == 'history':
+                signup_worksheet.write(row_count + 1, col_count,
+                                       ', '.join(h.short_name for h in signup.history.all()))
+            else:
+                signup_worksheet.write(row_count + 1, col_count,
+                                       signup_dict[pairs['fieldname']])
 
     #only export those signed up company receipt information 
     receipt_worksheet = workbook.add_worksheet("收據相關資訊")
