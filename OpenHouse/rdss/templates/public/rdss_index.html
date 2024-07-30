@@ -21,15 +21,10 @@
                             <img class="ui image logo" src="{{ company.logo.url }}">
                         </div>
                         <div class="content">
-                            <a class="header">{{ company.name }}</a>
+                            <a class="header" href="{{ company.website }}">{{ company.name }}</a>
                             <div class="meta">
-                                <span>{{ company.category }}</span>
+                                <span>{{ company.categories.name }}</span>
                             </div>
-                        </div>
-                        <div class="extra content">
-                            <a href="{{ company.website }}" target="_blank">
-                                {{ company.website }}
-                            </a>
                         </div>
                     </div>
                 </div>
