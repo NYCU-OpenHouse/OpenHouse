@@ -1066,13 +1066,12 @@ def RDSSPublicIndex(request):
     # semantic ui control
     sidebar_ui = {'index': "active"}
     try:
-        all_company = company.models.Company.objects.all()
+        all_company = company.models.Company.objects.all().order_by('categories')
         rdss_company = rdss.models.Signup.objects.all()
         rdss_info = rdss.models.RdssInfo.objects.all()
         company_list = [
             all_company.get(cid=com.cid) for com in rdss_company
         ]
-        company_list.sort(key=lambda item: getattr(item, 'categories'))
     except Exception as e:
         error_msg = f"error: {e}"
         return render(request, 'error.html', locals())
