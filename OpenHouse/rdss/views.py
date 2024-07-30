@@ -1072,7 +1072,7 @@ def RDSSPublicIndex(request):
     company_list = [
         all_company.get(cid=com.cid) for com in rdss_company
     ]
-    company_list.sort(key=lambda item: getattr(item, 'category'))
+    company_list.sort(key=lambda item: getattr(item, 'categories'))
     return render(request, 'public/rdss_index.html', locals())
 
 
