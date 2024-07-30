@@ -1181,20 +1181,22 @@ def ListJobs(request):
     # semantic ui control
     sidebar_ui = {'list_jobs': "active"}
 
-    categories = [category[0] for category in Company.CATEGORYS]
+    categories = [category.name for category in rdss.models.CompanyCategories.objects.all()]
     companies = []
     category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+
     if category_filtered and category_filtered != 'all':
         if category_filtered not in categories:
             raise Http404("What are u looking for?")
         for signup in rdss.models.Signup.objects.all():
             try:
-                target_company = company.models.Company.objects.get(cid=signup.cid, category=category_filtered)
+                target_category = company.models.CompanyCategories.objects.get(name=category_filtered)
+                target_company = company.models.Company.objects.get(cid=signup.cid, categories=target_category)
                 companies.append({
                     'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
-                    'category': target_company.category,
+                    'category': target_company.categories.name,
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
@@ -1212,7 +1214,7 @@ def ListJobs(request):
                     'cid': target_company.cid,
                     'logo': target_company.logo,
                     'name': target_company.name,
-                    'category': target_company.category,
+                    'category': target_company.categories.name,
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
