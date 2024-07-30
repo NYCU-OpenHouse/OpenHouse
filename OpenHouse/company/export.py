@@ -27,7 +27,7 @@ def Export_Company(request):
 
     company_list = list(company.models.Company.objects.all())
 
-    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'category', 'phone',
+    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'categories', 'phone',
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
@@ -85,6 +85,8 @@ def Export_Company(request):
                 worksheet.write(row_count + 1, col_count, total_jobs_types)
             elif fieldname == 'total_jobs':
                 worksheet.write(row_count + 1, col_count, total_jobs_quantity)
+            elif fieldname == 'categories':
+                worksheet.write(row_count + 1, col_count, company_obj.categories.name)
             else:
                 worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
 
