@@ -580,12 +580,11 @@ def ExportAdFormat(request):
                 return HttpResponse(status=403)
         else:
             return HttpResponse(status=403)
-        all_company = company.models.Company.objects.all()
+        all_company = company.models.Company.objects.all().order_by('categories')
         rdss_company = rdss.models.Signup.objects.all()
         company_list = [
             all_company.get(cid=c.cid) for c in rdss_company
         ]
-        company_list.sort(key=lambda item: getattr(item, 'category'))
 
         return render(request, 'admin/export_ad.html', locals())
     except Exception as e:
