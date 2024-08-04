@@ -296,7 +296,7 @@ def ExportAll(request):
                                             signup_dict[pairs['fieldname']])
                 except Exception as e:
                     error_msg = f"{pairs['fieldname']} error: {e}"
-                    return render(request, 'error.html', locals())
+                    render(request, 'error.html', locals())
 
         #only export those signed up company receipt information 
         receipt_worksheet = workbook.add_worksheet("收據相關資訊")
