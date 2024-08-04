@@ -208,6 +208,18 @@ def SignupRdss(request):
         data = request.POST.copy()
         # decide cid in the form
         data['cid'] = request.user.cid
+
+        # check if the company is right zone
+        if data.get('zone'):
+            filtered_zone = data.get('zone')
+            zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+            if zone.name != '一般企業':
+                my_company_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
+                zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+                if my_company_category not in zone.category.all():
+                    messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
+                    form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
+                    return render(request, 'company/signup_form.html', locals())
         if edit_instance_list:
             form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
         else:
@@ -218,16 +230,6 @@ def SignupRdss(request):
         else:
             # for debug usage
             print(form.errors.items())
-        
-        # check if the company is right zone
-        if data.get('zone'):
-            filtered_zone = data.get('zone')
-            zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
-            if zone.name != '一般企業':
-                my_company_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
-                zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
-                if my_company_category not in zone.category.all():
-                    messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
         return redirect(SignupRdss)
 
     # edit
