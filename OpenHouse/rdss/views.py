@@ -203,6 +203,8 @@ def SignupRdss(request):
             return render(request, 'error.html', locals())
 
     edit_instance_list = rdss.models.Signup.objects.filter(cid=request.user.cid)
+    plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
+    
     if request.POST:
         # copy the data from post
         data = request.POST.copy()
@@ -238,7 +240,6 @@ def SignupRdss(request):
         signup_edit_ui = True  # for semantic ui control
     else:
         form = rdss.forms.SignupCreationForm
-    plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
     return render(request, 'company/signup_form.html', locals())
 
 
