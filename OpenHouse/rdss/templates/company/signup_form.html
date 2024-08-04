@@ -7,6 +7,14 @@
 {% endblock %}
 
 {% block 'content' %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="ui {% if message.tags %}{{ message.tags }} message{% else %}message{% endif %}" style="width:70%;margin:auto">
+                {{ message }}
+            </div>
+            <br />
+        {% endfor %}
+    {% endif %}
     <form class="ui form" method="POST" action="{% url 'rdss_signup' %}">
         {% csrf_token %}
 
