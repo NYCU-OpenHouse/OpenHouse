@@ -229,7 +229,12 @@ def ExportAll(request):
                 elif fieldname == 'total_jobs':
                     info_worksheet.write(row_count + 1, col_count, total_jobs_quantity)
                 elif fieldname == 'categories':
-                    info_worksheet.write(row_count + 1, col_count, company_obj.categories.name)
+                    try:
+                        info_worksheet.write(row_count + 1, col_count, company_obj.get_category())
+                    except Exception as e:
+                        error_msg = f"category error: {e}"
+                        return render(request, 'error.html', locals())
+
                 else:
                     info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
 
@@ -273,23 +278,25 @@ def ExportAll(request):
             for key, value in company_dict.items():
                 signup_dict[key] = value
             for col_count, pairs in enumerate(title_pairs):
-                # signup_worksheet.write(row_count + 1, col_count,
-                #                        signup['fields'][pairs['fieldname']])
-                if pairs['fieldname'] == 'seminar':
-                    signup_worksheet.write(row_count + 1, col_count,
-                                        signup.get_seminar_display())
-                elif pairs['fieldname'] == 'seminar_ece':
-                    signup_worksheet.write(row_count + 1, col_count,
-                                        ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
-                elif pairs['fieldname'] == 'zone':
-                    zone_name_first_two_chars = signup.zone.name[:2]
-                    signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
-                elif pairs['fieldname'] == 'history':
-                    signup_worksheet.write(row_count + 1, col_count,
-                                        ', '.join(h.short_name for h in signup.history.all()))
-                else:
-                    signup_worksheet.write(row_count + 1, col_count,
-                                        signup_dict[pairs['fieldname']])
+                try:
+                    if pairs['fieldname'] == 'seminar':
+                        signup_worksheet.write(row_count + 1, col_count,
+                                            signup.get_seminar_display())
+                    elif pairs['fieldname'] == 'seminar_ece':
+                        signup_worksheet.write(row_count + 1, col_count,
+                                            ', '.join(ece.seminar_name for ece in signup.seminar_ece.all()))
+                    elif pairs['fieldname'] == 'zone':
+                        zone_name_first_two_chars = signup.zone.name[:2]
+                        signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
+                    elif pairs['fieldname'] == 'history':
+                        signup_worksheet.write(row_count + 1, col_count,
+                                            ', '.join(h.short_name for h in signup.history.all()))
+                    else:
+                        signup_worksheet.write(row_count + 1, col_count,
+                                            signup_dict[pairs['fieldname']])
+                except Exception as e:
+                    error_msg = f"{pairs['fieldname']} error: {e}"
+                    return render(request, 'error.html', locals())
 
         #only export those signed up company receipt information 
         receipt_worksheet = workbook.add_worksheet("收據相關資訊")

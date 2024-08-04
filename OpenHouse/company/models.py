@@ -136,6 +136,9 @@ class Company(AbstractBaseUser):
 
     def get_cid(self):  # for get cid
         return self.cid
+    
+    def get_category(self):
+        return getattr(self.categories, 'name')
 
     @property
     def username(self):
