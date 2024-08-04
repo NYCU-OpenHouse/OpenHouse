@@ -290,13 +290,12 @@ def ExportAll(request):
                         signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
                     elif pairs['fieldname'] == 'history':
                         signup_worksheet.write(row_count + 1, col_count,
-                                            ', '.join(h.short_name for h in signup.history.all()))
+                                            ', '.join(h.name for h in signup.history.all()))
                     else:
                         signup_worksheet.write(row_count + 1, col_count,
                                             signup_dict[pairs['fieldname']])
                 except Exception as e:
-                    error_msg = f"{pairs['fieldname']} error: {e}"
-                    render(request, 'error.html', locals())
+                    pass
 
         #only export those signed up company receipt information 
         receipt_worksheet = workbook.add_worksheet("收據相關資訊")
