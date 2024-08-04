@@ -218,6 +218,16 @@ def SignupRdss(request):
         else:
             # for debug usage
             print(form.errors.items())
+        
+        # check if the company is right zone
+        if data.get('zone'):
+            filtered_zone = data.get('zone')
+            zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+            if zone.name != '一般企業':
+                my_company_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
+                zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+                if my_company_category not in zone.category.all():
+                    messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
         return redirect(SignupRdss)
 
     # edit
