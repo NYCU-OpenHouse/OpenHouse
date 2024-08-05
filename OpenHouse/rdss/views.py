@@ -106,8 +106,11 @@ def Status(request):
     discount_text = ""
     fee = 0
     try:
-        if signup_data.seminar != "none":
+        # session fee calculation
+        if signup_data.seminar == 'attend':
             fee += configs.session_fee
+        elif signup_data.seminar == 'attend_noon':
+            fee += configs.session_fee_noon
         
         # ece seminar fee
         if mycompany.ece_member:
