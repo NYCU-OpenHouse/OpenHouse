@@ -92,6 +92,7 @@ class SignupAdmin(admin.ModelAdmin):
     list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'visit', 'lecture', 'payment')
     inlines = (SponsorshipInline,)
     search_fields = ('cid',)
+    list_filter = ('seminar', 'jobfair', 'payment', 'zone')
 
     def company_name(self, obj):
         # com = company.models.Company.objects.filter(cid=obj.cid).first()
@@ -124,7 +125,7 @@ class SignupAdmin(admin.ModelAdmin):
 
 @admin.register(models.Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'name', 'category', 'hr_name', 'hr_phone', 'hr_mobile', 'hr_email')
+    list_display = ('cid', 'name', 'categories', 'hr_name', 'hr_phone', 'hr_mobile', 'hr_email')
     search_fields = ['cid',]
 
     # Custom search for company name
@@ -150,9 +151,9 @@ class CompanyAdmin(admin.ModelAdmin):
         ]
         return my_urls + urls
 
-    def category(self, obj):
+    def categories(self, obj):
         com = company.models.Company.objects.filter(cid=obj.cid).first()
-        return com.category
+        return com.get_category()
 
     def hr_name(self, obj):
         com = company.models.Company.objects.filter(cid=obj.cid).first()
@@ -173,7 +174,7 @@ class CompanyAdmin(admin.ModelAdmin):
         com = company.models.Company.objects.filter(cid=obj.cid).first()
         return com.name
 
-    category.short_description = '類型'
+    categories.short_description = '類型'
     hr_name.short_description = '人資姓名'
     hr_phone.short_description = '人資電話'
     hr_mobile.short_description = '人資手機'
