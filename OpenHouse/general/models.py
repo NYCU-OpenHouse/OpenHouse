@@ -82,3 +82,11 @@ class FAQ_new(models.Model):
     class Meta:
         verbose_name = "常見問題"
         verbose_name_plural = "常見問題"
+
+class History(models.Model):
+    id = models.AutoField(primary_key=True)
+    content = RichTextUploadingField(u'內容')
+    
+    class Meta:
+        verbose_name = "歷史沿革"
+        verbose_name_plural = "歷史沿革"

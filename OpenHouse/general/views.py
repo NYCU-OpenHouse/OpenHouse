@@ -85,3 +85,11 @@ def FAQ(request):
         error_msg = '常見問題尚未建立，敬請等待!'
         return render(request, 'general/error.html', locals())
     return render(request, 'general/FAQ.html', locals())
+
+def History(request):
+    try:
+        History = models.History.objects.order_by('id').first()
+    except models.History.DoesNotExist:
+        error_msg = '歷史沿革尚未建立，敬請等待!'
+        return render(request, 'general/error.html', locals())
+    return render(request, 'general/history.html', locals())

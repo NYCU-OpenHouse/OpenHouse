@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'body' %}
+    <link href={% static "css/general/read_news.css" %} rel="stylesheet">
+    <title>Open House 歷史沿革</title>
+    
+
+    <div id="content" class="ui segment" >
+        <div style="text-align:center">
+            <h2 class="ui header">歷史沿革</h2>
+        </div>
+
+        <div class="ui divider"></div>
+        {{ history.content|safe }}
+    </div>
+    <div id="button_group">
+        <a class="ui button" href="/">回首頁</a>
+    </div>
+{% endblock %}
