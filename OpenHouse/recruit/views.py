@@ -1455,6 +1455,7 @@ def list_jobs(request):
             raise Http404("What are u looking for?")
         for company in RecruitSignup.objects.all():
             try:
+                # TODO: company website may not start with https, lead to 404 error. Need to fix for RECRUIT
                 target_company = Company.objects.get(cid=company.cid, category=category_filtered)
                 companies.append({
                     'cid': target_company.cid,

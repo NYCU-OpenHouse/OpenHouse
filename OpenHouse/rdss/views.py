@@ -1076,18 +1076,26 @@ def sync_company_categories(request):
         return redirect('/admin/rdss/companycategories/')
 
 # ========================RDSS public view=================
-
+def _change_website_start_with_http(website):
+    if not website.startswith('http'):
+        website = 'https://' + website
+    return website
 
 def RDSSPublicIndex(request):
     # semantic ui control
     sidebar_ui = {'index': "active"}
     try:
-        all_company = company.models.Company.objects.all().order_by('categories')
-        rdss_company = rdss.models.Signup.objects.all()
+        all_company = company.models.Company.objects.all()
+        rdss_company = rdss.models.Signup.objects.all().order_by('cid')
         rdss_info = rdss.models.RdssInfo.objects.all()
-        company_list = [
-            all_company.get(cid=com.cid) for com in rdss_company
-        ]
+        company_list = []
+        for signup in rdss_company:
+            com = all_company.get(cid=signup.cid)
+            com.website = _change_website_start_with_http(com.website)
+            company_list.append(com)
+        # sorted bt company categories id
+        company_list = sorted(company_list, key=lambda x: x.categories.id)
+
     except Exception as e:
         error_msg = f"error: {e}"
         return render(request, 'error.html', locals())
@@ -1218,7 +1226,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': _change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
@@ -1236,7 +1244,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': _change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
