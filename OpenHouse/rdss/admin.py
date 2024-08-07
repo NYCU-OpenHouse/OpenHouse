@@ -3,6 +3,8 @@ from rdss import models
 import company.models
 from django.conf.urls import url, include
 import rdss.export
+from company.models import Company
+
 
 admin.AdminSite.site_header = "OpenHouse 管理後台"
 admin.AdminSite.site_title = "OpenHouse"
@@ -94,8 +96,20 @@ class SignupAdmin(admin.ModelAdmin):
     search_fields = ('cid',)
     list_filter = ('seminar', 'jobfair', 'payment', 'zone')
 
+    # custom search the company name field in other db
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super(SignupAdmin, self).get_search_results(request, queryset, search_term)
+
+        # Check if search_term is empty or not
+        if search_term:
+            company_list = Company.objects.filter(name__icontains=search_term)
+            company_list |= Company.objects.filter(shortname__icontains=search_term)
+            for company in company_list:
+                queryset |= self.model.objects.filter(cid=company.cid)
+
+        return queryset, use_distinct
+    
     def company_name(self, obj):
-        # com = company.models.Company.objects.filter(cid=obj.cid).first()
         return obj.get_company_name()
 
     # define export URLs eg:...admin/rdss/signup/export
@@ -105,22 +119,6 @@ class SignupAdmin(admin.ModelAdmin):
             url(r'^export/$', rdss.export.Export_Signup),
         ]
         return my_urls + urls
-    
-    # Custom search for company name
-    def get_search_results(self, request, queryset, search_term):
-        queryset, may_have_duplicates = super().get_search_results(
-            request, queryset, search_term,
-        )
-        try:
-            companies = company.models.Company.objects.filter(name__icontains=search_term)
-            companies = company.models.Company.objects.filter(shortname__icontains=search_term)
-        except ValueError:
-            pass
-        else:
-            if(companies):
-                for com in companies :
-                    queryset |= self.model.objects.filter(cid=com.cid)
-        return queryset, may_have_duplicates
 
 
 @admin.register(models.Company)
