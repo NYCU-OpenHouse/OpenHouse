@@ -2,19 +2,21 @@
 {% load static %}
 
 {% block 'body' %}
-    <link href={% static "css/general/read_news.css" %} rel="stylesheet">
+    <body style="background-color: #0033A0"></body>
     <title>Open House 歷史沿革</title>
-    
-
-    <div id="content" class="ui segment" >
-        <div style="text-align:center">
-            <h2 class="ui header">歷史沿革</h2>
-        </div>
-
-        <div class="ui divider"></div>
-        {{ history.content|safe }}
-    </div>
-    <div id="button_group">
-        <a class="ui button" href="/">回首頁</a>
+    <style>
+        .history_image {
+            width: 70%;
+        }
+        @media (max-width: 770px) {
+            .history_image {
+                width: 100%;
+            }
+        }
+    </style>
+    <div style="text-align:center">
+        {% for history_img in history_imgs %}
+            <img src="{{ history_img.upload_img.url }}" class="history_image" alt="history">
+        {% endfor %}
     </div>
 {% endblock %}

@@ -83,10 +83,13 @@ class FAQ_new(models.Model):
         verbose_name = "常見問題"
         verbose_name_plural = "常見問題"
 
-class History(models.Model):
+class HistoryImg(models.Model):
     id = models.AutoField(primary_key=True)
-    content = RichTextUploadingField(u'內容')
-    
+    upload_img = models.ImageField(u'上傳檔案',
+                                   upload_to='history_files', null=False)
+    order = models.IntegerField(u'順序')
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
     class Meta:
-        verbose_name = "歷史沿革"
-        verbose_name_plural = "歷史沿革"
+        verbose_name = u"歷史沿革圖片上傳"
+        verbose_name_plural = u"歷史沿革圖片上傳"

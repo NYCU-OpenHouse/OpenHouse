@@ -29,4 +29,7 @@ class NavbarConfigsAdmin(admin.ModelAdmin):
         return '連結設定' # Register your models here.
     
 admin.site.register(models.FAQ_new)
-admin.site.register(models.History)
+
+@admin.register(models.HistoryImg)
+class HistoryImgAdmin(admin.ModelAdmin):
+    list_display=('order','upload_img', 'updated')

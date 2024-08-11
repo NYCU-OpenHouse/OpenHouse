@@ -88,8 +88,11 @@ def FAQ(request):
 
 def History(request):
     try:
-        History = models.History.objects.order_by('id').first()
-    except models.History.DoesNotExist:
+        history_imgs = models.HistoryImg.objects.order_by('order')
+        if not history_imgs:
+            error_msg = '歷史沿革尚未建立，敬請等待!'
+            return render(request, 'general/error.html', locals())
+    except models.HistoryImg.DoesNotExist:
         error_msg = '歷史沿革尚未建立，敬請等待!'
         return render(request, 'general/error.html', locals())
     return render(request, 'general/history.html', locals())
