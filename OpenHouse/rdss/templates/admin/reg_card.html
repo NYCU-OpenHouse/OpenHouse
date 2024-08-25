@@ -28,7 +28,7 @@
                         <p class="help">{{ form.idcard_no.help_text|safe }}</p>
                     </div>
                 </div>
-                <div class="two fields">
+                <div class="three fields">
                     <div class="field">
                         {{ form.student_id.label_tag }} {{ form.student_id }}
                         {{ form.student_id.errors }}
@@ -38,6 +38,11 @@
                         {{ form.phone.label_tag }} {{ form.phone }}
                         {{ form.phone.errors }}
                         <p class="help">{{ form.phone.help_text|safe }}</p>
+                    </div>
+                    <div class="field">
+                        {{ form.email.label_tag }} {{ form.email }}
+                        {{ form.email.errors }}
+                        <p class="help">{{ form.email.help_text|safe }}</p>
                     </div>
                 </div>
                 <button class="ui red submit button" type="submit">註冊</button>
