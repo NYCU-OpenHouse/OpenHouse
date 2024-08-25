@@ -854,15 +854,15 @@ def CollectPoints(request):
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
         
         # Find the suitable session
-        if (now - timedelta(minutes=20)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
+        if (now - timedelta(minutes=40)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
             current_session = 'forenoon'
-        elif (now - timedelta(minutes=20)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon'
-        elif (now - timedelta(minutes=20)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
             current_session = 'night1'
-        elif (now - timedelta(minutes=20)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
             current_session = 'night2'
-        elif (now - timedelta(minutes=20)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
+        elif (now - timedelta(minutes=40)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
             current_session = 'night3'
         else:
             current_session = ''
