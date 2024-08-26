@@ -255,6 +255,7 @@ class Student(models.Model):
     name = models.CharField(u'姓名', max_length=64, blank=True)
     dep = models.CharField(u'系級', max_length=16, blank=True)
     email = models.EmailField(u'Email', max_length=64, blank=True)
+    other = models.TextField(u'其他', max_length=64, blank=True, null=True)
 
     class Meta:
         verbose_name = u"說明會學生"
@@ -319,6 +320,18 @@ class RedeemPrize(models.Model):
         verbose_name = u"兌獎紀錄"
         verbose_name_plural = u"兌獎紀錄"
 
+# For 2024 rdss seminar
+class redeem_prize_2024_3_points_per_day(models.Model):
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date = models.DateField(u'日期')
+    redeem = models.BooleanField(u'是否兌獎', default=False)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        verbose_name = u"(2024) 集滿3點名單&兌獎"
+        verbose_name_plural = u"(2024) 集滿3點名單&兌獎"
+        
 
 class SlotColor(models.Model):
     id = models.AutoField(primary_key=True)
