@@ -121,7 +121,7 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = rdss.models.Student
-        fields = ['idcard_no', 'student_id', 'phone', 'name', 'dep', 'email']
+        fields = ['idcard_no', 'student_id', 'phone', 'name', 'dep', 'email', 'other']
 
     def save(self, commit=True):
         form = super(StudentForm, self).save(commit=False)
