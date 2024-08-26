@@ -227,6 +227,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('兌獎-2024餐券(每日聽滿三場說明會)'),
+                    'url': '/admin/rdss/show_3_seminar_attendance_student_2024/',
+                    'external': False,
+                },
+                {
                     'title': _('各場次學生登記總覽'),
                     'url': '/admin/rdss/seminar_attended_student/',
                     'external': False,
@@ -260,7 +265,8 @@ class CustomAppDashboard(AppIndexDashboard):
                 my_app = app
                 break
 
-        other, physical, online = [], [], []
+        other, physical, online, student = [], [], [], []
+        student_models = ['Student', 'StuAttendance', 'RedeemPrize', 'redeem_prize_2024_3_points_per_day']
         for m in my_app['models']:
             object_name = m['object_name']
             lower_object_name = object_name.lower()
@@ -271,6 +277,8 @@ class CustomAppDashboard(AppIndexDashboard):
                 online.append(my_app_name + '.' + object_name)
             elif ('seminar' in lower_object_name and 'ece' not in lower_object_name) or 'jobfair' in lower_object_name:
                 physical.append(my_app_name + '.' + object_name)
+            elif object_name in student_models:
+                student.append(my_app_name + '.' + object_name)
             else:
                 other.append(my_app_name + '.' + object_name)
 
@@ -293,6 +301,12 @@ class CustomAppDashboard(AppIndexDashboard):
             models=online,
             column=0,
             order=2
+        ))
+        self.children.append(modules.ModelList(
+            title=_('說明會學生'),
+            models=student,
+            column=0,
+            order=3
         ))
 
         self.children.append(modules.RecentActions(
