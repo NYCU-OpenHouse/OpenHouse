@@ -43,6 +43,11 @@ class RedeemAdmin(admin.ModelAdmin):
     list_display = ('student', 'prize', 'points', 'updated')
 
 
+@admin.register(models.redeem_prize_2024_3_points_per_day)
+class redeem_prize_2024_3_points_per_day_Admin(admin.ModelAdmin):
+    list_display = ('student', 'date', 'redeem', 'updated')
+
+
 @admin.register(models.ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name','ece_member_discount',)
