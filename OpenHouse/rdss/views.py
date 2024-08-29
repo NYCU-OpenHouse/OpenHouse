@@ -831,15 +831,20 @@ def CompanySurvey(request):
     return render(request, 'company/survey_form.html', locals())
 
 # ========================RDSS admin view for seminar points=================
-def _2024_rdss_check_3_seminar_attendance_per_day(student_obj):
+def _2024_rdss_seminar_check_get_meal_tickets(student_obj, target_date, company):
     # 2024 rdss: check whether the student has attended 3 seminars a day
     today = datetime.datetime.now().date()
     attended_seminar = rdss.models.StuAttendance.objects.filter(student=student_obj,
                                                                 seminar__date=today).count()
+    # if attendance >= 3 or today is the target date
     if attended_seminar >= 3:
-        # update model redeem_prize_2024_3_points_per_day
-        create_record = rdss.models.redeem_prize_2024_3_points_per_day.objects.create(student=student_obj, date=today)
+        rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=str(today))
         return True
+    elif today == target_date:
+        rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=f'{str(today)}-{company}')
+        return True
+    else:
+        return False
 
 @staff_member_required
 def show_3_seminar_attendance_student_2024(request):
@@ -877,15 +882,15 @@ def redeem_3_seminar_attendance_student_2024(request, student_id, date):
                 if edit_student_info_only:
                     messages.success(request, f"學生 {student_obj.student_id} 資料更新成功")
                     return redirect(show_3_seminar_attendance_student_2024)
-                rdss.models.RedeemPrize.objects.create(student=student_obj, prize=f"餐券-{date}")
+                rdss.models.RedeemPrize.objects.get_or_create(student=student_obj, prize=f"餐券-{date}")
                 rdss.models.redeem_prize_2024_3_points_per_day.objects.filter(student=student_obj, date=date).update(redeem=True)
                 messages.success(request, f"學生 {student_obj.student_id} 兌換餐券成功，日期: {date}")
                 collect_pts_logger.info('student {} succeeded to get meal ticket, date: {}'.format(student_obj.student_id, date))
             except Exception as e:
-                messages.error(request, "兌換失敗")
+                messages.error(request, f"兌換失敗: {e}")
             return redirect(show_3_seminar_attendance_student_2024)
         else:
-            messages.error(request, "兌換失敗")
+            messages.error(request, f"兌換失敗: {e}")
             return redirect(show_3_seminar_attendance_student_2024)
     form = rdss.forms.StudentForm(instance=student_obj)
     return render(request, 'admin/seminar_redeem_3_attendance.html', locals())
@@ -950,10 +955,12 @@ def CollectPoints(request):
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
 
         # 2024 rdss: check whether the student has attended 3 seminars a day
-        if (now + timedelta(minutes=40)).time() > (configs.session3_end) and \
-            _2024_rdss_check_3_seminar_attendance_per_day(student_obj):
-            ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 今日參加三場說明會，可兌換餐券"}
-            
+        target_date = datetime.date(2024, 8, 31)
+        if _2024_rdss_seminar_check_get_meal_tickets(student_obj, target_date, seminar_obj.company):
+            if today == target_date:
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {target_date} 說明會 {seminar_obj.company}，可兌換餐券"}
+            else:
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 今日參加三場說明會，可兌換餐券"}
         # maintain current seminar from post
         current_seminar = seminar_obj
 

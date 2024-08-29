@@ -324,7 +324,7 @@ class RedeemPrize(models.Model):
 class redeem_prize_2024_3_points_per_day(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    date = models.DateField(u'日期')
+    date = models.CharField(u'參加日期', max_length=30, default='')
     redeem = models.BooleanField(u'是否兌獎', default=False)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
