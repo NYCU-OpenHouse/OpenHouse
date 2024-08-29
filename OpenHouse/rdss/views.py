@@ -955,7 +955,7 @@ def CollectPoints(request):
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
 
         # 2024 rdss: check whether the student has attended 3 seminars a day
-        target_date = datetime.date(2024, 8, 31)
+        target_date = datetime.date(2024, 10, 9)
         if _2024_rdss_seminar_check_get_meal_tickets(student_obj, target_date, seminar_obj.company):
             if today == target_date:
                 ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {target_date} 說明會 {seminar_obj.company}，可兌換餐券"}
