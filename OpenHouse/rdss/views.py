@@ -13,11 +13,12 @@ import datetime, json
 from datetime import timedelta
 from company.models import Company
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, IntegerField
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
 from django.urls import reverse
 import re
+from django.db.models.functions import Cast
 # for logging
 import logging
 
@@ -584,7 +585,9 @@ def JobfairSelectControl(request):
         zones = rdss.models.ZoneCategories.objects.all()
         slot_group = list()
         for zone in zones:
-            slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone)
+            slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone).annotate(
+                serial_no_int=Cast('serial_no', IntegerField())
+            ).order_by('serial_no_int')
             return_data = list()
             for slot in slot_list:
                 slot_info = dict()
