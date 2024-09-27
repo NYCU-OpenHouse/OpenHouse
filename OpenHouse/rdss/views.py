@@ -834,70 +834,48 @@ def CompanySurvey(request):
     return render(request, 'company/survey_form.html', locals())
 
 # ========================RDSS admin view for seminar points=================
-def _2024_rdss_seminar_check_get_meal_tickets(student_obj, target_date, company):
-    # 2024 rdss: check whether the student has attended 3 seminars a day
+def _2024_rdss_seminar_check_get_meal_tickets(student_obj):
+    # 2024 rdss: check whether the student has attended all seminars a day
     today = datetime.datetime.now().date()
     attended_seminar = rdss.models.StuAttendance.objects.filter(student=student_obj,
                                                                 seminar__date=today).count()
-    # if attendance >= 3 or today is the target date
-    if attended_seminar >= 3:
-        rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=str(today))
-        return True
-    elif today == target_date:
-        rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=f'{str(today)}-{company}')
-        return True
+    total_seminar = rdss.models.SeminarSlot.objects.filter(date=today).count()
+
+    # if attendance is full, the student can redeem the meal ticket
+    if attended_seminar == total_seminar:
+        redeem_date = str(today)
+        redeem_obj, _ = rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=redeem_date)
+        return True, redeem_date, redeem_obj.redeem
     else:
-        return False
+        return False, None, None
 
 @staff_member_required
 def show_3_seminar_attendance_student_2024(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
-    title = "2024餐券兌換名單(每日聽滿三場說明會)"
-    # 2024 rdss: query the student who has attended 3 seminars a day
+    title = "2024餐券兌換名單(每日聽滿說明會)"
+    # 2024 rdss: query the student who has attended all seminars a day
     attended_students = rdss.models.redeem_prize_2024_3_points_per_day.objects.all()
     return render(request, 'admin/seminar_show_redeem_3_attendance.html', locals())
 
 @staff_member_required
-def redeem_3_seminar_attendance_student_2024(request, student_id, date):
-    site_header = "OpenHouse 管理後台"
-    site_title = "OpenHouse"
-    title = "2024餐券兌換"
+def redeem_seminar_meal_ticket_2024(request, student_id, date):
+    referer = request.META.get('HTTP_REFERER')
 
     try:
         student_obj = rdss.models.Student.objects.filter(student_id=student_id).first()
-
     except Exception as e:
-        messages.error(request, "學號錯誤")
-        return redirect(show_3_seminar_attendance_student_2024)
-    
-    if date == 'edit':
-        edit_student_info_only = True
-    else:
-        edit_student_info_only = False
+        messages.error(request, f"學號錯誤: {e}")        
+        return redirect(referer)
 
-    if request.method == "POST":
-        data = request.POST.copy()
-        form = rdss.forms.StudentForm(data, instance=student_obj)
-        if form.is_valid():
-            form.save()
-            try:
-                if edit_student_info_only:
-                    messages.success(request, f"學生 {student_obj.student_id} 資料更新成功")
-                    return redirect(show_3_seminar_attendance_student_2024)
-                rdss.models.RedeemPrize.objects.get_or_create(student=student_obj, prize=f"餐券-{date}")
-                rdss.models.redeem_prize_2024_3_points_per_day.objects.filter(student=student_obj, date=date).update(redeem=True)
-                messages.success(request, f"學生 {student_obj.student_id} 兌換餐券成功，日期: {date}")
-                collect_pts_logger.info('student {} succeeded to get meal ticket, date: {}'.format(student_obj.student_id, date))
-            except Exception as e:
-                messages.error(request, f"兌換失敗: {e}")
-            return redirect(show_3_seminar_attendance_student_2024)
-        else:
-            messages.error(request, f"兌換失敗: {e}")
-            return redirect(show_3_seminar_attendance_student_2024)
-    form = rdss.forms.StudentForm(instance=student_obj)
-    return render(request, 'admin/seminar_redeem_3_attendance.html', locals())
-
+    try:
+        rdss.models.RedeemPrize.objects.get_or_create(student=student_obj, prize=f"餐券-{date}")
+        rdss.models.redeem_prize_2024_3_points_per_day.objects.filter(student=student_obj, date=date).update(redeem=True)
+        messages.success(request, f"學生 {student_obj.student_id} 兌換餐券成功，日期: {date}")
+        collect_pts_logger.info('student %s succeeded to get meal ticket, date: %s', student_obj.student_id, date)
+    except Exception as e:
+        messages.error(request, f"兌換失敗: {e}")
+    return redirect(referer)
 
 @staff_member_required
 def CollectPoints(request):
@@ -957,13 +935,15 @@ def CollectPoints(request):
             points=Sum('attendance__points')).first()
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
 
-        # 2024 rdss: check whether the student has attended 3 seminars a day
-        target_date = datetime.date(2024, 10, 9)
-        if _2024_rdss_seminar_check_get_meal_tickets(student_obj, target_date, seminar_obj.company):
-            if today == target_date:
-                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {target_date} 說明會 {seminar_obj.company}，可兌換餐券"}
+        # 2024 rdss: check whether the student has attended all seminars a day
+        check_get_ticket, redeem_date, already_redeem = _2024_rdss_seminar_check_get_meal_tickets(student_obj)
+        redeem_target = f"{today} 說明會"
+
+        if check_get_ticket:
+            if already_redeem:
+                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 餐券"}
             else:
-                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 今日參加三場說明會，可兌換餐券"}
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換餐券"}
         # maintain current seminar from post
         current_seminar = seminar_obj
 
@@ -996,7 +976,6 @@ def RedeemPrize(request):
         if form.is_valid():
             form.save()
         else:
-            print(form.errors)
             ui_message = {"type": "error", "msg": "註冊失敗"}
         redeem_form = rdss.forms.RedeemForm(data, instance=redeem_obj)
         if redeem_form.is_valid():
@@ -1005,7 +984,6 @@ def RedeemPrize(request):
                 data['prize'], data['points'])}
             redeem_form = rdss.forms.RedeemForm()
         else:
-            print(redeem_form.errors)
             ui_message = {"type": "error", "msg": "註冊失敗"}
 
         student_form = rdss.forms.StudentForm(instance=student_obj)
