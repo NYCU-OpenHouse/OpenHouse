@@ -310,6 +310,7 @@ def ExportAll(request):
             {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
             {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},
             {'fieldname': 'receipt_contact_phone', 'title': '收據聯絡人公司電話'},
+            {'fieldname': 'receipt_contact_email', 'title': '收據聯絡人Email'},
         ]
         
         for index, pair in enumerate(receipt_title_pairs):
