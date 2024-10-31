@@ -19,6 +19,9 @@ from django.db.utils import IntegrityError
 from django.urls import reverse
 import re
 from django.db.models.functions import Cast
+
+import recruitment_common.views as views_helper
+
 # for logging
 import logging
 
@@ -1130,11 +1133,6 @@ def sync_company_categories(request):
         return redirect('/admin/rdss/companycategories/')
 
 # ========================RDSS public view=================
-def _change_website_start_with_http(website):
-    if not website.startswith('http'):
-        website = 'https://' + website
-    return website
-
 def RDSSPublicIndex(request):
     # semantic ui control
     sidebar_ui = {'index': "active"}
@@ -1145,7 +1143,7 @@ def RDSSPublicIndex(request):
         company_list = []
         for signup in rdss_company:
             com = all_company.get(cid=signup.cid)
-            com.website = _change_website_start_with_http(com.website)
+            com.website = views_helper.change_website_start_with_http(com.website)
             company_list.append(com)
         # sorted bt company categories id
         company_list = sorted(company_list, key=lambda x: x.categories.id)
@@ -1280,7 +1278,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': _change_website_start_with_http(target_company.website),
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
@@ -1298,7 +1296,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': _change_website_start_with_http(target_company.website),
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })

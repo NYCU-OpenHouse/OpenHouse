@@ -32,6 +32,9 @@ import recruit.models
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
 
+import recruitment_common.views as views_helper
+
+
 logger = logging.getLogger('recruit')
 collect_pts_logger = logging.getLogger('stu_attend')
 
@@ -1455,7 +1458,6 @@ def list_jobs(request):
             raise Http404("What are u looking for?")
         for company in RecruitSignup.objects.all():
             try:
-                # TODO: company website may not start with https, lead to 404 error. Need to fix for RECRUIT
                 target_company = Company.objects.get(cid=company.cid, category=category_filtered)
                 companies.append({
                     'cid': target_company.cid,
@@ -1465,7 +1467,7 @@ def list_jobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
@@ -1483,7 +1485,7 @@ def list_jobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
