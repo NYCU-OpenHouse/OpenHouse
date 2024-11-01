@@ -510,7 +510,8 @@ def jobfair_info(request):
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
         booth_num = company.jobfair
-        booth_quantity = booth_num * 3
+        lunch_box_quantity = booth_num * 3
+        parking_tickets_max = 2 + (booth_num - 1) if booth_num > 0 else 0
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
@@ -528,34 +529,29 @@ def jobfair_info(request):
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     reach_deadline =timezone.now() > deadline
-    parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=1, extra=1,
-                                             fields=('id', 'license_plate_number', 'info'),
-                                             widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '需要-連字號，例AA-1234、4321-BB'})})
+    initial_data = {'meat_lunchbox': lunch_box_quantity}
 
     if request.POST:
         if not reach_deadline:
             data = request.POST.copy()
             form = JobfairInfoForm(data=data, instance=jobfair_info_object, max_num=booth_num)
-            formset = parking_form_set(data=data, instance=jobfair_info_object)
-            if form.is_valid() and formset.is_valid():
+            if form.is_valid():
                 new_info = form.save(commit=False)
                 company = RecruitSignup.objects.get(cid=request.user.cid)
                 new_info.company = company
                 new_info.save()
-                formset.save()
-                # return render(request, 'recruit/company/success.html', locals())
                 return redirect(jobfair_info)
             else:
                 print(form.errors)
-
         else:
             error_msg = "實體就博會資訊填寫時間已截止!若有更改需求，請來信或來電。"
             return render(request, 'recruit/error.html', locals())
-
     else:
-        form = JobfairInfoForm(instance=jobfair_info_object, max_num=booth_num)
-        formset = parking_form_set(instance=jobfair_info_object)
+        form = JobfairInfoForm(
+            instance=jobfair_info_object,
+            max_num=booth_num,
+            initial=initial_data
+        )
 
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
