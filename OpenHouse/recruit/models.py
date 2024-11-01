@@ -435,10 +435,9 @@ class JobfairInfo(models.Model):
     parking_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
     job_number = models.SmallIntegerField(u'職缺人數', default=0)
 
-    LUNCH_BOX_CHOICES = [(i, str(i)) for i in range(4)]
     lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素")
-    general_lunch_box = models.SmallIntegerField(u'葷食餐點數量', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
-    veget_lunch_box = models.SmallIntegerField(u'素食餐點', choices=LUNCH_BOX_CHOICES, default=0, blank=True, null=True)
+    meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', default=0, blank=True, null=True)
+    vege_lunchbox = models.SmallIntegerField(u'素食餐點', default=0, blank=True, null=True)
 
     power_req = models.CharField(u'用電需求', max_length=128, blank=True, null=True)
     long_table = models.IntegerField(u'長桌', default=2, blank=True, null=True)
