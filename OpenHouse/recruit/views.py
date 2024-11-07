@@ -194,15 +194,15 @@ def seminar_select_form_gen(request):
 
     slot_colors = SlotColor.objects.all()
     session_list = [
-        {"name": "morning1", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
-        {"name": "noon1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
-        {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "noon3", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "noon4", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
-        {"name": "evening1", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "evening2", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "evening3", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
-        {"name": "evening4", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
+        {"name": "morning1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
+        {"name": "noon1", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
+        {"name": "noon2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
+        {"name": "noon3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
+        {"name": "noon4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
+        {"name": "evening1", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+        {"name": "evening2", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
+        {"name": "evening3", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
+        {"name": "evening4", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
         {"name": "add1", "start_time": configs.session_10_start, "end_time": configs.session_10_end},
     ]
     for session in session_list:
@@ -1219,15 +1219,15 @@ def SeminarAttendedStudent(request):
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
+        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
         "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
     
@@ -1315,16 +1315,16 @@ def Status(request):
     if request.user.is_staff:
         return redirect("/admin")
     mycid = request.user.cid
-    
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    if mycompany.chinese_funded:
-        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     # get the dates from the configs
     try:
         configs = recruit.models.RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     pay_info_file = Files.objects.filter(category="繳費資訊").first()
 
@@ -1335,15 +1335,15 @@ def Status(request):
         "jobfair_slot": "-",
     }
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end), # 2024 spring added
-        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
+        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
         "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
 
@@ -1377,15 +1377,18 @@ def Status(request):
     # Fee display
     fee = 0
     discount = 0
-    discount_text = ""
-    mycompany = Company.objects.get(cid=mycid)
+    discount_text: list[str] = []
     
     try:
         # session fee calculation
         if signup_data.seminar == 'attend_short':
-            fee += configs.session_fee_short
+            seminar_fee = configs.session_fee_short
+            seminar_fee_text = f"50min ({seminar_fee} 元)"
+            fee += seminar_fee
         elif signup_data.seminar == 'attend_long':
-            fee += configs.session_fee_long
+            seminar_fee = configs.session_fee_long
+            seminar_fee_text = f"90min ({seminar_fee} 元)"
+            fee += seminar_fee
 
         # ece fee calculation
         num_of_ece = len(signup_data.seminar_ece.all())
@@ -1395,27 +1398,36 @@ def Status(request):
                 if ece_seminar.ece_member_discount:
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
+            discount_text.append(f"貴公司為電機研究所聯盟永久會員，可享有ECE說明會場次免費優惠 -{discount}元")
         if num_of_ece:
-            fee += configs.session_ece_fee * num_of_ece
+            ece_seminar_fee = configs.session_ece_fee * num_of_ece
+            fee += ece_seminar_fee
 
         # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
-                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                ece_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為電機研究所聯盟永久會員或Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount += ece_discount
             elif mycompany.gloria_startup:
-                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+                startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為Gloria新創會員，可享有第一攤免費優惠 -{startup_discount}元")
+                discount += startup_discount
             elif signup_data.first_participation:
-                discount_text = "貴公司為首次參加本活動，可享有第一攤半價優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+                first_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+                discount_text.append(f"貴公司為首次參加本活動，可享有第一攤半價優惠 -{first_discount}元")
+                discount += first_discount
             elif signup_data.zone and signup_data.zone.name != '一般企業':
-                discount_text = "貴公司為{}專區，可享有第一攤半價優惠".format(signup_data.zone)
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
-            fee += signup_data.jobfair * configs.jobfair_booth_fee
+                zone_discount = min(signup_data.jobfair, 1) * signup_data.zone.discount
+                discount_text.append(f"貴公司為{signup_data.zone}專區，可享有第一攤優惠減免{signup_data.zone.discount}元")
+                discount += zone_discount
 
-        if mycompany.category == '公家單位':
-            discount_text = "貴公司為公家單位，可享有免費優惠"
+            jobfair_fee = signup_data.jobfair * configs.jobfair_booth_fee
+            fee += jobfair_fee
+        
+        mycompany_category = CompanyCategories.objects.get(name=mycompany.categories.name)
+        if mycompany_category.discount:
+            discount_text = [(f"貴公司類別為{mycompany_category.name}，可享有免費優惠")]
             discount = fee
     except AttributeError:
         # Company has not sign up
