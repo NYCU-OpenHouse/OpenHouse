@@ -575,7 +575,7 @@ def JobfairSelectControl(request):
         action = post_data.get("action")
     else:
         raise Http404("What are u looking for?")
-    
+
     try:
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
     except:
@@ -588,28 +588,26 @@ def JobfairSelectControl(request):
         configs = rdss.models.RdssConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    
+
     if action == "query":
         zones = rdss.models.ZoneCategories.objects.all()
-        slot_group = list()
+        slot_group = []
         for zone in zones:
             slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone).annotate(
                 serial_no_int=Cast('serial_no', IntegerField())
             ).order_by('serial_no_int')
-            return_data = list()
+            return_data = []
             for slot in slot_list:
-                slot_info = dict()
+                slot_info = {}
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
                     slot.company.get_company_name()
                 return_data.append(slot_info)
-
             is_myzone = (
                 (rdss.models.Signup.objects.filter(cid=request.user.cid).first().zone == zone) 
-                or 
+                or
                 (zone.name == '一般企業')
             )
-            
             slot_group.append({
                 'slot_type': zone.id,
                 'display': zone.name,
