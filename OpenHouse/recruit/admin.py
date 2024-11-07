@@ -202,6 +202,8 @@ class JobfairOrderAdmin(admin.ModelAdmin):
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'zone', 'company', 'updated')
     zones = models.ZoneCategories.objects.all()
+    change_list_template = "admin/jobfairslot_change_list.html"
+
 
 
 class JobfairParkingInline(admin.StackedInline):
@@ -293,17 +295,6 @@ class RecruitJobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-# @admin.register(models.RecruitOnlineJobfairInfo)
-# class RecruitOnlineJobfairContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = models.RecruitOnlineJobfairInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False
-
-
 @admin.register(models.RecruitSeminarInfo)
 class RecruitSeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)
@@ -324,14 +315,3 @@ class RecruitECESeminarContentAdmin(admin.ModelAdmin):
         if count == 0:
             return True
         return False
-
-
-# @admin.register(models.RecruitOnlineSeminarInfo)
-# class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = models.RecruitOnlineSeminarInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False

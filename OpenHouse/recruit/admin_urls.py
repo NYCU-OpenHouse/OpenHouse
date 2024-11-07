@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'import_student_card_info/$', views.ImportStudentCardInfo, name='recruit_import_student_card_info'),
     url(r'clear_student_info/$', views.ClearStudentInfo, name='recruit_clear_student_info'),
     path(r'companycategories/sync', views.sync_company_categories, name='sync_company_categories'),
+    path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='bulk_add_jobfairslot'),
 
     url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
 

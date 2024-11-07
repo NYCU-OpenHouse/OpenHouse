@@ -1290,6 +1290,25 @@ def ClearStudentInfo(request):
     return render(request, 'recruit/admin/message.html', locals())
 
 # ========================RDSS admin tools view=================
+def bulk_add_jobfairslot(request):
+    zones = ZoneCategories.objects.all()
+    if request.method == 'POST':
+        number = int(request.POST.get('number'))
+        zone_id = int(request.POST.get('zone'))
+        zone = ZoneCategories.objects.get(id=zone_id)
+        max_serial_no = JobfairSlot.objects.all().last()
+        max_serial_no = (int(max_serial_no.serial_no)) if max_serial_no else 0
+
+        for i in range(1, number + 1):
+            new_serial_no = max_serial_no + i
+            JobfairSlot.objects.create(serial_no=str(new_serial_no), zone=zone)
+
+        messages.success(request, f'Successfully added {number} new JobfairSlots of {zone}.')
+        return redirect('/admin/recruit/jobfairslot/')
+
+    return render(request, 'admin/bulk_add_jobfairslot.html', locals())
+
+
 @staff_member_required
 def sync_company_categories(request):
     try:
