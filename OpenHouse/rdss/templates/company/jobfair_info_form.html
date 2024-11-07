@@ -2,8 +2,44 @@
 {% load static %}
 
 {% block 'custom_head' %}
-    <title>就博會資訊 | OpenHouse 企業校園徵才</title>
+    <title>就業博覽會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/rdss/info.css" %} rel="stylesheet">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const meatLunchboxField = document.getElementById("id_meat_lunchbox");
+            const vegeLunchboxField = document.getElementById("id_vege_lunchbox");
+            const maxLimit = {{ booth_quantity }};
+            const errorMessage = document.getElementById("error-message");
+    
+            function validateTotal() {
+                const meatLunchbox = parseInt(meatLunchboxField.value) || 0;
+                const vegeLunchbox = parseInt(vegeLunchboxField.value) || 0;
+                const total = meatLunchbox + vegeLunchbox;
+    
+                if (total >= maxLimit) {
+                    errorMessage.style.display = "block";
+                } else {
+                    errorMessage.style.display = "none";
+                }
+    
+                // Disable vege_lunchbox if meat_lunchbox reaches or exceeds max limit for meat_lunchbox alone
+                if (total >= maxLimit) {
+                // Adjust values if total exceeds max limit
+                    if (meatLunchbox + vegeLunchbox >= maxLimit) {
+                        if (document.activeElement === meatLunchboxField && meatLunchbox > maxLimit - vegeLunchbox) {
+                            meatLunchboxField.value = maxLimit - vegeLunchbox;
+                        } else if (document.activeElement === vegeLunchboxField && vegeLunchbox > maxLimit - meatLunchbox) {
+                            vegeLunchboxField.value = maxLimit - meatLunchbox;
+                        }
+                    }
+                }
+            }
+    
+            // Listen for changes in both fields to validate total and toggle vege_lunchbox
+            meatLunchboxField.addEventListener("input", validateTotal);
+            vegeLunchboxField.addEventListener("input", validateTotal);
+        });
+    </script>
 {% endblock %}
 
 {% block 'content' %}
@@ -79,6 +115,9 @@
             <div class="field">
                 <label>{{ form.vege_lunchbox.label }}</label>
                 {{ form.vege_lunchbox }}
+                <div id="error-message" style="color: red; display: none;">
+                    已達上限，葷素便當總和不得超過 {{ booth_quantity }}
+                </div>
             </div>
             {% else %}
             <div class="field">
@@ -98,6 +137,7 @@
             <span style="color:red; background-color: yellow;">
                 貴公司至多 {{ booth_quantity }} 份。
             </span>
+            響應節能減碳，活動當日必須領取此份表單填寫的便當數量。
         </p>
 
         <div class="fields">

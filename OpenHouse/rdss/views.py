@@ -209,9 +209,12 @@ def SignupRdss(request):
                 timezone.localtime(configs.rdss_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
             return render(request, 'error.html', locals())
 
-    edit_instance_list = rdss.models.Signup.objects.filter(cid=request.user.cid)
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
-    
+    try:
+        signup_info = rdss.models.Signup.objects.get(cid=request.user.cid)
+    except ObjectDoesNotExist:
+        signup_info = None
+
     if request.POST:
         # copy the data from post
         data = request.POST.copy()
@@ -223,16 +226,14 @@ def SignupRdss(request):
             filtered_zone = data.get('zone')
             zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
             if zone.name != '一般企業':
-                my_company_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
-                zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+                my_company_category = rdss.models.CompanyCategories.objects.get(
+                    name=mycompany.categories.name
+                )
                 if my_company_category not in zone.category.all():
                     messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
-                    form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
+                    form = rdss.forms.SignupCreationForm(data, instance=signup_info)
                     return render(request, 'company/signup_form.html', locals())
-        if edit_instance_list:
-            form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
-        else:
-            form = rdss.forms.SignupCreationForm(data)
+        form = rdss.forms.SignupCreationForm(data, instance=signup_info)
         if form.is_valid():
             form.save()
             form.save_m2m()
@@ -240,13 +241,8 @@ def SignupRdss(request):
             # for debug usage
             print(form.errors.items())
         return redirect(SignupRdss)
-
-    # edit
-    if edit_instance_list:
-        form = rdss.forms.SignupCreationForm(instance=edit_instance_list[0])
-        signup_edit_ui = True  # for semantic ui control
     else:
-        form = rdss.forms.SignupCreationForm
+        form = rdss.forms.SignupCreationForm(instance=signup_info)
     return render(request, 'company/signup_form.html', locals())
 
 
@@ -330,6 +326,8 @@ def JobfairInfo(request):
         jobfair_info = rdss.models.JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
+    
+    initial_data = {'meat_lunchbox': booth_quantity}
 
     if request.POST:
         data = request.POST.copy()
@@ -343,7 +341,7 @@ def JobfairInfo(request):
         else:
             print(form.errors)
     else:
-        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num)
+        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num, initial=initial_data)
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}
