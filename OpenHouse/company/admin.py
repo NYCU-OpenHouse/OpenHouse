@@ -311,7 +311,7 @@ class UserAdmin(BaseUserAdmin):
          ),
          ("會員身份", {
             'classes': ('wide',),
-            'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
+            'fields': ('ece_member_normal', 'ece_member', 'gloria_normal', 'gloria_startup')
         }
          ),
          ("收據資訊", {
@@ -353,7 +353,7 @@ class UserAdmin(BaseUserAdmin):
          ),
          ("會員身份", {
             'classes': ('wide',),
-            'fields': ('ece_member', 'gloria_normal', 'gloria_startup')
+            'fields': ('ece_member_normal', 'ece_member', 'gloria_normal', 'gloria_startup')
         }
          ),
          ("收據資訊", {
