@@ -4,6 +4,49 @@
 {% block 'custom_head' %}
     <title>就博會選位 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/recruit/Controller.js" %}></script>
+    <script>
+        ctrl.controller('jobfair_select', function ($scope, $window, $http, $timeout, $interval, $log) {
+            var ctrl = this;
+            ctrl.selected = null;
+
+            function refresh() {
+                $http.post('/company/recruit/jobfair/select_ctrl/', {"action": "query"}).success(function (response) {
+                    ctrl.slot = response.data;
+                    console.log(response.data);
+                    ctrl.my_slot_list = response.my_slot_list;
+                    ctrl.select_ctrl = response.select_ctrl;
+                });
+            };
+            refresh();
+            $interval(function () {
+                refresh();
+            }, 10000);
+
+            ctrl.select = function (slot_id) {
+                var data = {};
+                data.action = "select";
+                data.slot = slot_id;
+                $http.post('/company/recruit/jobfair/select_ctrl/', data).success(function (response) {
+                    refresh();
+                    if (response.success) {
+                        $window.alert("選位成功");
+                    } else if (!response.success) {
+                        $window.alert(response.msg);
+                    }
+                });
+            };
+
+            ctrl.cancel = function (slot_id) {
+                var data = {};
+                data.action = "cancel";
+                data.slot = slot_id;
+                $http.post('/company/recruit/jobfair/select_ctrl/', data).success(function (response) {
+                    refresh();
+                });
+            };
+
+        });
+    </script>
 {% endblock %}
 
 {% block 'content' %}
