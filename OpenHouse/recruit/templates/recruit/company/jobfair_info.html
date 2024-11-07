@@ -5,44 +5,51 @@
     <title>就業博覽會資訊 | OpenHouse 企業校園徵才</title>
     <link href={% static "css/recruit/info.css" %} rel="stylesheet">
     <script>
-        function init() {
-            var selectedValue = $('#id_parking_type').val();
-            if (selectedValue === 'register') {
-                    $('#registerField').show();
-            } else if (selectedValue === 'ticket') {
-                    $('#ticketField').show();
-            }
-        }
-
-         $(document).ready(function () {
-            init();
-
-            $('#id_parking_type').change(function () {
-                $('#registerField').hide();
-                $('#ticketField').hide();
-        
-                var selectedValue = $(this).val();
-                console.log(selectedValue);
-        
-                if (selectedValue === 'register') {
-                    $('#registerField').show();
-                } else if (selectedValue === 'ticket') {
-                    $('#ticketField').show();
+        document.addEventListener("DOMContentLoaded", function() {
+            const meatLunchboxField = document.getElementById("id_meat_lunchbox");
+            const vegeLunchboxField = document.getElementById("id_vege_lunchbox");
+            const maxLimit = {{ booth_quantity }};
+            const errorMessage = document.getElementById("error-message");
+    
+            function validateTotal() {
+                const meatLunchbox = parseInt(meatLunchboxField.value) || 0;
+                const vegeLunchbox = parseInt(vegeLunchboxField.value) || 0;
+                const total = meatLunchbox + vegeLunchbox;
+    
+                if (total >= maxLimit) {
+                    errorMessage.style.display = "block";
+                } else {
+                    errorMessage.style.display = "none";
                 }
-            });
+    
+                // Disable vege_lunchbox if meat_lunchbox reaches or exceeds max limit for meat_lunchbox alone
+                if (total >= maxLimit) {
+                // Adjust values if total exceeds max limit
+                    if (meatLunchbox + vegeLunchbox >= maxLimit) {
+                        if (document.activeElement === meatLunchboxField && meatLunchbox > maxLimit - vegeLunchbox) {
+                            meatLunchboxField.value = maxLimit - vegeLunchbox;
+                        } else if (document.activeElement === vegeLunchboxField && vegeLunchbox > maxLimit - meatLunchbox) {
+                            vegeLunchboxField.value = maxLimit - meatLunchbox;
+                        }
+                    }
+                }
+            }
+    
+            // Listen for changes in both fields to validate total and toggle vege_lunchbox
+            meatLunchboxField.addEventListener("input", validateTotal);
+            vegeLunchboxField.addEventListener("input", validateTotal);
         });
     </script>
 {% endblock %}
 
 {% block 'content' %}
-    <form method="post" class="ui info form error" action=".">
+    <form method="POST" class="ui info form error" action=".">
         {% csrf_token %}
         <h1 class="ui dividing header">Open House 春季徵才 - 就業博覽會資訊</h1>
-        {% if form.errors or formset.errors %}
+        {% if form.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
                 {{ form.errors }}
-                {{ formset.errors }}
             </div>        
         {% elif jobfair_info_object %}
             <div class="ui blue compact message">
@@ -50,7 +57,14 @@
             </div>
         {% endif %}
         <h2 style="color:red">請企業於 {{ deadline }} 前完成「就業博覽會資訊」填寫，以進行行政施工等準備作業</h2>
+        <div class="ui error message">
+            未填寫者視同放棄正名權利，由本組自行填寫，企業不得有異議。 招牌_網路上找到的名稱
+        </div>
         <h3 class="ui dividing header">攤位資訊</h3>
+        <p>
+            請務必確認攤位招牌名稱中文+英文大小寫是否正確。
+            將再自行裝潢者，請務必另勾選無需校對欄位，以確定免除校對流程。
+        </p>
         <div class="two fields">
             <div class="field required">
                 <label>{{ form.sign_name.label }}</label>
@@ -75,57 +89,67 @@
             <div class="field required">
                 <label>{{ form.contact_person.label }}</label>
                 {{ form.contact_person }}
+                {{ form.contact_person.errors }}
             </div>
             <div class="field required">
                 <label>{{ form.contact_mobile.label }}</label>
                 {{ form.contact_mobile }}
+                {{ form.contact_mobile.errors }}
             </div>
             <div class="field required">
                 <label>{{ form.contact_email.label }}</label>
                 {{ form.contact_email }}
+                {{ form.contact_email.errors }}
             </div>
         </div>
 
-        <div class="three fields">
+        <div class="two fields">
             {% if food_type == 'bento' %}
             <div class="field">
-                <label>{{ form.general_lunch_box.label }}</label>
-                {{ form.general_lunch_box }}
+                <label>{{ form.meat_lunchbox.label }}</label>
+                {{ form.meat_lunchbox }}
             </div>
             <div class="field">
-                <label>{{ form.veget_lunch_box.label }}</label>
-                {{ form.veget_lunch_box }}
+                <label>{{ form.vege_lunchbox.label }}</label>
+                {{ form.vege_lunchbox }}
+                <div id="error-message" style="color: red; display: none;">
+                    已達上限，葷素便當總和不得超過 {{ booth_quantity }}
+                </div>
             </div>
             {% else %}
             <div class="field">
                 <label>{{ form.lunch_box.label }}</label>
                 {{ form.lunch_box }}
                 {{ form.lunch_box.help_text }}
-                <p>每攤位免費提供至多3份午餐。<span style="color:red;">貴公司至多 {{ booth_quantity }} 份。</span></p>
             </div>
             {% endif %}
-
             <div class="field">
                 <label>餐點注意事項</label>
                 {{ food_info | safe }}
             </div>
-
+            <br/>
+        </div>
+        <p style="font-size: larger; font-weight: bold;">
+            每攤位免費提供至多3份午餐。
+            <span style="color:red; background-color: yellow;">
+                貴公司至多 {{ booth_quantity }} 份。
+            </span>
+            響應節能減碳，活動當日必須領取此份表單填寫的便當數量。
+        </p>
+        <div class="field">
+            {% now 'Y' as current_year %}
+            {% now 'm' as current_month %}
+            {% if current_month > '06' %}
+                <label>
+                    {{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+            {% else %}
+                <label>
+                    {{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
+            {% endif %}
             <div class="field">
-                {% now 'Y' as current_year %}
-                {% now 'm' as current_month %}
-                {% if current_month > '06' %}
-                    <label>
-                        {{ current_year|add:"1" }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
-                {% else %}
-                    <label>
-                        {{ current_year }}{{ form.job_number.label }}{{ form.job_number.errors }}</label>
-                {% endif %}
-                <div class="field">
-                    {{ form.job_number }}
-                </div>
+                {{ form.job_number }}
             </div>
         </div>
-
         <div class="field">
             <label>{{ form.send_obj.label }}</label>
             {{ form.send_obj }}
@@ -135,76 +159,23 @@
             {{ form.power_req }}
             <p>攤位用電建議500瓦以內，請填寫預計使用電器(如筆電、音響等)，如有模擬機、爆米花機、可樂機等耗電設備，請務必填寫並須由企業自行負擔小型發電機費用</p>
         </div>
-        <!-- 2024 spring 藏起來下方截圖+所有可變動的欄位 -->
-        <!-- <div class="ui field">
-            <label class="ui">攤位實際需求桌椅數</label>
-            <div class="ui blue segment">
-                <label>{{ form.long_table.label }}</label>
-                {{ form.long_table }}
-                <label>{{ form.chair.label }}</label>
-                {{ form.chair }}
-                <label>{{ form.doily.label }}</label>
-                {{ form.doily }}
-                <label>{{ form.flag_pole_socket.label }}</label>
-                {{ form.flag_pole_socket }}
-                <label>{{ form.searchlight.label }}</label>
-                {{ form.searchlight }}
-                <p>
-                    每個攤位基本提供2長桌5椅1桌巾，為讓實際使用數量貼近企業需求，免去搬運勞務之苦，請協助填寫。如超過原定數量，會議桌每張加收300元/張、椅子50元/張、紅桌巾100元/件、旗桿座組100元/組、白光探照燈400元/盞，由企業自備現金於現場繳納給施工廠商並領取發票。</p>
-            </div>
-        </div> -->
-        <!-- <div class="field">
-            <label>{{ form.ps.label }}</label>
-            {{ form.ps }}
-            <p>
-                如企業攤位需請本校施工廠商進行【加價-客製化修改】(例如改為隔間攤位、攤位招牌架高等等，請於本欄位說明，後續將由施工廠商評估是否可施作，並提供進一步報價，費用亦由企業逕付本校施工廠商(非匯給本校)。)</p>
-        </div> -->
         <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
-        <p>說明(1)：參加2023/3/9(六)就業博覽會之企業，至多提供1部汽車入校停車費抵免；企業可選擇「事先登記車牌號碼」與「當日索取紙本停車抵用券」兩種並行。</p>
+        <p>說明(1)：參加就業博覽會之企業，每攤提供汽車入校停車費抵免；企業可選擇需要索取多少紙本停車抵用券，活動當日發放。</p>
         <ul>
             <li>
-                <span style="color:red; background-color: yellow;">當日索取紙本停車抵用券</span>: 本組當日發放紙本停車證，可免費抵用一台汽車的停車費。
+                <span style="color:red; background-color: yellow;">第一攤至多提供2張，第二攤後每攤1張</span>紙本停車抵用券</span>
             </li>
             <li>
-                <span style="color:red; background-color: yellow;">企業事先登記A車車牌號碼</span>: 本組呈報車號給駐警隊，請駐警隊登記A車免費。活動當天A車免費進出校園一次，若開其他車則須付費。
+                <span style="color:red; background-color: yellow;">當日索取紙本停車抵用券</span>: 本組當日發放紙本停車證，一張停車抵用券可免費抵用一台汽車的停車費。
             </li>
         </ul>
-        <p>說明(2)：本校進出車輛自2020年1月已改用車號辨識系統，可加速企業同仁離校速度與簡化繳費流程，如選擇此項之車輛須提供完整車號(需要-連字號，例AA-1234、4321-BB)；若無法事先確認入校車輛之車牌號碼，請選擇索取紙本汽車抵用券。</p>
-        <p>說明(3)：如超過基本提供數量，須自付每部每時30元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
-        <!-- <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p> -->
-        <div class="field">
-            <label>停車證領取方式</label>
-            {{ form.parking_type.errors }}
-            {{ form.parking_type }}
-        </div>
-        <div class="three fields" id="ticketField" style="display: none;">
+        <p>說明(2)：如超過基本提供數量，須自付每部每時30元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
+        <div class="two fields">
             <div class="field">
                 <label>{{ form.parking_tickets.label }}</label>
                 {{ form.parking_tickets }}
-                <p>每攤位免費提供1張停車證。<span style="color:red;">貴公司至多 {{ booth_num }} 張。</span></p>
+                <p>第一攤至供2張，第二攤後每攤1張停車證。<span style="color:red;">貴公司至多 {{ parking_tickets_max }} 張。</span></p>
             </div>
-        </div>
-
-        <div class="field" id="registerField" style="display: none;">
-            {{ formset.management_form }}
-            {% for f in formset %}
-                {{ f.id }}
-                {{ f.info }}
-                <label>
-                    {{ f.license_plate_number.label }} {{ forloop.counter }} {{ f.license_plate_number.errors }}</label>
-                <div class="fields">
-                        {{ f.license_plate_number }}
-                    <!-- {% if formset.can_delete %}
-                        <div class="two wide field">
-                            <div class="ui checkbox">
-                                {{ f.DELETE }}
-                                <label>刪除</label>
-                            </div>
-                        </div>
-                    {% endif %} -->
-                </div>
-            {% endfor %}
-            <p style="color:red; background-color: yellow;">車輛須提供完整車號(需要-連字號，例AA-1234、4321-BB)</p>
         </div>
         {% if reach_deadline %}
             <div class="ui red button" style="float: right;" >填寫截止</div>

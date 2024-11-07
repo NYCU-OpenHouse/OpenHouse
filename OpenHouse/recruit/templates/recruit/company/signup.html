@@ -7,6 +7,14 @@
 {% endblock %}
 
 {% block 'content' %}
+{% if messages %}
+    {% for message in messages %}
+            <div class="ui {% if message.tags %}{{ message.tags }} message{% else %}message{% endif %}" style="width:70%;margin:auto">
+                {{ message }}
+            </div>
+            <br />
+        {% endfor %}
+    {% endif %}
     <form class="ui form" method="POST" action="{% url 'recruit_signup' %}">
         {% csrf_token %}
 
@@ -43,7 +51,7 @@
                 <tr>
                     <td>專區調查</td>
                     <td>
-                        攤位區域分為「一般企業」、「人文、管理與金融企業」、「智慧醫療與科技企業」
+                        攤位區域分為「一般企業」、「多元職涯專區」
                         <br/>請選擇貴公司所屬專區
                         {{ form.zone }}
                     </td>
@@ -51,7 +59,7 @@
                 <tr>
                     <td>過往參與調查</td>
                     <td>
-                        <p>是否曾參加2023年春、秋就業博覽會、企業說明會</p>
+                        <p>是否曾參加2024年春、秋就業博覽會、企業說明會</p>
                         {{ form.history }}
                     </td>
                 </tr>
@@ -70,8 +78,6 @@
                 <tr>
                     <td style="width: 6em;">活動日期</td>
                     <td>2024年3月~2024年5月 電子所、電機系將再另行公告</td>
-                    <!-- <td>{{ configs.seminar_ece_start_date|date:"Y年m月d日(D)" }} ~
-                        {{ configs.seminar_ece_end_date|date:"Y年m月d日(D)" }}</td> -->
                 </tr>
                 <tr>
                     <td>活動內容</td>
@@ -92,13 +98,11 @@
                 <tr>
                     <td>會員確認聯絡資訊</td>
                     <td>
-                            電機資源產學聯盟
-                            聯絡人：
-                            電機系
-                            馬駿亞小姐
-                            ethel@nycu.edu.tw
-                            (03)5712121#54072
-                            <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
+                        <ul class="ui list">
+                            <li>電機資源產學聯盟聯絡人：電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072</li>
+                            <li>電子所活動聯絡人：電子所 翁珮婷小姐 heyrebecca@nycu.edu.tw (03)5712121#54103</li>
+                        </ul>
+                        <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
                     </td>
                 </tr>
             </table>
@@ -124,7 +128,6 @@
                     <td style="width: 6em;">活動日期</td>
                     <td>{{ configs.seminar_start_date|date:"Y年m月d日(D)" }}
                         ~ {{ configs.seminar_end_date|date:"Y年m月d日(D)" }} 額滿為止
-                        <br/> ★ 3月8日周五整日不排場次
                     </td>
 
                 </tr>
@@ -178,51 +181,9 @@
                 {{ form.seminar }}
             </div>
         </div>
+
         <div class="ui divider"></div>
         
-
-        {#<div class="ui purple inverted segment">#}
-        {#    <h1 class="ui inverted header">#}
-        {#        <i class="desktop icon" style="color:white"></i>#}
-        {#        線上企業說明會#}
-        {#    </h1>#}
-{##}
-        {#    <table class="ui celled table">#}
-        {#        <tr>#}
-        {#            <td style="width: 6em;">活動日期</td>#}
-        {#            <td>{{ configs.seminar_online_start_date|date:"Y年m月d日(D)" }} ~#}
-        {#                {{ configs.seminar_online_end_date|date:"Y年m月d日(D)" }}</td>#}
-        {#        </tr>#}
-        {#        <tr>#}
-        {#            <td>活動內容</td>#}
-        {#            <td>#}
-        {#                <p>#}
-        {#                    以線上直播串流方式舉辦，企業透過平台可傳達公司訊息，解說公司內部企業文化、經營理念、薪資福利制度、徵才職缺以及需求等。 #}
-        {#                </p>#}
-        {#                <ol class="ui list">#}
-        {#                    <li>#}
-        {#                        企業以播放影片、書面介紹或其他方式做公司簡介，針對所需專業人才，提供必要之說明，並傳達企業專業理念與形象。#}
-        {#                    </li>#}
-        {#                    <li>企業可自行設計活動內容並提供抽獎等以吸引參加人潮。</li>#}
-        {#                </ol>#}
-        {#            </td>#}
-        {#        </tr>#}
-        {#        <tr>#}
-        {#            <td>提供設備</td>#}
-        {#            <td>線上徵才系統平台</td>#}
-        {#        </tr>#}
-        {#    </table>#}
-{##}
-        {#    <div class="ui segment">#}
-        {#        <h3 class="ui header">選取欲報名線上說明會時段</h3>#}
-        {#        <p>活動費用： {{ configs.session_online_fee }} 元</p>#}
-        {#        {{ form.seminar_online }}#}
-        {#    </div>#}
-        {#</div>#}
-{##}
-        {#<div class="ui divider"></div>#}
-        
-
         <div class="ui green inverted segment">
             <h1 class="ui header">
                 <i class="student icon" style="color:white"></i>
@@ -255,7 +216,26 @@
                     <td>
                         <ol class="ui list">
                             <li>本校工作人員協助報到及處理隨機突發狀況。</li>
-                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，每攤位至多提供3份；素食餐點請事先告知。</li>
+                            <li>提供企業免費校內停車證，中午提供各廠商便當與飲水，素食餐點請事先告知。</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>會員確認聯絡資訊</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>
+                                電機資源產學聯盟
+                                聯絡人：
+                                電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072
+                                <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
+                            </li>
+                            <li>
+                                國際產學聯盟總中心 (GLORIA)
+                                聯絡人： 
+                                Peggy陸長欣小姐 peggylu@nycu.edu.tw (03)5712121#71108 (手機)0905-939-103
+                                <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
+                            </li>
                         </ol>
                     </td>
                 </tr>
@@ -264,8 +244,8 @@
                 <h3 class="ui header">報名就博會</h3>
                 <ol class="ui list">
                     <li>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</li>
-                    <li>同集團數量上限為6攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
-                    <li> 欲參加之「人文、管理與金融專區」或「智慧醫療與科技專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】之「所營事業資料」進行覆核。</li>
+                    <li>同集團數量上限為4攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
+                    <li> 欲參加之「多元職涯專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】之「所營事業資料」進行覆核。</li>
                 </ol>
                 <div class="ui labeled input">
                     <div class="ui label">
@@ -273,139 +253,10 @@
                     </div>
                     {{ form.jobfair }}
                 </div>
-                <!--
-                <div class="ui yellow message">
-                  每家廠商至多報名4個攤位，超過4攤以4攤計
-                </div>
-                -->
             </div>
         </div>
 
         <div class="ui divider"></div>
-        
-        {# <div class="ui pantone inverted segment">#}
-        {#     <h1 class="ui header">#}
-        {#         <i class="laptop icon"></i>#}
-        {#         線上就業博覽會#}
-        {#     </h1>#}
-{# #}
-        {#     <table class="ui celled table">#}
-        {#         <tr>#}
-        {#             <td style="width: 6em;">活動日期</td>#}
-        {#             <td>#}
-        {#                 <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p>#}
-        {#                 {# <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p> #}
-        {#             </td>#}
-        {#         </tr>#}
-        {#         <tr>#}
-        {#             <td>活動內容</td>#}
-        {#             <td>#}
-        {#                 透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。#}
-        {#             </td>#}
-        {#         </tr>#}
-        {#         <tr>#}
-        {#             <td>提供服務</td>#}
-        {#             <td>#}
-        {#                 線上徵才系統平台，非單向傳播，可與學生互動。#}
-        {#             </td>#}
-        {#         </tr>#}
-        {#     </table>#}
-{# #}
-        {#     <div class="ui segment">#}
-        {#         <h3 class="ui header">報名線上就博會</h3>#}
-        {#         <p>活動費用： {{ configs.jobfair_online_fee }} 元</p>#}
-        {#         <div class="ui checkbox">#}
-        {#             {{ form.jobfair_online }}#}
-        {#             <label style="color:black">{{ form.jobfair_online.label }}</label>#}
-        {#         </div>#}
-        {#     </div>#}
-        {# </div>#}
-{# #}
-        {# <div class="ui divider"></div>#}
-        
-        {#<div class="ui black inverted segment">#}
-        {#    <h1 class="ui header">#}
-        {#        <i class="users icon" style="color:white"></i>#}
-        {#        企業職場導師#}
-        {#    </h1>#}
-        {#    <table class="ui celled table">#}
-        {#        <tr>#}
-        {#            <td style="width: 6em;">活動內容</td>#}
-        {#            <td>#}
-        {#                本活動內容擬邀請企業人資和各領域資深主管、職涯專業諮商師蒞校擔任企業職場老師或職涯教練，以一對一近距離指導方式，為本校同學進行個人生涯發展規劃及職涯諮詢指導、履歷寫作、面試技巧，讓學生發掘自我潛能並在起跑點上更具備潛在優勢。#}
-        {#            </td>#}
-        {#        </tr>#}
-        {#        <tr>#}
-        {#            <td>活動說明</td>#}
-        {#            <td>#}
-        {#                <ol class="ui list">#}
-        {#                    <li>業師每次駐點至少2小時，企業可於報名系統上勾選擔任「企業職場導師」意願，擔任企業導師可為人資或是各部門技術及行政主管；主辦單位保留最終邀請企業職涯導師名單之權利。#}
-        {#                    </li>#}
-        {#                    <li>一對一職涯諮詢服務：同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約。</li>#}
-        {#                </ol>#}
-        {#            </td>#}
-        {#        </tr>#}
-        {#        <tr>#}
-        {#            <td>回饋方案</td>#}
-        {#            <td>企業參與本次活動可增加選位積分5分</td>#}
-        {#        </tr>#}
-        {#    </table>#}
-        {#    <div class="ui segment">#}
-        {#        <h3 class="ui header">願意提供</h3>#}
-        {#        <div class="ui checked checkbox">#}
-        {#            {{ form.career_tutor }}#}
-        {#            <label style="color:black">{{ form.career_tutor.label }}</label>#}
-        {#        </div>#}
-        {#    </div>#}
-        {#</div>#}
-
-        {#<div class="ui divider"></div>#}
-        <!-- 就職講座 -->
-        <!-- <div class="ui pantone inverted segment">
-            <h1>
-                <i class="laptop icon"></i>
-                就職講座
-            </h1>
-            <table class="ui celled table">
-
-                    <tr>
-                        <td>活動日期</td>
-                        <td>2023年1月~6月; (暫定)星期三或星期五 12:10 ~ 17:00 (1-2 小時)</td>
-                    </tr>
-                    <tr>
-                        <td>活動內容</td>
-                        <td>
-                            藉由參加講座／參訪來提升本校同學對企業的實際瞭解，對同學籌劃未來就
-                            業藍圖有所助益；參加學生以應屆畢業碩博士生與大四學生優先。
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>活動說明</td>
-                        <td>
-                            講座內容
-                            <ol class="ui list">
-                                <li>就職前資料準備：履歷及自傳準備、個人特質及作品的呈現方式……等</li>
-                                <li>面試、就職後須知(薪資保密)、公司適應、跨國溝通/協作……等</li>
-                            </ol>
-                            <strong>*請企業錄取後主動來信提供可辦理講座日期及時段。</strong>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>回饋方案</td>
-                        <td>企業參與本次活動可增加 3000 分；未主動聯繫之企業下期將不予加分。</td>
-                    </tr>
-
-            </table>
-            <div class="ui segment">
-                <h3>願意提供</h3>
-                <div class="ui checked checkbox">
-                    {{form.lecture}}
-                    <label style="color:black">{{form.lecture.label}}</label>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- <div class="ui divider"></div> -->
 
         <!-- 諮詢服務 -->
         <div class="ui black inverted segment">
@@ -491,33 +342,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div class="ui divider"></div>
-
-        <div class="ui orange inverted segment">
-            <h1 class="ui header">
-                <i class="ticket alternate icon" style="color:white"></i>
-                公司收據
-            </h1>
-            <div class="ui segment">
-                <h3 class="ui header">{{ form.receipt_year.label }}</h3>
-                <ol class="ui divided list">
-                    <li><span style="color: #0070c0;">本校無法預開收據作為企業請款用途</span>，企業先行繳款後才能開立收據；
-                        繳費期限為<span style="color: red; text-decoration: underline;">112年1月9日(五)</span>
-                    </li>
-                    <li>
-                        急需2022年收據報帳者，請務必在<strong style="text-decoration: underline;">12/21(三)前</strong>完成繳款及來信告知。因政策關係，當年度繳費僅獲當年度收據。
-                    </li>
-                    <li>請於網頁「公司資料」選單內
-                        <span style="text-decoration: underline;">確認收據開立抬頭、統編、郵寄地址、收件人等資訊</span>
-                    </li>
-                </ol>
-                {{ form.receipt_year.errors }}
-                {{ form.receipt_year }}
-                {{ form.receipt_year.help_text }}
-            </div>
-        </div> -->
-
 
         <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
     </form>

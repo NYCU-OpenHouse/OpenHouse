@@ -70,7 +70,15 @@ class JobfairInfoCreationForm(forms.ModelForm):
         exclude = ['company']
 
     def __init__(self, *args, max_num=None, **kwargs):
+        # (2025 recruit) The default value of total lunchbox is ${max_num * 3} meal_lunchbox.
+        initial_data = kwargs.pop('initial', {})
+        default_meat_lunchbox = initial_data.get('meat_lunchbox', max_num*3)
+
         super(JobfairInfoCreationForm, self).__init__(*args, **kwargs)
+        # Set default values
+        if not self.instance.pk or not self.instance.meat_lunchbox:
+            self.fields['meat_lunchbox'].initial = default_meat_lunchbox
+        # Set attributes max and min
         self.fields['lunch_box'].widget.attrs.update({
             'max' : max_num*3,
             'min' : '0'

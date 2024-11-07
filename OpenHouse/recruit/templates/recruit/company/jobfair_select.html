@@ -4,6 +4,49 @@
 {% block 'custom_head' %}
     <title>就博會選位 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/recruit/Controller.js" %}></script>
+    <script>
+        ctrl.controller('jobfair_select', function ($scope, $window, $http, $timeout, $interval, $log) {
+            var ctrl = this;
+            ctrl.selected = null;
+
+            function refresh() {
+                $http.post('/company/recruit/jobfair/select_ctrl/', {"action": "query"}).success(function (response) {
+                    ctrl.slot = response.data;
+                    console.log(response.data);
+                    ctrl.my_slot_list = response.my_slot_list;
+                    ctrl.select_ctrl = response.select_ctrl;
+                });
+            };
+            refresh();
+            $interval(function () {
+                refresh();
+            }, 10000);
+
+            ctrl.select = function (slot_id) {
+                var data = {};
+                data.action = "select";
+                data.slot = slot_id;
+                $http.post('/company/recruit/jobfair/select_ctrl/', data).success(function (response) {
+                    refresh();
+                    if (response.success) {
+                        $window.alert("選位成功");
+                    } else if (!response.success) {
+                        $window.alert(response.msg);
+                    }
+                });
+            };
+
+            ctrl.cancel = function (slot_id) {
+                var data = {};
+                data.action = "cancel";
+                data.slot = slot_id;
+                $http.post('/company/recruit/jobfair/select_ctrl/', data).success(function (response) {
+                    refresh();
+                });
+            };
+
+        });
+    </script>
 {% endblock %}
 
 {% block 'content' %}
@@ -24,7 +67,7 @@
                 在選位時間內，直接按「選位」按鈕選位。並看到該場次變為紅色且顯示貴公司名稱才算選位成功
             </div>
             <div class="item">
-                如有任何問題，請立刻撥打活動專線：(03)5131365 或 (03)5712121分機31365、50659
+                如有任何問題，請立刻撥打活動專線：(03)5131365(林小姐) 或 (03)5712121分機31365(林小姐)、50659(張小姐) 
             </div>
         </div>
     </div>
@@ -37,38 +80,32 @@
 
     <div ng-app="oh" ng-controller="jobfair_select as ctrl">
         <br/>
-        <h2 class="ui dividing header">實體就博會選位</h2>
+        <h2 class="ui dividing header">就博會選位</h2>
         <div ng-if="ctrl.select_ctrl.display" class="ui compact warning message">{$ ctrl.select_ctrl.msg$}</div>
         <div class="ui list">
             <div class="item">
-                <i class="users icon"></i>
-                <div class="content">
+                <i class="black users icon"></i>
                     貴公司選位開始時間為：{{ jobfair_select_time }}
-                </div>
             </div>
             <div class="item">
-                <i class="marker icon"></i>
-                <div class="content">
+                <i class="black marker icon"></i>
                     貴公司攤位數量為：{{ my_signup.jobfair }}
-                </div>
             </div>
             <div class="item">
-                <i class="marker icon"></i>
-                <div class="content">
-                    貴公司類別為：{{ my_signup.get_company.category }}
-                </div>
+                <i class="black marker icon"></i>
+                    貴公司專區為：{{ my_signup.zone.name }}
             </div>
         </div> 
-        <div class="ui segment" ng-repeat="group in ctrl.slot_group">
-            <h3 class="ui dividing header">{$ group.display$}</h3>
-            <p ng-if="!group.is_mygroup">非貴公司類別</p>
+        <div class="ui segment" ng-repeat="group in ctrl.slot">
+            <h3 class="ui dividing header">{$ group.display $}</h3>
+            <p ng-if="!group.is_myzone">非貴公司專區</p>
             <div class="ui six column padded grid">
                 <div ng-repeat="slot in group.slot_list" class="column" style="padding:0.5rem">
 
-                    <div class="ui {$ group.color $} center aligned segment">
+                    <div class="ui center aligned segment">
                         <p>攤位{$ slot.serial_no $} {$ slot.company $}</p>
 
-                        <div ng-if="ctrl.select_ctrl.select_enable && group.is_mygroup">
+                        <div ng-if="ctrl.select_ctrl.select_enable && group.is_myzone">
                             <div ng-if="ctrl.select_ctrl.btn_display">
                                 <div ng-if="!(ctrl.my_slot_list|contains:slot.serial_no) && !slot.company"
                                      class="ui blue button" ng-click="ctrl.select(slot.serial_no)">

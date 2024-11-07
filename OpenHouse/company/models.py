@@ -97,7 +97,8 @@ class Company(AbstractBaseUser):
     recruit_url = models.CharField(u'應徵方式', max_length=260, help_text='報名網站或詳細職缺說明, 限260字內', blank=True)
 
     # discount for special member
-    ece_member = models.BooleanField(u'電機資源產學聯盟', default=False)
+    ece_member_normal = models.BooleanField(u'電機資源產學聯盟_一般會員', default=False)
+    ece_member = models.BooleanField(u'電機資源產學聯盟_永久會員', default=False)
     gloria_normal = models.BooleanField(u'國際產學聯盟總中心_一般會員', default=False)
     gloria_startup = models.BooleanField(u'國際產學聯盟總中心_國際新創會員', default=False)
 

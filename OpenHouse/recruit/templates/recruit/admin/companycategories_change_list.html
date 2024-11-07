@@ -1,0 +1,9 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content %}
+    <div style="text-align: right;">
+        <a class="button" href="{% url 'sync_company_categories' %}">連動目前公司攤位</a>
+    </div>
+    {{ block.super }}
+{% endblock %}

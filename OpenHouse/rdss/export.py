@@ -310,6 +310,7 @@ def ExportAll(request):
             {'fieldname': 'receipt_postal_address', 'title': '收據寄送地址'},
             {'fieldname': 'receipt_contact_name', 'title': '收據聯絡人姓名'},
             {'fieldname': 'receipt_contact_phone', 'title': '收據聯絡人公司電話'},
+            {'fieldname': 'receipt_contact_email', 'title': '收據聯絡人Email'},
         ]
         
         for index, pair in enumerate(receipt_title_pairs):
@@ -347,18 +348,21 @@ def ExportAll(request):
             })
         spon_worksheet = workbook.add_worksheet("贊助")
         spon_worksheet.write(0, 0, "廠商/贊助品")
+        spon_worksheet.write(0, 1, "統編")
         spon_worksheet.write(1, 0, "目前數量/上限")
-        spon_worksheet.write(0, len(sponsor_items) + 1, "贊助額")
-        for index, item in enumerate(sponsor_items):
-            spon_worksheet.write(0, index + 1, item.name)
-            spon_worksheet.write(1, index + 1, "{}/{}".format(item.num_sponsor, item.limit))
-
         row_offset = 2
+        col_offset = 2
+        spon_worksheet.write(0, len(sponsor_items) + col_offset, "贊助額")
+        for index, item in enumerate(sponsor_items):
+            spon_worksheet.write(0, index + col_offset, item.name)
+            spon_worksheet.write(1, index + col_offset, "{}/{}".format(item.num_sponsor, item.limit))
+
         for row_count, com in enumerate(sponsorships_list):
             spon_worksheet.write(row_count + row_offset, 0, com['shortname'])
+            spon_worksheet.write(row_count + row_offset, 1, com['cid'])
             for col_count, count in enumerate(com['counts']):
-                spon_worksheet.write(row_count + row_offset, col_count + 1, count)
-            spon_worksheet.write(row_count + row_offset, len(com['counts']) + 1, com['amount'])
+                spon_worksheet.write(row_count + row_offset, col_count + col_offset, count)
+            spon_worksheet.write(row_count + row_offset, len(com['counts']) + col_offset, com['amount'])
 
         # ece seminar information
         
@@ -507,17 +511,20 @@ def ExportSurvey(request):
     with xlsxwriter.Workbook(response) as workbook:
         survey_worksheet = workbook.add_worksheet("廠商滿意度問卷")  # set the excel sheet
         survey_worksheet.write(0, 0, "廠商")  # The excel at(0,0) name is "廠商"
+        survey_worksheet.write(0, 1, "統編")
+        col_offset = 1
         fields = rdss.models.CompanySurvey._meta.get_fields()[1:]
         # print(fields)
         for index, field in enumerate(fields, 1):
-            survey_worksheet.write(0, index, field.verbose_name)  # set the title for each colume
+            survey_worksheet.write(0, index + col_offset, field.verbose_name)  # set the title for each colume
         survey_list = rdss.models.CompanySurvey.objects.all()
         # print(survey_list)
         for row_count, survey in enumerate(survey_list, 1):
             survey_worksheet.write(row_count, 0, survey.company)
+            survey_worksheet.write(row_count, 1, survey.cid)
             for col_count, field in enumerate(fields, 1):
                 try:
-                    survey_worksheet.write(row_count, col_count, getattr(survey, field.name))
+                    survey_worksheet.write(row_count, col_count + col_offset, getattr(survey, field.name))
                 except TypeError as e:
                     # xlsxwriter do not accept django timzeone aware time, so use
                     # except, to write string

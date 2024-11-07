@@ -19,6 +19,9 @@ from django.db.utils import IntegrityError
 from django.urls import reverse
 import re
 from django.db.models.functions import Cast
+
+import recruitment_common.views as views_helper
+
 # for logging
 import logging
 
@@ -104,13 +107,17 @@ def Status(request):
     # Fee display
     total_fee = 0
     discount = 0
-    discount_text = ""
+    discount_text: list[str] = []
     fee = 0
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            fee += configs.session_fee
+            seminar_fee = configs.session_fee
+            seminar_fee_text = f"({seminar_fee} 元)"
+            fee += seminar_fee
         elif signup_data.seminar == 'attend_noon':
+            seminar_fee = configs.session_fee_noon
+            seminar_fee_text = f"({seminar_fee} 元)"
             fee += configs.session_fee_noon
         
         # ece seminar fee
@@ -120,30 +127,33 @@ def Status(request):
                 if ece_seminar.ece_member_discount:
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
+            discount_text.append(f"貴公司為電機研究所聯盟永久會員，可享有ECE說明會場次免費優惠 -{discount}元")
         num_of_ece = len(signup_data.seminar_ece.all())
         if num_of_ece:
-            fee += configs.session_ece_fee * num_of_ece
+            ece_seminar_fee = configs.session_ece_fee * num_of_ece
+            fee += ece_seminar_fee
 
         # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
-                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                ece_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為電機研究所聯盟永久會員或Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount += ece_discount
             elif mycompany.gloria_startup:
-                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+                startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為Gloria新創會員，可享有第一攤免費優惠 -{startup_discount}元")
+                discount += startup_discount
             elif signup_data.zone and signup_data.zone.name != '一般企業':
-                discount_text = "貴公司為{}專區，可享有優惠減免{}元".format(signup_data.zone, signup_data.zone.discount)
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
-            
-            fee += signup_data.jobfair * configs.jobfair_booth_fee
-        else:
-            fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
-        
-        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
+                zone_discount = min(signup_data.jobfair, 1) * signup_data.zone.discount
+                discount_text.append(f"貴公司為{signup_data.zone}專區，可享有第一攤優惠減免{signup_data.zone.discount}元")
+                discount += zone_discount
 
+            jobfair_fee = signup_data.jobfair * configs.jobfair_booth_fee
+            fee += jobfair_fee
+
+        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
         if rdss_mycompany_category.discount:
-            discount_text = "貴公司為公家單位，可享有免費優惠"
+            discount_text = [(f"貴公司類別為{rdss_mycompany_category.name}，可享有免費優惠")]
             discount = fee
 
     except AttributeError:
@@ -155,7 +165,7 @@ def Status(request):
     for s in sponsorships:
         sponsor_amount += s.item.price
 
-    total_fee += fee + sponsor_amount -discount
+    total_fee += fee + sponsor_amount - discount
 
     # Seminar and Jobfair info status
     try:
@@ -206,9 +216,12 @@ def SignupRdss(request):
                 timezone.localtime(configs.rdss_signup_end).strftime("%Y/%m/%d %H:%M:%S"))
             return render(request, 'error.html', locals())
 
-    edit_instance_list = rdss.models.Signup.objects.filter(cid=request.user.cid)
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
-    
+    try:
+        signup_info = rdss.models.Signup.objects.get(cid=request.user.cid)
+    except ObjectDoesNotExist:
+        signup_info = None
+
     if request.POST:
         # copy the data from post
         data = request.POST.copy()
@@ -220,16 +233,14 @@ def SignupRdss(request):
             filtered_zone = data.get('zone')
             zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
             if zone.name != '一般企業':
-                my_company_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
-                zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
+                my_company_category = rdss.models.CompanyCategories.objects.get(
+                    name=mycompany.categories.name
+                )
                 if my_company_category not in zone.category.all():
                     messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
-                    form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
+                    form = rdss.forms.SignupCreationForm(data, instance=signup_info)
                     return render(request, 'company/signup_form.html', locals())
-        if edit_instance_list:
-            form = rdss.forms.SignupCreationForm(data, instance=edit_instance_list[0])
-        else:
-            form = rdss.forms.SignupCreationForm(data)
+        form = rdss.forms.SignupCreationForm(data, instance=signup_info)
         if form.is_valid():
             form.save()
             form.save_m2m()
@@ -237,13 +248,8 @@ def SignupRdss(request):
             # for debug usage
             print(form.errors.items())
         return redirect(SignupRdss)
-
-    # edit
-    if edit_instance_list:
-        form = rdss.forms.SignupCreationForm(instance=edit_instance_list[0])
-        signup_edit_ui = True  # for semantic ui control
     else:
-        form = rdss.forms.SignupCreationForm
+        form = rdss.forms.SignupCreationForm(instance=signup_info)
     return render(request, 'company/signup_form.html', locals())
 
 
@@ -327,6 +333,8 @@ def JobfairInfo(request):
         jobfair_info = rdss.models.JobfairInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         jobfair_info = None
+    
+    initial_data = {'meat_lunchbox': booth_quantity}
 
     if request.POST:
         data = request.POST.copy()
@@ -340,7 +348,7 @@ def JobfairInfo(request):
         else:
             print(form.errors)
     else:
-        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num)
+        form = rdss.forms.JobfairInfoCreationForm(instance=jobfair_info, max_num=booth_num, initial=initial_data)
 
     # semantic ui
     sidebar_ui = {'jobfair_info': "active"}
@@ -567,7 +575,7 @@ def JobfairSelectControl(request):
         action = post_data.get("action")
     else:
         raise Http404("What are u looking for?")
-    
+
     try:
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
     except:
@@ -580,28 +588,26 @@ def JobfairSelectControl(request):
         configs = rdss.models.RdssConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    
+
     if action == "query":
         zones = rdss.models.ZoneCategories.objects.all()
-        slot_group = list()
+        slot_group = []
         for zone in zones:
             slot_list = rdss.models.JobfairSlot.objects.filter(zone=zone).annotate(
                 serial_no_int=Cast('serial_no', IntegerField())
             ).order_by('serial_no_int')
-            return_data = list()
+            return_data = []
             for slot in slot_list:
-                slot_info = dict()
+                slot_info = {}
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
                     slot.company.get_company_name()
                 return_data.append(slot_info)
-
             is_myzone = (
                 (rdss.models.Signup.objects.filter(cid=request.user.cid).first().zone == zone) 
-                or 
+                or
                 (zone.name == '一般企業')
             )
-            
             slot_group.append({
                 'slot_type': zone.id,
                 'display': zone.name,
@@ -1130,11 +1136,6 @@ def sync_company_categories(request):
         return redirect('/admin/rdss/companycategories/')
 
 # ========================RDSS public view=================
-def _change_website_start_with_http(website):
-    if not website.startswith('http'):
-        website = 'https://' + website
-    return website
-
 def RDSSPublicIndex(request):
     # semantic ui control
     sidebar_ui = {'index': "active"}
@@ -1145,7 +1146,7 @@ def RDSSPublicIndex(request):
         company_list = []
         for signup in rdss_company:
             com = all_company.get(cid=signup.cid)
-            com.website = _change_website_start_with_http(com.website)
+            com.website = views_helper.change_website_start_with_http(com.website)
             company_list.append(com)
         # sorted bt company categories id
         company_list = sorted(company_list, key=lambda x: x.categories.id)
@@ -1280,7 +1281,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': _change_website_start_with_http(target_company.website),
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
@@ -1298,7 +1299,7 @@ def ListJobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': _change_website_start_with_http(target_company.website),
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })

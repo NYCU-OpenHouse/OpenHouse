@@ -10,15 +10,19 @@ from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJo
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
 from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
+from .models import ZoneCategories, CompanyCategories
 from company.models import Company
+import company.models
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from django import forms
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, IntegerField
+from django.db.models.functions import Cast
 import datetime
 import json
 import logging
@@ -31,6 +35,9 @@ import re
 import recruit.models
 from .data_import import ImportStudentCardID
 from django.db.utils import IntegrityError
+
+import recruitment_common.views as views_helper
+
 
 logger = logging.getLogger('recruit')
 collect_pts_logger = logging.getLogger('stu_attend')
@@ -71,6 +78,14 @@ def recruit_company_index(request):
     menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/index.html', locals())
 
+def _check_in_right_zone(zone: ZoneCategories, mycompany: Company) -> bool:
+    if zone.name != "一般企業":
+        my_company_category = CompanyCategories.objects.get(
+            name=mycompany.categories.name
+        )
+        if my_company_category not in zone.category.all():
+            return False
+    return True
 
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
@@ -80,16 +95,16 @@ def recruit_signup(request):
     # semantic ui control
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
-    
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    if mycompany.chinese_funded:
-        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    
+
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -98,7 +113,6 @@ def recruit_signup(request):
             return render(request, 'recruit/error.html', locals())
 
     plan_file = recruit.models.Files.objects.filter(category="企畫書").first()
-
     try:
         signup_info = RecruitSignup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
@@ -106,8 +120,18 @@ def recruit_signup(request):
 
     if request.POST:
         data = request.POST.copy()
-        # decide cid in the form
         data['cid'] = request.user.cid
+        filtered_zone = data.get('zone', None)
+        try:
+            filtered_zone_obj = ZoneCategories.objects.get(id=filtered_zone)
+        except ObjectDoesNotExist:
+            filtered_zone_obj = None
+
+        # Check if the company is in right zone
+        if not _check_in_right_zone(filtered_zone_obj, mycompany):
+            messages.error(request, f'貴公司不屬於{filtered_zone_obj.name}專區指定類別，請重新選擇')
+            form = RecruitSignupForm(data=data, instance=signup_info)
+            return render(request, 'recruit/company/signup.html', locals())
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():
             form.save()
@@ -171,15 +195,15 @@ def seminar_select_form_gen(request):
 
     slot_colors = SlotColor.objects.all()
     session_list = [
-        {"name": "morning1", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
-        {"name": "noon1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
-        {"name": "noon2", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "noon3", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "noon4", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
-        {"name": "evening1", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "evening2", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "evening3", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
-        {"name": "evening4", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
+        {"name": "morning1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
+        {"name": "noon1", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
+        {"name": "noon2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
+        {"name": "noon3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
+        {"name": "noon4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
+        {"name": "evening1", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
+        {"name": "evening2", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
+        {"name": "evening3", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
+        {"name": "evening4", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
         {"name": "add1", "start_time": configs.session_10_start, "end_time": configs.session_10_end},
     ]
     for session in session_list:
@@ -507,7 +531,8 @@ def jobfair_info(request):
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
         booth_num = company.jobfair
-        booth_quantity = booth_num * 3
+        lunch_box_quantity = booth_num * 3
+        parking_tickets_max = 2 + (booth_num - 1) if booth_num > 0 else 0
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
         return render(request, 'recruit/error.html', locals())
@@ -525,34 +550,29 @@ def jobfair_info(request):
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     reach_deadline =timezone.now() > deadline
-    parking_form_set = inlineformset_factory(JobfairInfo, JobfairParking, max_num=1, extra=1,
-                                             fields=('id', 'license_plate_number', 'info'),
-                                             widgets={'license_plate_number': forms.TextInput(
-                                                 attrs={'placeholder': '需要-連字號，例AA-1234、4321-BB'})})
+    initial_data = {'meat_lunchbox': lunch_box_quantity}
 
     if request.POST:
         if not reach_deadline:
             data = request.POST.copy()
             form = JobfairInfoForm(data=data, instance=jobfair_info_object, max_num=booth_num)
-            formset = parking_form_set(data=data, instance=jobfair_info_object)
-            if form.is_valid() and formset.is_valid():
+            if form.is_valid():
                 new_info = form.save(commit=False)
                 company = RecruitSignup.objects.get(cid=request.user.cid)
                 new_info.company = company
                 new_info.save()
-                formset.save()
-                # return render(request, 'recruit/company/success.html', locals())
                 return redirect(jobfair_info)
             else:
                 print(form.errors)
-
         else:
             error_msg = "實體就博會資訊填寫時間已截止!若有更改需求，請來信或來電。"
             return render(request, 'recruit/error.html', locals())
-
     else:
-        form = JobfairInfoForm(instance=jobfair_info_object, max_num=booth_num)
-        formset = parking_form_set(instance=jobfair_info_object)
+        form = JobfairInfoForm(
+            instance=jobfair_info_object,
+            max_num=booth_num,
+            initial=initial_data
+        )
 
     return render(request, 'recruit/company/jobfair_info.html', locals())
 
@@ -704,7 +724,6 @@ def jobfair_select_form_gen(request):
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
-    
     mycid = request.user.cid
     # check the company have signup recruit
     try:
@@ -722,6 +741,7 @@ def jobfair_select_form_gen(request):
     except Exception as e:
         jobfair_select_time = "選位時間及順序尚未排定，您可以先參考攤位圖"
 
+    slots = JobfairSlot.objects.all()
     place_maps = Files.objects.filter(category='就博會攤位圖')
 
     return render(request, 'recruit/company/jobfair_select.html', locals())
@@ -736,22 +756,6 @@ def jobfair_select_control(request):
     else:
         raise Http404("What are u looking for?")
 
-    slot_group = [
-        {"slot_type": "一般企業", "display": "一般企業", 
-         "category": ['None'], 
-         "slot_list": list(),
-         "is_mygroup": True, "color": "purple"},
-
-        {"slot_type": "人文、管理與金融企業", "display": "人文、管理與金融企業", 
-         "category": ['金融/保險/不動產', '出版影音/藝術、娛樂及休閒服務業', '財團/社團/行政法人',
-                      '住宿/餐飲業', '批發及零售/運輸及倉儲業'], 
-         "slot_list": list(),
-         "is_mygroup": False, "color": "pink"},
-
-        {"slot_type": "智慧醫療與科技企業", "display": "智慧醫療與科技企業", 
-         "category": ['醫療保健及社會工作服務業'], "slot_list": list(),
-         "is_mygroup": False, "color": "blue"},
-    ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
     except:
@@ -760,41 +764,39 @@ def jobfair_select_control(request):
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
     
-    # 找到自己的group enable並放到最前面顯示
     try:
-        company_category = my_signup.get_company().category
-        my_slot_group = next(group for group in slot_group if company_category in group['category'])
-        slot_group.remove(my_slot_group)
-        my_slot_group['is_mygroup'] = True
-        slot_group.insert(0, my_slot_group)
-    except StopIteration:
-        pass
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     if action == "query":
-        companyname = dict(Company.objects.values_list('cid', 'shortname'))
-
-        handled_slots = set()
-        for group in slot_group:
-            if (group["category"] == ['None']):
-                slot_list = JobfairSlot.objects.filter(category__isnull=True).order_by('serial_no')
-            else: 
-                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"]).order_by('serial_no')
+        zones = ZoneCategories.objects.all()
+        slot_group = []
+        for zone in zones:
+            slot_list = JobfairSlot.objects.filter(zone=zone).annotate(
+                serial_no_int=Cast('serial_no', IntegerField())
+            ).order_by('serial_no_int')
+            return_data = []
             for slot in slot_list:
-                if slot.serial_no in handled_slots:
-                    continue
-                slot_info = dict()
+                slot_info = {}
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
-                    companyname[slot.company_id]
-                group['slot_list'].append(slot_info)
-                handled_slots.add(slot.serial_no)
+                    slot.company.get_company_name()
+                return_data.append(slot_info)
+            is_myzone = (
+                (RecruitSignup.objects.filter(cid=request.user.cid).first().zone == zone) 
+                or
+                (zone.name == '一般企業')
+            )
+            slot_group.append({
+                'slot_type': zone.id,
+                'display': zone.name,
+                'slot_list': return_data,
+                'is_myzone': bool(is_myzone),
+            })
 
-        # remove those slot list is equal to 0
-        for group in slot_group.copy():
-            if  not group['slot_list']:
-                slot_group.remove(group)
-                
-        my_slot_list = [slot.serial_no for slot in JobfairSlot.objects.filter(company__cid=request.user.cid)]
+        my_slot_list = [slot.serial_no for slot in
+                        JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
         try:
             my_select_time = JobfairOrder.objects.filter(company=request.user.cid).first().time
@@ -807,29 +809,26 @@ def jobfair_select_control(request):
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
             select_ctrl['select_enable'] = False
-            select_ctrl['btn_display'] = False
+            select_ctrl['select_btn'] = False
         else:
             select_ctrl = dict()
             select_ctrl['display'] = False
+            select_ctrl['select_btn'] = True
             select_ctrl['select_enable'] = True
             today = timezone.now().date()
-            try:
-                configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
-            except IndexError:
-                return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-            if (configs['jobfair_btn_start'] <= today <= configs['jobfair_btn_end']) or request.user.username == '77777777':
+            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
-
         return JsonResponse({"success": True,
-                             "slot_group": slot_group,
+                             "data": slot_group,
                              "my_slot_list": my_slot_list,
                              "select_ctrl": select_ctrl})
 
     elif action == "select":
         try:
             slot = JobfairSlot.objects.get(serial_no=post_data.get('slot'))
+            my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         except:
             ret = dict()
             ret['success'] = False
@@ -847,14 +846,7 @@ def jobfair_select_control(request):
         my_slot_list = JobfairSlot.objects.filter(company__cid=request.user.cid)
         if my_slot_list.count() >= my_signup.jobfair:
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
-
-        try:
-            my_slot_group = next(group for group in slot_group if company_category in group['category'])
-            if slot.category.exists() and company_category not in my_slot_group['category']:
-                return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
-        except StopIteration:
-            pass
-
+    
         slot.company = my_signup
         slot.save()
 
@@ -1200,15 +1192,15 @@ def SeminarAttendedStudent(request):
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
+        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
         "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
     
@@ -1270,22 +1262,61 @@ def ClearStudentInfo(request):
 
     return render(request, 'recruit/admin/message.html', locals())
 
+# ========================RDSS admin tools view=================
+def bulk_add_jobfairslot(request):
+    zones = ZoneCategories.objects.all()
+    if request.method == 'POST':
+        number = int(request.POST.get('number'))
+        zone_id = int(request.POST.get('zone'))
+        zone = ZoneCategories.objects.get(id=zone_id)
+        max_serial_no = JobfairSlot.objects.all().last()
+        max_serial_no = (int(max_serial_no.serial_no)) if max_serial_no else 0
+
+        for i in range(1, number + 1):
+            new_serial_no = max_serial_no + i
+            JobfairSlot.objects.create(serial_no=str(new_serial_no), zone=zone)
+
+        messages.success(request, f'Successfully added {number} new JobfairSlots of {zone}.')
+        return redirect('/admin/recruit/jobfairslot/')
+
+    return render(request, 'admin/bulk_add_jobfairslot.html', locals())
+
+
+@staff_member_required
+def sync_company_categories(request):
+    try:
+        company_categories = company.models.CompanyCategories.objects.all()
+        for category in company_categories:
+            CompanyCategories.objects.update_or_create(
+                id=category.id,
+                defaults={
+                    'name': category.name,
+                    'discount': category.discount,
+                }
+            )
+        messages.success(request, f'Successfully synchronized company categories')
+        return redirect('/admin/recruit/companycategories/')
+    except Exception as e:
+        messages.error(request, f'Failed to synchronize company categories: {e}')
+        return redirect('/admin/recruit/companycategories/')
+
+# ========================RDSS company view=================
 
 @login_required(login_url='/company/login/')
 def Status(request):
     if request.user.is_staff:
         return redirect("/admin")
     mycid = request.user.cid
-    
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    if mycompany.chinese_funded:
-        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
     # get the dates from the configs
     try:
         configs = recruit.models.RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+    
     signup_data = recruit.models.RecruitSignup.objects.filter(cid=mycid).first()
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     pay_info_file = Files.objects.filter(category="繳費資訊").first()
 
@@ -1296,15 +1327,15 @@ def Status(request):
         "jobfair_slot": "-",
     }
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon4": "{}~{}".format(configs.session_8_start, configs.session_8_end), # 2024 spring added
-        "evening1": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening2": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening3": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening4": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
+        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
+        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
+        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
         "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
 
@@ -1338,15 +1369,18 @@ def Status(request):
     # Fee display
     fee = 0
     discount = 0
-    discount_text = ""
-    mycompany = Company.objects.get(cid=mycid)
+    discount_text: list[str] = []
     
     try:
         # session fee calculation
         if signup_data.seminar == 'attend_short':
-            fee += configs.session_fee_short
+            seminar_fee = configs.session_fee_short
+            seminar_fee_text = f"50min ({seminar_fee} 元)"
+            fee += seminar_fee
         elif signup_data.seminar == 'attend_long':
-            fee += configs.session_fee_long
+            seminar_fee = configs.session_fee_long
+            seminar_fee_text = f"90min ({seminar_fee} 元)"
+            fee += seminar_fee
 
         # ece fee calculation
         num_of_ece = len(signup_data.seminar_ece.all())
@@ -1356,27 +1390,36 @@ def Status(request):
                 if ece_seminar.ece_member_discount:
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
+            discount_text.append(f"貴公司為電機研究所聯盟永久會員，可享有ECE說明會場次免費優惠 -{discount}元")
         if num_of_ece:
-            fee += configs.session_ece_fee * num_of_ece
+            ece_seminar_fee = configs.session_ece_fee * num_of_ece
+            fee += ece_seminar_fee
 
         # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
-                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                ece_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為電機研究所聯盟永久會員或Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount += ece_discount
             elif mycompany.gloria_startup:
-                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+                startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為Gloria新創會員，可享有第一攤免費優惠 -{startup_discount}元")
+                discount += startup_discount
             elif signup_data.first_participation:
-                discount_text = "貴公司為首次參加本活動，可享有第一攤半價優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+                first_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
+                discount_text.append(f"貴公司為首次參加本活動，可享有第一攤半價優惠 -{first_discount}元")
+                discount += first_discount
             elif signup_data.zone and signup_data.zone.name != '一般企業':
-                discount_text = "貴公司為{}專區，可享有第一攤半價優惠".format(signup_data.zone)
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
-            fee += signup_data.jobfair * configs.jobfair_booth_fee
+                zone_discount = min(signup_data.jobfair, 1) * signup_data.zone.discount
+                discount_text.append(f"貴公司為{signup_data.zone}專區，可享有第一攤優惠減免{signup_data.zone.discount}元")
+                discount += zone_discount
 
-        if mycompany.category == '公家單位':
-            discount_text = "貴公司為公家單位，可享有免費優惠"
+            jobfair_fee = signup_data.jobfair * configs.jobfair_booth_fee
+            fee += jobfair_fee
+        
+        mycompany_category = CompanyCategories.objects.get(name=mycompany.categories.name)
+        if mycompany_category.discount:
+            discount_text = [(f"貴公司類別為{mycompany_category.name}，可享有免費優惠")]
             discount = fee
     except AttributeError:
         # Company has not sign up
@@ -1455,7 +1498,6 @@ def list_jobs(request):
             raise Http404("What are u looking for?")
         for company in RecruitSignup.objects.all():
             try:
-                # TODO: company website may not start with https, lead to 404 error. Need to fix for RECRUIT
                 target_company = Company.objects.get(cid=company.cid, category=category_filtered)
                 companies.append({
                     'cid': target_company.cid,
@@ -1465,7 +1507,7 @@ def list_jobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })
@@ -1483,7 +1525,7 @@ def list_jobs(request):
                     'brief': replace_urls_and_emails(target_company.brief),
                     'address': target_company.address,
                     'phone': target_company.phone,
-                    'website': target_company.website,
+                    'website': views_helper.change_website_start_with_http(target_company.website),
                     'recruit_info': replace_urls_and_emails(target_company.recruit_info),
                     'recruit_url': replace_urls_and_emails(target_company.recruit_url),
                 })

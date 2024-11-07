@@ -27,7 +27,7 @@ class RecruitSignupForm(ModelForm):
             'class': 'ui dropdown',
         })
         self.fields['jobfair'].widget.attrs.update({
-            'max' : '6',
+            'max' : '4',
             'min' : '0'
         })
 
@@ -110,18 +110,38 @@ class JobfairInfoForm(ModelForm):
         exclude = ['company']
 
     def __init__(self, *args, max_num=None, **kwargs):
+        initial_data = kwargs.pop('initial', {})
         super(JobfairInfoForm, self).__init__(*args, **kwargs)
-        self.fields['contact_mobile'].widget.attrs.update({
-            'placeholder': '格式：0912-345678',
-        })
+
+        # Set default values
+        # (2025 recruit) The default value of total lunchbox is ${max_num * 3} meal_lunchbox.
+        if not self.instance.pk or not self.instance.meat_lunchbox:
+            default_meat_lunchbox = initial_data.get('meat_lunchbox', max_num*3)
+            self.fields['meat_lunchbox'].initial = default_meat_lunchbox
+
+        # Set attributes max and min
         self.fields['lunch_box'].widget.attrs.update({
             'max' : max_num*3,
             'min' : '0'
         })
+        # (2025 recruit) For first booth, 2 tickets. For the rest, 1 ticket.
+        parking_tickets_max = 2 + (max_num - 1) if max_num > 0 else 0
         self.fields['parking_tickets'].widget.attrs.update({
-            'max' : max_num,
+            'max' : parking_tickets_max,
             'min' : '0'
         })
+        self.fields['contact_mobile'].widget.attrs.update({
+            'placeholder': '格式：0912-345678',
+        })
+        self.fields['meat_lunchbox'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+        self.fields['vege_lunchbox'].widget.attrs.update({
+            'max' : max_num*3,
+            'min' : '0'
+        })
+
 
 class JobfairInfoTempForm(ModelForm):
     def __init__(self, *args, **kwargs):

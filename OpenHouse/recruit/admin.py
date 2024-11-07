@@ -4,7 +4,7 @@ from django.db.models import F
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, \
-    ECESeminar, CompanyCatogories, ZoneCatogories, HistoryParticipation
+    ECESeminar, CompanyCategories, ZoneCategories, HistoryParticipation
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
@@ -51,15 +51,29 @@ class RecruitConfigAdmin(admin.ModelAdmin):
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name', 'ece_member_discount')
 
-@admin.register(CompanyCatogories)
+@admin.register(models.CompanyCategories)
 class CompanyCategoriesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'discount')
+    list_display = ('id', 'name', 'discount')
+    # disable add button
+    def has_add_permission(self, request):
+        return False
 
-@admin.register(ZoneCatogories)
-class ZoneCatogoriesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'discount')
+    # disable delete button
+    def has_delete_permission(self, request, obj=None):
+        return False
 
-@admin.register(HistoryParticipation)
+    change_list_template = "admin/companycategories_change_list.html"
+
+@admin.register(models.ZoneCategories)
+class ZoneCategoriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'discount', 'display_categories')
+    list_filter = ('category', )
+    def display_categories(self, obj):
+        return ', '.join(category.name for category in obj.category.all())
+
+    display_categories.short_description = 'Categories'
+
+@admin.register(models.HistoryParticipation)
 class HistoryParticipationAdmin(admin.ModelAdmin):
     fields = ('name', 'short_name')
 
@@ -94,22 +108,10 @@ class SeminarSlotAdmin(admin.ModelAdmin):
     raw_id_fields = ("company",)
 
 
-# @admin.register(OnlineSeminarSlot)
-# class OnlineSeminarSlotAdmin(admin.ModelAdmin):
-#     list_display = ('date', 'session', 'company')
-#     raw_id_fields = ("company",)
-
-
 @admin.register(SeminarOrder)
 class SeminarOrderAdmin(admin.ModelAdmin):
     list_display = ("company", "time", "updated")
     raw_id_fields = ("company",)
-
-
-# @admin.register(OnlineSeminarOrder)
-# class OnlineSeminarOrderAdmin(admin.ModelAdmin):
-#     list_display = ("company", "time", "updated")
-#     raw_id_fields = ("company",)
 
 
 class SeminarParkingInline(admin.StackedInline):
@@ -123,12 +125,6 @@ class SeminarInfoAdmin(admin.ModelAdmin):
     inlines = [SeminarParkingInline]
     list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
                     'contact_email', 'contact_mobile', 'updated')
-
-
-# @admin.register(OnlineSeminarInfo)
-# class OnlineSeminarInfoAdmin(admin.ModelAdmin):
-#     list_display = ('company', 'topic', 'speaker', 'speaker_title', 'contact',
-#                     'contact_email', 'contact_mobile', 'updated')
 
 
 @admin.register(SeminarParking)
@@ -204,16 +200,10 @@ class JobfairOrderAdmin(admin.ModelAdmin):
 
 @admin.register(JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
-    list_display = ('serial_no', 'company', 'display_categories', 'updated')
-    list_filter = ('category', )
-    def display_categories(self, obj):
-        return ', '.join(category.name for category in obj.category.all())
+    list_display = ('serial_no', 'zone', 'company', 'updated')
+    zones = models.ZoneCategories.objects.all()
+    change_list_template = "admin/jobfairslot_change_list.html"
 
-    display_categories.short_description = 'Categories'
-
-# @admin.register(OnlineJobfairSlot)
-# class OnlineJobfairSlotAdmin(admin.ModelAdmin):
-#     list_display = ('serial_no', 'category', 'company', 'updated')
 
 
 class JobfairParkingInline(admin.StackedInline):
@@ -305,17 +295,6 @@ class RecruitJobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-# @admin.register(models.RecruitOnlineJobfairInfo)
-# class RecruitOnlineJobfairContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = models.RecruitOnlineJobfairInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False
-
-
 @admin.register(models.RecruitSeminarInfo)
 class RecruitSeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)
@@ -336,14 +315,3 @@ class RecruitECESeminarContentAdmin(admin.ModelAdmin):
         if count == 0:
             return True
         return False
-
-
-# @admin.register(models.RecruitOnlineSeminarInfo)
-# class RecruitOnlineSeminarContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = models.RecruitOnlineSeminarInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False
