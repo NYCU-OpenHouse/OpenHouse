@@ -10,9 +10,11 @@ from .models import SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, RecruitJo
 from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Student, JobfairInfoTemp
 from .models import SeminarParking, JobfairParking
 from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
+from .models import ZoneCategories, CompanyCategories
 from company.models import Company
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
@@ -74,6 +76,14 @@ def recruit_company_index(request):
     menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/index.html', locals())
 
+def _check_in_right_zone(zone: ZoneCategories, mycompany: Company) -> bool:
+    if zone.name != "一般企業":
+        my_company_category = CompanyCategories.objects.get(
+            name=mycompany.categories.name
+        )
+        if my_company_category not in zone.category.all():
+            return False
+    return True
 
 @login_required(login_url='/company/login/')
 def recruit_signup(request):
@@ -83,16 +93,16 @@ def recruit_signup(request):
     # semantic ui control
     sidebar_ui = {'signup': "active"}
     menu_ui = {'recruit': "active"}
-    
-    mycompany = Company.objects.filter(cid=request.user.cid).first()
-    if mycompany.chinese_funded:
-        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
 
     try:
         configs = RecruitConfigs.objects.all()[0]
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    
+
+    mycompany = Company.objects.filter(cid=request.user.cid).first()
+    if mycompany.chinese_funded:
+        return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
+
     if timezone.now() < configs.recruit_signup_start or timezone.now() > configs.recruit_signup_end:
         if request.user.username != "77777777":
             error_msg = "非報名時間。期間為 {} 至 {}".format(
@@ -101,7 +111,6 @@ def recruit_signup(request):
             return render(request, 'recruit/error.html', locals())
 
     plan_file = recruit.models.Files.objects.filter(category="企畫書").first()
-
     try:
         signup_info = RecruitSignup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
@@ -109,8 +118,18 @@ def recruit_signup(request):
 
     if request.POST:
         data = request.POST.copy()
-        # decide cid in the form
         data['cid'] = request.user.cid
+        filtered_zone = data.get('zone', None)
+        try:
+            filtered_zone_obj = ZoneCategories.objects.get(id=filtered_zone)
+        except ObjectDoesNotExist:
+            filtered_zone_obj = None
+
+        # Check if the company is in right zone
+        if not _check_in_right_zone(filtered_zone_obj, mycompany):
+            messages.error(request, f'貴公司不屬於{filtered_zone_obj.name}專區指定類別，請重新選擇')
+            form = RecruitSignupForm(data=data, instance=signup_info)
+            return render(request, 'recruit/company/signup.html', locals())
         form = RecruitSignupForm(data=data, instance=signup_info)
         if form.is_valid():
             form.save()

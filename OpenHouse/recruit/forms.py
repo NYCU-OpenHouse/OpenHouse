@@ -27,7 +27,7 @@ class RecruitSignupForm(ModelForm):
             'class': 'ui dropdown',
         })
         self.fields['jobfair'].widget.attrs.update({
-            'max' : '6',
+            'max' : '4',
             'min' : '0'
         })
 
