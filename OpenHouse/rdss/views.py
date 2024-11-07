@@ -107,13 +107,17 @@ def Status(request):
     # Fee display
     total_fee = 0
     discount = 0
-    discount_text = ""
+    discount_text: list[str] = []
     fee = 0
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            fee += configs.session_fee
+            seminar_fee = configs.session_fee
+            seminar_fee_text = f"({seminar_fee} 元)"
+            fee += seminar_fee
         elif signup_data.seminar == 'attend_noon':
+            seminar_fee = configs.session_fee_noon
+            seminar_fee_text = f"({seminar_fee} 元)"
             fee += configs.session_fee_noon
         
         # ece seminar fee
@@ -123,30 +127,33 @@ def Status(request):
                 if ece_seminar.ece_member_discount:
                     discount_num_of_ece += 1
             discount += configs.session_ece_fee * discount_num_of_ece
+            discount_text.append(f"貴公司為電機研究所聯盟永久會員，可享有ECE說明會場次免費優惠 -{discount}元")
         num_of_ece = len(signup_data.seminar_ece.all())
         if num_of_ece:
-            fee += configs.session_ece_fee * num_of_ece
+            ece_seminar_fee = configs.session_ece_fee * num_of_ece
+            fee += ece_seminar_fee
 
         # jobfair fee calculation
         if signup_data.jobfair:
             if mycompany.ece_member or mycompany.gloria_normal:
-                discount_text = "貴公司為電機研究所聯盟或Gloria會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                ece_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為電機研究所聯盟永久會員或Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount += ece_discount
             elif mycompany.gloria_startup:
-                discount_text = "貴公司為Gloria新創會員，可享有第一攤免費優惠"
-                discount += min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+                startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為Gloria新創會員，可享有第一攤免費優惠 -{startup_discount}元")
+                discount += startup_discount
             elif signup_data.zone and signup_data.zone.name != '一般企業':
-                discount_text = "貴公司為{}專區，可享有優惠減免{}元".format(signup_data.zone, signup_data.zone.discount)
-                discount += min(signup_data.jobfair, 1) * configs.jobfair_booth_fee // 2
-            
-            fee += signup_data.jobfair * configs.jobfair_booth_fee
-        else:
-            fee += configs.jobfair_online_fee if signup_data.jobfair_online else 0
-        
-        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
+                zone_discount = min(signup_data.jobfair, 1) * signup_data.zone.discount
+                discount_text.append(f"貴公司為{signup_data.zone}專區，可享有第一攤優惠減免{signup_data.zone.discount}元")
+                discount += zone_discount
 
+            jobfair_fee = signup_data.jobfair * configs.jobfair_booth_fee
+            fee += jobfair_fee
+
+        rdss_mycompany_category = rdss.models.CompanyCategories.objects.get(name=mycompany.categories.name)
         if rdss_mycompany_category.discount:
-            discount_text = "貴公司為公家單位，可享有免費優惠"
+            discount_text = [(f"貴公司類別為{rdss_mycompany_category.name}，可享有免費優惠")]
             discount = fee
 
     except AttributeError:
@@ -158,7 +165,7 @@ def Status(request):
     for s in sponsorships:
         sponsor_amount += s.item.price
 
-    total_fee += fee + sponsor_amount -discount
+    total_fee += fee + sponsor_amount - discount
 
     # Seminar and Jobfair info status
     try:
