@@ -12,6 +12,7 @@ from .models import SeminarParking, JobfairParking
 from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
 from .models import ZoneCategories, CompanyCategories
 from company.models import Company
+import company.models
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
@@ -1288,6 +1289,26 @@ def ClearStudentInfo(request):
 
     return render(request, 'recruit/admin/message.html', locals())
 
+# ========================RDSS admin tools view=================
+@staff_member_required
+def sync_company_categories(request):
+    try:
+        company_categories = company.models.CompanyCategories.objects.all()
+        for category in company_categories:
+            CompanyCategories.objects.update_or_create(
+                id=category.id,
+                defaults={
+                    'name': category.name,
+                    'discount': category.discount,
+                }
+            )
+        messages.success(request, f'Successfully synchronized company categories')
+        return redirect('/admin/recruit/companycategories/')
+    except Exception as e:
+        messages.error(request, f'Failed to synchronize company categories: {e}')
+        return redirect('/admin/recruit/companycategories/')
+
+# ========================RDSS company view=================
 
 @login_required(login_url='/company/login/')
 def Status(request):
