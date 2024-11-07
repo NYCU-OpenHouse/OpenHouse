@@ -8,7 +8,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             const meatLunchboxField = document.getElementById("id_meat_lunchbox");
             const vegeLunchboxField = document.getElementById("id_vege_lunchbox");
-            const maxLimit = {{ booth_quantity }};
+            const maxLimit = {{ lunch_box_quantity }};
             const errorMessage = document.getElementById("error-message");
     
             function validateTotal() {
@@ -113,7 +113,7 @@
                 <label>{{ form.vege_lunchbox.label }}</label>
                 {{ form.vege_lunchbox }}
                 <div id="error-message" style="color: red; display: none;">
-                    已達上限，葷素便當總和不得超過 {{ booth_quantity }}
+                    已達上限，葷素便當總和不得超過 {{ lunch_box_quantity }}
                 </div>
             </div>
             {% else %}
@@ -132,7 +132,7 @@
         <p style="font-size: larger; font-weight: bold;">
             每攤位免費提供至多3份午餐。
             <span style="color:red; background-color: yellow;">
-                貴公司至多 {{ booth_quantity }} 份。
+                貴公司至多 {{ lunch_box_quantity }} 份。
             </span>
             響應節能減碳，活動當日必須領取此份表單填寫的便當數量。
         </p>
