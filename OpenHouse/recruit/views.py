@@ -21,7 +21,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from django import forms
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, IntegerField
+from django.db.models.functions import Cast
 import datetime
 import json
 import logging
@@ -723,7 +724,6 @@ def jobfair_select_form_gen(request):
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'recruit/error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})
-    
     mycid = request.user.cid
     # check the company have signup recruit
     try:
@@ -741,6 +741,7 @@ def jobfair_select_form_gen(request):
     except Exception as e:
         jobfair_select_time = "選位時間及順序尚未排定，您可以先參考攤位圖"
 
+    slots = JobfairSlot.objects.all()
     place_maps = Files.objects.filter(category='就博會攤位圖')
 
     return render(request, 'recruit/company/jobfair_select.html', locals())
@@ -755,22 +756,6 @@ def jobfair_select_control(request):
     else:
         raise Http404("What are u looking for?")
 
-    slot_group = [
-        {"slot_type": "一般企業", "display": "一般企業", 
-         "category": ['None'], 
-         "slot_list": list(),
-         "is_mygroup": True, "color": "purple"},
-
-        {"slot_type": "人文、管理與金融企業", "display": "人文、管理與金融企業", 
-         "category": ['金融/保險/不動產', '出版影音/藝術、娛樂及休閒服務業', '財團/社團/行政法人',
-                      '住宿/餐飲業', '批發及零售/運輸及倉儲業'], 
-         "slot_list": list(),
-         "is_mygroup": False, "color": "pink"},
-
-        {"slot_type": "智慧醫療與科技企業", "display": "智慧醫療與科技企業", 
-         "category": ['醫療保健及社會工作服務業'], "slot_list": list(),
-         "is_mygroup": False, "color": "blue"},
-    ]
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
     except:
@@ -779,41 +764,39 @@ def jobfair_select_control(request):
         ret['msg'] = "選位失敗，攤位錯誤或貴公司未勾選參加就博會"
         return JsonResponse(ret)
     
-    # 找到自己的group enable並放到最前面顯示
     try:
-        company_category = my_signup.get_company().category
-        my_slot_group = next(group for group in slot_group if company_category in group['category'])
-        slot_group.remove(my_slot_group)
-        my_slot_group['is_mygroup'] = True
-        slot_group.insert(0, my_slot_group)
-    except StopIteration:
-        pass
+        configs = RecruitConfigs.objects.all()[0]
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
     if action == "query":
-        companyname = dict(Company.objects.values_list('cid', 'shortname'))
-
-        handled_slots = set()
-        for group in slot_group:
-            if (group["category"] == ['None']):
-                slot_list = JobfairSlot.objects.filter(category__isnull=True).order_by('serial_no')
-            else: 
-                slot_list = JobfairSlot.objects.filter(category__name__in=group["category"]).order_by('serial_no')
+        zones = ZoneCategories.objects.all()
+        slot_group = []
+        for zone in zones:
+            slot_list = JobfairSlot.objects.filter(zone=zone).annotate(
+                serial_no_int=Cast('serial_no', IntegerField())
+            ).order_by('serial_no_int')
+            return_data = []
             for slot in slot_list:
-                if slot.serial_no in handled_slots:
-                    continue
-                slot_info = dict()
+                slot_info = {}
                 slot_info["serial_no"] = slot.serial_no
                 slot_info["company"] = None if not slot.company_id else \
-                    companyname[slot.company_id]
-                group['slot_list'].append(slot_info)
-                handled_slots.add(slot.serial_no)
+                    slot.company.get_company_name()
+                return_data.append(slot_info)
+            is_myzone = (
+                (RecruitSignup.objects.filter(cid=request.user.cid).first().zone == zone) 
+                or
+                (zone.name == '一般企業')
+            )
+            slot_group.append({
+                'slot_type': zone.id,
+                'display': zone.name,
+                'slot_list': return_data,
+                'is_myzone': bool(is_myzone),
+            })
 
-        # remove those slot list is equal to 0
-        for group in slot_group.copy():
-            if  not group['slot_list']:
-                slot_group.remove(group)
-                
-        my_slot_list = [slot.serial_no for slot in JobfairSlot.objects.filter(company__cid=request.user.cid)]
+        my_slot_list = [slot.serial_no for slot in
+                        JobfairSlot.objects.filter(company__cid=request.user.cid)]
 
         try:
             my_select_time = JobfairOrder.objects.filter(company=request.user.cid).first().time
@@ -826,29 +809,26 @@ def jobfair_select_control(request):
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考攤位圖，並待選位時間內選位'
             select_ctrl['select_enable'] = False
-            select_ctrl['btn_display'] = False
+            select_ctrl['select_btn'] = False
         else:
             select_ctrl = dict()
             select_ctrl['display'] = False
+            select_ctrl['select_btn'] = True
             select_ctrl['select_enable'] = True
             today = timezone.now().date()
-            try:
-                configs = RecruitConfigs.objects.values('jobfair_btn_start', 'jobfair_btn_end').all()[0]
-            except IndexError:
-                return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-            if (configs['jobfair_btn_start'] <= today <= configs['jobfair_btn_end']) or request.user.username == '77777777':
+            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
                 select_ctrl['btn_display'] = True
             else:
                 select_ctrl['btn_display'] = False
-
         return JsonResponse({"success": True,
-                             "slot_group": slot_group,
+                             "data": slot_group,
                              "my_slot_list": my_slot_list,
                              "select_ctrl": select_ctrl})
 
     elif action == "select":
         try:
             slot = JobfairSlot.objects.get(serial_no=post_data.get('slot'))
+            my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         except:
             ret = dict()
             ret['success'] = False
@@ -866,14 +846,7 @@ def jobfair_select_control(request):
         my_slot_list = JobfairSlot.objects.filter(company__cid=request.user.cid)
         if my_slot_list.count() >= my_signup.jobfair:
             return JsonResponse({"success": False, 'msg': '選位失敗，貴公司攤位數已達上限'})
-
-        try:
-            my_slot_group = next(group for group in slot_group if company_category in group['category'])
-            if slot.category.exists() and company_category not in my_slot_group['category']:
-                return JsonResponse({"success": False, 'msg': '選位失敗，該攤位非貴公司類別'})
-        except StopIteration:
-            pass
-
+    
         slot.company = my_signup
         slot.save()
 

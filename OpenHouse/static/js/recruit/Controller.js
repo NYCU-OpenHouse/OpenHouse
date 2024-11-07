@@ -118,11 +118,9 @@ ctrl.controller('jobfair_select', function ($scope, $window, $http, $timeout, $i
 
     function refresh() {
         $http.post('/company/recruit/jobfair/select_ctrl/', {"action": "query"}).success(function (response) {
-            // 所有位置
-            ctrl.slot_group = response.slot_group;
-            // 我已經選的位置(要顯示放棄)
+            ctrl.slot = response.data;
+            console.log(response.data);
             ctrl.my_slot_list = response.my_slot_list;
-            // 選位控制
             ctrl.select_ctrl = response.select_ctrl;
         });
     };
@@ -155,6 +153,3 @@ ctrl.controller('jobfair_select', function ($scope, $window, $http, $timeout, $i
     };
 
 });
-
-
-
