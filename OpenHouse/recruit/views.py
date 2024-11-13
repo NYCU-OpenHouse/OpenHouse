@@ -1370,16 +1370,16 @@ def Status(request):
     fee = 0
     discount = 0
     discount_text: list[str] = []
-    
+
     try:
         # session fee calculation
-        if signup_data.seminar == 'attend_short':
-            seminar_fee = configs.session_fee_short
-            seminar_fee_text = f"50min ({seminar_fee} 元)"
+        if signup_data.seminar == 'attend':
+            seminar_fee = configs.session_fee
+            seminar_fee_text = f"說明會 ({seminar_fee} 元)"
             fee += seminar_fee
-        elif signup_data.seminar == 'attend_long':
-            seminar_fee = configs.session_fee_long
-            seminar_fee_text = f"90min ({seminar_fee} 元)"
+        elif signup_data.seminar == 'attend_noon':
+            seminar_fee = configs.session_fee_noon
+            seminar_fee_text = f"說明會中午場 ({seminar_fee} 元)"
             fee += seminar_fee
 
         # ece fee calculation

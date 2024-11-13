@@ -119,8 +119,8 @@ class RecruitConfigs(models.Model):
     session_10_start = models.TimeField(u'說明會場次10_開始時間', default='00:00')
     session_10_end = models.TimeField(u'說明會場次10_結束時間', default='00:00')
     # 費用
-    session_fee_short = models.IntegerField(u'說明會場次(50min)_費用', default=0)
-    session_fee_long = models.IntegerField(u'說明會場次(90min)_費用', default=0)
+    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
+    session_fee_noon = models.IntegerField(u'說明會場次(午場)_費用', default=0)
 
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
@@ -170,8 +170,8 @@ class ECESeminar(models.Model):
 class RecruitSignup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加說明會'),
-        (u'attend_short', u'參加說明會(50min)'),
-        (u'attend_long', u'參加說明會(90min)'),
+        (u'attend', u'參加說明會'),
+        (u'attend_noon', u'參加說明會(中午場)'),
     )
     
     id = models.AutoField(primary_key=True)
