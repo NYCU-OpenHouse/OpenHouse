@@ -158,11 +158,35 @@ class JobfairInfoTempForm(ModelForm):
 
 
 class SurveyForm(forms.ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #       super(SignupCreationForm, self).__init__(*args, **kwargs)
-    #       self.fields['seminar'].widget.attrs.update({
-    #           'class': 'ui dropdown',
-    #           })
+    def __init__(self, *args, **kwargs):
+        super(SurveyForm, self).__init__(*args, **kwargs)
+        self.fields['os_for_ftime'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['os_osc_ftime'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['os_cn_ftime'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['os_for_intern'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['os_osc_intern'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['os_cn_intern'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['intern_week'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['intern_hour'].widget.attrs.update({
+            'min' : '0'
+        })
+        self.fields['intern_num'].widget.attrs.update({
+            'min' : '0'
+        })
 
     class Meta:
         model = CompanySurvey

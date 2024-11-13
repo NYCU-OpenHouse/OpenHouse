@@ -577,23 +577,55 @@ class SponsorShip(models.Model):
 
 class CompanySurvey(models.Model):
     RATING = (
-        (u'優', u'優'),
-        (u'佳', u'佳'),
+        (u'非常滿意', u'非常滿意'),
+        (u'滿意', u'滿意'),
         (u'普通', u'普通'),
-        (u'差', u'差'),
-        (u'劣', u'劣'),
+        (u'不滿意', u'不滿意'),
+        (u'非常不滿意', u'非常不滿意'),
     )
+    YES_NO_CHOICES = [
+        ('yes', '是'),
+        ('no', '否'),
+    ]
 
     id = models.AutoField(primary_key=True)
-    english_name = models.CharField(u'公司英文名稱', blank=True, null=True, max_length=255)
-    # os = overseas, osc = overseas chinese, cn = china
-    os_serve = models.BooleanField(u'境外生參與活動', default=False)
-    os_for_ftime = models.BooleanField(u'外籍生正職', default=False)
-    os_osc_ftime = models.BooleanField(u'僑生正職', default=False)
-    os_cn_ftime = models.BooleanField(u'陸生正職', default=False)
-    os_for_intern = models.BooleanField(u'外籍生實習', default=False)
-    os_osc_intern = models.BooleanField(u'僑生實習', default=False)
-    os_cn_intern = models.BooleanField(u'陸生實習', default=False)
+    # basic info
+    cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
+    company = models.CharField(u'企業名稱(中文)', max_length=50)
+    company_eng = models.CharField(u'企業名稱(英文)(選填)', max_length=50, null=True, blank=True)
+    submiter_name = models.CharField(u'填寫人姓名', max_length=20)
+    submiter_phone = models.CharField(u'填寫人電話', max_length=20)
+    submiter_email = models.CharField(u'填寫人Email', max_length=50)
+    SIZE = (
+        (u'1~100人', u'1~100人'),
+        (u'101~500人', u'101~500人'),
+        (u'500~1000人', u'500~1000人'),
+        (u'1001~5000人', u'1001~5000人'),
+        (u'5000~10000人', u'5000~10000人'),
+        (u'10000~20000人', u'10000~20000人'),
+        (u'30000人以上', u'30000人以上'),
+    )
+    company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
+    nycu_employees = models.IntegerField(u'本校校友人數', default=0)
+    category = models.CharField(u'企業類別', max_length=37, choices=CATEGORYS)
+
+    # oversea recruit info
+    os_serve = models.CharField(
+        u'境外生參與活動',
+        max_length=3,
+        choices=YES_NO_CHOICES,
+    )
+    os_seminar = models.CharField(
+        u'境外生說明會',
+        max_length=3,
+        choices=YES_NO_CHOICES,
+    )
+    os_for_ftime = models.IntegerField(u'外籍生(母語非中文)正職人數', default=0)
+    os_osc_ftime = models.IntegerField(u'僑生正職人數', default=0)
+    os_cn_ftime = models.IntegerField(u'陸生正職人數', default=0)
+    os_for_intern = models.IntegerField(u'外籍生(母語非中文)實習人數', default=0)
+    os_osc_intern = models.IntegerField(u'僑生實習人數', default=0)
+    os_cn_intern = models.IntegerField(u'陸生實習人數', default=0)
 
     # application process
     APP_PROCESS_CHOICES = (
@@ -603,7 +635,7 @@ class CompanySurvey(models.Model):
     )
     os_app_process = models.CharField(u'應徵方式 ', max_length=50, choices=APP_PROCESS_CHOICES, null=True)
     os_app_cv_url = models.CharField(u'網址', max_length=64, blank=True, null=True, default='')
-    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內')
+    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內，若無則免填')
 
     # major multiple choice field
     os_major_ee = models.BooleanField(u'電子電機', default=False)
@@ -640,162 +672,176 @@ class CompanySurvey(models.Model):
     os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
 
     os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
-    os_seminar = models.BooleanField(u'外籍生說明會', default=False)
     os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)
 
+    # intern
+    intern_num = models.IntegerField(u'實習人數', default=0)
+    intern_percent = models.CharField(u'實習生比例', max_length=10, default='0')
+    intern_bachelor = models.BooleanField(u'大學生', default=False)
+    intern_master = models.BooleanField(u'碩士生', default=False)
+    intern_phd = models.BooleanField(u'博士生', default=False)
+    intern_week = models.IntegerField(u'實習週數', default=0)
+    intern_hour = models.IntegerField(u'實習時數', default=0)
+    intern_pay = models.CharField(u'實習薪資', max_length=3, choices=YES_NO_CHOICES, null=True)
+    intern_return = models.CharField(u'實習生轉正', max_length=3, choices=YES_NO_CHOICES, null=True)
+
+    # satisfaction
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
     ee_phd = models.IntegerField(u'電機學院-博士人數', default=0)
-    ee_satisfaction = models.CharField(u'電機學院 - 平均滿意度', max_length=2, choices=RATING,
+    ee_satisfaction = models.CharField(u'電機學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True
                                        )
     cs_bachelor = models.IntegerField(u'資訊學院-大學人數', default=0)
     cs_master = models.IntegerField(u'資訊學院-碩士人數', default=0)
     cs_phd = models.IntegerField(u'資訊學院-博士人數', default=0)
-    cs_satisfaction = models.CharField(u'資訊學院 - 平均滿意度', max_length=2, choices=RATING,
+    cs_satisfaction = models.CharField(u'資訊學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     manage_bachelor = models.IntegerField(u'管理學院-大學人數', default=0)
     manage_master = models.IntegerField(u'管理學院-碩士人數', default=0)
     manage_phd = models.IntegerField(u'管理學院-博士人數', default=0)
-    manage_satisfaction = models.CharField(u'管理學院 - 平均滿意度', max_length=2, choices=RATING,
+    manage_satisfaction = models.CharField(u'管理學院 - 平均滿意度', max_length=10, choices=RATING,
                                            null=True, blank=True)
     ls_bachelor = models.IntegerField(u'生命科學院-大學人數', default=0)
     ls_master = models.IntegerField(u'生命科學院-碩士人數', default=0)
     ls_phd = models.IntegerField(u'生命科學院-博士人數', default=0)
-    ls_satisfaction = models.CharField(u'生命科學院 - 平均滿意度', max_length=2, choices=RATING,
+    ls_satisfaction = models.CharField(u'生命科學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     bio_bachelor = models.IntegerField(u'生物科技學院-大學人數', default=0)
     bio_master = models.IntegerField(u'生物科技學院-碩士人數', default=0)
     bio_phd = models.IntegerField(u'生物科技學院-博士人數', default=0)
-    bio_satisfaction = models.CharField(u'生物科技學院 - 平均滿意度', max_length=2, choices=RATING,
+    bio_satisfaction = models.CharField(u'生物科技學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     bse_bachelor = models.IntegerField(u'生物醫學暨工程學院-大學人數', default=0)
     bse_master = models.IntegerField(u'生物醫學暨工程學院-碩士人數', default=0)
     bse_phd = models.IntegerField(u'生物醫學暨工程學院-博士人數', default=0)
-    bse_satisfaction = models.CharField(u'生物醫學暨工程學院 - 平均滿意度', max_length=2, choices=RATING,
+    bse_satisfaction = models.CharField(u'生物醫學暨工程學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     sci_bachelor = models.IntegerField(u'理學院-大學人數', default=0)
     sci_master = models.IntegerField(u'理學院-碩士人數', default=0)
     sci_phd = models.IntegerField(u'理學院-博士人數', default=0)
-    sci_satisfaction = models.CharField(u'理學院 - 平均滿意度', max_length=2, choices=RATING,
+    sci_satisfaction = models.CharField(u'理學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     eng_bachelor = models.IntegerField(u'工學院-大學人數', default=0)
     eng_master = models.IntegerField(u'工學院-碩士人數', default=0)
     eng_phd = models.IntegerField(u'工學院-博士人數', default=0)
-    eng_satisfaction = models.CharField(u'工學院 - 平均滿意度', max_length=2, choices=RATING,
+    eng_satisfaction = models.CharField(u'工學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     hs_bachelor = models.IntegerField(u'人文社會學院-大學人數', default=0)
     hs_master = models.IntegerField(u'人文社會學院-碩士人數', default=0)
     hs_phd = models.IntegerField(u'人文社會學院-博士人數', default=0)
-    hs_satisfaction = models.CharField(u'人文社會學院 - 平均滿意度', max_length=2, choices=RATING,
+    hs_satisfaction = models.CharField(u'人文社會學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     hss_bachelor = models.IntegerField(u'人文與社會科學院-大學人數', default=0)
     hss_master = models.IntegerField(u'人文與社會科學院-碩士人數', default=0)
     hss_phd = models.IntegerField(u'人文與社會科學院-博士人數', default=0)
-    hss_satisfaction = models.CharField(u'人文與社會科學院 - 平均滿意度', max_length=2, choices=RATING,
+    hss_satisfaction = models.CharField(u'人文與社會科學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     haka_bachelor = models.IntegerField(u'客家學院-大學人數', default=0)
     haka_master = models.IntegerField(u'客家學院-碩士人數', default=0)
     haka_phd = models.IntegerField(u'客家學院-博士人數', default=0)
-    haka_satisfaction = models.CharField(u'客家學院 - 平均滿意度', max_length=2, choices=RATING,
+    haka_satisfaction = models.CharField(u'客家學院 - 平均滿意度', max_length=10, choices=RATING,
                                          null=True, blank=True)
     den_bachelor = models.IntegerField(u'牙醫學院-大學人數', default=0)
     den_master = models.IntegerField(u'牙醫學院-碩士人數', default=0)
     den_phd = models.IntegerField(u'牙醫學院-博士人數', default=0)
-    den_satisfaction = models.CharField(u'牙醫學院 - 平均滿意度', max_length=2, choices=RATING,
+    den_satisfaction = models.CharField(u'牙醫學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     pho_bachelor = models.IntegerField(u'光電學院-大學人數', default=0)
     pho_master = models.IntegerField(u'光電學院-碩士人數', default=0)
     pho_phd = models.IntegerField(u'光電學院-博士人數', default=0)
-    pho_satisfaction = models.CharField(u'光電學院 - 平均滿意度', max_length=2, choices=RATING,
+    pho_satisfaction = models.CharField(u'光電學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     law_bachelor = models.IntegerField(u'科技法律學院-大學人數', default=0)
     law_master = models.IntegerField(u'科技法律學院-碩士人數', default=0)
     law_phd = models.IntegerField(u'科技法律學院-博士人數', default=0)
-    law_satisfaction = models.CharField(u'科技法律學院 - 平均滿意度', max_length=2, choices=RATING,
+    law_satisfaction = models.CharField(u'科技法律學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     fse_bachelor = models.IntegerField(u'前瞻系統工程教育院-大學人數', default=0)
     fse_master = models.IntegerField(u'前瞻系統工程教育院-碩士人數', default=0)
     fse_phd = models.IntegerField(u'前瞻系統工程教育院-博士人數', default=0)
-    fse_satisfaction = models.CharField(u'前瞻系統工程教育院 - 平均滿意度', max_length=2, choices=RATING,
+    fse_satisfaction = models.CharField(u'前瞻系統工程教育院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     icst_bachelor = models.IntegerField(u'國際半導體學院-大學人數', default=0)
     icst_master = models.IntegerField(u'國際半導體學院-碩士人數', default=0)
     icst_phd = models.IntegerField(u'國際半導體學院-博士人數', default=0)
-    icst_satisfaction = models.CharField(u'國際半導體學院 - 平均滿意度', max_length=2, choices=RATING,
+    icst_satisfaction = models.CharField(u'國際半導體學院 - 平均滿意度', max_length=10, choices=RATING,
                                          null=True, blank=True)
     ai_bachelor = models.IntegerField(u'智慧科技暨綠能學院-大學人數', default=0)
     ai_master = models.IntegerField(u'智慧科技暨綠能學院-碩士人數', default=0)
     ai_phd = models.IntegerField(u'智慧科技暨綠能學院-博士人數', default=0)
-    ai_satisfaction = models.CharField(u'智慧科技暨綠能學院 - 平均滿意度', max_length=2, choices=RATING,
+    ai_satisfaction = models.CharField(u'智慧科技暨綠能學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     som_bachelor = models.IntegerField(u'醫學院-大學人數', default=0)
     som_master = models.IntegerField(u'醫學院-碩士人數', default=0)
     som_phd = models.IntegerField(u'醫學院-博士人數', default=0)
-    som_satisfaction = models.CharField(u'醫學院 - 平均滿意度', max_length=2, choices=RATING,
+    som_satisfaction = models.CharField(u'醫學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     ps_bachelor = models.IntegerField(u'藥物科學院-大學人數', default=0)
     ps_master = models.IntegerField(u'藥物科學院-碩士人數', default=0)
     ps_phd = models.IntegerField(u'藥物科學院-博士人數', default=0)
-    ps_satisfaction = models.CharField(u'藥物科學院 - 平均滿意度', max_length=2, choices=RATING,
+    ps_satisfaction = models.CharField(u'藥物科學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     son_bachelor = models.IntegerField(u'護理學院-大學人數', default=0)
     son_master = models.IntegerField(u'護理學院-碩士人數', default=0)
     son_phd = models.IntegerField(u'護理學院-博士人數', default=0)
-    son_satisfaction = models.CharField(u'護理學院 - 平均滿意度', max_length=2, choices=RATING,
+    son_satisfaction = models.CharField(u'護理學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
-    overall_satisfaction = models.CharField(u'整體滿意度', max_length=2, choices=RATING, null=True, blank=True)
+    overall_satisfaction = models.CharField(u'整體滿意度', max_length=10, choices=RATING, null=True, blank=True)
 
     # salary
     SALARY_MONTH = (
-        (u'4萬以下', u'4萬以下'),
-        (u'4~5萬', u'4~5萬'),
-        (u'5~6萬', u'5~6萬'),
-        (u'6萬以上', u'6萬以上'),
+        (u'約30,000 元以下', u'約30,000 元以下'),
+        (u'約30,001 元至40,000 元', u'約30,001 元至40,000 元'),
+        (u'約40,001 元至50,000 元', u'約40,001 元至50,000 元'),
+        (u'約50,001 元至60,000 元', u'約50,001 元至60,000 元'),
+        (u'約60,001 元至70,000 元', u'約60,001 元至70,000 元'),
+        (u'約70,001 元至80,000 元', u'約70,001 元至80,000 元'),
+        (u'約80,001 元至90,000 元', u'約80,001 元至90,000 元'),
+        (u'約90,001 元至100,000 元', u'約90,001 元至100,000 元'),
+        (u'約100,001 元至110,000 元', u'約100,001 元至110,000 元'),
+        (u'約110,001 元至120,000 元', u'約110,001 元至120,000 元'),
+        (u'約120,001 元至130,000 元', u'約120,001 元至130,000 元'),
+        (u'約130,001 元至140,000 元', u'約130,001 元至140,000 元'),
+        (u'約140,001 元至150,000 元', u'約140,001 元至150,000 元'),
+        (u'約150,001 元以上', u'約150,001 元以上'),
     )
     SALARY_YEAR = (
-        (u'50萬以下', u'50萬以下'),
-        (u'50~70萬', u'50~70萬'),
-        (u'70~100萬', u'70~100萬'),
-        (u'100萬以上', u'100萬以上'),
+        (u'40萬元以下', u'40萬元以下'),
+        (u'40~80萬元', u'40~80萬元'),
+        (u'80~120萬元', u'80~120萬元'),
+        (u'120~160萬元', u'120~160萬元'),
+        (u'160~200萬元', u'160~200萬元'),
+        (u'200萬元以上', u'200萬元以上'),
     )
-    salary_avg_bachelor = models.CharField(u'大學平均月薪', max_length=8, choices=SALARY_MONTH)
-    salary_avg_master = models.CharField(u'碩士平均月薪', max_length=8, choices=SALARY_MONTH)
-    salary_avg_phd = models.CharField(u'博士平均月薪', max_length=8, choices=SALARY_MONTH)
-    nctu_salary_avg_bachelor = models.CharField(u'大學平均年薪', max_length=8, choices=SALARY_YEAR)
-    nctu_salary_avg_master = models.CharField(u'碩士平均年薪', max_length=8, choices=SALARY_YEAR)
-    nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=8, choices=SALARY_YEAR)
+    salary_avg_bachelor = models.CharField(u'大學平均月薪', max_length=20, choices=SALARY_MONTH)
+    salary_avg_master = models.CharField(u'碩士平均月薪', max_length=20, choices=SALARY_MONTH)
+    salary_avg_phd = models.CharField(u'博士平均月薪', max_length=20, choices=SALARY_MONTH)
+    nctu_salary_avg_bachelor = models.CharField(u'大學平均年薪', max_length=20, choices=SALARY_YEAR)
+    nctu_salary_avg_master = models.CharField(u'碩士平均年薪', max_length=20, choices=SALARY_YEAR)
+    nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=20, choices=SALARY_YEAR)
 
     # ability
     no_nycu_employee = models.BooleanField(u'目前無本校畢業生在職', default=False)
-    professional_skill_rate = models.CharField(u'專業知能', max_length=4, choices=RATING, null=True, blank=True)
-    foreign_lang_rate = models.CharField(u'外語能力', max_length=4, choices=RATING, null=True, blank=True)
-    document_process_rate = models.CharField(u'文書處理', max_length=4, choices=RATING, null=True, blank=True)
-    info_literacy_rate = models.CharField(u'資訊素養', max_length=4, choices=RATING, null=True, blank=True)
-    problem_solving_rate = models.CharField(u'發現及解決問題', max_length=4, choices=RATING, null=True, blank=True)
-    attitude_rate = models.CharField(u'工作態度', max_length=4, choices=RATING, null=True, blank=True)
-    civic_duty_rate = models.CharField(u'公民責任', max_length=4, choices=RATING, null=True, blank=True)
-    pro_moral_rate = models.CharField(u'專業倫理', max_length=4, choices=RATING, null=True, blank=True)
-    humanities_rate = models.CharField(u'人文及在地關懷', max_length=4, choices=RATING, null=True, blank=True)
-    cultural_rate = models.CharField(u'人文藝術陶冶', max_length=4, choices=RATING, null=True, blank=True)
-    international_view_rate = models.CharField(u'國際視野', max_length=4, choices=RATING, null=True, blank=True)
-    diverse_thinking_rate = models.CharField(u'跨界多元思考', max_length=4, choices=RATING, null=True, blank=True)
-    group_cognitive_rate = models.CharField(u'群己平衡認知', max_length=4, choices=RATING, null=True, blank=True)
 
+    communication_rate = models.CharField(u'溝通表達', max_length=10, choices=RATING, null=True, blank=True)
+    continuous_learning_rate = models.CharField(u'持續學習', max_length=10, choices=RATING, null=True, blank=True)
+    interpersonal_rate = models.CharField(u'人際互動', max_length=10, choices=RATING, null=True, blank=True)
+    collaboration_rate = models.CharField(u'團隊合作', max_length=10, choices=RATING, null=True, blank=True)
+    problem_solving_rate = models.CharField(u'問題解決', max_length=10, choices=RATING, null=True, blank=True)
+    innovation_rate = models.CharField(u'創新', max_length=10, choices=RATING, null=True, blank=True)
+    responsibility_rate = models.CharField(u'工作責任及紀律', max_length=10, choices=RATING, null=True, blank=True)
+    tech_applications_rate = models.CharField(u'資訊科技應用', max_length=10, choices=RATING, null=True, blank=True)
+    
     # ability choice
-    professional_skill = models.BooleanField(u'專業知能')
-    foreign_lang = models.BooleanField(u'外語能力')
-    document_process = models.BooleanField(u'文書處理')
-    info_literacy = models.BooleanField(u'資訊素養')
-    problem_solving = models.BooleanField(u'發現及解決問題')
-    attitude = models.BooleanField(u'工作態度')
-    civic_duty = models.BooleanField(u'公民責任')
-    pro_moral = models.BooleanField(u'專業倫理')
-    humanities = models.BooleanField(u'人文及在地關懷')
-    cultural = models.BooleanField(u'人文藝術陶冶')
-    international_view = models.BooleanField(u'國際視野')
-    diverse_thinking = models.BooleanField(u'跨界多元思考')
-    group_cognitive = models.BooleanField(u'群己平衡認知')
+    communication = models.BooleanField(u'溝通表達', default=False)
+    continuous_learning = models.BooleanField(u'持續學習', default=False)
+    interpersonal = models.BooleanField(u'人際互動', default=False)
+    collaboration = models.BooleanField(u'團隊合作', default=False)
+    problem_solving = models.BooleanField(u'問題解決', default=False)
+    innovation = models.BooleanField(u'創新', default=False)
+    responsibility = models.BooleanField(u'工作責任及紀律', default=False)
+    tech_applications = models.BooleanField(u'資訊科技應用', default=False)
     other = models.CharField(u'其它', max_length=100, blank=True, null=True)
 
     # exp
@@ -815,7 +861,7 @@ class CompanySurvey(models.Model):
     national_exam = models.CharField(u'國家考試證書', max_length=4, choices=HELPFUL_RATE)
     cert = models.CharField(u'證照', max_length=4, choices=HELPFUL_RATE)
     work_exp = models.CharField(u'相關工作經驗（打工、實習）', max_length=4, choices=HELPFUL_RATE)
-    travel_study = models.CharField(u'遊學（如交換學生）', max_length=4, choices=HELPFUL_RATE)
+    travel_study = models.CharField(u'遊學（如交換學生、雙聯學位等）', max_length=4, choices=HELPFUL_RATE)
 
     # ways to recruit
     hr_bank = models.BooleanField(u'人力銀行')
@@ -825,30 +871,12 @@ class CompanySurvey(models.Model):
     teacher_recommend = models.BooleanField(u'老師推薦')
     campus_jobfair = models.BooleanField(u'校園徵才')
     contest = models.BooleanField(u'競賽活動')
+    recruit_other = models.BooleanField(u'其他', default=False)
 
     # receive info
     receive_info = models.BooleanField(u'我希望定期接收校園徵才活動訊息')
     suggestions = models.CharField(u'其它建議', max_length=150, blank=True, null=True)
 
-    # basic info
-    cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
-    company = models.CharField(u'企業名稱', max_length=50)
-    submiter_name = models.CharField(u'填寫人姓名', max_length=20)
-    submiter_phone = models.CharField(u'填寫人電話', max_length=20)
-    submiter_email = models.CharField(u'填寫人Email', max_length=50)
-    SIZE = (
-        (u'1~100人', u'1~100人'),
-        (u'101~500人', u'101~500人'),
-        (u'500~1000人', u'500~1000人'),
-        (u'1001~5000人', u'1001~5000人'),
-        (u'5000~10000人', u'5000~10000人'),
-        (u'10000~20000人', u'10000~20000人'),
-        (u'30000人以上', u'30000人以上'),
-    )
-    company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
-    # plan_to_recruit     = models.IntegerField(u'2017年預計招募職缺數', help_text="此數據不會對外公開，僅供主辦單位內部作業統計用途。")
-    nycu_employees = models.IntegerField(u'本校校友人數', default=0)
-    category = models.CharField(u'企業類別', max_length=37, choices=CATEGORYS)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
