@@ -113,6 +113,15 @@ def recruit_signup(request):
             return render(request, 'recruit/error.html', locals())
 
     plan_file = recruit.models.Files.objects.filter(category="企畫書").first()
+
+    # Check if the company has filled the survey. If not, disable the signup button
+    try:
+        recruit.models.CompanySurvey.objects.get(cid=request.user.cid)
+        fill_survey = True
+    except ObjectDoesNotExist:
+        fill_survey = False
+        messages.error(request, '尚未填寫問卷，請先填寫問卷才能送出/儲存報名資料')
+
     try:
         signup_info = RecruitSignup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
@@ -1015,6 +1024,12 @@ def company_survey(request):
         my_survey = CompanySurvey.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
         my_survey = None
+
+    try:
+        is_sign_up = RecruitSignup.objects.get(cid=request.user.cid)
+    except ObjectDoesNotExist:
+        is_sign_up = None
+
     if request.POST:
         data = request.POST.copy()
         # decide cid in the form
@@ -1022,6 +1037,9 @@ def company_survey(request):
         form = SurveyForm(data=data, instance=my_survey)
         if form.is_valid():
             form.save()
+            if not is_sign_up:
+                messages.success(request, '滿意度問卷填答成功，可以進行報名')
+                return redirect(Status)
             return redirect(company_survey)
         else:
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")

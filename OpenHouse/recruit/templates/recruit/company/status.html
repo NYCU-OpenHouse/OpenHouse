@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block 'content' %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="ui {% if message.tags %}{{ message.tags }} message{% else %}message{% endif %}" style="width:70%;margin:auto">
+                {{ message }}
+            </div>
+            <br />
+        {% endfor %}
+    {% endif %}
     <h1 class="ui dividing header">Open House 春季徵才 - 報名狀況</h1>
     <h3 class="ui dividing header">
         國立陽明交通大學OpenHouse 春季徵才 活動報名流程
@@ -47,11 +55,12 @@
 
     {% if not signup_data %}
         <div class="ui warning icon message">
-            <i class="warning icon"></i>
-            <div class="content">
+            <i class="black warning icon"></i>
+            <div class="content" style="color: black;">
                 <div class="header">
                     貴公司尚未報名本年度「春季徵才」活動
                 </div>
+                <p><a href="{% url 'recruit_survey' %}">點此填寫問卷</a>，需要先填寫滿意度問卷方可進行報名</p>
                 <p><a href="{% url 'recruit_signup' %}">點此前往活動報名頁面</a>，活動將於{{ configs.recruit_signup_end }}截止報名</p>
                 <p>報名企業說明會、ECE說明會之企業，請於說明會選位與場次排定後，再「列印繳費金額」進行繳費 (建議列印時間：11月30日)</p>
             </div>
@@ -81,7 +90,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>畢業生滿意度問卷</td>
+                    <td>企業滿意度問卷</td>
                     <td>
                         {% if fill_survey %}
                             <i class="large green check icon"></i>
@@ -95,7 +104,12 @@
                 <tr>
                     <td>參展專區</td>
                     <td>
-                        {{ signup_data.zone }}
+                        {% if signup_data.zone %}
+                            {{ signup_data.zone }}
+                        {% else %}
+                            <i class="large red x icon"></i>
+                            <b>尚未送出報名資料</b>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
