@@ -34,14 +34,14 @@
         <tbody>
         {% for company in companies %}
             <tr>
-                <td><img class="ui small image" style="width: 100%" src="{{ company.logo.url }}"/></td>
+                <td><img class="ui small image" style="width: 100%;" src="{{ company.logo.url }}"/></td>
                 <td>
                     <a href="/company/detail/{{ company.cid }}">
                         {{ company.name }}
                     </a>
                 </td>
                 <td>{{ company.category }}</td>
-                <td style="word-wrap: break-word; ">{{ company.brief |safe }}</td>
+                <td style="word-wrap: break-word; ">{{ company.brief|safe }}</td>
                 <td style="word-wrap: break-word; ">{{ company.recruit_info|safe }}</td>
                 <td>
                     <ul class="ui list">
@@ -56,3 +56,4 @@
         </tbody>
     </table>
 {% endblock %}
+

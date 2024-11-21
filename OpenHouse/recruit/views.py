@@ -1517,15 +1517,16 @@ def list_jobs(request):
     # semantic ui control
     sidebar_ui = {'list_jobs': "active"}
 
-    categories = [category[0] for category in Company.CATEGORYS]
+    categories = [category.name for category in CompanyCategories.objects.all()]
     companies = []
-    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None    
     if category_filtered and category_filtered != 'all':
         if category_filtered not in categories:
             raise Http404("What are u looking for?")
-        for company in RecruitSignup.objects.all():
+        for signup in RecruitSignup.objects.all():
             try:
-                target_company = Company.objects.get(cid=company.cid, category=category_filtered)
+                target_category = company.models.CompanyCategories.objects.get(name=category_filtered)
+                target_company = Company.objects.get(cid=signup.cid, categories=target_category)
                 companies.append({
                     'cid': target_company.cid,
                     'logo': target_company.logo,
@@ -1541,9 +1542,9 @@ def list_jobs(request):
             except:
                 pass
     else:
-        for company in RecruitSignup.objects.all():
+        for signup in RecruitSignup.objects.all():
             try:
-                target_company = Company.objects.get(cid=company.cid)
+                target_company = Company.objects.get(cid=signup.cid)
                 companies.append({
                     'cid': target_company.cid,
                     'logo': target_company.logo,
