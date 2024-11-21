@@ -9,7 +9,7 @@
 {% block 'content' %}
     <form class="ui info form" method="POST" action="{% url 'recruit_seminar_info' %}">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 春季徵才 - 說明會資訊</h1>
+        <h1 class="ui dividing header">Open House 春季徵才 - 企業說明會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
@@ -33,7 +33,10 @@
                 說明會資訊填寫已完成，您也可以修改資訊，再次送出。
             </div>
         {% endif %}
-        <h2 style="color:red">請企業於 1/8 前完成「說明會資訊填寫」，以利活動宣傳</h2>
+        <h2 style="color:red">請企業於 {{ deadline }} 前完成「企業說明會資訊」填寫，以進行行政施工等準備作業</h2>
+        <div class="ui red message">
+            未填寫者視同放棄正名權利，由本組自行填寫，企業不得有異議。 說明會主題_留空
+        </div>
         <h3 class="ui dividing header">主題資訊</h3>
         <div class="field required">
             <label>{{ form.topic.label }}{{ form.topic.errors }} </label>

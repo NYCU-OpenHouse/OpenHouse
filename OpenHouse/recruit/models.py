@@ -121,6 +121,7 @@ class RecruitConfigs(models.Model):
     # 費用
     session_fee = models.IntegerField(u'說明會場次_費用', default=0)
     session_fee_noon = models.IntegerField(u'說明會場次(午場)_費用', default=0)
+    seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
 
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
@@ -133,7 +134,7 @@ class RecruitConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間', default='00:00')
     jobfair_end = models.TimeField(u'就博會結束時間', default='00:00')
     jobfair_place = models.CharField(u'就博會地點', max_length=150, default="")
-    jobfair_info_deadline = models.DateTimeField(u'資訊截止填寫時間', default=timezone.now)
+    jobfair_info_deadline = models.DateTimeField(u'就博會資訊截止填寫時間', default=timezone.now)
     JOBFAIR_FOOD_CHOICES = (
         ('lunch_box', u'餐盒(蛋奶素)'),
         ('bento', u'便當(葷素)')
@@ -209,6 +210,13 @@ class RecruitSignup(models.Model):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         if com:
             return com.date_join 
+        else:
+            return None
+
+    def company_other_ps(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        if com:
+            return com.other_ps
         else:
             return None
 

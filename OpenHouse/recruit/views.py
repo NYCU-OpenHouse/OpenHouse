@@ -640,6 +640,15 @@ def seminar_info(request):
     except ObjectDoesNotExist:
         seminar_info_object = None
 
+    try:
+        deadline = RecruitConfigs.objects.values('seminar_info_deadline')[0]['seminar_info_deadline']
+    except IndexError:
+        return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+
+    if timezone.now() > deadline:
+        error_msg = "企業說明會資訊填寫時間已截止!若有更改需求，請來信或來電。"
+        return render(request, 'recruit/error.html', locals())
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
