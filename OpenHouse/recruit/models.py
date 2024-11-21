@@ -607,7 +607,7 @@ class CompanySurvey(models.Model):
     )
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
     nycu_employees = models.IntegerField(u'本校校友人數', default=0)
-    category = models.CharField(u'企業類別', max_length=37, choices=CATEGORYS)
+    categories = models.ForeignKey('CompanyCategories', verbose_name=u'企業類別', on_delete=models.SET_NULL, null=True)
 
     # oversea recruit info
     os_serve = models.CharField(
