@@ -20,10 +20,12 @@
                         {{ form.instance.mentor.date }} {{ form.instance.mentor.start_time }}
                     </td>
                     {% for item in form %}
-                        <tr>
-                            <td>{{ item.label }}</td>
-                            <td>{{ item.value }}</td>
-                        </tr>
+                        {% if item.name != 'preferred_categories' %}
+                            <tr>
+                                <td>{{ item.label }}</td>
+                                <td>{{ item.value }}</td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>

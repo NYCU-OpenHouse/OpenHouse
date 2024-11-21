@@ -20,14 +20,20 @@ def ExportStudentSignupStatus(request, id):
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("學生登記")
     # ignore id and cid which is index 0 and 1
-    fields = Signup._meta.get_fields()[2:10]
+    fields = list(Signup._meta.get_fields()[2:10])
+    fields.append(Signup._meta.get_field('preferred_categories'))
+
     for index, field in enumerate(fields):
         worksheet.write(0, index, field.verbose_name)
 
     student_signup_status = mentor.signup_set.all()
     for row_count, info in enumerate(student_signup_status):
         for col_count, field in enumerate(fields):
-            worksheet.write(row_count + 1, col_count, getattr(info, field.name))
+            if field.name == 'preferred_categories':
+                preferred_names = ", ".join([category.name for category in getattr(info, field.name).all()])
+                worksheet.write(row_count + 1, col_count, preferred_names)
+            else:
+                worksheet.write(row_count + 1, col_count, getattr(info, field.name))
 
 
     

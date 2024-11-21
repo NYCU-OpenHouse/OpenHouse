@@ -62,7 +62,6 @@ def CareerMentorSignup(request, event_id):
     if request.method == "POST":
         request_data = request.POST.copy()
         form = forms.SignupForm(request_data, request.FILES,initial=init_data)
-
         if form.is_valid():
             data = form.cleaned_data
             if models.Signup.objects.filter(mentor=event_id, student_id=data['student_id'],name=data['name']).exists():

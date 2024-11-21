@@ -1,6 +1,8 @@
 from django.db import models
 from company import models as company
 from django.utils import timezone
+from company.models import CompanyCategories
+
 
 class Mentor(models.Model):
     MENTOR_CAT = (
@@ -79,6 +81,11 @@ class Signup(models.Model):
                              help_text="非必要，能讓導師事先了解情況")
     other = models.FileField(u'Other / 其它資料上傳', upload_to='career_mentor', blank=True, null=True)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
+    preferred_categories = models.ManyToManyField(
+        CompanyCategories,
+        verbose_name=u'感興趣的企業類別(可複選)',
+        blank=True
+    )
 
     class Meta:
         managed = True

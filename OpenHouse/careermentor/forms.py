@@ -14,6 +14,9 @@ class SignupForm(forms.ModelForm):
             'class': 'ui dropdown',
         })
         self.fields['time_available'].required = True
+        self.fields['preferred_categories'].widget.attrs.update({
+            'class': 'ui dropdown',
+        })
 
     class Meta:
         model=models.Signup
@@ -23,11 +26,6 @@ class SignupForm(forms.ModelForm):
             'question': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
         }
 
-    def save(self,commit=True):
-        form = super(SignupForm, self).save(commit=False)
-        if commit:
-            form.save()
-            return form
 
 # Customized form for Career Seminar
 class CareerSeminarSignupForm(forms.ModelForm):
