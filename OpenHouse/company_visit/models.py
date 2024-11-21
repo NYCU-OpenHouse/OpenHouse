@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
-
+from company.models import CompanyCategories
 
 
 class CompanyVisit(models.Model):
@@ -59,6 +59,11 @@ class StudentApply(models.Model):
     mobile = models.CharField(u'手機', max_length=15)
     email = models.EmailField(u'email')
     country = models.CharField(u'國籍', max_length=20, blank=True, null=True)
+    preferred_categories = models.ManyToManyField(
+        CompanyCategories,
+        verbose_name=u'感興趣的企業類別(可複選)',
+        blank=True
+    )
 
     class Meta:
         managed = True

@@ -21,7 +21,9 @@ def ExportStudentSignupStatus(request, id):
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("學生登記")
     # ignore id which is index 0
-    fields = StudentApply._meta.get_fields()[2:11]
+    fields = list(StudentApply._meta.get_fields()[2:11])
+    fields.append(StudentApply._meta.get_field('preferred_categories'))
+
     for index, field in enumerate(fields):
         worksheet.write(0, index, field.verbose_name)
 
@@ -31,12 +33,11 @@ def ExportStudentSignupStatus(request, id):
             if field.name == 'date':
                 date_format = workbook.add_format({'num_format': 'yyyy/mm/dd'})
                 worksheet.write_datetime(row_count + 1, col_count, getattr(info, field.name), date_format)
+            elif field.name == 'preferred_categories':
+                preferred_names = ", ".join([category.name for category in getattr(info, field.name).all()])
+                worksheet.write(row_count + 1, col_count, preferred_names)
             else:
                 worksheet.write(row_count + 1, col_count, getattr(info, field.name))
 
-
-    
     workbook.close()
     return response
-
-

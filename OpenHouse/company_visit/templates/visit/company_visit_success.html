@@ -17,10 +17,12 @@
                     <td>{{ form.instance.event }}</td>
                 </tr>
                 {% for item in form %}
-                    <tr>
-                        <td>{{ item.label }}</td>
-                        <td>{{ item.value }}</td>
-                    </tr>
+                    {% if item.name != 'preferred_categories' %}
+                        <tr>
+                            <td>{{ item.label }}</td>
+                            <td>{{ item.value }}</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
