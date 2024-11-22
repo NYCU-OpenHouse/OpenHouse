@@ -59,6 +59,7 @@ class StudentApply(models.Model):
     mobile = models.CharField(u'手機', max_length=15)
     email = models.EmailField(u'email')
     country = models.CharField(u'國籍', max_length=20, blank=True, null=True)
+    insurance_doc = models.FileField(u'保險文件上傳', upload_to='company_visit', blank=True, null=True,)
     preferred_categories = models.ManyToManyField(
         CompanyCategories,
         verbose_name=u'感興趣的企業類別(可複選)',

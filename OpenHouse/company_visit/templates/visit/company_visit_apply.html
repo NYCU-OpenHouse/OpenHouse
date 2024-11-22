@@ -57,6 +57,11 @@
             {{ form.country }}
         </div>
         <div class="field">
+            <label>{{ form.insurance_doc.label }} (外籍生上傳)</label>
+            {{ form.insurance_doc }}
+            外籍生報名階段需要上傳文件以利保險流程(護照/居留證電子檔)
+        </div>
+        <div class="field">
             <label>{{ form.preferred_categories.label }}</label>
             {{ form.preferred_categories }}
         </div>
