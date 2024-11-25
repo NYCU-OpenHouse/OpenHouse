@@ -1559,6 +1559,12 @@ def list_jobs(request):
                 })
             except:
                 pass
+    # if cid = 66666666, 77777777 exists, move these 2 companies to the head of the list
+    for i, company in enumerate(companies):
+        if company['cid'] == '66666666':
+            companies.insert(0, companies.pop(i))
+        if company['cid'] == '77777777':
+            companies.insert(0, companies.pop(i))
     return render(request, 'recruit/public/list_jobs.html', locals())
 
 
