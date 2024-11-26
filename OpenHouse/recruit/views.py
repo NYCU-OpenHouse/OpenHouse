@@ -11,8 +11,7 @@ from .models import JobfairSlot, JobfairOrder, JobfairInfo, StuAttendance, Stude
 from .models import SeminarParking, JobfairParking
 from .models import OnlineSeminarInfo, OnlineSeminarOrder, OnlineSeminarSlot, OnlineJobfairSlot
 from .models import ZoneCategories, CompanyCategories
-from company.models import Company
-import company.models
+from company.models import Company, CompanyCategories as CompanyCategories_Company
 from django.forms import inlineformset_factory
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
@@ -27,7 +26,6 @@ import datetime
 import json
 import logging
 from ipware.ip import get_client_ip
-from company.models import Company
 from datetime import timedelta
 import recruit.models
 from urllib.parse import urlparse, parse_qs
@@ -1312,7 +1310,7 @@ def bulk_add_jobfairslot(request):
 @staff_member_required
 def sync_company_categories(request):
     try:
-        company_categories = company.models.CompanyCategories.objects.all()
+        company_categories = CompanyCategories_Company.objects.all()
         for category in company_categories:
             CompanyCategories.objects.update_or_create(
                 id=category.id,
@@ -1519,13 +1517,14 @@ def list_jobs(request):
 
     categories = [category.name for category in CompanyCategories.objects.all()]
     companies = []
-    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None    
+    category_filtered = request.GET.get('categories') if request.GET.get('categories') else None
+
     if category_filtered and category_filtered != 'all':
         if category_filtered not in categories:
             raise Http404("What are u looking for?")
         for signup in RecruitSignup.objects.all():
             try:
-                target_category = company.models.CompanyCategories.objects.get(name=category_filtered)
+                target_category = CompanyCategories_Company.objects.get(name=category_filtered)
                 target_company = Company.objects.get(cid=signup.cid, categories=target_category)
                 companies.append({
                     'cid': target_company.cid,
