@@ -408,11 +408,11 @@ class JobfairInfo(models.Model):
         ('ticket', u'當日索取紙本停車抵用券'),
         ('register', u'企業事先登記A車車牌號碼')
     )
-    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True)
+    parking_type = models.CharField(u'停車方式', max_length=20, choices=PARKING_CHOICES, null=True, blank=True)
     parking_tickets = models.IntegerField(u'停車證數量', default=0, blank=True, null=True)
     job_number = models.SmallIntegerField(u'職缺人數', default=0)
 
-    lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素")
+    lunch_box = models.SmallIntegerField(u'餐盒數量', default=0, help_text="餐盒預設為蛋奶素", blank=True, null=True)
     meat_lunchbox = models.SmallIntegerField(u'葷食餐點數量', default=0, blank=True, null=True)
     vege_lunchbox = models.SmallIntegerField(u'素食餐點', default=0, blank=True, null=True)
 
