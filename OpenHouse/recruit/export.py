@@ -200,9 +200,9 @@ def ExportAll(request):
             "id": c.id,
         })
     spon_worksheet = workbook.add_worksheet("贊助")
-    spon_worksheet.write(0, 0, "廠商/贊助品")
+    spon_worksheet.write(0, 0, "統編/贊助品")
     spon_worksheet.write(1, 0, "目前數量/上限")
-    spon_worksheet.write(0, 1, "統編")
+    spon_worksheet.write(0, 1, "廠商")
     row_offset = 2
     col_offset = 2
     spon_worksheet.write(0, len(sponsor_items) + col_offset, "贊助額")
@@ -211,8 +211,8 @@ def ExportAll(request):
         spon_worksheet.write(1, index + col_offset, "{}/{}".format(item.num_sponsor, item.number_limit))
 
     for row_count, com in enumerate(sponsorships_list):
-        spon_worksheet.write(row_count + row_offset, 0, com['shortname'])
-        spon_worksheet.write(row_count + row_offset, 1, com['cid'])
+        spon_worksheet.write(row_count + row_offset, 0, com['cid'])
+        spon_worksheet.write(row_count + row_offset, 1, com['shortname'])
         for col_count, count in enumerate(com['counts']):
             spon_worksheet.write(row_count + row_offset, col_count + col_offset, count)
         spon_worksheet.write(row_count + row_offset, len(com['counts']) + col_offset, com['amount'])
