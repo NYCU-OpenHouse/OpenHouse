@@ -978,9 +978,20 @@ def Sponsor(request):
 def SponsorAdmin(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+
+    # get sponsor and company object
     sponsor_items = SponsorItem.objects.all() \
         .annotate(num_sponsor=Count('sponsorship'))
     companies = RecruitSignup.objects.all()
+
+    # handle search item
+    search_term = request.GET.get('q', '').strip()
+    if search_term:
+        companies = list(companies.filter(cid__icontains=search_term)) + [
+                c for c in companies if search_term in c.get_company_name()
+            ]
+
+    # Make sponsorship info
     sponsorships_list = list()
     for c in companies:
         shortname = c.get_company_name()

@@ -1,16 +1,22 @@
 from django.contrib import admin
 from django.conf.urls import url
-from django.db.models import F
+from django.db.models import F, Q
 from .models import RecruitConfigs, RecruitSignup, JobfairSlot, JobfairInfo, SponsorItem, SponsorShip, \
     Files, RecruitConfigs, CompanySurvey, SeminarSlot, SlotColor, SeminarOrder, SeminarInfo, Student, \
     StuAttendance, SeminarInfoTemporary, SeminarParking, JobfairParking, \
-    ECESeminar, CompanyCategories, ZoneCategories, HistoryParticipation
+    ECESeminar
 from .models import JobfairInfoTemp
 from .models import JobfairOrder, ExchangePrize
 from company.models import Company
 from recruit import export
 import recruit.models as models
 
+def _get_company_name_search_results(queryset, model, search_term):
+    if search_term:
+        company_list = Company.objects.filter(Q(name__icontains=search_term) | Q(shortname__icontains=search_term))
+        for company in company_list:
+            queryset |= model.objects.filter(cid=company.cid)
+    return queryset
 
 @admin.register(ExchangePrize)
 class ExchangePrizeAdmin(admin.ModelAdmin):
@@ -84,20 +90,12 @@ class RecruitSignupAdmin(admin.ModelAdmin):
                     'company_visit', 'lecture', 'payment', 'company_other_ps')
     list_filter = ('seminar', 'jobfair', 'payment', 'first_participation', 'zone')
     inlines = (SponsorshipInline,)
-    
-    # custom search the company name field in other db
+
     def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super(RecruitSignupAdmin, self).get_search_results(request, queryset, search_term)
-
-        # Check if search_term is empty or not
-        if search_term:
-            company_list = Company.objects.filter(name__icontains=search_term)
-            company_list |= Company.objects.filter(shortname__icontains=search_term)
-            for company in company_list:
-                queryset |= self.model.objects.filter(cid=company.cid)
-
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
         return queryset, use_distinct
-    
+
     def company_name(self, obj):
         return obj.get_company_name()
 
@@ -246,7 +244,8 @@ class SponsorShipAdmin(admin.ModelAdmin):
 
 @admin.register(CompanySurvey)
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ("company",)
+    search_fields = ('cid', )
+    list_display = ('cid', 'company_name')
 
     # define export URLs eg:...admin/recruit/signup/export
     def get_urls(self):
@@ -255,6 +254,11 @@ class SurveyAdmin(admin.ModelAdmin):
             url(r'^export/$', export.ExportSurvey, name="recruit_survey_export"),
         ]
         return my_urls + urls
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
+        return queryset, use_distinct
 
 
 @admin.register(Files)
