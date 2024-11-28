@@ -35,7 +35,7 @@ def ExportAll(request):
         company_list.append(
             company.models.Company.objects.filter(cid=cid).first())
 
-    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'category', 'phone',
+    fieldname_list = ['cid', 'name', 'english_name', 'shortname', 'categories', 'phone',
                       'postal_code', 'address', 'website',
                       'hr_name', 'hr_phone', 'hr_mobile', 'hr_email',
                       'hr2_name', 'hr2_phone', 'hr2_mobile', 'hr2_email', 'hr_ps',
@@ -89,6 +89,8 @@ def ExportAll(request):
                 info_worksheet.write(row_count + 1, col_count, total_job_types)
             elif fieldname == 'total_jobs':
                 info_worksheet.write(row_count + 1, col_count, total_jobs_quantity)
+            elif fieldname == 'categories':
+                info_worksheet.write(row_count + 1, col_count, company_obj.categories.name)
             else:
                 info_worksheet.write(row_count + 1, col_count, getattr(company_obj, fieldname))
 
@@ -103,16 +105,12 @@ def ExportAll(request):
         {'fieldname': 'first_participation', 'title': '首次參加'},
         {'fieldname': 'zone', 'title': '專區類別'},
         {'fieldname': 'history', 'title': '歷史參加調查'},
-        {'fieldname': 'seminar', 'title': '實體說明會場次'},
-        {'fieldname': 'seminar_ece', 'title': '實體ECE說明會'},
-        # {'fieldname': 'seminar_online', 'title': '線上說明會場次'},
-        {'fieldname': 'jobfair', 'title': '實體就博會攤位數'},
-        # {'fieldname': 'jobfair_online', 'title': '線上就博會'},
+        {'fieldname': 'seminar', 'title': '說明會場次'},
+        {'fieldname': 'seminar_ece', 'title': 'ECE說明會'},
+        {'fieldname': 'jobfair', 'title': '就博會攤位數'},
         {'fieldname': 'company_visit', 'title': '提供企業參訪'},
         {'fieldname': 'career_tutor', 'title': '提供職場導師'},
-        {'fieldname': 'lecture', 'title': '提供就業講座'},
         {'fieldname': 'payment', 'title': '是否繳費'},
-        # {'fieldname': 'receipt_year', 'title': '收據年份'},
         {'fieldname': 'ps', 'title': '備註'},
     ]
 
@@ -142,9 +140,6 @@ def ExportAll(request):
             elif pairs['fieldname'] == 'history':
                 signup_worksheet.write(row_count + 1, col_count,
                                        ', '.join(h.short_name for h in signup.history.all()))
-            # elif pairs['fieldname'] == 'seminar_online':
-            #     signup_worksheet.write(row_count + 1, col_count,
-            #                            signup.get_seminar_online_display())
             else:
                 signup_worksheet.write(row_count + 1, col_count,
                                        signup_dict[pairs['fieldname']])
@@ -543,7 +538,7 @@ def ExportAdFormat(request):
         company_list.append({
             'logo': target_company.logo,
             'name': target_company.name,
-            'category': target_company.category,
+            'category': target_company.categories.name,
             'brief': replace_urls_and_emails(target_company.brief),
             'address': target_company.address,
             'phone': target_company.phone,
