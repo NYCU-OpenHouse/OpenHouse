@@ -1,3 +1,4 @@
+from django.db import models
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import Mentor, Signup
 from django.http import HttpResponse
@@ -20,7 +21,7 @@ def ExportStudentSignupStatus(request, id):
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("學生登記")
     # ignore id and cid which is index 0 and 1
-    fields = list(Signup._meta.get_fields()[2:10])
+    fields = list(Signup._meta.get_fields()[2:14])
     fields.append(Signup._meta.get_field('preferred_categories'))
 
     for index, field in enumerate(fields):
@@ -32,6 +33,14 @@ def ExportStudentSignupStatus(request, id):
             if field.name == 'preferred_categories':
                 preferred_names = ", ".join([category.name for category in getattr(info, field.name).all()])
                 worksheet.write(row_count + 1, col_count, preferred_names)
+            elif isinstance(field, models.FileField):
+                file_instance = getattr(info, field.name)
+                if file_instance:
+                    # file_url = file_instance.url
+                    file_url = request.build_absolute_uri(file_instance.url)
+                    worksheet.write(row_count + 1, col_count, file_url)
+                else:
+                    worksheet.write(row_count + 1, col_count, "")
             else:
                 worksheet.write(row_count + 1, col_count, getattr(info, field.name))
 
