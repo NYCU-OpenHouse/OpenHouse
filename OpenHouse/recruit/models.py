@@ -74,7 +74,7 @@ class ZoneCategories(models.Model):
 class HistoryParticipation(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(u'過往參加活動名稱', max_length=30)
-    short_name = models.CharField(u'過往參加活動簡稱', max_length=10, null=True, blank=True)
+    short_name = models.CharField(u'過往參加活動簡稱', max_length=10, default="", help_text="請填寫簡稱，用於匯出資訊")
 
     def __str__(self):
         return u'{}'.format(self.name)

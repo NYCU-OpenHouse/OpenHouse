@@ -290,7 +290,7 @@ def ExportAll(request):
                         signup_worksheet.write(row_count + 1, col_count, zone_name_first_two_chars)
                     elif pairs['fieldname'] == 'history':
                         signup_worksheet.write(row_count + 1, col_count,
-                                            ', '.join(h.name for h in signup.history.all()))
+                                            ', '.join(h.short_name for h in signup.history.all()))
                     else:
                         signup_worksheet.write(row_count + 1, col_count,
                                             signup_dict[pairs['fieldname']])
