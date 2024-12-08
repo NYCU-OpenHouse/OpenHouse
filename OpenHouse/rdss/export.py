@@ -254,6 +254,9 @@ def ExportAll(request):
         title_pairs = [
             {'fieldname': 'cid', 'title': '公司統一編號'},
             {'fieldname': 'shortname', 'title': '公司簡稱'},
+            {'fieldname': 'gloria_normal', 'title': 'GLORIA_一般會員'},
+            {'fieldname': 'ece_member_normal', 'title': 'ECE_一般會員'},
+            {'fieldname': 'ece_member', 'title': 'ECE_永久會員'},
             {'fieldname': 'zone', 'title': '專區類別'},
             {'fieldname': 'history', 'title': '歷史參加調查'},
             {'fieldname': 'seminar', 'title': '說明會場次'},
@@ -291,6 +294,10 @@ def ExportAll(request):
                     elif pairs['fieldname'] == 'history':
                         signup_worksheet.write(row_count + 1, col_count,
                                             ', '.join(h.short_name for h in signup.history.all()))
+                    elif pairs['fieldname'] in ['gloria_normal', 'ece_member_normal', 'ece_member',
+                                                'visit', 'career_tutor']:
+                        signup_worksheet.write(row_count + 1, col_count,
+                                            "TRUE" if signup_dict[pairs['fieldname']] else "")
                     else:
                         signup_worksheet.write(row_count + 1, col_count,
                                             signup_dict[pairs['fieldname']])
