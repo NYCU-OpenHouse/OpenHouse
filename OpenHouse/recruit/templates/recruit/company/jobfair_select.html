@@ -66,6 +66,9 @@
             <div class="item" style="color:red">
                 在選位時間內，直接按「選位」按鈕選位。並看到該場次變為紅色且顯示貴公司名稱才算選位成功
             </div>
+            <div class="item" style="color:blue">
+                僅在每日上班時間 {{enable_time}} ~ {{disable_time}} 內，才能選位。
+            </div>
             <div class="item">
                 如有任何問題，請立刻撥打活動專線：(03)5131365(林小姐) 或 (03)5712121分機31365(林小姐)
             </div>
@@ -95,7 +98,11 @@
                 <i class="black marker icon"></i>
                     貴公司專區為：{{ my_signup.zone.name }}
             </div>
-        </div> 
+        </div>
+        <div>
+            <p ng-if="ctrl.select_ctrl.select_btn and !ctrl.select_ctrl.btn_display" style="color:blue">目前並非選位時間，「選位」按鍵將在系統開放時出現</p>
+            <p ng-if="!ctrl.select_ctrl.select_btn" style="color:red">目前並非貴公司時段，「選位」按鍵將在貴公司時段內出現</p>
+        </div>
         <div class="ui segment" ng-repeat="group in ctrl.slot">
             <h3 class="ui dividing header">{$ group.display $}</h3>
             <p ng-if="!group.is_myzone">非貴公司專區</p>

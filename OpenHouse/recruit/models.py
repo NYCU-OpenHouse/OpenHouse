@@ -144,10 +144,14 @@ class RecruitConfigs(models.Model):
     # 費用
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
 
-    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
-    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
-    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
+    seminar_btn_start = models.DateField(u'說明會選位按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會選位按鈕關閉日期', null=True)
+    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
+    jobfair_btn_start = models.DateField(u'就博會選位按鈕開啟日期', null=True)
+    jobfair_btn_end = models.DateField(u'就博會選位按鈕關閉日期', null=True)
+    jobfair_btn_enable_time = models.TimeField(u'就博會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    jobfair_btn_disable_time = models.TimeField(u'就博會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
 
     class Meta:
         managed = True

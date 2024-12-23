@@ -23,6 +23,9 @@
             <div class="item" style="color:red">
                 從表格選擇場次後，請務必按下最下方「送出」按鈕，並於送出後看到該場次顯示貴公司名稱才算選位成功。
             </div>
+            <div class="item" style="color:blue">
+                僅在每日上班時間 {{enable_time}} ~ {{disable_time}} 內，才能選位。
+            </div>
             <div class="item">
                 如有任何問題，請立刻撥打活動專線：(03)5131365 或 (03)5712121分機31365
             </div>
@@ -113,6 +116,7 @@
                 </div>
             </div>
         </div>
+        <p ng-if="ctrl.select_ctrl.select_btn and !ctrl.select_ctrl.btn_display" style="color:blue">目前並非選位時間，「選位」按鍵將在系統開放時出現</p>
         <p ng-if="!ctrl.select_ctrl.select_btn" style="color:red">目前並非貴公司時段，「選位」按鍵將在貴公司時段內出現</p>
     </div>
 {% endblock %}
