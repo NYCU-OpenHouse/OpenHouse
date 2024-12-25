@@ -187,7 +187,7 @@ class SeminarInfoTemporaryAdmin(admin.ModelAdmin):
 
 @admin.register(SlotColor)
 class SlotColorAdmin(admin.ModelAdmin):
-    list_display = ('place', 'css_color', 'place_info')
+    list_display = ('place', 'css_color', 'zone', 'place_info')
 
 
 @admin.register(JobfairOrder)

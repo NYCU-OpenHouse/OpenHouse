@@ -60,7 +60,7 @@ class CompanyCategories(models.Model):
 class ZoneCategories(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(u'專區名稱', max_length=20)
-    discount = models.IntegerField(u'專區優惠', default=0)
+    discount = models.IntegerField(u'就博攤位第一攤減免優惠', default=0)
     category = models.ManyToManyField('CompanyCategories', verbose_name=u'公司類別', blank=True)
     
     def __str__(self):
@@ -908,6 +908,8 @@ class SlotColor(models.Model):
     '''請輸入顏色英文，比如: red, green, blue, purple, black等'''
                                  )
     place_info = models.URLField(u'場地介紹網頁', max_length=256, default="http://")
+    zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True, blank=True)
+
 
     class Meta:
         managed = True
