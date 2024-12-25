@@ -76,7 +76,7 @@ def recruit_company_index(request):
     menu_ui = {'recruit': "active"}
     return render(request, 'recruit/company/index.html', locals())
 
-def _check_in_right_zone(zone: ZoneCategories, mycompany: Company) -> bool:
+def _check_category_in_right_zone(zone: ZoneCategories, mycompany: Company) -> bool:
     if zone.name != "一般企業":
         my_company_category = CompanyCategories.objects.get(
             name=mycompany.categories.name
@@ -135,7 +135,7 @@ def recruit_signup(request):
             filtered_zone_obj = None
 
         # Check if the company is in right zone
-        if not _check_in_right_zone(filtered_zone_obj, mycompany):
+        if not _check_category_in_right_zone(filtered_zone_obj, mycompany):
             messages.error(request, f'貴公司不屬於{filtered_zone_obj.name}專區指定類別，請重新選擇')
             form = RecruitSignupForm(data=data, instance=signup_info)
             return render(request, 'recruit/company/signup.html', locals())
@@ -239,13 +239,18 @@ def seminar_select_control(request):
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
+        try:
+            my_signup = RecruitSignup.objects.get(cid=request.user.cid)
+        except RecruitSignup.DoesNotExist:
+            return JsonResponse({"success": False, "msg": "貴公司尚未報名本次活動"})
+
         slots = SeminarSlot.objects.all()
         return_data = {}
+
         for s in slots:
-            # (2024 spring) only specific company can see place 2
-            # cid: 5052322、04231910、16844527、86517384、51811609、28454066、80328219、80333183、70827383
-            if s.place and s.place.id == 2 and request.user.cid not in ['5052322', '04231910', '16844527', '86517384', '51811609', '28454066', '80328219', '80333183', '70827383', '77777777']:
-                continue
+            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
+                if s.place.zone != my_signup.zone:
+                    continue
             # make index first night1_20160707
             index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
             # dict for return data
