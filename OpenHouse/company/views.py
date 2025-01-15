@@ -68,6 +68,36 @@ def CompanyCreation(request):
     return render(request, 'company_create_form.html', locals())
 
 
+def _update_job_position_with_excel_file(excel_file, company: Company):
+    MAX_DESCRIPTION_LENGTH = 260
+    wb = load_workbook(excel_file)
+    ws = wb.active
+    for row in ws.iter_rows(min_row=2, values_only=True):
+
+        if not any(row):
+            continue
+        title, quantity, is_liberal, is_foreign, description, note, english_title, english_description, english_note = row
+        
+        description = description[:MAX_DESCRIPTION_LENGTH]
+        note = note[:MAX_DESCRIPTION_LENGTH] if note is not None else ""
+        english_title = english_title if english_title is not None else ""
+        english_description = english_description[:MAX_DESCRIPTION_LENGTH] if english_description is not None else ""
+        english_note = english_note[:MAX_DESCRIPTION_LENGTH] if english_note is not None else ""
+        
+        Job.objects.create(
+            cid=company,
+            title=title,
+            is_liberal=is_liberal,
+            is_foreign=is_foreign,
+            description=description,
+            quantity=quantity,
+            note=note,
+            english_title=english_title,
+            english_description=english_description,
+            english_note=english_note
+        )
+
+
 @login_required(login_url='/company/login/')
 def CompanyEdit(request):
 
@@ -89,39 +119,13 @@ def CompanyEdit(request):
             if job_formset.is_valid():
                 job_formset.save()
             else:
-                messages.error(request, "「職缺列表」填入資料有誤，請重新修改公司資料。錯誤內容：{job_formset.errors}")
+                messages.error(request, "「職缺列表」填入資料有誤，請重新修改公司資料（錯誤欄位會有提示字眼，請下滑檢查）。")
                 return render(request, 'company_edit_form.html', locals())
             
             excel_file = request.FILES.get('excel_file')
-            MAX_DESCRIPTION_LENGTH = 260
             if excel_file:
                 try:
-                    wb = load_workbook(excel_file)
-                    ws = wb.active
-                    for row in ws.iter_rows(min_row=2, values_only=True):
-
-                        if not any(row):
-                            continue
-                        title, quantity, is_liberal, is_foreign, description, note, english_title, english_description, english_note = row
-                        
-                        description = description[:MAX_DESCRIPTION_LENGTH]
-                        note = note[:MAX_DESCRIPTION_LENGTH] if note is not None else ""
-                        english_title = english_title if english_title is not None else ""
-                        english_description = english_description[:MAX_DESCRIPTION_LENGTH] if english_description is not None else ""
-                        english_note = english_note[:MAX_DESCRIPTION_LENGTH] if english_note is not None else ""
-                        
-                        Job.objects.create(
-                            cid=company_info, 
-                            title=title, 
-                            is_liberal=is_liberal, 
-                            is_foreign=is_foreign, 
-                            description=description, 
-                            quantity=quantity, 
-                            note=note, 
-                            english_title=english_title, 
-                            english_description=english_description, 
-                            english_note=english_note
-                        )
+                    _update_job_position_with_excel_file(excel_file, user)
                     messages.success(request, '「職缺上傳檔案」成功，請確認內容並再次送出修改公司資料，注意中英文欄位「職缺內容、備註」只會存取前260個字元')
                     return redirect('company_edit')
                 
