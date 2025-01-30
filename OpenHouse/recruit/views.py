@@ -28,7 +28,6 @@ import json
 import logging
 from ipware.ip import get_client_ip
 from datetime import timedelta
-import recruit.models
 from urllib.parse import urlparse, parse_qs
 import re
 import recruit.models
@@ -97,6 +96,7 @@ def recruit_signup(request):
 
     try:
         configs = RecruitConfigs.objects.all()[0]
+        session_choices = recruit.models.ConfigSeminarChoice.objects.all()
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
@@ -204,25 +204,10 @@ def seminar_select_form_gen(request):
                               for day in range(0, 4)])
 
     slot_colors = SlotColor.objects.all()
-    session_list = [
-        # TODO: refactor session order logic
-        {"name": "add1", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "morning1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
-        {"name": "noon1", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "noon2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "noon3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "evening1", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
-        {"name": "evening2", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
-        {"name": "evening3", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
-        {"name": "evening4", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
-    ]
-    for session in session_list:
-        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
-                datetime.datetime.combine(datetime.date.today(), session["start_time"])
-        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
-            session["valid"] = True
-        else:
-            session["valid"] = False
+
+    config_session_list = recruit.models.ConfigSeminarSession.objects \
+        .all().order_by('session_start')
+
     return render(request, 'recruit/company/seminar_select.html', locals())
 
 
@@ -249,11 +234,8 @@ def seminar_select_control(request):
         return_data = {}
 
         for s in slots:
-            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
-                if s.place.zone != my_signup.zone:
-                    continue
-            # make index first night1_20160707
-            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
+            index = "{}_{}_{}".format(s.session_from_config, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
+
             # dict for return data
             return_data[index] = {}
 
@@ -264,14 +246,17 @@ def seminar_select_control(request):
 
             my_seminar_session = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar
 
-            # session wrong (signup noon but choose night)
-            # and noon is not full yet
-            if (my_seminar_session not in s.session) and \
-                    (SeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists()):
-                # 選別人的時段，而且自己的時段還沒滿
+            # session wrong (signup A type seminar but choose B type)
+            if s.session_from_config.qualification and \
+                s.session_from_config.qualification != my_seminar_session:
                 return_data[index]['valid'] = False
             else:
                 return_data[index]['valid'] = True
+
+            # check if the company is in right zone and the special user
+            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
+                if s.place.zone != my_signup.zone:
+                    return_data[index]['valid'] = False
 
         my_slot = SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
@@ -314,41 +299,42 @@ def seminar_select_control(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
+        _, start_str, end_str, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
+        slot_session_start = datetime.datetime.strptime(start_str, "%H%M").time()
+        slot_session_end = datetime.datetime.strptime(end_str, "%H%M").time()
+
         try:
-            slot = SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
+            slot_session = recruit.models.ConfigSeminarSession.objects.get(
+                session_start=slot_session_start, session_end=slot_session_end
+            )
+            slot = SeminarSlot.objects.get(date=slot_date, session_from_config=slot_session, place=slot_place_id)
             my_signup = RecruitSignup.objects.get(cid=request.user.cid)
-        except:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
+        except Exception as e:
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
 
         if slot.company != None:
             return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
 
         if slot and my_signup:
-            # 不在公司時段，且該時段未滿
-            if my_signup.seminar not in slot.session and \
-                    SeminarSlot.objects.filter(session=my_signup.seminar, company=None):
-                return JsonResponse({"success": False, "msg": "選位失敗，時段錯誤"})
-
             slot.company = my_signup
             slot.save()
-            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
+            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session_from_config))
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
 
     # end of action select
     elif action == "cancel":
-
         my_slot = SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
             logger.info('{} cancel seminar slot {} {}'.format(
-                my_slot.company.get_company_name(), my_slot.date, my_slot.session))
+                my_slot.company.get_company_name(), my_slot.date, my_slot.session_from_config))
             my_slot.company = None
             my_slot.save()
             return JsonResponse({"success": True})
         else:
+            logger.error(f'Cancel seminar slot failed. Cannot find slot for company {request.user.cid}')
             return JsonResponse({"success": False, "msg": "刪除實體說明會選位失敗"})
 
     else:
@@ -1504,12 +1490,8 @@ def Status(request):
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            seminar_fee = configs.session_fee
+            seminar_fee = signup_data.seminar_type.session_fee
             seminar_fee_text = f"說明會 ({seminar_fee} 元)"
-            fee += seminar_fee
-        elif signup_data.seminar == 'attend_noon':
-            seminar_fee = configs.session_fee_noon
-            seminar_fee_text = f"說明會中午場 ({seminar_fee} 元)"
             fee += seminar_fee
 
         # ece fee calculation
