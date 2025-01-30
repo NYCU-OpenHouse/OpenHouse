@@ -100,43 +100,6 @@ class RecruitConfigs(models.Model):
     seminar_end_date = models.DateField(u'說明會結束日期', default=datetime.date.today)
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
 
-    # (Deprecated) Seminar sessions and price are set with model ConfigSeminarSession
-    session_1_start = models.TimeField(u'說明會場次1_開始時間', default='00:00')
-    session_1_end = models.TimeField(u'說明會場次1_結束時間', default='00:00')
-    session_2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
-    session_2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
-    session_3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
-    session_3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
-    session_4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
-    session_4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
-    session_5_start = models.TimeField(u'說明會場次5_開始時間', default='00:00')
-    session_5_end = models.TimeField(u'說明會場次5_結束時間', default='00:00')
-    session_6_start = models.TimeField(u'說明會場次6_開始時間', default='00:00')
-    session_6_end = models.TimeField(u'說明會場次6_結束時間', default='00:00')
-    session_7_start = models.TimeField(u'說明會場次7_開始時間', default='00:00')
-    session_7_end = models.TimeField(u'說明會場次7_結束時間', default='00:00')
-    session_8_start = models.TimeField(u'說明會場次8_開始時間', default='00:00')
-    session_8_end = models.TimeField(u'說明會場次8_結束時間', default='00:00')
-    session_9_start = models.TimeField(u'說明會場次9_開始時間', default='00:00')
-    session_9_end = models.TimeField(u'說明會場次9_結束時間', default='00:00')
-    session_10_start = models.TimeField(u'說明會場次10_開始時間', default='00:00')
-    session_10_end = models.TimeField(u'說明會場次10_結束時間', default='00:00')
-    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
-    session_fee_noon = models.IntegerField(u'說明會場次(午場)_費用', default=0)
-    seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
-    # 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
-    seminar_prize_threshold = models.IntegerField(
-        u'每日參與領獎門檻',
-        default=10,
-        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
-    )
-    # 是否開放每日說明會全數參加者領獎
-    seminar_prize_all = models.BooleanField(
-        u'每日說明會全數參加者領獎',
-        default=False,
-        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
-    )
-
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
     seminar_ece_end_date = models.DateField(u'ECE說明會結束日期', default=datetime.date.today)
