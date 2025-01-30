@@ -21,7 +21,7 @@ def ExportStudentSignupStatus(request, id):
     workbook = xlsxwriter.Workbook(response)
     worksheet = workbook.add_worksheet("學生登記")
     # ignore id and cid which is index 0 and 1
-    fields = list(Signup._meta.get_fields()[2:14])
+    fields = list(Signup._meta.get_fields()[2:13])
     fields.append(Signup._meta.get_field('preferred_categories'))
 
     for index, field in enumerate(fields):

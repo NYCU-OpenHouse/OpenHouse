@@ -69,7 +69,6 @@ class Signup(models.Model):
     dep = models.CharField(u'系所/年級(Department and Grade)', max_length=16)
     phone = models.CharField(u'手機(Cellphone)', max_length=20,
                              help_text='格式：0987654321')
-    attend_mode = models.CharField(u'參加方式(Attend Mode)', max_length=50, default='實體',choices=ATTEND_CAT , blank=True)
     email = models.EmailField(u'Email', max_length=64)
     time_available = models.CharField(u'場次時段內可以的時間(Available Time)', max_length=100, default='', blank=True)
     question = models.CharField(u'諮詢的內容(Enquiry)', max_length=100, default='')
@@ -79,7 +78,6 @@ class Signup(models.Model):
     cv_zh = models.FileField(u'履歷(中文)上傳', upload_to='career_mentor', blank=True, null=True,
                              help_text="非必要，能讓導師事先了解情況")
     other = models.FileField(u'Other / 其它資料上傳', upload_to='career_mentor', blank=True, null=True)
-    meal_category = models.CharField(u'葷素(Meal Category)',max_length=20, default='無',choices=MEAL_CATEGORY)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
     preferred_categories = models.ManyToManyField(
         CompanyCategories,
