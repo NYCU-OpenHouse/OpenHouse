@@ -5,8 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 import rdss.forms
-from django.forms import inlineformset_factory
-from django import forms
 import company.models
 import rdss.models
 import datetime, json
@@ -112,14 +110,10 @@ def Status(request):
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            seminar_fee = configs.session_fee
-            seminar_fee_text = f"({seminar_fee} 元)"
+            seminar_fee = signup_data.seminar_type.session_fee
+            seminar_fee_text = f"說明會 ({seminar_fee} 元)"
             fee += seminar_fee
-        elif signup_data.seminar == 'attend_noon':
-            seminar_fee = configs.session_fee_noon
-            seminar_fee_text = f"({seminar_fee} 元)"
-            fee += configs.session_fee_noon
-        
+
         # ece seminar fee
         if mycompany.ece_member:
             discount_num_of_ece = 0
@@ -201,6 +195,7 @@ def SignupRdss(request):
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
+        session_choices = rdss.models.ConfigSeminarChoice.objects.all()
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
@@ -408,20 +403,8 @@ def SeminarSelectFormGen(request):
 
     slot_colors = rdss.models.SlotColor.objects.all()
 
-    session_list = [
-        {"name": "forenoon", "start_time": configs.session0_start, "end_time": configs.session0_end},
-        {"name": "noon", "start_time": configs.session1_start, "end_time": configs.session1_end},
-        {"name": "night1", "start_time": configs.session2_start, "end_time": configs.session2_end},
-        {"name": "night2", "start_time": configs.session3_start, "end_time": configs.session3_end},
-        {"name": "night3", "start_time": configs.session4_start, "end_time": configs.session4_end},
-    ]
-    for session in session_list:
-        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
-                datetime.datetime.combine(datetime.date.today(), session["start_time"])
-        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
-            session["valid"] = True
-        else:
-            session["valid"] = False
+    config_session_list = recruit.models.ConfigSeminarSession.objects \
+        .all().order_by('session_start')
     return render(request, 'company/seminar_select.html', locals())
 
 
@@ -439,10 +422,15 @@ def SeminarSelectControl(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
+        try:
+            my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
+        except rdss.models.Signup.DoesNotExist:
+            return JsonResponse({"success": False, "msg": "貴公司尚未報名本次活動"})
+
         slots = rdss.models.SeminarSlot.objects.all()
         return_data = {}
         for s in slots:
-            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 1)
+            index = "{}_{}_{}".format(s.session_from_config, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
             return_data[index] = {}
 
             return_data[index]['place_color'] = None if not s.place else \
@@ -452,7 +440,17 @@ def SeminarSelectControl(request):
 
             my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
 
-            return_data[index]['valid'] = True if len(my_seminar_session) > 0 else False
+            # session wrong (signup A type seminar but choose B type)
+            if s.session_from_config.qualification and \
+                s.session_from_config.qualification != my_seminar_session:
+                return_data[index]['valid'] = False
+            else:
+                return_data[index]['valid'] = True
+
+            # check if the company is in right zone and the special user
+            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
+                if s.place.zone != my_signup.zone:
+                    return_data[index]['valid'] = False
 
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
@@ -492,10 +490,16 @@ def SeminarSelectControl(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
+        _, start_str, end_str, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
+        slot_session_start = datetime.datetime.strptime(start_str, "%H%M").time()
+        slot_session_end = datetime.datetime.strptime(end_str, "%H%M").time()
+
         try:
-            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
+            slot_session = rdss.models.ConfigSeminarSession.objects.get(
+                session_start=slot_session_start, session_end=slot_session_end
+            )
+            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session_from_config=slot_session, place=slot_place_id)
             my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         except:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
@@ -504,14 +508,9 @@ def SeminarSelectControl(request):
             return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
 
         if slot and my_signup:
-            # 不在公司時段，且該時段未滿
-            if my_signup.seminar not in slot.session and \
-                    rdss.models.SeminarSlot.objects.filter(session=my_signup.seminar, company=None):
-                return JsonResponse({"success": False, "msg": "選位失敗，時段錯誤"})
-
             slot.company = my_signup
             slot.save()
-            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
+            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session_from_config))
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
@@ -522,11 +521,12 @@ def SeminarSelectControl(request):
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
             logger.info('{} cancel seminar slot {} {}'.format(
-                my_slot.company.get_company_name(), my_slot.date, my_slot.session))
+                my_slot.company.get_company_name(), my_slot.date, my_slot.session_from_config))
             my_slot.company = None
             my_slot.save()
             return JsonResponse({"success": True})
         else:
+            logger.error(f'Cancel seminar slot failed. Cannot find slot for company {request.user.cid}')
             return JsonResponse({"success": False, "msg": "刪除說明會選位失敗"})
 
     else:

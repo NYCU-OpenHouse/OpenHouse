@@ -102,6 +102,7 @@ class RdssConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
+    # Deprecated
     session0_start = models.TimeField(u'說明會場次0_開始時間', default='00:00')
     session0_end = models.TimeField(u'說明會場次0_結束時間', default='00:00')
     session1_start = models.TimeField(u'說明會場次1(中午)_開始時間', default='00:00')
@@ -112,7 +113,6 @@ class RdssConfigs(models.Model):
     session3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
     session4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
     session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
-    # 費用
     session_fee = models.IntegerField(u'說明會場次_費用', default=0)
     session_fee_noon = models.IntegerField(u'說明會場次_中午場費用', default=0)
 
@@ -171,7 +171,6 @@ class Signup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加企業說明會'),
         (u'attend', u'參加企業說明會(下午場 $10000)'),
-        (u'attend_noon', u'參加企業說明會(中午場 $12000)'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
@@ -179,6 +178,7 @@ class Signup(models.Model):
     history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
+    seminar_type = models.ForeignKey('ConfigSeminarChoice', verbose_name=u'說明會場次類型', on_delete=models.CASCADE, default=1)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
     jobfair_online = models.BooleanField(u'線上就業博覽會', default=False)
@@ -205,6 +205,71 @@ class Signup(models.Model):
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
 
 
+class ConfigSeminarChoice(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RdssConfigs, on_delete=models.CASCADE, related_name='config_seminar_choice'
+    )
+    name = models.CharField(u'說明會場次名稱', max_length=30, help_text="例如：上午場、下午場、晚場")
+    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
+
+    class Meta:
+        managed = True
+        db_table = 'config_seminar_choice'
+
+        verbose_name = u"說明會場次類型＆費用設定"
+        verbose_name_plural = u"說明會場次類型＆費用設定"
+
+    def __str__(self):
+        return self.name
+
+    def get_session_fee(self):
+        return self.session_fee
+
+
+class ConfigSeminarSession(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RdssConfigs, on_delete=models.CASCADE, related_name='config_seminar_session'
+    )
+    session_start = models.TimeField(u'說明會場次_開始時間', default='00:00')
+    session_end = models.TimeField(u'說明會場次_結束時間', default='00:00')
+    qualification = models.ForeignKey(
+        ConfigSeminarChoice,
+        verbose_name="說明會種類",
+        on_delete=models.CASCADE,
+        related_name='seminar_session',
+        null=True
+    )
+
+    class Meta:
+        managed = True
+        db_table = 'config_seminar_session'
+
+        verbose_name = u"說明會場次時間設定"
+        verbose_name_plural = u"說明會場次時間設定"
+
+    def __str__(self):
+        return f"s_{self.session_start.strftime('%H%M')}" \
+               f"_{self.session_end.strftime('%H%M')}"
+
+    def get_display_name(self):
+        return f"{self.session_start.strftime('%H:%M')} - {self.session_end.strftime('%H:%M')}"
+
+    def clean(self):
+        delta = datetime.datetime.combine(datetime.date.today(), self.session_end) - \
+                datetime.datetime.combine(datetime.date.today(), self.session_start)
+        if delta <= datetime.timedelta(minutes=30):
+            raise ValidationError("開始時間與結束時間的間隔必須大於 30 分鐘")
+
+        if not datetime.time(6, 0, 0) <= self.session_start <= datetime.time(21, 0, 0):
+            raise ValidationError("開始時間必須在 6:00 至 21:00 之間")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+
 # Proxy model for AdminSite company list item
 class Company(Signup):
     class Meta:
@@ -214,25 +279,24 @@ class Company(Signup):
 
 
 class SeminarSlot(models.Model):
-    # (value in db,display name)
-    SESSIONS = (
-        ("forenoon", "上午場"),
-        ("noon", "中午場"),
-        ("night1", "晚上場1"),
-        ("night2", "晚上場2"),
-        ("night3", "晚上場3"),
-        ("extra", "加(補)場"),
-        ("jobfair", "就博會"),  # 因為集點需要，公司留空
-    )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期')
-    session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
+    session_from_config = models.ForeignKey(
+        "ConfigSeminarSession",
+        on_delete=models.CASCADE,
+        verbose_name="時段(new)",
+        related_name="seminar_slots",
+        help_text="於活動設定中指定時段及對應價格",
+        null=True,
+        blank=True,
+    )
     company = models.ForeignKey('Signup', to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True, unique=False)
     place = models.ForeignKey('SlotColor', verbose_name=u'場地', on_delete=models.CASCADE, default=1)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
+    session = models.CharField(u'時段(棄用、勿填)', max_length=10, null=True, blank=True)
 
     class Meta:
         managed = True

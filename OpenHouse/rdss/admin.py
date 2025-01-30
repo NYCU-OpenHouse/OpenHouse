@@ -80,7 +80,7 @@ class HistoryParticipationAdmin(admin.ModelAdmin):
 
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'session', 'company', 'place')
+    list_display = ('date', 'session_from_config', 'company', 'place')
 
 
 @admin.register(models.SponsorItems)
@@ -193,13 +193,23 @@ class SeminarOrderAdmin(admin.ModelAdmin):
 class JobfairOrderAdmin(admin.ModelAdmin):
     list_display = ("company", "time", "updated")
 
+class ConfigSeminarSessionInline(admin.StackedInline):
+    model = models.ConfigSeminarSession
+    fields = ('session_start', 'session_end', 'qualification')
+    extra = 0
+
+class ConfigSeminarChoiceInline(admin.StackedInline):
+    model = models.ConfigSeminarChoice
+    fields = ('name', 'session_fee')
+    extra = 0
 
 @admin.register(models.RdssConfigs)
 class RdssConfigsAdmin(admin.ModelAdmin):
-    list_display = ("configs",)
+    list_display = ['title']
+    inlines = [ConfigSeminarChoiceInline, ConfigSeminarSessionInline]
 
-    def configs(self, obj):
-        return "活動設定"
+    def title(self, obj):
+        return '活動設定'
 
 
 @admin.register(models.CompanySurvey)
