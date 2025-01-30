@@ -50,7 +50,7 @@
                             <div class="menu">
                                 {% for seminar in seminar_list %}
                                 <div class="item" data-value="{{ seminar.id }}">
-                                    {{ seminar.date|date:"m/d (D)" }}-{{ seminar.session }}({{ seminar.place }})-{{ seminar.company }}
+                                    {{ seminar.date|date:"m/d (D)" }}-{{ seminar.session_from_config.get_display_name }}({{ seminar.place }})-{{ seminar.company }}
                                 </div>
                                 {% endfor %}
                             </div>

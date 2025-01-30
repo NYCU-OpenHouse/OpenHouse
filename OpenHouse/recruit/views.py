@@ -1192,30 +1192,16 @@ def CollectPoints(request):
     if seminar_place_id:
         seminar_list = seminar_list.filter(place=seminar_place_id)
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
-        
-        # Find the suitable session
-        if (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
-            current_session = 'add1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
-            current_session = 'morning1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_2_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon2'
-        elif (now - timedelta(minutes=40)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon3'
-        elif (now - timedelta(minutes=40)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening2'
-        elif (now - timedelta(minutes=40)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening3'
-        elif (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening4'
-        else:
-            current_session = ''
 
-        current_seminar = seminar_list.filter(session=current_session).first()
+        lower_bound = (now - timedelta(minutes=40)).time()
+        upper_bound = (now + timedelta(minutes=20)).time()
+
+        matching_session = recruit.models.ConfigSeminarSession.objects.filter(
+            session_end__gt=lower_bound,
+            session_end__lt=upper_bound
+        ).first()
+
+        current_seminar = seminar_list.filter(session_from_config=matching_session).first()
         if seminar_list and current_seminar in seminar_list:
             # put current seminar to the default
             seminar_list = list(seminar_list)
@@ -1309,21 +1295,9 @@ def SeminarAttendedStudent(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
-    seminar_session_display = {
-        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
-        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-    }
-    
     for ele in seminars:
         student_count = recruit.models.StuAttendance.objects.filter(seminar=ele).count()
-        ele.time = seminar_session_display[ele.session]
+        ele.time = ele.session_from_config.get_display_name()
         ele.student_count = student_count
 
     return render(request, 'recruit/admin/seminar_attended_student.html', locals())
@@ -1443,17 +1417,6 @@ def Status(request):
         "seminar_slot": "-",
         "jobfair_slot": "-",
     }
-    seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
-        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-    }
 
     # 問卷狀況
     try:
@@ -1476,7 +1439,8 @@ def Status(request):
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
     else:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
-                                                   seminar_session_display[seminar_slot.session])
+                                                   seminar_slot.session_from_config.get_display_name()
+                                                   )
     if not jobfair_slot:
         slot_info['jobfair_slot'] = "請依時段於左方選單選位"
     else:
