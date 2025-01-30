@@ -14,7 +14,7 @@ class NewsFileAdmin(admin.ModelAdmin):
 
 @admin.register(models.News)
 class NewsAdmin(admin.ModelAdmin):
-        list_display=('title','category','created_time','updated_time')
+        list_display=('title','category','expiration_time','created_time','updated_time')
         search_fields=('title','content')
         inlines = [NewsFileInline]
 

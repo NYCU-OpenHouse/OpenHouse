@@ -20,6 +20,7 @@ class News(models.Model):
     pinned = models.BooleanField(u'置頂貼文', default=False)
     category = models.CharField(u'公告類別', max_length=5, choices=CATEGORYS)
     perm = models.CharField(u'誰能看到這則公告', max_length=15, choices=PERM)
+    expiration_time = models.DateTimeField(u'下架時間', null=True, blank=True, help_text="公告的截止時間，過期後不顯示於首頁")
     content = RichTextUploadingField(u'內容')
     created_time = models.DateTimeField(u'發佈時間', auto_now_add=True)
     updated_time = models.DateTimeField(u'更新時間', auto_now=True)

@@ -12,10 +12,22 @@ import datetime, json
 from . import models
 
 def Index(request):
-    general_news_list = models.News.objects.filter(category="最新消息").exclude(perm="company_only")\
-            .order_by("-pinned","-updated_time")[:5]
-    recruit_news_list = models.News.objects.filter(category="徵才專區").exclude(perm="company_only")\
-            .order_by("-pinned","-updated_time")[:5]
+    general_news_list = models.News.objects.filter(
+        category="最新消息"
+    ).exclude(
+        perm="company_only"
+    ).exclude(
+        expiration_time__lt=datetime.datetime.now()
+    ).order_by("-pinned", "-updated_time")[:5]
+
+    recruit_news_list = models.News.objects.filter(
+        category="徵才專區"
+    ).exclude(
+        perm="company_only"
+    ).exclude(
+        expiration_time__lt=datetime.datetime.now()
+    ).order_by("-pinned", "-updated_time")[:5]
+
 
     photo_slide_list = models.PhotoSlide.objects.all().order_by('order')
 
@@ -33,8 +45,15 @@ def ReadNews(request,news_id):
     return render(request,'general/read_news.html',locals())
 
 def GeneralNewsListing(request):
-    general_news_list = models.News.objects.filter(category="最新消息").exclude(perm="company_only")\
-            .order_by("-pinned", "-updated_time")
+    general_news_list = models.News.objects.filter(
+        category="最新消息"
+    ).exclude(
+        perm="company_only"
+    ).exclude(
+        expiration_time__lt=datetime.datetime.now()
+    ).order_by(
+        "-pinned", "-updated_time"
+    )
     paginator = Paginator(general_news_list, 10) # Show 10 news per page
 
     page = request.GET.get('page')
@@ -50,8 +69,15 @@ def GeneralNewsListing(request):
     return render(request, 'general/general_news_list.html', locals())
 
 def RecruitNewsListing(request):
-    recruit_news_list = models.News.objects.filter(category="徵才專區").exclude(perm="company_only")\
-            .order_by("-pinned", "-updated_time")
+    recruit_news_list = models.News.objects.filter(
+        category="徵才專區"
+    ).exclude(
+        perm="company_only"
+    ).exclude(
+        expiration_time__lt=datetime.datetime.now()
+    ).order_by(
+        "-pinned", "-updated_time"
+    )
     paginator = Paginator(recruit_news_list, 10) # Show 10 news per page
 
     page = request.GET.get('page')
