@@ -244,11 +244,11 @@ def seminar_select_control(request):
             return_data[index]["cid"] = "None" if not s.company else \
                 s.company.get_company_name()
 
-            my_seminar_session = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar
+            my_seminar_session_type = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar_type
 
             # session wrong (signup A type seminar but choose B type)
             if s.session_from_config.qualification and \
-                s.session_from_config.qualification != my_seminar_session:
+                s.session_from_config.qualification != my_seminar_session_type:
                 return_data[index]['valid'] = False
             else:
                 return_data[index]['valid'] = True
