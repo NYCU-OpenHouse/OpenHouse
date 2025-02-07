@@ -215,8 +215,6 @@ class ConfigSeminarChoice(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'config_seminar_choice'
-
         verbose_name = u"說明會場次類型＆費用設定"
         verbose_name_plural = u"說明會場次類型＆費用設定"
 
@@ -244,7 +242,6 @@ class ConfigSeminarSession(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'config_seminar_session'
 
         verbose_name = u"說明會場次時間設定"
         verbose_name_plural = u"說明會場次時間設定"
