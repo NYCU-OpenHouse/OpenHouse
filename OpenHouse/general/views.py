@@ -17,7 +17,7 @@ def Index(request):
     ).exclude(
         perm="company_only"
     ).exclude(
-        expiration_time__lt=datetime.datetime.now()
+        expiration_time__lt=datetime.datetime.now().date()
     ).order_by("-pinned", "-updated_time")[:5]
 
     recruit_news_list = models.News.objects.filter(
@@ -25,7 +25,7 @@ def Index(request):
     ).exclude(
         perm="company_only"
     ).exclude(
-        expiration_time__lt=datetime.datetime.now()
+        expiration_time__lt=datetime.datetime.now().date()
     ).order_by("-pinned", "-updated_time")[:5]
 
 
@@ -50,7 +50,7 @@ def GeneralNewsListing(request):
     ).exclude(
         perm="company_only"
     ).exclude(
-        expiration_time__lt=datetime.datetime.now()
+        expiration_time__lt=datetime.datetime.now().date()
     ).order_by(
         "-pinned", "-updated_time"
     )
@@ -74,7 +74,7 @@ def RecruitNewsListing(request):
     ).exclude(
         perm="company_only"
     ).exclude(
-        expiration_time__lt=datetime.datetime.now()
+        expiration_time__lt=datetime.datetime.now().date()
     ).order_by(
         "-pinned", "-updated_time"
     )
