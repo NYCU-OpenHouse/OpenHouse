@@ -1,3 +1,4 @@
+import typing
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1091,6 +1092,79 @@ def sponsorship_admin(request):
     companys = SponsorShip.objects.all()
     return render(request, 'recruit/admin/sponsorship.html', locals())
 
+# ========================RDSS admin view for seminar points=================
+def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]:
+    """
+    Check whether the student has attended all/specific number of seminars a day.
+
+    Args:
+        student_obj: Student object
+    Returns:
+        bool: Whether the student has reached the daily threshold.
+        str: The date of the redeemed prize.
+        bool: Whether the student has redeemed.
+    """
+    today = datetime.datetime.now().date()
+    attended_seminar = recruit.models.StuAttendance.objects.filter(student=student_obj,
+                                                                seminar__date=today).count()
+    total_seminar = recruit.models.SeminarSlot.objects.filter(date=today).count()
+
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+        daily_threshold = configs.seminar_prize_threshold
+        is_all_attendance_has_prize = configs.seminar_prize_all
+    except IndexError:
+        daily_threshold = 10
+        is_all_attendance_has_prize = False
+
+    if (is_all_attendance_has_prize and attended_seminar == total_seminar) or \
+        (attended_seminar >= daily_threshold):
+        redeem_date = str(today)
+        redeem_obj, _ = recruit.models.RedeemDailyPrize.objects.get_or_create(
+            student=student_obj,
+            date=redeem_date
+        )
+        return True, redeem_date, redeem_obj.redeem
+    return False, None, None
+
+@staff_member_required
+def show_student_with_daily_seminar_prize(request):
+    site_header = "OpenHouse 管理後台"
+    site_title = "OpenHouse"
+    title = "每日說明會參與達成＆兌換名單"
+    try:
+        configs = RecruitConfigs.objects.all()[0]
+        daily_threshold = configs.seminar_prize_threshold
+        is_all_attendance_has_prize = configs.seminar_prize_all
+    except IndexError:
+        daily_threshold = 10
+        is_all_attendance_has_prize = False
+    attended_students = recruit.models.RedeemDailyPrize.objects.all()
+    return render(request, 'recruit/admin/seminar_show_student_with_daily_seminar_prize.html', locals())
+
+@staff_member_required
+def redeem_seminar_daily_prize(request, card_num, date):
+    referer = request.META.get('HTTP_REFERER')
+
+    try:
+        student_obj = recruit.models.Student.objects.filter(card_num=card_num).first()
+    except Exception as e:
+        messages.error(request, f"學號錯誤: {e}，請註冊學生證")
+        return redirect(referer)
+
+    try:
+        recruit.models.ExchangePrize.objects.get_or_create(
+            student=student_obj, prize=f"每日獎品-{date}"
+        )
+        recruit.models.RedeemDailyPrize.objects.filter(
+            student=student_obj, date=date
+        ).update(redeem=True)
+        messages.success(request, f"學生 {student_obj.student_id} 兌換每日獎品成功，日期: {date}")
+        collect_pts_logger.info('student %s succeeded to get daily seminar prize, date: %s', student_obj.student_id, date)
+    except Exception as e:
+        messages.error(request, f"兌換失敗: {e}")
+    return redirect(referer)
+
 
 @staff_member_required
 def RegisterCard(request):
@@ -1135,7 +1209,7 @@ def CollectPoints(request):
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
         
         # Find the suitable session
-        if (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
+        if (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
             current_session = 'morning1'
         elif (now - timedelta(minutes=40)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon1'
@@ -1143,15 +1217,15 @@ def CollectPoints(request):
             current_session = 'noon2'
         elif (now - timedelta(minutes=40)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
             current_session = 'noon3'
-        elif (now - timedelta(minutes=40)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon4'
         elif (now - timedelta(minutes=40)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening2'
+            current_session = 'noon4'
         elif (now - timedelta(minutes=40)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening3'
+            current_session = 'evening1'
         elif (now - timedelta(minutes=40)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening2'
+        elif (now - timedelta(minutes=40)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
+            current_session = 'evening3'
+        elif (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening4'
         elif (now - timedelta(minutes=40)).time() < configs.session_10_end < (now + timedelta(minutes=20)).time():
             current_session = 'add1'
@@ -1179,6 +1253,15 @@ def CollectPoints(request):
         student_obj = Student.objects.filter(card_num=idcard_no).annotate(
             points=Sum('attendance__points')).first()
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+
+        # check if the student can get the daily seminar prize
+        is_redeem, redeem_date, already_redeemed = _reach_seminar_daily_threshold(student_obj)
+        redeem_target = f"{redeem_date} 說明會"
+        if is_redeem:
+            if already_redeemed:
+                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 每日獎品"}
+            else:
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換每日獎品"}
 
         # maintain current seminar from post
         current_seminar = seminar_obj

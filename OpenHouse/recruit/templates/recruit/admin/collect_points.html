@@ -13,6 +13,12 @@
 <div>
     <h1 class="ui dividing header">OpenHouse 春徵說明會集點</h1>
     <div class="ui segment">
+        <div>
+            {% if ui_message %}
+                <div class="ui {{ ui_message.type }} message">{{ ui_message.msg }}</div><br/>
+            {% endif %}
+        </div>
+
         <div class="ui two column grid">
             <div class="column">
                 <h3>場地</h3>
@@ -69,10 +75,26 @@
             </div>
 
             <div class="center aligned column">
+                {% if msg %}
+                    <div class="ui {{ msg.type }} message">
+                        {{ msg.content }}
+                    </div>
+                {% endif %}
                 <h1 class="info">卡號: {{student_obj.card_num}}</h1>
                 <h1 class="info">學號: {{student_obj.student_id | default:"未註冊"}}</h1>
                 <h1 class="info">目前點數: {{student_obj.get_points}}</h1>
                 <h1 class="info">已兌換: {{student_obj.get_redeem_points}}</h1>
+                {% if is_redeem and not already_redeemed %}
+                    <a class="ui red button" href="/admin/recruit/redeem_seminar_daily_prize/{{student_obj.card_num}}/{{redeem_date}}">兌換 {{redeem_target}} 每日獎品</a>
+                {% endif %}
+                <div class="ui info message">
+                    <p>
+                        (說明會每日獎品兌換) 自動抓取學生資料計算是否達到兌換標準，並更新至
+                        <a class="button" href="/admin/recruit/show_student_with_daily_seminar_prize/">
+                            兌獎-說明會每日獎品
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>    
     </div>

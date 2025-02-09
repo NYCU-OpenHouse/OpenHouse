@@ -206,7 +206,7 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['card_num', 'student_id', 'phone', 'name', 'department', 'email']
+        fields = ['card_num', 'student_id', 'phone', 'name', 'department', 'email', 'other']
     
     def save(self, commit=True):
         form = super(StudentForm, self).save(commit=False)

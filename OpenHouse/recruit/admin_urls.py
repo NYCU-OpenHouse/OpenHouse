@@ -28,6 +28,7 @@ urlpatterns = [
     path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='bulk_add_jobfairslot'),
 
     url(r'^export_jobs/$', export.ExportJobs,name="recruit_export_jobs"),
-
+    path(r'redeem_seminar_daily_prize/<str:card_num>/<str:date>/', views.redeem_seminar_daily_prize, name='redeem_seminar_daily_prize'),
+    url(r'show_student_with_daily_seminar_prize/$', views.show_student_with_daily_seminar_prize, name='show_student_with_daily_seminar_prize'),
     #export urls are defined in admin.py
 ]
