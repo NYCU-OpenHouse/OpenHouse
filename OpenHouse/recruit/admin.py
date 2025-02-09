@@ -319,3 +319,8 @@ class RecruitECESeminarContentAdmin(admin.ModelAdmin):
         if count == 0:
             return True
         return False
+
+
+@admin.register(models.RedeemDailyPrize)
+class RedeemDailyPrizeAdmin(admin.ModelAdmin):
+    list_display = ('date', 'redeem', 'updated')

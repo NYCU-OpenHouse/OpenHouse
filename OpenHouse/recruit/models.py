@@ -122,6 +122,18 @@ class RecruitConfigs(models.Model):
     session_fee = models.IntegerField(u'說明會場次_費用', default=0)
     session_fee_noon = models.IntegerField(u'說明會場次(午場)_費用', default=0)
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
+    # 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    seminar_prize_threshold = models.IntegerField(
+        u'每日參與領獎門檻',
+        default=10,
+        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
+    )
+    # 是否開放每日說明會全數參加者領獎
+    seminar_prize_all = models.BooleanField(
+        u'每日說明會全數參加者領獎',
+        default=False,
+        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+    )
 
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
@@ -929,6 +941,7 @@ class Student(models.Model):
     name = models.CharField(u'姓名', max_length=30, blank=True, null=True)
     department = models.CharField(u'系級', max_length=20, blank=True, null=True)
     email = models.EmailField(u'Email', max_length=64, blank=True)
+    other = models.TextField(u'其他', max_length=64, blank=True, null=True)
 
     def get_redeem_points(self):
         redeem_records = ExchangePrize.objects.filter(student=self)
@@ -1090,3 +1103,19 @@ class RecruitOnlineJobfairInfo(models.Model):
         managed = True
         verbose_name = u"線上就博會資訊編輯頁面 (學生)"
         verbose_name_plural = u"線上就博會資訊編輯頁面 (學生)"
+
+
+class RedeemDailyPrize(models.Model):
+    """
+    Record the student who listens to seminars and reach the
+    threshold set in the config in a day.
+    """
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, to_field='card_num', verbose_name=u'學生證卡號', on_delete=models.CASCADE)
+    date = models.CharField(u'參加日期', max_length=30, default='')
+    redeem = models.BooleanField(u'是否兌獎', default=False)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        verbose_name = u"達成說明會參與次數紀錄&兌獎"
+        verbose_name_plural = u"達成說明會參與次數紀錄&兌獎"
