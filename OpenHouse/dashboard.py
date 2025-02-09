@@ -143,6 +143,11 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
+                    'title': _('兌獎-每日參與說明會獎品'),
+                    'url': '/admin/recruit/show_student_with_daily_seminar_prize/',
+                    'external': False,
+                },
+                {
                     'title': _('各場次學生登記總覽'),
                     'url': '/admin/recruit/seminar_attended_student/',
                     'external': False,
@@ -266,7 +271,16 @@ class CustomAppDashboard(AppIndexDashboard):
                 break
 
         other, physical, online, student = [], [], [], []
-        student_models = ['Student', 'StuAttendance', 'RedeemPrize', 'redeem_prize_2024_3_points_per_day']
+        student_models = [
+            'Student',
+            'StuAttendance',
+            # rdss
+            'RedeemPrize',
+            'redeem_prize_2024_3_points_per_day',
+            # recruit
+            'ExchangePrize',
+            'RedeemDailyPrize',
+            ]
         for m in my_app['models']:
             object_name = m['object_name']
             lower_object_name = object_name.lower()
@@ -295,20 +309,18 @@ class CustomAppDashboard(AppIndexDashboard):
             column=0,
             order=1
         ))
-
-        self.children.append(modules.ModelList(
-            title=_('線上'),
-            models=online,
-            column=0,
-            order=2
-        ))
         self.children.append(modules.ModelList(
             title=_('說明會學生'),
             models=student,
             column=0,
+            order=2
+        ))
+        self.children.append(modules.ModelList(
+            title=_('線上'),
+            models=online,
+            column=0,
             order=3
         ))
-
         self.children.append(modules.RecentActions(
             include_list=self.get_app_content_types(),
             column=1,
