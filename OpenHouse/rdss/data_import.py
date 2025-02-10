@@ -9,8 +9,8 @@ def ImportStudentCardID(file):
 
     for i in range(2, sheet.max_row+1):
         Student.objects.get_or_create(
-            idcard_no= sheet.cell(row=i, column=2).value, 
-            student_id=sheet.cell(row=i, column=1).value, 
+            idcard_no= sheet.cell(row=i, column=2).value,
+            student_id=sheet.cell(row=i, column=1).value,
             name=sheet.cell(row=i, column=3).value,
             email=sheet.cell(row=i, column=4).value or '',
             phone=sheet.cell(row=i, column=5).value or '',
