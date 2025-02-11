@@ -1327,11 +1327,11 @@ def SeminarAttendedStudent(request):
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "morning1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon4": "{}~{}".format(configs.session_4_start, configs.session_4_end),
         "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
         "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
         "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
