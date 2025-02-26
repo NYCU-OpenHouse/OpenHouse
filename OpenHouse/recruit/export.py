@@ -253,7 +253,6 @@ def ExportAll(request):
         for col_count, pairs in enumerate(title_pairs):
             signup_worksheet.write(row_count + 1, col_count,
                                    signup['fields'][pairs['fieldname']])
-        print(signup['fields']['seminar_ece'])
         for ece in signup['fields']['seminar_ece']:
             signup_worksheet.write(row_count + 1, col_count + ece,
                                    "TRUE")
@@ -455,7 +454,14 @@ def ExportSurvey(request):
         survey_worksheet.write(row_count + 1, 1, survey.cid)
         # export timestamp cause problem, TODO:FIX the fields[:-1] to fields
         for col_count, field in enumerate(fields[:-1]):
-            survey_worksheet.write(row_count + 1, col_count + 2, getattr(survey, field.name))
+            if field.name == 'categories':
+                survey_worksheet.write(
+                    row_count + 1,
+                    col_count + 2,
+                    survey.categories.name if survey.categories else ""
+                )
+            else:
+                survey_worksheet.write(row_count + 1, col_count + 2, getattr(survey, field.name))
 
     workbook.close()
     return response
