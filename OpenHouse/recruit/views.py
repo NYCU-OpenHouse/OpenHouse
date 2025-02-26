@@ -206,7 +206,7 @@ def seminar_select_form_gen(request):
     slot_colors = SlotColor.objects.all()
     session_list = [
         # TODO: refactor session order logic
-        {"name": "noon4", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
+        {"name": "add1", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
         {"name": "morning1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
         {"name": "noon1", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
         {"name": "noon2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
@@ -215,7 +215,6 @@ def seminar_select_form_gen(request):
         {"name": "evening2", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
         {"name": "evening3", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
         {"name": "evening4", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
-        {"name": "add1", "start_time": configs.session_10_start, "end_time": configs.session_10_end},
     ]
     for session in session_list:
         delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
@@ -1210,15 +1209,15 @@ def CollectPoints(request):
         
         # Find the suitable session
         if (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
-            current_session = 'morning1'
+            current_session = 'add1'
         elif (now - timedelta(minutes=40)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon1'
+            current_session = 'morning1'
         elif (now - timedelta(minutes=40)).time() < configs.session_2_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon2'
+            current_session = 'noon1'
         elif (now - timedelta(minutes=40)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon3'
+            current_session = 'noon2'
         elif (now - timedelta(minutes=40)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon4'
+            current_session = 'noon3'
         elif (now - timedelta(minutes=40)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening1'
         elif (now - timedelta(minutes=40)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
@@ -1227,8 +1226,6 @@ def CollectPoints(request):
             current_session = 'evening3'
         elif (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
             current_session = 'evening4'
-        elif (now - timedelta(minutes=40)).time() < configs.session_10_end < (now + timedelta(minutes=20)).time():
-            current_session = 'add1'
         else:
             current_session = ''
 
@@ -1327,16 +1324,15 @@ def SeminarAttendedStudent(request):
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
     seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "noon1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon2": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon3": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon4": "{}~{}".format(configs.session_4_start, configs.session_4_end),
+        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
+        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
+        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
+        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
         "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
         "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
         "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
         "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
     
     for ele in seminars:
@@ -1466,12 +1462,11 @@ def Status(request):
         "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
         "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
         "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "noon4": "{}~{}".format(configs.session_5_start, configs.session_5_end),
+        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
         "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
         "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
         "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
         "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-        "add1": "{}~{}".format(configs.session_10_start, configs.session_10_end),
     }
 
     # 問卷狀況
