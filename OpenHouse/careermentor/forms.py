@@ -10,9 +10,6 @@ class SignupForm(forms.ModelForm):
         self.fields['mentor'].widget.attrs.update({
             'class': 'ui disabled dropdown',
         })
-        self.fields['attend_mode'].widget.attrs.update({
-            'class': 'ui dropdown',
-        })
         self.fields['time_available'].required = True
         self.fields['preferred_categories'].widget.attrs.update({
             'class': 'ui dropdown',
@@ -21,7 +18,7 @@ class SignupForm(forms.ModelForm):
     class Meta:
         model=models.Signup
         fields='__all__'
-        exclude=['id','updated','meal_category']
+        exclude=['id','updated']
         widgets = {
             'question': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
         }
