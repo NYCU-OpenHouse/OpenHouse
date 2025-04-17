@@ -99,6 +99,18 @@ class RecruitConfigs(models.Model):
     seminar_start_date = models.DateField(u'說明會開始日期', default=datetime.date.today)
     seminar_end_date = models.DateField(u'說明會結束日期', default=datetime.date.today)
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
+    # 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    seminar_prize_threshold = models.IntegerField(
+        u'每日參與領獎門檻',
+        default=10,
+        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
+    )
+    # 是否開放每日說明會全數參加者領獎
+    seminar_prize_all = models.BooleanField(
+        u'每日說明會全數參加者領獎',
+        default=False,
+        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+    )
 
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
@@ -353,7 +365,6 @@ class SeminarSlot(models.Model):
     place = models.ForeignKey('SlotColor', verbose_name=u'場地', on_delete=models.CASCADE, default=1)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
-    session = models.CharField(u'時段(棄用、勿填)', max_length=10, null=True, blank=True)
 
     class Meta:
         managed = True
@@ -361,7 +372,7 @@ class SeminarSlot(models.Model):
         verbose_name_plural = u"說明會場次"
 
     def __str__(self):
-        return '{} {}'.format(self.date, self.session)
+        return '{} {}'.format(self.date, self.session_from_config)
 
 # 線上說明會場次
 class OnlineSeminarSlot(models.Model):

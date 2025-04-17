@@ -1221,7 +1221,7 @@ def CollectPoints(request):
         )
         student_obj = Student.objects.filter(card_num=idcard_no).annotate(
             points=Sum('attendance__points')).first()
-        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
         # check if the student can get the daily seminar prize
         is_redeem, redeem_date, already_redeemed = _reach_seminar_daily_threshold(student_obj)
