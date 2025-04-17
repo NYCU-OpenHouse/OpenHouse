@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.utils import timezone
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 import company.models
@@ -102,24 +103,27 @@ class RdssConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
-    # Deprecated
-    session0_start = models.TimeField(u'說明會場次0_開始時間', default='00:00')
-    session0_end = models.TimeField(u'說明會場次0_結束時間', default='00:00')
-    session1_start = models.TimeField(u'說明會場次1(中午)_開始時間', default='00:00')
-    session1_end = models.TimeField(u'說明會場次1(中午)_結束時間', default='00:00')
-    session2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
-    session2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
-    session3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
-    session3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
-    session4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
-    session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
-    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
-    session_fee_noon = models.IntegerField(u'說明會場次_中午場費用', default=0)
+    seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
+    ### 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    seminar_prize_threshold = models.IntegerField(
+        u'每日參與領獎門檻',
+        default=10,
+        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
+    )
+    ### 是否開放每日說明會全數參加者領獎
+    seminar_prize_all = models.BooleanField(
+        u'每日說明會全數參加者領獎',
+        default=False,
+        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+    )
+    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
+    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
 
-    # 實體ECE說明會相關
+    # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
     seminar_ece_end_date = models.DateField(u'實體ECE說明會結束日期', default=datetime.date.today)
-    # 費用
     session_ece_fee = models.IntegerField(u'實體ECE說明會_費用', default=0)
 
     # 就博會相關
@@ -127,29 +131,20 @@ class RdssConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-    
-    # 線上就博會相關
-    # jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
-    # jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
-    # jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
-    # jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
-    # jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
-
-    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
-    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
-    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
-
+    jobfair_info_deadline = models.DateTimeField(u'就博會資訊截止填寫時間', default=timezone.now)
     JOBFAIR_FOOD_CHOICES = (
         ('lunch_box', u'餐盒(蛋奶素)'),
         ('bento', u'便當(葷素)')
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
     jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
+    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
+    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
+    jobfair_btn_enable_time = models.TimeField(u'就博會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    jobfair_btn_disable_time = models.TimeField(u'就博會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
 
     class Meta:
         managed = True
-
         verbose_name = u"1. 秋季招募活動設定"
         verbose_name_plural = u"1. 秋季招募活動設定"
 
@@ -170,7 +165,7 @@ class ECESeminar(models.Model):
 class Signup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加企業說明會'),
-        (u'attend', u'參加企業說明會(下午場 $10000)'),
+        (u'attend', u'參加說明會'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
@@ -181,7 +176,6 @@ class Signup(models.Model):
     seminar_type = models.ForeignKey('ConfigSeminarChoice', verbose_name=u'說明會場次類型', on_delete=models.CASCADE, default=1)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
-    jobfair_online = models.BooleanField(u'線上就業博覽會', default=False)
     career_tutor = models.BooleanField(u'諮詢服務', default=False)
     visit = models.BooleanField(u'企業參訪', default=False)
     lecture = models.BooleanField(u'就業力講座', default=False)
@@ -293,18 +287,17 @@ class SeminarSlot(models.Model):
     place = models.ForeignKey('SlotColor', verbose_name=u'場地', on_delete=models.CASCADE, default=1)
     points = models.SmallIntegerField(u'集點點數', default=1)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
-    session = models.CharField(u'時段(棄用、勿填)', max_length=10, null=True, blank=True)
 
     class Meta:
         managed = True
-        verbose_name = u"線上-說明會場次"
-        verbose_name_plural = u"線上-說明會場次"
+        verbose_name = u"說明會場次"
+        verbose_name_plural = u"說明會場次"
 
     def __str__(self):
         if self.company is None:
-            return '{} {} {}'.format(self.date, self.session, "None")
+            return '{} {} {}'.format(self.date, self.session_from_config, "None")
 
-        return '{} {} {}'.format(self.date, self.session, self.company.get_company_name())
+        return '{} {} {}'.format(self.date, self.session_from_config , self.company.get_company_name())
 
 
 class Student(models.Model):
@@ -401,6 +394,8 @@ class SlotColor(models.Model):
     '''請輸入顏色英文，比如: red, green, blue, purple, black等'''
                                  )
     place_info = models.URLField(u'場地介紹網頁', max_length=256, default="http://")
+    zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True, blank=True)
+
 
     class Meta:
         managed = True

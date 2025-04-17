@@ -68,15 +68,7 @@ def Status(request):
         "seminar_slot": "-",
         "jobfair_slot": "-",
     }
-    seminar_session_display = {
-        "forenoon": "{}~{}".format(configs.session0_start, configs.session0_end),
-        "noon": "{}~{}".format(configs.session1_start, configs.session1_end),
-        "night1": "{}~{}".format(configs.session2_start, configs.session2_end),
-        "night2": "{}~{}".format(configs.session3_start, configs.session3_end),
-        "night3": "{}~{}".format(configs.session4_start, configs.session4_end),
-        "extra": "補場",
-        "jobfair": "就博會",
-    }
+
     # 問卷狀況
     try:
         rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
@@ -98,7 +90,8 @@ def Status(request):
 
     if seminar_slot:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
-                                                   seminar_session_display[seminar_slot.session])
+                                                   seminar_slot.session_from_config.get_display_name()
+                                                   )
     if jobfair_slot:
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
@@ -379,7 +372,7 @@ def SeminarSelectFormGen(request):
     except Exception as e:
         seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方說明會時間表"
 
-    seminar_session = my_signup.get_seminar_display()
+    seminar_type = my_signup.seminar_type
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
@@ -403,7 +396,7 @@ def SeminarSelectFormGen(request):
 
     slot_colors = rdss.models.SlotColor.objects.all()
 
-    config_session_list = recruit.models.ConfigSeminarSession.objects \
+    config_session_list = rdss.models.ConfigSeminarSession.objects \
         .all().order_by('session_start')
     return render(request, 'company/seminar_select.html', locals())
 
@@ -438,11 +431,11 @@ def SeminarSelectControl(request):
             return_data[index]["cid"] = "None" if not s.company else \
                 s.company.get_company_name()
 
-            my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
+            my_seminar_session_type = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar_type
 
             # session wrong (signup A type seminar but choose B type)
             if s.session_from_config.qualification and \
-                s.session_from_config.qualification != my_seminar_session:
+                s.session_from_config.qualification != my_seminar_session_type:
                 return_data[index]['valid'] = False
             else:
                 return_data[index]['valid'] = True
@@ -904,22 +897,15 @@ def CollectPoints(request):
     if seminar_place_id:
         seminar_list = seminar_list.filter(place=seminar_place_id)
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
-        
-        # Find the suitable session
-        if (now - timedelta(minutes=40)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
-            current_session = 'forenoon'
-        elif (now - timedelta(minutes=40)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon'
-        elif (now - timedelta(minutes=40)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night1'
-        elif (now - timedelta(minutes=40)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night2'
-        elif (now - timedelta(minutes=40)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night3'
-        else:
-            current_session = ''
+        lower_bound = (now - timedelta(minutes=40)).time()
+        upper_bound = (now + timedelta(minutes=20)).time()
 
-        current_seminar = seminar_list.filter(session=current_session).first()
+        matching_session = rdss.models.ConfigSeminarSession.objects.filter(
+            session_end__gt=lower_bound,
+            session_end__lt=upper_bound
+        ).first()
+
+        current_seminar = seminar_list.filter(session_from_config=matching_session).first()
         if seminar_list and current_seminar in seminar_list:
             # put current seminar to the default
             seminar_list = list(seminar_list)
@@ -939,7 +925,7 @@ def CollectPoints(request):
         )
         student_obj = rdss.models.Student.objects.filter(idcard_no=idcard_no).annotate(
             points=Sum('attendance__points')).first()
-        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
         # 2024 rdss: check whether the student has attended all seminars a day
         check_get_ticket, redeem_date, already_redeem = _2024_rdss_seminar_check_get_meal_tickets(student_obj)
