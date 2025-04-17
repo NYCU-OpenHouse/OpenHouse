@@ -181,7 +181,7 @@ def seminar_select_form_gen(request):
     except Exception as e:
         seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方實體說明會時間表"
 
-    seminar_session = my_signup.get_seminar_display()
+    seminar_type = my_signup.seminar_type
 
     try:
         configs = RecruitConfigs.objects.all()[0]

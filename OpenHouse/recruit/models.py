@@ -99,23 +99,26 @@ class RecruitConfigs(models.Model):
     seminar_start_date = models.DateField(u'說明會開始日期', default=datetime.date.today)
     seminar_end_date = models.DateField(u'說明會結束日期', default=datetime.date.today)
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
-    # 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    ### 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
     seminar_prize_threshold = models.IntegerField(
         u'每日參與領獎門檻',
         default=10,
         help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
     )
-    # 是否開放每日說明會全數參加者領獎
+    ### 是否開放每日說明會全數參加者領獎
     seminar_prize_all = models.BooleanField(
         u'每日說明會全數參加者領獎',
         default=False,
         help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
     )
-
+    seminar_btn_start = models.DateField(u'說明會選位按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會選位按鈕關閉日期', null=True)
+    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
+    
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
     seminar_ece_end_date = models.DateField(u'ECE說明會結束日期', default=datetime.date.today)
-    # 費用
     session_ece_fee = models.IntegerField(u'ECE說明會_費用', default=0)
 
     # 就博會相關
@@ -130,13 +133,7 @@ class RecruitConfigs(models.Model):
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
     jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
-    # 費用
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-
-    seminar_btn_start = models.DateField(u'說明會選位按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'說明會選位按鈕關閉日期', null=True)
-    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
-    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
     jobfair_btn_start = models.DateField(u'就博會選位按鈕開啟日期', null=True)
     jobfair_btn_end = models.DateField(u'就博會選位按鈕關閉日期', null=True)
     jobfair_btn_enable_time = models.TimeField(u'就博會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
