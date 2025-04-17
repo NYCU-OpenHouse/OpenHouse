@@ -23,8 +23,8 @@ urlpatterns = [
     url(r'^export_jobfair/$', export.ExportJobfair,name="rdss_export_jobfair"),
     url(r'^export_seminar/$', export.ExportSeminar,name="rdss_export_seminar"),
     url(r'^export_jobs/$', export.ExportJobs,name="rdss_export_jobs"),
-    path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='bulk_add_jobfairslot'),
-    path(r'companycategories/sync', views.sync_company_categories, name='sync_company_categories'),
+    path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='rdss_bulk_add_jobfairslot'),
+    path(r'companycategories/sync', views.sync_company_categories, name='rdss_sync_company_categories'),
     url(r'show_3_seminar_attendance_student_2024/$', views.show_3_seminar_attendance_student_2024, name='show_3_seminar_attendance_student_2024'),
     path(r'redeem_seminar_meal_ticket_2024/<str:student_id>/<str:date>/', views.redeem_seminar_meal_ticket_2024, name='show_3_seminar_attendance_student_2024_redeem'),
 	#export urls are defined in admin.py
