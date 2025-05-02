@@ -1085,9 +1085,10 @@ def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]
     Args:
         student_obj: Student object
     Returns:
-        bool: Whether the student has reached the daily threshold.
-        str: The date of the redeemed prize.
-        bool: Whether the student has redeemed.
+        tuple[bool, str, bool]
+            bool: Whether the student has reached the daily threshold.
+            str: The date of the redeemed prize.
+            bool: Whether the student has redeemed.
     """
     today = datetime.datetime.now().date()
     attended_seminar = recruit.models.StuAttendance.objects.filter(student=student_obj,
@@ -1134,7 +1135,7 @@ def redeem_seminar_daily_prize(request, card_num, date):
     try:
         student_obj = recruit.models.Student.objects.filter(card_num=card_num).first()
     except Exception as e:
-        messages.error(request, f"學號錯誤: {e}，請註冊學生證")
+        messages.error(request, f"學生證卡號不存在: {e}，請註冊學生證")
         return redirect(referer)
 
     try:

@@ -374,18 +374,6 @@ class RedeemPrize(models.Model):
         verbose_name = u"兌獎紀錄"
         verbose_name_plural = u"兌獎紀錄"
 
-# For 2024 rdss seminar
-class redeem_prize_2024_3_points_per_day(models.Model):
-    id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    date = models.CharField(u'參加日期', max_length=30, default='')
-    redeem = models.BooleanField(u'是否兌獎', default=False)
-    updated = models.DateTimeField(u'更新時間', auto_now=True)
-
-    class Meta:
-        verbose_name = u"(2024) 集滿3點名單&兌獎"
-        verbose_name_plural = u"(2024) 集滿3點名單&兌獎"
-        
 
 class SlotColor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -1024,3 +1012,19 @@ class RdssOnlineJobfairInfo(models.Model):
         managed = True
         verbose_name = u"線上就博會資訊編輯頁面"
         verbose_name_plural = u"線上就博會資訊編輯頁面"
+
+
+class RedeemDailyPrize(models.Model):
+    """
+    Record the student who listens to seminars and reach the
+    threshold set in the config in a day.
+    """
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, to_field='idcard_no', verbose_name=u'學生證卡號', on_delete=models.CASCADE)
+    date = models.CharField(u'參加日期', max_length=30, default='')
+    redeem = models.BooleanField(u'是否兌獎', default=False)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        verbose_name = u"達成說明會參與次數紀錄&兌獎"
+        verbose_name_plural = u"達成說明會參與次數紀錄&兌獎"

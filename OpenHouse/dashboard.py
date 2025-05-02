@@ -232,8 +232,8 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title': _('兌獎-2024餐券(每日參與全部說明會)'),
-                    'url': '/admin/rdss/show_3_seminar_attendance_student_2024/',
+                    'title': _('兌獎-每日參與說明會獎品'),
+                    'url': '/admin/rdss/show_student_with_daily_seminar_prize/',
                     'external': False,
                 },
                 {

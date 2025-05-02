@@ -42,12 +42,6 @@ class StudentAdmin(admin.ModelAdmin):
 class RedeemAdmin(admin.ModelAdmin):
     list_display = ('student', 'prize', 'points', 'updated')
 
-
-@admin.register(models.redeem_prize_2024_3_points_per_day)
-class redeem_prize_2024_3_points_per_day_Admin(admin.ModelAdmin):
-    list_display = ('student', 'date', 'redeem', 'updated')
-
-
 @admin.register(models.ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):
     list_display = ('seminar_name','ece_member_discount',)
@@ -282,17 +276,6 @@ class RdssInfoAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(models.RdssCompanyInfo)
-class RdssInfoAdmin(admin.ModelAdmin):
-    list_display = ('title',)
-
-    def has_add_permission(self, request):
-        count = rdss.models.RdssCompanyInfo.objects.all().count()
-        if count == 0:
-            return True
-        return False
-
-
 @admin.register(models.RdssSeminarInfo)
 class SeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)
@@ -315,30 +298,19 @@ class JobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-# @admin.register(models.RdssOnlineJobfairInfo)
-# class OnlineJobfairContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = rdss.models.RdssOnlineJobfairInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False
-
-
 @admin.register(models.Sponsorship)
 class SponsorshipAdmin(admin.ModelAdmin):
     list_display = ('company_id', 'item_id', 'updated',)
     list_filter = ('item_id',)
 
 
-# Register your models here.
-# admin.site.register(models.Sponsorship)
-
 @admin.register(models.JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'zone', 'company', 'updated')
     change_list_template = "admin/jobfairslot_change_list.html"
     zones = models.ZoneCategories.objects.all()
-    
-# admin.site.register(models.OnlineJobfairSlot)
+
+
+@admin.register(models.RedeemDailyPrize)
+class RedeemDailyPrizeAdmin(admin.ModelAdmin):
+    list_display = ('date', 'redeem', 'updated')
