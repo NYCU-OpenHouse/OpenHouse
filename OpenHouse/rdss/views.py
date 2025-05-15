@@ -1354,7 +1354,12 @@ def ListJobs(request):
                 })
             except:
                 pass
-
+    # if cid = 66666666, 77777777 exists, move these 2 companies to the head of the list
+    for i, com in enumerate(companies):
+        if com['cid'] == '66666666':
+            companies.insert(0, companies.pop(i))
+        if com['cid'] == '77777777':
+            companies.insert(0, companies.pop(i))
     return render(request, 'public/rdss_jobs.html', locals())
 
 
