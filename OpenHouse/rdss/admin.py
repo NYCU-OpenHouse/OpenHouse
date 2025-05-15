@@ -96,7 +96,8 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Signup)
 class SignupAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'visit', 'lecture', 'payment')
+    list_display = ('cid', 'company_name', 'seminar', 'jobfair',
+                    'career_tutor', 'visit', 'lecture', 'payment', 'company_other_ps')
     inlines = (SponsorshipInline,)
     search_fields = ('cid',)
     list_filter = ('seminar', 'jobfair', 'payment', 'zone')

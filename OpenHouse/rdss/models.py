@@ -200,6 +200,13 @@ class Signup(models.Model):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
 
+    def company_other_ps(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        if com:
+            return com.other_ps
+        else:
+            return None
+
 
 class ConfigSeminarChoice(models.Model):
     id = models.AutoField(primary_key=True)
