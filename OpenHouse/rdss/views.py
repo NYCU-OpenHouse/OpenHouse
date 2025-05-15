@@ -177,6 +177,14 @@ def Status(request):
 
     return render(request, 'company/status.html', locals())
 
+def _check_category_in_right_zone(zone: rdss.models.ZoneCategories, mycompany: Company) -> bool:
+    if zone.name != "一般企業":
+        my_company_category = rdss.models.CompanyCategories.objects.get(
+            name=mycompany.categories.name
+        )
+        if my_company_category not in zone.category.all():
+            return False
+    return True
 
 @login_required(login_url='/company/login/')
 def SignupRdss(request):
@@ -216,20 +224,20 @@ def SignupRdss(request):
         data = request.POST.copy()
         # decide cid in the form
         data['cid'] = request.user.cid
+        filtered_zone = data.get('zone', None)
+        try:
+            filtered_zone_obj = rdss.models.ZoneCategories.objects.get(id=filtered_zone)
+        except ObjectDoesNotExist:
+            filtered_zone_obj = None
 
         # check if the company is right zone
-        if data.get('zone'):
-            filtered_zone = data.get('zone')
-            zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
-            if zone.name != '一般企業':
-                my_company_category = rdss.models.CompanyCategories.objects.get(
-                    name=mycompany.categories.name
-                )
-                if my_company_category not in zone.category.all():
-                    messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
-                    form = rdss.forms.SignupCreationForm(data, instance=signup_info)
-                    return render(request, 'company/signup_form.html', locals())
-        form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+        if not _check_category_in_right_zone(filtered_zone_obj, mycompany):
+            messages.error(request, f'貴公司不屬於{filtered_zone_obj.name}專區指定類別，請重新選擇')
+            form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+            return render(request, 'company/signup_form.html', locals())
+        else:
+            form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+
         if form.is_valid():
             form.save()
             form.save_m2m()
