@@ -269,20 +269,21 @@ def SeminarInfo(request):
         seminar_info = rdss.models.SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         seminar_info = None
+    
+    try:
+        deadline = rdss.models.RdssConfigs.objects.values('seminar_info_deadline')[0]['seminar_info_deadline']
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
-    # parking_form_set = inlineformset_factory(rdss.models.SeminarInfo, rdss.models.SeminarParking, max_num=2, extra=2,
-    #                                          fields=('id', 'license_plate_number', 'info'),
-    #                                          widgets={'license_plate_number': forms.TextInput(
-    #                                              attrs={'placeholder': '例AA-1234、4321-BB'})})
+    if timezone.now() > deadline:
+        error_msg = "企業說明會資訊填寫時間已截止!若有更改需求，請來信或來電。"
+        return render(request, 'error.html', locals())
+
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
         form = rdss.forms.SeminarInfoCreationForm(data=data, instance=seminar_info)
-        # formset = parking_form_set(data=data, instance=seminar_info)
-        # if form.is_valid() and formset.is_valid():
-        #     form.save()
-        #     formset.save()
-        #     return redirect(SeminarInfo)
         if form.is_valid():
             form.save()
             return redirect(SeminarInfo)
@@ -290,7 +291,6 @@ def SeminarInfo(request):
             print(form.errors)
     else:
         form = rdss.forms.SeminarInfoCreationForm(instance=seminar_info)
-        # formset = parking_form_set(instance=seminar_info)
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
