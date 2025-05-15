@@ -5,7 +5,7 @@ class OH_router(object):
     """
 
     def __init__(self):
-        self.current_year_db = "oh_2024"
+        self.current_year_db = "oh_2025"
         self.use_separate_db_list = ['rdss', 'recruit', 'comapny_list']
 
     def db_for_read(self, model, **hints):
