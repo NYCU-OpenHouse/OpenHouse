@@ -785,15 +785,28 @@ def Sponsor(request):
 def SponsorAdmin(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+
+    # get sponsor and company object
     sponsor_items = rdss.models.SponsorItems.objects.all() \
         .annotate(num_sponsor=Count('sponsorship'))
     companies = rdss.models.Signup.objects.all()
+
+    # handle search item
+    search_term = request.GET.get('q', '').strip()
+    if search_term:
+        companies = list(companies.filter(cid__icontains=search_term)) + [
+                c for c in companies if search_term in c.get_company_name()
+            ]
+
+    # Make sponsorship info
     sponsorships_list = list()
     for c in companies:
         shortname = company.models.Company.objects.filter(cid=c.cid).first().shortname
         sponsorships = rdss.models.Sponsorship.objects.filter(company=c)
         counts = [rdss.models.Sponsorship.objects.filter(company=c, item=item).count() for item in sponsor_items]
         amount = 0
+        latest_sponsorship = rdss.models.Sponsorship.objects.filter(company=c).order_by('-updated').first()
+
         for s in sponsorships:
             amount += s.item.price
         sponsorships_list.append({
@@ -801,6 +814,7 @@ def SponsorAdmin(request):
             "counts": counts,
             "amount": amount,
             "shortname": shortname,
+            "update_time": latest_sponsorship.updated if latest_sponsorship else None,
             "id": c.id,
             "change_url": reverse('admin:rdss_signup_change',
                                                args=(c.id,))

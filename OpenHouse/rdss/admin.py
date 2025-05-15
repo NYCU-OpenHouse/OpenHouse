@@ -4,13 +4,19 @@ import company.models
 from django.conf.urls import url, include
 import rdss.export
 from company.models import Company
+from django.db.models import F, Q
 
 
 admin.AdminSite.site_header = "OpenHouse 管理後台"
 admin.AdminSite.site_title = "OpenHouse"
 
 
-# admin.AdminSite.index_template="admin/admin_index.html"
+def _get_company_name_search_results(queryset, model, search_term):
+    if search_term:
+        company_list = Company.objects.filter(Q(name__icontains=search_term) | Q(shortname__icontains=search_term))
+        for company in company_list:
+            queryset |= model.objects.filter(cid=company.cid)
+    return queryset
 
 
 class SponsorshipInline(admin.TabularInline):
@@ -95,19 +101,11 @@ class SignupAdmin(admin.ModelAdmin):
     search_fields = ('cid',)
     list_filter = ('seminar', 'jobfair', 'payment', 'zone')
 
-    # custom search the company name field in other db
     def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super(SignupAdmin, self).get_search_results(request, queryset, search_term)
-
-        # Check if search_term is empty or not
-        if search_term:
-            company_list = Company.objects.filter(name__icontains=search_term)
-            company_list |= Company.objects.filter(shortname__icontains=search_term)
-            for company in company_list:
-                queryset |= self.model.objects.filter(cid=company.cid)
-
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
         return queryset, use_distinct
-    
+
     def company_name(self, obj):
         return obj.get_company_name()
 
@@ -208,7 +206,8 @@ class RdssConfigsAdmin(admin.ModelAdmin):
 
 @admin.register(models.CompanySurvey)
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ("company",)
+    search_fields = ('cid', )
+    list_display = ('cid', 'company_name')
 
     # define export URLs eg:...admin/rdss/signup/export
     def get_urls(self):
@@ -217,6 +216,11 @@ class SurveyAdmin(admin.ModelAdmin):
             url(r'^export/$', rdss.export.ExportSurvey),
         ]
         return my_urls + urls
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
+        return queryset, use_distinct
 
 
 @admin.register(models.Files)

@@ -940,6 +940,10 @@ class CompanySurvey(models.Model):
         verbose_name = u"企業滿意度問卷"
         verbose_name_plural = u"企業滿意度問卷"
 
+    def company_name(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
+
 
 class RdssInfo(models.Model):
     id = models.AutoField(primary_key=True)
