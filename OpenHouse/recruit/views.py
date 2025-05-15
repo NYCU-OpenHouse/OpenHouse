@@ -168,8 +168,8 @@ def seminar_select_form_gen(request):
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
-        if my_signup.seminar == "":
-            error_msg = "貴公司已報名本次活動，但並未勾選參加實體說明會選項。"
+        if my_signup.seminar == "none":
+            error_msg = "貴公司已報名本次春季徵才活動，但並未勾選參加說明會選項。"
             return render(request, 'recruit/error.html', locals())
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"

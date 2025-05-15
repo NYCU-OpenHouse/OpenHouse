@@ -49,6 +49,10 @@
                 報名專區：{{ my_signup.zone }}
             </div>
         </div>
+        <div>
+            <p ng-if="!ctrl.select_ctrl.btn_display" style="color:blue">目前並非選位時間，「選位」按鍵將在系統開放時出現</p>
+            <p ng-if="!ctrl.select_ctrl.select_btn" style="color:red">目前並非貴公司時段，「選位」按鍵將在貴公司時段內出現</p>
+        </div>
 
         <h2 class="ui dividing header">說明會時間表</h2>
         <h3 class="ui dividing header">時段場地及顏色</h3>
