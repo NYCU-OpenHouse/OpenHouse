@@ -14,6 +14,7 @@ from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet
 import rdss.models
 import recruit.models
 import company.models
+import general.models
 from oauth2_provider.decorators import protected_resource
 from oauth.models import CustomAccessToken
 from django.http import Http404
@@ -30,6 +31,8 @@ def CompanyIndex(request):
     # rdss files
     rdss_file_list = rdss.models.Files.objects.all().order_by('-updated')
     recruit_file_list = recruit.models.Files.objects.all().order_by('-updated')
+    show_recruit = general.models.NavbarConfigs.objects.first().show_recruit
+    show_rdss = general.models.NavbarConfigs.objects.first().show_rdss
     return render(request, 'company_index.html', locals())
 
 
