@@ -173,7 +173,9 @@ class Signup(models.Model):
     history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
-    seminar_type = models.ForeignKey('ConfigSeminarChoice', verbose_name=u'說明會場次類型', on_delete=models.CASCADE, default=1)
+    seminar_type = models.ForeignKey('ConfigSeminarChoice',
+                                     verbose_name=u'說明會場次類型', on_delete=models.CASCADE,
+                                     default=1, blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
     career_tutor = models.BooleanField(u'諮詢服務', default=False)

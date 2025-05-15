@@ -360,7 +360,7 @@ def SeminarSelectFormGen(request):
     try:
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
-        if my_signup.seminar == "":
+        if my_signup.seminar == "none":
             error_msg = "貴公司已報名本次秋季招募活動，但並末勾選參加說明會選項。"
             return render(request, 'error.html', locals())
     except Exception as e:
@@ -383,6 +383,8 @@ def SeminarSelectFormGen(request):
     seminar_end_date = configs.seminar_end_date
     seminar_days = (seminar_end_date - seminar_start_date).days
     table_start_date = seminar_start_date
+    enable_time = configs.seminar_btn_enable_time
+    disable_time = configs.seminar_btn_disable_time
     # find the nearest Monday
     while table_start_date.weekday() != 0:
         table_start_date -= datetime.timedelta(days=1)
@@ -459,19 +461,23 @@ def SeminarSelectControl(request):
 
         # Open button for 77777777
         if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
-            select_ctrl = dict()
+            select_ctrl = {}
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
             select_ctrl['select_btn'] = False
         else:
-            select_ctrl = dict()
+            select_ctrl = {}
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
-            today = timezone.now().date()
-            if (configs.seminar_btn_start <= today <= configs.seminar_btn_end) or request.user.username == "77777777":
-                select_ctrl['btn_display'] = True
-            else:
-                select_ctrl['btn_display'] = False
+            now_time = datetime.datetime.now()
+            in_date_range = configs.seminar_btn_start <= now_time.date() <= configs.seminar_btn_end
+            in_time_range = (
+                configs.seminar_btn_enable_time <= now_time.time() <= configs.seminar_btn_disable_time
+            )
+            is_special_user = request.user.username == '77777777'
+            print(now_time, configs.seminar_btn_enable_time, configs.seminar_btn_disable_time)
+            print(in_date_range, in_time_range)
+            select_ctrl['btn_display'] = (in_date_range and in_time_range) or is_special_user
 
         return JsonResponse({"success": True, "data": return_data, "select_ctrl": select_ctrl})
 
@@ -557,7 +563,8 @@ def JobfairSelectFormGen(request):
 
     slots = rdss.models.JobfairSlot.objects.all()
     place_map = rdss.models.Files.objects.filter(category='就博會攤位圖').first()
-
+    enable_time = rdss.models.RdssConfigs.objects.all()[0].jobfair_btn_enable_time
+    disable_time = rdss.models.RdssConfigs.objects.all()[0].jobfair_btn_disable_time
     return render(request, 'company/jobfair_select.html', locals())
 
 
@@ -629,11 +636,14 @@ def JobfairSelectControl(request):
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
             select_ctrl['select_enable'] = True
-            today = timezone.now().date()
-            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
-                select_ctrl['btn_display'] = True
-            else:
-                select_ctrl['btn_display'] = False
+            now_time = datetime.datetime.now()
+            in_date_range = configs.jobfair_btn_start <= now_time.date() <= configs.jobfair_btn_end
+            in_time_range = (
+                configs.jobfair_btn_enable_time <= now_time.time() <= configs.jobfair_btn_disable_time
+            )
+            is_special_user = request.user.username == '77777777'
+
+            select_ctrl['btn_display'] = (in_date_range and in_time_range) or is_special_user
 
         return JsonResponse({"success": True,
                              "data": slot_group,
