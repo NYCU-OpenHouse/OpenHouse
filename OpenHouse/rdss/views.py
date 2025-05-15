@@ -214,6 +214,14 @@ def SignupRdss(request):
             return render(request, 'error.html', locals())
 
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
+    # Check if the company has filled the survey. If not, disable the signup button
+    try:
+        rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
+        fill_survey = True
+    except ObjectDoesNotExist:
+        fill_survey = False
+        messages.error(request, '尚未填寫問卷，請先填寫問卷才能送出/儲存報名資料')
+
     try:
         signup_info = rdss.models.Signup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
@@ -848,6 +856,12 @@ def CompanySurvey(request):
         my_survey = rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
         my_survey = None
+
+    try:
+        is_sign_up = rdss.models.Signup.objects.get(cid=request.user.cid)
+    except ObjectDoesNotExist:
+        is_sign_up = None
+
     if request.POST:
         data = request.POST.copy()
         # decide cid in the form
@@ -856,6 +870,9 @@ def CompanySurvey(request):
         if form.is_valid():
             form.save()
             (msg_display, msg_type, msg_content) = (True, "green", "問卷填寫完成，感謝您")
+            if not is_sign_up:
+                messages.success(request, '滿意度問卷填答成功，可以進行報名')
+                return redirect(Status)
         else:
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)

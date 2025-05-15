@@ -341,7 +341,6 @@
                 </div>
             </div>
         </div>
-        <button class="ui blue button" style="float: right;" type="submit">送出資料</button>
+        <button class="ui blue button {% if not fill_survey %} disabled {% endif %}" style="float: right;" type="submit">送出資料</button>
     </form>
-
 {% endblock %}
