@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.utils import timezone
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 import company.models
@@ -102,24 +103,27 @@ class RdssConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
-    session0_start = models.TimeField(u'說明會場次0_開始時間', default='00:00')
-    session0_end = models.TimeField(u'說明會場次0_結束時間', default='00:00')
-    session1_start = models.TimeField(u'說明會場次1(中午)_開始時間', default='00:00')
-    session1_end = models.TimeField(u'說明會場次1(中午)_結束時間', default='00:00')
-    session2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
-    session2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
-    session3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
-    session3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
-    session4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
-    session4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
-    # 費用
-    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
-    session_fee_noon = models.IntegerField(u'說明會場次_中午場費用', default=0)
+    seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
+    ### 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    seminar_prize_threshold = models.IntegerField(
+        u'每日參與領獎門檻',
+        default=10,
+        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
+    )
+    ### 是否開放每日說明會全數參加者領獎
+    seminar_prize_all = models.BooleanField(
+        u'每日說明會全數參加者領獎',
+        default=False,
+        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+    )
+    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
+    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
 
-    # 實體ECE說明會相關
+    # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
     seminar_ece_end_date = models.DateField(u'實體ECE說明會結束日期', default=datetime.date.today)
-    # 費用
     session_ece_fee = models.IntegerField(u'實體ECE說明會_費用', default=0)
 
     # 就博會相關
@@ -127,29 +131,20 @@ class RdssConfigs(models.Model):
     jobfair_start = models.TimeField(u'就博會開始時間')
     jobfair_end = models.TimeField(u'就博會結束時間')
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-    
-    # 線上就博會相關
-    # jobfair_online_start = models.DateField(u'線上就博會開始日期', default=datetime.date.today)
-    # jobfair_online_end = models.DateField(u'線上就博會結束日期', default=datetime.date.today)
-    # jobfair_online_fee = models.IntegerField(u'線上就博會費用', default=0)
-    # jobfair_drawing_start = models.DateField(u'系統宣傳抽獎開始日期', default=datetime.date.today)
-    # jobfair_drawing_end = models.DateField(u'系統宣傳抽獎結束日期', default=datetime.date.today)
-
-    seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
-    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
-    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
-
+    jobfair_info_deadline = models.DateTimeField(u'就博會資訊截止填寫時間', default=timezone.now)
     JOBFAIR_FOOD_CHOICES = (
         ('lunch_box', u'餐盒(蛋奶素)'),
         ('bento', u'便當(葷素)')
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
     jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
+    jobfair_btn_start = models.DateField(u'就博會按鈕開啟日期', null=True)
+    jobfair_btn_end = models.DateField(u'就博會按鈕關閉日期', null=True)
+    jobfair_btn_enable_time = models.TimeField(u'就博會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    jobfair_btn_disable_time = models.TimeField(u'就博會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
 
     class Meta:
         managed = True
-
         verbose_name = u"1. 秋季招募活動設定"
         verbose_name_plural = u"1. 秋季招募活動設定"
 
@@ -170,8 +165,7 @@ class ECESeminar(models.Model):
 class Signup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加企業說明會'),
-        (u'attend', u'參加企業說明會(下午場 $10000)'),
-        (u'attend_noon', u'參加企業說明會(中午場 $12000)'),
+        (u'attend', u'參加說明會'),
     )
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
@@ -179,9 +173,11 @@ class Signup(models.Model):
     history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
     seminar = models.CharField(u'說明會場次', max_length=15,
                                choices=SEMINAR_CHOICES, default='none', blank=True)
+    seminar_type = models.ForeignKey('ConfigSeminarChoice',
+                                     verbose_name=u'說明會場次類型', on_delete=models.CASCADE,
+                                     default=1, blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[ MinValueValidator(0)])
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'實體ECE說明會場次', blank=True)
-    jobfair_online = models.BooleanField(u'線上就業博覽會', default=False)
     career_tutor = models.BooleanField(u'諮詢服務', default=False)
     visit = models.BooleanField(u'企業參訪', default=False)
     lecture = models.BooleanField(u'就業力講座', default=False)
@@ -204,6 +200,75 @@ class Signup(models.Model):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
 
+    def company_other_ps(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        if com:
+            return com.other_ps
+        else:
+            return None
+
+
+class ConfigSeminarChoice(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RdssConfigs, on_delete=models.CASCADE, related_name='config_seminar_choice'
+    )
+    name = models.CharField(u'說明會場次名稱', max_length=30, help_text="例如：上午場、下午場、晚場")
+    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
+
+    class Meta:
+        managed = True
+        verbose_name = u"說明會場次類型＆費用設定"
+        verbose_name_plural = u"說明會場次類型＆費用設定"
+
+    def __str__(self):
+        return self.name
+
+    def get_session_fee(self):
+        return self.session_fee
+
+
+class ConfigSeminarSession(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RdssConfigs, on_delete=models.CASCADE, related_name='config_seminar_session'
+    )
+    session_start = models.TimeField(u'說明會場次_開始時間', default='00:00')
+    session_end = models.TimeField(u'說明會場次_結束時間', default='00:00')
+    qualification = models.ForeignKey(
+        ConfigSeminarChoice,
+        verbose_name="說明會種類",
+        on_delete=models.CASCADE,
+        related_name='seminar_session',
+        null=True
+    )
+
+    class Meta:
+        managed = True
+
+        verbose_name = u"說明會場次時間設定"
+        verbose_name_plural = u"說明會場次時間設定"
+
+    def __str__(self):
+        return f"s_{self.session_start.strftime('%H%M')}" \
+               f"_{self.session_end.strftime('%H%M')}"
+
+    def get_display_name(self):
+        return f"{self.session_start.strftime('%H:%M')} - {self.session_end.strftime('%H:%M')}"
+
+    def clean(self):
+        delta = datetime.datetime.combine(datetime.date.today(), self.session_end) - \
+                datetime.datetime.combine(datetime.date.today(), self.session_start)
+        if delta <= datetime.timedelta(minutes=30):
+            raise ValidationError("開始時間與結束時間的間隔必須大於 30 分鐘")
+
+        if not datetime.time(6, 0, 0) <= self.session_start <= datetime.time(21, 0, 0):
+            raise ValidationError("開始時間必須在 6:00 至 21:00 之間")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 # Proxy model for AdminSite company list item
 class Company(Signup):
@@ -214,19 +279,17 @@ class Company(Signup):
 
 
 class SeminarSlot(models.Model):
-    # (value in db,display name)
-    SESSIONS = (
-        ("forenoon", "上午場"),
-        ("noon", "中午場"),
-        ("night1", "晚上場1"),
-        ("night2", "晚上場2"),
-        ("night3", "晚上場3"),
-        ("extra", "加(補)場"),
-        ("jobfair", "就博會"),  # 因為集點需要，公司留空
-    )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期')
-    session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
+    session_from_config = models.ForeignKey(
+        "ConfigSeminarSession",
+        on_delete=models.CASCADE,
+        verbose_name="時段(new)",
+        related_name="seminar_slots",
+        help_text="於活動設定中指定時段及對應價格",
+        null=True,
+        blank=True,
+    )
     company = models.ForeignKey('Signup', to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True, unique=False)
@@ -236,14 +299,14 @@ class SeminarSlot(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"線上-說明會場次"
-        verbose_name_plural = u"線上-說明會場次"
+        verbose_name = u"說明會場次"
+        verbose_name_plural = u"說明會場次"
 
     def __str__(self):
         if self.company is None:
-            return '{} {} {}'.format(self.date, self.session, "None")
+            return '{} {} {}'.format(self.date, self.session_from_config, "None")
 
-        return '{} {} {}'.format(self.date, self.session, self.company.get_company_name())
+        return '{} {} {}'.format(self.date, self.session_from_config , self.company.get_company_name())
 
 
 class Student(models.Model):
@@ -320,18 +383,6 @@ class RedeemPrize(models.Model):
         verbose_name = u"兌獎紀錄"
         verbose_name_plural = u"兌獎紀錄"
 
-# For 2024 rdss seminar
-class redeem_prize_2024_3_points_per_day(models.Model):
-    id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    date = models.CharField(u'參加日期', max_length=30, default='')
-    redeem = models.BooleanField(u'是否兌獎', default=False)
-    updated = models.DateTimeField(u'更新時間', auto_now=True)
-
-    class Meta:
-        verbose_name = u"(2024) 集滿3點名單&兌獎"
-        verbose_name_plural = u"(2024) 集滿3點名單&兌獎"
-        
 
 class SlotColor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -340,6 +391,8 @@ class SlotColor(models.Model):
     '''請輸入顏色英文，比如: red, green, blue, purple, black等'''
                                  )
     place_info = models.URLField(u'場地介紹網頁', max_length=256, default="http://")
+    zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True, blank=True)
+
 
     class Meta:
         managed = True
@@ -362,8 +415,8 @@ class SeminarOrder(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"線上-說明會選位順序"
-        verbose_name_plural = u"線上-說明會選位順序"
+        verbose_name = u"說明會選位順序"
+        verbose_name_plural = u"說明會選位順序"
 
 
 class SeminarInfo(models.Model):
@@ -400,8 +453,8 @@ class SeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"線上-說明會資訊"
-        verbose_name_plural = u"線上-說明會資訊"
+        verbose_name = u"說明會資訊"
+        verbose_name_plural = u"說明會資訊"
 
 
 class SeminarParking(models.Model):
@@ -413,8 +466,8 @@ class SeminarParking(models.Model):
         return self.license_plate_number
 
     class Meta:
-        verbose_name = u"線上-說明會車牌號碼"
-        verbose_name_plural = u"線上-說明會車牌號碼"
+        verbose_name = u"說明會車牌號碼"
+        verbose_name_plural = u"說明會車牌號碼"
 
 
 # 以下為就博會
@@ -581,23 +634,61 @@ class Files(models.Model):
 
 class CompanySurvey(models.Model):
     RATING = (
-        (u'優', u'優'),
-        (u'佳', u'佳'),
+        (u'非常滿意', u'非常滿意'),
+        (u'滿意', u'滿意'),
         (u'普通', u'普通'),
-        (u'差', u'差'),
-        (u'劣', u'劣'),
+        (u'不滿意', u'不滿意'),
+        (u'非常不滿意', u'非常不滿意'),
     )
+    YES_NO_CHOICES = [
+        ('yes', '是'),
+        ('no', '否'),
+    ]
 
     id = models.AutoField(primary_key=True)
-    english_name = models.CharField(u'公司英文名稱', blank=True, null=True, max_length=255)
+    # basic info
+    cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
+    company = models.CharField(u'企業名稱(中文)', max_length=50)
+    company_eng = models.CharField(u'企業名稱(英文)(選填)', max_length=50, null=True, blank=True)
+    submiter_name = models.CharField(u'填寫人姓名', max_length=20)
+    submiter_phone = models.CharField(u'填寫人電話', max_length=20)
+    submiter_email = models.CharField(u'填寫人Email', max_length=50)
+    SIZE = (
+        (u'1~100人', u'1~100人'),
+        (u'101~500人', u'101~500人'),
+        (u'500~1000人', u'500~1000人'),
+        (u'1001~5000人', u'1001~5000人'),
+        (u'5000~10000人', u'5000~10000人'),
+        (u'10000~20000人', u'10000~20000人'),
+        (u'30000人以上', u'30000人以上'),
+    )
+    company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
+    nycu_employees = models.IntegerField(u'本校校友人數', default=0)
+    categories = models.ForeignKey(
+        'CompanyCategories',
+        verbose_name=u'企業類別',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    # oversea recruit info
     # os = overseas, osc = overseas chinese, cn = china
-    os_serve = models.BooleanField(u'境外生參與活動', default=False)
-    os_for_ftime = models.BooleanField(u'外籍生正職', default=False)
-    os_osc_ftime = models.BooleanField(u'僑生正職', default=False)
-    os_cn_ftime = models.BooleanField(u'陸生正職', default=False)
-    os_for_intern = models.BooleanField(u'外籍生實習', default=False)
-    os_osc_intern = models.BooleanField(u'僑生實習', default=False)
-    os_cn_intern = models.BooleanField(u'陸生實習', default=False)
+    os_serve = models.CharField(
+        u'境外生參與活動',
+        max_length=3,
+        choices=YES_NO_CHOICES,
+    )
+    os_seminar = models.CharField(
+        u'境外生說明會',
+        max_length=3,
+        choices=YES_NO_CHOICES,
+    )
+    os_for_ftime = models.IntegerField(u'外籍生(母語非中文)正職人數', default=0)
+    os_osc_ftime = models.IntegerField(u'僑生正職人數', default=0)
+    os_cn_ftime = models.IntegerField(u'陸生正職人數', default=0)
+    os_for_intern = models.IntegerField(u'外籍生(母語非中文)實習人數', default=0)
+    os_osc_intern = models.IntegerField(u'僑生實習人數', default=0)
+    os_cn_intern = models.IntegerField(u'陸生實習人數', default=0)
 
     # application process
     APP_PROCESS_CHOICES = (
@@ -607,7 +698,7 @@ class CompanySurvey(models.Model):
     )
     os_app_process = models.CharField(u'應徵方式 ', max_length=50, choices=APP_PROCESS_CHOICES, null=True)
     os_app_cv_url = models.CharField(u'網址', max_length=64, blank=True, null=True, default='')
-    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內')
+    os_app_other = models.CharField(u'其他', max_length=30, blank=True, null=True, help_text='說明限30字內，若無則免填')
 
     # major multiple choice field
     os_major_ee = models.BooleanField(u'電子電機', default=False)
@@ -644,162 +735,176 @@ class CompanySurvey(models.Model):
     os_eng_write = models.CharField(u'English Writing', max_length=12, choices=SKILL_RATING, null=True, blank=True)
 
     os_other_required = models.CharField(u'特殊徵才條件', blank=True, null=True, max_length=255)
-    os_seminar = models.BooleanField(u'外籍生說明會', default=False)
     os_others = models.CharField(u'其他事項', blank=True, null=True, max_length=255)
 
+    # intern
+    intern_num = models.IntegerField(u'實習人數', default=0)
+    intern_percent = models.CharField(u'實習生比例', max_length=10, default='0')
+    intern_bachelor = models.BooleanField(u'大學生', default=False)
+    intern_master = models.BooleanField(u'碩士生', default=False)
+    intern_phd = models.BooleanField(u'博士生', default=False)
+    intern_week = models.IntegerField(u'實習週數', default=0)
+    intern_hour = models.IntegerField(u'實習時數', default=0)
+    intern_pay = models.CharField(u'實習薪資', max_length=3, choices=YES_NO_CHOICES, null=True)
+    intern_return = models.CharField(u'實習生轉正', max_length=3, choices=YES_NO_CHOICES, null=True)
+
+        # satisfaction
     ee_bachelor = models.IntegerField(u'電機學院-大學人數', default=0)
     ee_master = models.IntegerField(u'電機學院-碩士人數', default=0)
     ee_phd = models.IntegerField(u'電機學院-博士人數', default=0)
-    ee_satisfaction = models.CharField(u'電機學院 - 平均滿意度', max_length=2, choices=RATING,
+    ee_satisfaction = models.CharField(u'電機學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True
                                        )
     cs_bachelor = models.IntegerField(u'資訊學院-大學人數', default=0)
     cs_master = models.IntegerField(u'資訊學院-碩士人數', default=0)
     cs_phd = models.IntegerField(u'資訊學院-博士人數', default=0)
-    cs_satisfaction = models.CharField(u'資訊學院 - 平均滿意度', max_length=2, choices=RATING,
+    cs_satisfaction = models.CharField(u'資訊學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     manage_bachelor = models.IntegerField(u'管理學院-大學人數', default=0)
     manage_master = models.IntegerField(u'管理學院-碩士人數', default=0)
     manage_phd = models.IntegerField(u'管理學院-博士人數', default=0)
-    manage_satisfaction = models.CharField(u'管理學院 - 平均滿意度', max_length=2, choices=RATING,
+    manage_satisfaction = models.CharField(u'管理學院 - 平均滿意度', max_length=10, choices=RATING,
                                            null=True, blank=True)
     ls_bachelor = models.IntegerField(u'生命科學院-大學人數', default=0)
     ls_master = models.IntegerField(u'生命科學院-碩士人數', default=0)
     ls_phd = models.IntegerField(u'生命科學院-博士人數', default=0)
-    ls_satisfaction = models.CharField(u'生命科學院 - 平均滿意度', max_length=2, choices=RATING,
+    ls_satisfaction = models.CharField(u'生命科學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     bio_bachelor = models.IntegerField(u'生物科技學院-大學人數', default=0)
     bio_master = models.IntegerField(u'生物科技學院-碩士人數', default=0)
     bio_phd = models.IntegerField(u'生物科技學院-博士人數', default=0)
-    bio_satisfaction = models.CharField(u'生物科技學院 - 平均滿意度', max_length=2, choices=RATING,
+    bio_satisfaction = models.CharField(u'生物科技學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     bse_bachelor = models.IntegerField(u'生物醫學暨工程學院-大學人數', default=0)
     bse_master = models.IntegerField(u'生物醫學暨工程學院-碩士人數', default=0)
     bse_phd = models.IntegerField(u'生物醫學暨工程學院-博士人數', default=0)
-    bse_satisfaction = models.CharField(u'生物醫學暨工程學院 - 平均滿意度', max_length=2, choices=RATING,
+    bse_satisfaction = models.CharField(u'生物醫學暨工程學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     sci_bachelor = models.IntegerField(u'理學院-大學人數', default=0)
     sci_master = models.IntegerField(u'理學院-碩士人數', default=0)
     sci_phd = models.IntegerField(u'理學院-博士人數', default=0)
-    sci_satisfaction = models.CharField(u'理學院 - 平均滿意度', max_length=2, choices=RATING,
+    sci_satisfaction = models.CharField(u'理學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     eng_bachelor = models.IntegerField(u'工學院-大學人數', default=0)
     eng_master = models.IntegerField(u'工學院-碩士人數', default=0)
     eng_phd = models.IntegerField(u'工學院-博士人數', default=0)
-    eng_satisfaction = models.CharField(u'工學院 - 平均滿意度', max_length=2, choices=RATING,
+    eng_satisfaction = models.CharField(u'工學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     hs_bachelor = models.IntegerField(u'人文社會學院-大學人數', default=0)
     hs_master = models.IntegerField(u'人文社會學院-碩士人數', default=0)
     hs_phd = models.IntegerField(u'人文社會學院-博士人數', default=0)
-    hs_satisfaction = models.CharField(u'人文社會學院 - 平均滿意度', max_length=2, choices=RATING,
+    hs_satisfaction = models.CharField(u'人文社會學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     hss_bachelor = models.IntegerField(u'人文與社會科學院-大學人數', default=0)
     hss_master = models.IntegerField(u'人文與社會科學院-碩士人數', default=0)
     hss_phd = models.IntegerField(u'人文與社會科學院-博士人數', default=0)
-    hss_satisfaction = models.CharField(u'人文與社會科學院 - 平均滿意度', max_length=2, choices=RATING,
+    hss_satisfaction = models.CharField(u'人文與社會科學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     haka_bachelor = models.IntegerField(u'客家學院-大學人數', default=0)
     haka_master = models.IntegerField(u'客家學院-碩士人數', default=0)
     haka_phd = models.IntegerField(u'客家學院-博士人數', default=0)
-    haka_satisfaction = models.CharField(u'客家學院 - 平均滿意度', max_length=2, choices=RATING,
+    haka_satisfaction = models.CharField(u'客家學院 - 平均滿意度', max_length=10, choices=RATING,
                                          null=True, blank=True)
     den_bachelor = models.IntegerField(u'牙醫學院-大學人數', default=0)
     den_master = models.IntegerField(u'牙醫學院-碩士人數', default=0)
     den_phd = models.IntegerField(u'牙醫學院-博士人數', default=0)
-    den_satisfaction = models.CharField(u'牙醫學院 - 平均滿意度', max_length=2, choices=RATING,
+    den_satisfaction = models.CharField(u'牙醫學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     pho_bachelor = models.IntegerField(u'光電學院-大學人數', default=0)
     pho_master = models.IntegerField(u'光電學院-碩士人數', default=0)
     pho_phd = models.IntegerField(u'光電學院-博士人數', default=0)
-    pho_satisfaction = models.CharField(u'光電學院 - 平均滿意度', max_length=2, choices=RATING,
+    pho_satisfaction = models.CharField(u'光電學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     law_bachelor = models.IntegerField(u'科技法律學院-大學人數', default=0)
     law_master = models.IntegerField(u'科技法律學院-碩士人數', default=0)
     law_phd = models.IntegerField(u'科技法律學院-博士人數', default=0)
-    law_satisfaction = models.CharField(u'科技法律學院 - 平均滿意度', max_length=2, choices=RATING,
+    law_satisfaction = models.CharField(u'科技法律學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     fse_bachelor = models.IntegerField(u'前瞻系統工程教育院-大學人數', default=0)
     fse_master = models.IntegerField(u'前瞻系統工程教育院-碩士人數', default=0)
     fse_phd = models.IntegerField(u'前瞻系統工程教育院-博士人數', default=0)
-    fse_satisfaction = models.CharField(u'前瞻系統工程教育院 - 平均滿意度', max_length=2, choices=RATING,
+    fse_satisfaction = models.CharField(u'前瞻系統工程教育院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     icst_bachelor = models.IntegerField(u'國際半導體學院-大學人數', default=0)
     icst_master = models.IntegerField(u'國際半導體學院-碩士人數', default=0)
     icst_phd = models.IntegerField(u'國際半導體學院-博士人數', default=0)
-    icst_satisfaction = models.CharField(u'國際半導體學院 - 平均滿意度', max_length=2, choices=RATING,
+    icst_satisfaction = models.CharField(u'國際半導體學院 - 平均滿意度', max_length=10, choices=RATING,
                                          null=True, blank=True)
     ai_bachelor = models.IntegerField(u'智慧科技暨綠能學院-大學人數', default=0)
     ai_master = models.IntegerField(u'智慧科技暨綠能學院-碩士人數', default=0)
     ai_phd = models.IntegerField(u'智慧科技暨綠能學院-博士人數', default=0)
-    ai_satisfaction = models.CharField(u'智慧科技暨綠能學院 - 平均滿意度', max_length=2, choices=RATING,
+    ai_satisfaction = models.CharField(u'智慧科技暨綠能學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     som_bachelor = models.IntegerField(u'醫學院-大學人數', default=0)
     som_master = models.IntegerField(u'醫學院-碩士人數', default=0)
     som_phd = models.IntegerField(u'醫學院-博士人數', default=0)
-    som_satisfaction = models.CharField(u'醫學院 - 平均滿意度', max_length=2, choices=RATING,
+    som_satisfaction = models.CharField(u'醫學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
     ps_bachelor = models.IntegerField(u'藥物科學院-大學人數', default=0)
     ps_master = models.IntegerField(u'藥物科學院-碩士人數', default=0)
     ps_phd = models.IntegerField(u'藥物科學院-博士人數', default=0)
-    ps_satisfaction = models.CharField(u'藥物科學院 - 平均滿意度', max_length=2, choices=RATING,
+    ps_satisfaction = models.CharField(u'藥物科學院 - 平均滿意度', max_length=10, choices=RATING,
                                        null=True, blank=True)
     son_bachelor = models.IntegerField(u'護理學院-大學人數', default=0)
     son_master = models.IntegerField(u'護理學院-碩士人數', default=0)
     son_phd = models.IntegerField(u'護理學院-博士人數', default=0)
-    son_satisfaction = models.CharField(u'護理學院 - 平均滿意度', max_length=2, choices=RATING,
+    son_satisfaction = models.CharField(u'護理學院 - 平均滿意度', max_length=10, choices=RATING,
                                         null=True, blank=True)
-    overall_satisfaction = models.CharField(u'整體滿意度', max_length=2, choices=RATING, null=True, blank=True)
+    overall_satisfaction = models.CharField(u'整體滿意度', max_length=10, choices=RATING, null=True, blank=True)
 
     # salary
     SALARY_MONTH = (
-        (u'4萬以下', u'4萬以下'),
-        (u'4~5萬', u'4~5萬'),
-        (u'5~6萬', u'5~6萬'),
-        (u'6萬以上', u'6萬以上'),
+        (u'約30,000 元以下', u'約30,000 元以下'),
+        (u'約30,001 元至40,000 元', u'約30,001 元至40,000 元'),
+        (u'約40,001 元至50,000 元', u'約40,001 元至50,000 元'),
+        (u'約50,001 元至60,000 元', u'約50,001 元至60,000 元'),
+        (u'約60,001 元至70,000 元', u'約60,001 元至70,000 元'),
+        (u'約70,001 元至80,000 元', u'約70,001 元至80,000 元'),
+        (u'約80,001 元至90,000 元', u'約80,001 元至90,000 元'),
+        (u'約90,001 元至100,000 元', u'約90,001 元至100,000 元'),
+        (u'約100,001 元至110,000 元', u'約100,001 元至110,000 元'),
+        (u'約110,001 元至120,000 元', u'約110,001 元至120,000 元'),
+        (u'約120,001 元至130,000 元', u'約120,001 元至130,000 元'),
+        (u'約130,001 元至140,000 元', u'約130,001 元至140,000 元'),
+        (u'約140,001 元至150,000 元', u'約140,001 元至150,000 元'),
+        (u'約150,001 元以上', u'約150,001 元以上'),
     )
     SALARY_YEAR = (
-        (u'50萬以下', u'50萬以下'),
-        (u'50~70萬', u'50~70萬'),
-        (u'70~100萬', u'70~100萬'),
-        (u'100萬以上', u'100萬以上'),
+        (u'40萬元以下', u'40萬元以下'),
+        (u'40~80萬元', u'40~80萬元'),
+        (u'80~120萬元', u'80~120萬元'),
+        (u'120~160萬元', u'120~160萬元'),
+        (u'160~200萬元', u'160~200萬元'),
+        (u'200萬元以上', u'200萬元以上'),
     )
-    salary_avg_bachelor = models.CharField(u'大學平均月薪', max_length=8, choices=SALARY_MONTH)
-    salary_avg_master = models.CharField(u'碩士平均月薪', max_length=8, choices=SALARY_MONTH)
-    salary_avg_phd = models.CharField(u'博士平均月薪', max_length=8, choices=SALARY_MONTH)
-    nctu_salary_avg_bachelor = models.CharField(u'大學平均年薪', max_length=8, choices=SALARY_YEAR)
-    nctu_salary_avg_master = models.CharField(u'碩士平均年薪', max_length=8, choices=SALARY_YEAR)
-    nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=8, choices=SALARY_YEAR)
+    salary_avg_bachelor = models.CharField(u'大學平均月薪', max_length=20, choices=SALARY_MONTH)
+    salary_avg_master = models.CharField(u'碩士平均月薪', max_length=20, choices=SALARY_MONTH)
+    salary_avg_phd = models.CharField(u'博士平均月薪', max_length=20, choices=SALARY_MONTH)
+    nctu_salary_avg_bachelor = models.CharField(u'大學平均年薪', max_length=20, choices=SALARY_YEAR)
+    nctu_salary_avg_master = models.CharField(u'碩士平均年薪', max_length=20, choices=SALARY_YEAR)
+    nctu_salary_avg_phd = models.CharField(u'博士平均年薪', max_length=20, choices=SALARY_YEAR)
 
     # ability
-    no_nctu_employee = models.BooleanField(u'目前無本校畢業生在職')
-    professional_skill_rate = models.CharField(u'專業知能', max_length=4, choices=RATING, null=True, blank=True)
-    foreign_lang_rate = models.CharField(u'外語能力', max_length=4, choices=RATING, null=True, blank=True)
-    document_process_rate = models.CharField(u'文書處理', max_length=4, choices=RATING, null=True, blank=True)
-    info_literacy_rate = models.CharField(u'資訊素養', max_length=4, choices=RATING, null=True, blank=True)
-    problem_solving_rate = models.CharField(u'發現及解決問題', max_length=4, choices=RATING, null=True, blank=True)
-    attitude_rate = models.CharField(u'工作態度', max_length=4, choices=RATING, null=True, blank=True)
-    civic_duty_rate = models.CharField(u'公民責任', max_length=4, choices=RATING, null=True, blank=True)
-    pro_moral_rate = models.CharField(u'專業倫理', max_length=4, choices=RATING, null=True, blank=True)
-    humanities_rate = models.CharField(u'人文及在地關懷', max_length=4, choices=RATING, null=True, blank=True)
-    cultural_rate = models.CharField(u'人文藝術陶冶', max_length=4, choices=RATING, null=True, blank=True)
-    international_view_rate = models.CharField(u'國際視野', max_length=4, choices=RATING, null=True, blank=True)
-    diverse_thinking_rate = models.CharField(u'跨界多元思考', max_length=4, choices=RATING, null=True, blank=True)
-    group_cognitive_rate = models.CharField(u'群己平衡認知', max_length=4, choices=RATING, null=True, blank=True)
+    no_nycu_employee = models.BooleanField(u'目前無本校畢業生在職', default=False)
 
+    communication_rate = models.CharField(u'溝通表達', max_length=10, choices=RATING, null=True, blank=True)
+    continuous_learning_rate = models.CharField(u'持續學習', max_length=10, choices=RATING, null=True, blank=True)
+    interpersonal_rate = models.CharField(u'人際互動', max_length=10, choices=RATING, null=True, blank=True)
+    collaboration_rate = models.CharField(u'團隊合作', max_length=10, choices=RATING, null=True, blank=True)
+    problem_solving_rate = models.CharField(u'問題解決', max_length=10, choices=RATING, null=True, blank=True)
+    innovation_rate = models.CharField(u'創新', max_length=10, choices=RATING, null=True, blank=True)
+    responsibility_rate = models.CharField(u'工作責任及紀律', max_length=10, choices=RATING, null=True, blank=True)
+    tech_applications_rate = models.CharField(u'資訊科技應用', max_length=10, choices=RATING, null=True, blank=True)
+    
     # ability choice
-    professional_skill = models.BooleanField(u'專業知能')
-    foreign_lang = models.BooleanField(u'外語能力')
-    document_process = models.BooleanField(u'文書處理')
-    info_literacy = models.BooleanField(u'資訊素養')
-    problem_solving = models.BooleanField(u'發現及解決問題')
-    attitude = models.BooleanField(u'工作態度')
-    civic_duty = models.BooleanField(u'公民責任')
-    pro_moral = models.BooleanField(u'專業倫理')
-    humanities = models.BooleanField(u'人文及在地關懷')
-    cultural = models.BooleanField(u'人文藝術陶冶')
-    international_view = models.BooleanField(u'國際視野')
-    diverse_thinking = models.BooleanField(u'跨界多元思考')
-    group_cognitive = models.BooleanField(u'群己平衡認知')
+    communication = models.BooleanField(u'溝通表達', default=False)
+    continuous_learning = models.BooleanField(u'持續學習', default=False)
+    interpersonal = models.BooleanField(u'人際互動', default=False)
+    collaboration = models.BooleanField(u'團隊合作', default=False)
+    problem_solving = models.BooleanField(u'問題解決', default=False)
+    innovation = models.BooleanField(u'創新', default=False)
+    responsibility = models.BooleanField(u'工作責任及紀律', default=False)
+    tech_applications = models.BooleanField(u'資訊科技應用', default=False)
     other = models.CharField(u'其它', max_length=100, blank=True, null=True)
 
     # exp
@@ -819,7 +924,7 @@ class CompanySurvey(models.Model):
     national_exam = models.CharField(u'國家考試證書', max_length=4, choices=HELPFUL_RATE)
     cert = models.CharField(u'證照', max_length=4, choices=HELPFUL_RATE)
     work_exp = models.CharField(u'相關工作經驗（打工、實習）', max_length=4, choices=HELPFUL_RATE)
-    travel_study = models.CharField(u'遊學（如交換學生）', max_length=4, choices=HELPFUL_RATE)
+    travel_study = models.CharField(u'遊學（如交換學生、雙聯學位等）', max_length=4, choices=HELPFUL_RATE)
 
     # ways to recruit
     hr_bank = models.BooleanField(u'人力銀行')
@@ -829,56 +934,22 @@ class CompanySurvey(models.Model):
     teacher_recommend = models.BooleanField(u'老師推薦')
     campus_jobfair = models.BooleanField(u'校園徵才')
     contest = models.BooleanField(u'競賽活動')
+    recruit_other = models.BooleanField(u'其他', default=False)
 
     # receive info
     receive_info = models.BooleanField(u'我希望定期接收校園徵才活動訊息')
     suggestions = models.CharField(u'其它建議', max_length=150, blank=True, null=True)
 
-    # basic info
-    cid = models.CharField(u'公司統一編號', unique=True, max_length=8, null=False)
-    company = models.CharField(u'企業名稱', max_length=50)
-    submiter_name = models.CharField(u'填寫人姓名', max_length=20)
-    submiter_phone = models.CharField(u'填寫人電話', max_length=20)
-    submiter_email = models.CharField(u'填寫人Email', max_length=50)
-    SIZE = (
-        (u'1~100人', u'1~100人'),
-        (u'101~500人', u'101~500人'),
-        (u'500~1000人', u'500~1000人'),
-        (u'1001~5000人', u'1001~5000人'),
-        (u'5000~10000人', u'5000~10000人'),
-        (u'10000~20000人', u'10000~20000人'),
-        (u'30000人以上', u'30000人以上'),
-    )
-    company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
-    nctu_employees = models.IntegerField(u'本校校友人數')
-    CATEGORYS = (
-        (u'半導體', u'半導體'),
-        (u'消費電子', u'消費電子'),
-        (u'網路通訊', u'網路通訊'),
-        (u'光電光學', u'光電光學'),
-        (u'資訊軟體', u'資訊軟體'),
-        (u'集團', u'集團'),
-        (u'綜合', u'綜合'),
-        (u'人力銀行', u'人力銀行'),
-        (u'機構', u'機構'),
-        (u'公家單位', u'公家單位'),
-        (u'化工/化學', u'化工/化學'),
-        (u'傳產/製造', u'傳產/製造'),
-        (u'工商/服務', u'工商/服務'),
-        (u'教育、政府及團體', u'教育、政府及團體'),
-        (u'醫藥/農牧', u'醫藥/農牧'),
-        (u'民生消費', u'民生消費'),
-        (u'媒體/出版', u'媒體/出版'),
-        (u'貿易/流通', u'貿易/流通'),
-        (u'不動產相關', u'不動產相關'),
-    )
-    category = models.CharField(u'企業類別', max_length=10, choices=CATEGORYS)
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
         managed = True
-        verbose_name = u"畢業生滿意度問卷"
-        verbose_name_plural = u"畢業生滿意度問卷"
+        verbose_name = u"企業滿意度問卷"
+        verbose_name_plural = u"企業滿意度問卷"
+
+    def company_name(self):
+        com = company.models.Company.objects.filter(cid=self.cid).first()
+        return "資料庫不同步，請連絡資訊組" if com is None else com.shortname
 
 
 class RdssInfo(models.Model):
@@ -922,8 +993,8 @@ class RdssSeminarInfo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = u"線上-說明會資訊編輯頁面"
-        verbose_name_plural = u"線上-說明會資訊編輯頁面"
+        verbose_name = u"說明會資訊編輯頁面"
+        verbose_name_plural = u"說明會資訊編輯頁面"
 
 
 class RdssJobfairInfo(models.Model):
@@ -954,3 +1025,19 @@ class RdssOnlineJobfairInfo(models.Model):
         managed = True
         verbose_name = u"線上就博會資訊編輯頁面"
         verbose_name_plural = u"線上就博會資訊編輯頁面"
+
+
+class RedeemDailyPrize(models.Model):
+    """
+    Record the student who listens to seminars and reach the
+    threshold set in the config in a day.
+    """
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, to_field='idcard_no', verbose_name=u'學生證卡號', on_delete=models.CASCADE)
+    date = models.CharField(u'參加日期', max_length=30, default='')
+    redeem = models.BooleanField(u'是否兌獎', default=False)
+    updated = models.DateTimeField(u'更新時間', auto_now=True)
+
+    class Meta:
+        verbose_name = u"達成說明會參與次數紀錄&兌獎"
+        verbose_name_plural = u"達成說明會參與次數紀錄&兌獎"

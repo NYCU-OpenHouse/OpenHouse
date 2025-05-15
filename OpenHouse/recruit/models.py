@@ -98,47 +98,27 @@ class RecruitConfigs(models.Model):
     # 說明會相關
     seminar_start_date = models.DateField(u'說明會開始日期', default=datetime.date.today)
     seminar_end_date = models.DateField(u'說明會結束日期', default=datetime.date.today)
-    session_1_start = models.TimeField(u'說明會場次1_開始時間', default='00:00')
-    session_1_end = models.TimeField(u'說明會場次1_結束時間', default='00:00')
-    session_2_start = models.TimeField(u'說明會場次2_開始時間', default='00:00')
-    session_2_end = models.TimeField(u'說明會場次2_結束時間', default='00:00')
-    session_3_start = models.TimeField(u'說明會場次3_開始時間', default='00:00')
-    session_3_end = models.TimeField(u'說明會場次3_結束時間', default='00:00')
-    session_4_start = models.TimeField(u'說明會場次4_開始時間', default='00:00')
-    session_4_end = models.TimeField(u'說明會場次4_結束時間', default='00:00')
-    session_5_start = models.TimeField(u'說明會場次5_開始時間', default='00:00')
-    session_5_end = models.TimeField(u'說明會場次5_結束時間', default='00:00')
-    session_6_start = models.TimeField(u'說明會場次6_開始時間', default='00:00')
-    session_6_end = models.TimeField(u'說明會場次6_結束時間', default='00:00')
-    session_7_start = models.TimeField(u'說明會場次7_開始時間', default='00:00')
-    session_7_end = models.TimeField(u'說明會場次7_結束時間', default='00:00')
-    session_8_start = models.TimeField(u'說明會場次8_開始時間', default='00:00')
-    session_8_end = models.TimeField(u'說明會場次8_結束時間', default='00:00')
-    session_9_start = models.TimeField(u'說明會場次9_開始時間', default='00:00')
-    session_9_end = models.TimeField(u'說明會場次9_結束時間', default='00:00')
-    session_10_start = models.TimeField(u'說明會場次10_開始時間', default='00:00')
-    session_10_end = models.TimeField(u'說明會場次10_結束時間', default='00:00')
-    # 費用
-    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
-    session_fee_noon = models.IntegerField(u'說明會場次(午場)_費用', default=0)
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
-    # 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
+    ### 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
     seminar_prize_threshold = models.IntegerField(
         u'每日參與領獎門檻',
         default=10,
         help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
     )
-    # 是否開放每日說明會全數參加者領獎
+    ### 是否開放每日說明會全數參加者領獎
     seminar_prize_all = models.BooleanField(
         u'每日說明會全數參加者領獎',
         default=False,
         help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
     )
-
+    seminar_btn_start = models.DateField(u'說明會選位按鈕開啟日期', null=True)
+    seminar_btn_end = models.DateField(u'說明會選位按鈕關閉日期', null=True)
+    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
+    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
+    
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'ECE說明會開始日期', default=datetime.date.today)
     seminar_ece_end_date = models.DateField(u'ECE說明會結束日期', default=datetime.date.today)
-    # 費用
     session_ece_fee = models.IntegerField(u'ECE說明會_費用', default=0)
 
     # 就博會相關
@@ -153,13 +133,7 @@ class RecruitConfigs(models.Model):
     )
     jobfair_food = models.CharField(u'就業博覽會餐點', max_length=10, choices=JOBFAIR_FOOD_CHOICES, default='餐盒(蛋奶素)')
     jobfair_food_info = RichTextField(u'餐點注意事項', max_length=128, blank=True, null=True)
-    # 費用
     jobfair_booth_fee = models.IntegerField(u'就博會攤位費用(每攤)', default=0)
-
-    seminar_btn_start = models.DateField(u'說明會選位按鈕開啟日期', null=True)
-    seminar_btn_end = models.DateField(u'說明會選位按鈕關閉日期', null=True)
-    seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
-    seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
     jobfair_btn_start = models.DateField(u'就博會選位按鈕開啟日期', null=True)
     jobfair_btn_end = models.DateField(u'就博會選位按鈕關閉日期', null=True)
     jobfair_btn_enable_time = models.TimeField(u'就博會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
@@ -188,15 +162,15 @@ class RecruitSignup(models.Model):
     SEMINAR_CHOICES = (
         (u'none', u'不參加說明會'),
         (u'attend', u'參加說明會'),
-        (u'attend_noon', u'參加說明會(中午場)'),
     )
-    
+
     id = models.AutoField(primary_key=True)
     cid = models.CharField(u'公司統一編號', max_length=8, unique=True)
     zone = models.ForeignKey('ZoneCategories', verbose_name=u'專區類別', on_delete=models.CASCADE, null=True)
     history = models.ManyToManyField('HistoryParticipation', verbose_name=u'歷史參加調查', blank=True)
     first_participation = models.BooleanField(u'首次參加', default=False)
     seminar = models.CharField(u'說明會場次', choices=SEMINAR_CHOICES, max_length=15, default='none', blank=True)
+    seminar_type = models.ForeignKey('ConfigSeminarChoice', verbose_name=u'說明會場次類型', on_delete=models.CASCADE, default=1)
     seminar_ece = models.ManyToManyField('ECESeminar', verbose_name=u'ECE說明會場次', blank=True)
     jobfair = models.IntegerField(u'徵才展示會攤位數量', default=0, validators=[MinValueValidator(0)])
     career_tutor = models.BooleanField(u'諮詢服務', default=False)
@@ -225,7 +199,7 @@ class RecruitSignup(models.Model):
     def company_join_date(self):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         if com:
-            return com.date_join 
+            return com.date_join
         else:
             return None
 
@@ -245,6 +219,71 @@ class RecruitSignup(models.Model):
         verbose_name = u'4. 活動報名情況'
         verbose_name_plural = u'4. 活動報名情況'
 
+class ConfigSeminarChoice(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RecruitConfigs, on_delete=models.CASCADE, related_name='config_seminar_choice'
+    )
+    name = models.CharField(u'說明會場次名稱', max_length=30, help_text="例如：上午場、下午場、晚場")
+    session_fee = models.IntegerField(u'說明會場次_費用', default=0)
+
+    class Meta:
+        managed = True
+        # TODO: Remove self defined db table name
+        db_table = 'config_seminar_choice'
+
+        verbose_name = u"說明會場次類型＆費用設定"
+        verbose_name_plural = u"說明會場次類型＆費用設定"
+
+    def __str__(self):
+        return self.name
+
+    def get_session_fee(self):
+        return self.session_fee
+
+
+class ConfigSeminarSession(models.Model):
+    id = models.AutoField(primary_key=True)
+    config = models.ForeignKey(
+        RecruitConfigs, on_delete=models.CASCADE, related_name='config_seminar_session'
+    )
+    session_start = models.TimeField(u'說明會場次_開始時間', default='00:00')
+    session_end = models.TimeField(u'說明會場次_結束時間', default='00:00')
+    qualification = models.ForeignKey(
+        ConfigSeminarChoice,
+        verbose_name="說明會種類",
+        on_delete=models.CASCADE,
+        related_name='seminar_session',
+        null=True
+    )
+
+    class Meta:
+        managed = True
+        # TODO: Remove self defined db table name
+        db_table = 'config_seminar_session'
+
+        verbose_name = u"說明會場次時間設定"
+        verbose_name_plural = u"說明會場次時間設定"
+
+    def __str__(self):
+        return f"s_{self.session_start.strftime('%H%M')}" \
+               f"_{self.session_end.strftime('%H%M')}"
+    
+    def get_display_name(self):
+        return f"{self.session_start.strftime('%H:%M')} - {self.session_end.strftime('%H:%M')}"
+
+    def clean(self):
+        delta = datetime.datetime.combine(datetime.date.today(), self.session_end) - \
+                datetime.datetime.combine(datetime.date.today(), self.session_start)
+        if delta <= datetime.timedelta(minutes=30):
+            raise ValidationError("開始時間與結束時間的間隔必須大於 30 分鐘")
+    
+        if not (datetime.time(6, 0, 0) <= self.session_start <= datetime.time(21, 0, 0)):
+            raise ValidationError("開始時間必須在 6:00 至 21:00 之間")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 class Files(models.Model):
     FILE_CAT = (
@@ -306,22 +345,17 @@ class OnlineJobfairSlot(models.Model):
 
 
 class SeminarSlot(models.Model):
-    # (value in db, display name)
-    SESSIONS = (
-        ("morning1", "早上場1"),
-        ("noon1", "中午場1"),
-        ("noon2", "中午場2"),
-        ("noon3", "中午場3"),
-        ("noon4", "中午場4"),
-        ("evening1", "晚場1"),
-        ("evening2", "晚場2"),
-        ("evening3", "晚場3"),
-        ("evening4", "晚場4(90min)"),
-        ("add1", "備用場1"),
-    )
     id = models.AutoField(primary_key=True)
     date = models.DateField(u'日期', default=datetime.date.today)
-    session = models.CharField(u'時段', max_length=10, choices=SESSIONS)
+    session_from_config = models.ForeignKey(
+        "ConfigSeminarSession",
+        on_delete=models.CASCADE,
+        verbose_name="時段(new)",
+        related_name="seminar_slots",
+        help_text="於活動設定中指定時段及對應價格",
+        null=True,
+        blank=True,
+    )
     company = models.ForeignKey('RecruitSignup', to_field='cid',
                                    verbose_name=u'公司',
                                    on_delete=models.CASCADE, null=True, blank=True, unique=False)
@@ -335,7 +369,7 @@ class SeminarSlot(models.Model):
         verbose_name_plural = u"說明會場次"
 
     def __str__(self):
-        return '{} {}'.format(self.date, self.session)
+        return '{} {}'.format(self.date, self.session_from_config)
 
 # 線上說明會場次
 class OnlineSeminarSlot(models.Model):
@@ -631,9 +665,15 @@ class CompanySurvey(models.Model):
     )
     company_size = models.CharField(u'貴企業規模', max_length=20, choices=SIZE)
     nycu_employees = models.IntegerField(u'本校校友人數', default=0)
-    categories = models.ForeignKey('CompanyCategories', verbose_name=u'企業類別', on_delete=models.SET_NULL, null=True)
+    categories = models.ForeignKey(
+        'CompanyCategories',
+        verbose_name=u'企業類別',
+        on_delete=models.SET_NULL,
+        null=True
+    )
 
     # oversea recruit info
+    # os = overseas, osc = overseas chinese, cn = china
     os_serve = models.CharField(
         u'境外生參與活動',
         max_length=3,

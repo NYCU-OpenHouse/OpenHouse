@@ -45,10 +45,20 @@ class SponsorshipInline(admin.TabularInline):
     model = SponsorShip
     extra = 0
 
+class ConfigSeminarSessionInline(admin.StackedInline):
+    model = models.ConfigSeminarSession
+    fields = ('session_start', 'session_end', 'qualification')
+    extra = 0
+
+class ConfigSeminarChoiceInline(admin.StackedInline):
+    model = models.ConfigSeminarChoice
+    fields = ('name', 'session_fee')
+    extra = 0
 
 @admin.register(RecruitConfigs)
 class RecruitConfigAdmin(admin.ModelAdmin):
     list_display = ['title']
+    inlines = [ConfigSeminarChoiceInline, ConfigSeminarSessionInline]
 
     def title(self, obj):
         return '活動設定'
@@ -102,7 +112,7 @@ class RecruitSignupAdmin(admin.ModelAdmin):
 
 @admin.register(SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'session', 'company', 'place')
+    list_display = ('date', 'session_from_config', 'company', 'place')
     raw_id_fields = ("company",)
 
 

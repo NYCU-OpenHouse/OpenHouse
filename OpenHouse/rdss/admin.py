@@ -4,13 +4,19 @@ import company.models
 from django.conf.urls import url, include
 import rdss.export
 from company.models import Company
+from django.db.models import F, Q
 
 
 admin.AdminSite.site_header = "OpenHouse 管理後台"
 admin.AdminSite.site_title = "OpenHouse"
 
 
-# admin.AdminSite.index_template="admin/admin_index.html"
+def _get_company_name_search_results(queryset, model, search_term):
+    if search_term:
+        company_list = Company.objects.filter(Q(name__icontains=search_term) | Q(shortname__icontains=search_term))
+        for company in company_list:
+            queryset |= model.objects.filter(cid=company.cid)
+    return queryset
 
 
 class SponsorshipInline(admin.TabularInline):
@@ -41,12 +47,6 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(models.RedeemPrize)
 class RedeemAdmin(admin.ModelAdmin):
     list_display = ('student', 'prize', 'points', 'updated')
-
-
-@admin.register(models.redeem_prize_2024_3_points_per_day)
-class redeem_prize_2024_3_points_per_day_Admin(admin.ModelAdmin):
-    list_display = ('student', 'date', 'redeem', 'updated')
-
 
 @admin.register(models.ECESeminar)
 class ECESeminarAdmin(admin.ModelAdmin):
@@ -80,7 +80,7 @@ class HistoryParticipationAdmin(admin.ModelAdmin):
 
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'session', 'company', 'place')
+    list_display = ('date', 'session_from_config', 'company', 'place')
 
 
 @admin.register(models.SponsorItems)
@@ -96,24 +96,17 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 
 @admin.register(models.Signup)
 class SignupAdmin(admin.ModelAdmin):
-    list_display = ('cid', 'company_name', 'seminar', 'jobfair', 'career_tutor', 'visit', 'lecture', 'payment')
+    list_display = ('cid', 'company_name', 'seminar', 'jobfair',
+                    'career_tutor', 'visit', 'lecture', 'payment', 'company_other_ps')
     inlines = (SponsorshipInline,)
     search_fields = ('cid',)
     list_filter = ('seminar', 'jobfair', 'payment', 'zone')
 
-    # custom search the company name field in other db
     def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super(SignupAdmin, self).get_search_results(request, queryset, search_term)
-
-        # Check if search_term is empty or not
-        if search_term:
-            company_list = Company.objects.filter(name__icontains=search_term)
-            company_list |= Company.objects.filter(shortname__icontains=search_term)
-            for company in company_list:
-                queryset |= self.model.objects.filter(cid=company.cid)
-
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
         return queryset, use_distinct
-    
+
     def company_name(self, obj):
         return obj.get_company_name()
 
@@ -193,18 +186,29 @@ class SeminarOrderAdmin(admin.ModelAdmin):
 class JobfairOrderAdmin(admin.ModelAdmin):
     list_display = ("company", "time", "updated")
 
+class ConfigSeminarSessionInline(admin.StackedInline):
+    model = models.ConfigSeminarSession
+    fields = ('session_start', 'session_end', 'qualification')
+    extra = 0
+
+class ConfigSeminarChoiceInline(admin.StackedInline):
+    model = models.ConfigSeminarChoice
+    fields = ('name', 'session_fee')
+    extra = 0
 
 @admin.register(models.RdssConfigs)
 class RdssConfigsAdmin(admin.ModelAdmin):
-    list_display = ("configs",)
+    list_display = ['title']
+    inlines = [ConfigSeminarChoiceInline, ConfigSeminarSessionInline]
 
-    def configs(self, obj):
-        return "活動設定"
+    def title(self, obj):
+        return '活動設定'
 
 
 @admin.register(models.CompanySurvey)
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ("company",)
+    search_fields = ('cid', )
+    list_display = ('cid', 'company_name')
 
     # define export URLs eg:...admin/rdss/signup/export
     def get_urls(self):
@@ -214,6 +218,11 @@ class SurveyAdmin(admin.ModelAdmin):
         ]
         return my_urls + urls
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = _get_company_name_search_results(queryset, self.model, search_term)
+        return queryset, use_distinct
+
 
 @admin.register(models.Files)
 class RDSSFilesAdmin(admin.ModelAdmin):
@@ -222,7 +231,7 @@ class RDSSFilesAdmin(admin.ModelAdmin):
 
 @admin.register(models.SlotColor)
 class SlotColorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'place', 'css_color', 'place_info')
+    list_display = ('id', 'place', 'css_color', 'zone', 'place_info')
 
 
 class SeminarParkingInline(admin.StackedInline):
@@ -272,17 +281,6 @@ class RdssInfoAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(models.RdssCompanyInfo)
-class RdssInfoAdmin(admin.ModelAdmin):
-    list_display = ('title',)
-
-    def has_add_permission(self, request):
-        count = rdss.models.RdssCompanyInfo.objects.all().count()
-        if count == 0:
-            return True
-        return False
-
-
 @admin.register(models.RdssSeminarInfo)
 class SeminarContentAdmin(admin.ModelAdmin):
     list_display = ('title',)
@@ -305,30 +303,19 @@ class JobfairContentAdmin(admin.ModelAdmin):
         return False
 
 
-# @admin.register(models.RdssOnlineJobfairInfo)
-# class OnlineJobfairContentAdmin(admin.ModelAdmin):
-#     list_display = ('title',)
-
-#     def has_add_permission(self, request):
-#         count = rdss.models.RdssOnlineJobfairInfo.objects.all().count()
-#         if count == 0:
-#             return True
-#         return False
-
-
 @admin.register(models.Sponsorship)
 class SponsorshipAdmin(admin.ModelAdmin):
     list_display = ('company_id', 'item_id', 'updated',)
     list_filter = ('item_id',)
 
 
-# Register your models here.
-# admin.site.register(models.Sponsorship)
-
 @admin.register(models.JobfairSlot)
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'zone', 'company', 'updated')
     change_list_template = "admin/jobfairslot_change_list.html"
     zones = models.ZoneCategories.objects.all()
-    
-# admin.site.register(models.OnlineJobfairSlot)
+
+
+@admin.register(models.RedeemDailyPrize)
+class RedeemDailyPrizeAdmin(admin.ModelAdmin):
+    list_display = ('date', 'redeem', 'updated')

@@ -8,7 +8,7 @@ urlpatterns = [
     # url(r'^$', 'oh2016_dj.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^sponsorship_situation/$', views.SponsorAdmin, name="rdss_sponsorship_situation"),
+    url(r'^sponsorship/$', views.SponsorAdmin, name="rdss_sponsorship_situation"),
     url(r'^collect_points/$', views.CollectPoints, name="rdss_collect_points"),
     url(r'^reg_card/$', views.RegisterCard, name="rdss_reg_card"),
     url(r'redeem/$', views.RedeemPrize, name='rdss_redeem'),
@@ -23,9 +23,9 @@ urlpatterns = [
     url(r'^export_jobfair/$', export.ExportJobfair,name="rdss_export_jobfair"),
     url(r'^export_seminar/$', export.ExportSeminar,name="rdss_export_seminar"),
     url(r'^export_jobs/$', export.ExportJobs,name="rdss_export_jobs"),
-    path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='bulk_add_jobfairslot'),
-    path(r'companycategories/sync', views.sync_company_categories, name='sync_company_categories'),
-    url(r'show_3_seminar_attendance_student_2024/$', views.show_3_seminar_attendance_student_2024, name='show_3_seminar_attendance_student_2024'),
-    path(r'redeem_seminar_meal_ticket_2024/<str:student_id>/<str:date>/', views.redeem_seminar_meal_ticket_2024, name='show_3_seminar_attendance_student_2024_redeem'),
+    path(r'jobfairslot/bulk_add', views.bulk_add_jobfairslot, name='rdss_bulk_add_jobfairslot'),
+    path(r'companycategories/sync', views.sync_company_categories, name='rdss_sync_company_categories'),
+    path(r'redeem_seminar_daily_prize/<str:idcard_no>/<str:date>/', views.redeem_seminar_daily_prize, name='rdss_redeem_seminar_daily_prize'),
+    url(r'show_student_with_daily_seminar_prize/$', views.show_student_with_daily_seminar_prize, name='rdss_show_student_with_daily_seminar_prize'),	
 	#export urls are defined in admin.py
 ]

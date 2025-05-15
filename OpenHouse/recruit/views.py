@@ -28,7 +28,6 @@ import json
 import logging
 from ipware.ip import get_client_ip
 from datetime import timedelta
-import recruit.models
 from urllib.parse import urlparse, parse_qs
 import re
 import recruit.models
@@ -97,6 +96,7 @@ def recruit_signup(request):
 
     try:
         configs = RecruitConfigs.objects.all()[0]
+        session_choices = recruit.models.ConfigSeminarChoice.objects.all()
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
@@ -168,8 +168,8 @@ def seminar_select_form_gen(request):
     try:
         my_signup = RecruitSignup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
-        if my_signup.seminar == "":
-            error_msg = "貴公司已報名本次活動，但並未勾選參加實體說明會選項。"
+        if my_signup.seminar == "none":
+            error_msg = "貴公司已報名本次春季徵才活動，但並未勾選參加說明會選項。"
             return render(request, 'recruit/error.html', locals())
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
@@ -181,7 +181,7 @@ def seminar_select_form_gen(request):
     except Exception as e:
         seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方實體說明會時間表"
 
-    seminar_session = my_signup.get_seminar_display()
+    seminar_type = my_signup.seminar_type
 
     try:
         configs = RecruitConfigs.objects.all()[0]
@@ -204,25 +204,10 @@ def seminar_select_form_gen(request):
                               for day in range(0, 4)])
 
     slot_colors = SlotColor.objects.all()
-    session_list = [
-        # TODO: refactor session order logic
-        {"name": "add1", "start_time": configs.session_5_start, "end_time": configs.session_5_end},
-        {"name": "morning1", "start_time": configs.session_1_start, "end_time": configs.session_1_end},
-        {"name": "noon1", "start_time": configs.session_2_start, "end_time": configs.session_2_end},
-        {"name": "noon2", "start_time": configs.session_3_start, "end_time": configs.session_3_end},
-        {"name": "noon3", "start_time": configs.session_4_start, "end_time": configs.session_4_end},
-        {"name": "evening1", "start_time": configs.session_6_start, "end_time": configs.session_6_end},
-        {"name": "evening2", "start_time": configs.session_7_start, "end_time": configs.session_7_end},
-        {"name": "evening3", "start_time": configs.session_8_start, "end_time": configs.session_8_end},
-        {"name": "evening4", "start_time": configs.session_9_start, "end_time": configs.session_9_end},
-    ]
-    for session in session_list:
-        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
-                datetime.datetime.combine(datetime.date.today(), session["start_time"])
-        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
-            session["valid"] = True
-        else:
-            session["valid"] = False
+
+    config_session_list = recruit.models.ConfigSeminarSession.objects \
+        .all().order_by('session_start')
+
     return render(request, 'recruit/company/seminar_select.html', locals())
 
 
@@ -249,11 +234,8 @@ def seminar_select_control(request):
         return_data = {}
 
         for s in slots:
-            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
-                if s.place.zone != my_signup.zone:
-                    continue
-            # make index first night1_20160707
-            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
+            index = "{}_{}_{}".format(s.session_from_config, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
+
             # dict for return data
             return_data[index] = {}
 
@@ -262,16 +244,19 @@ def seminar_select_control(request):
             return_data[index]["cid"] = "None" if not s.company else \
                 s.company.get_company_name()
 
-            my_seminar_session = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar
+            my_seminar_session_type = RecruitSignup.objects.filter(cid=request.user.cid).first().seminar_type
 
-            # session wrong (signup noon but choose night)
-            # and noon is not full yet
-            if (my_seminar_session not in s.session) and \
-                    (SeminarSlot.objects.filter(session__contains=my_seminar_session, company=None).exists()):
-                # 選別人的時段，而且自己的時段還沒滿
+            # session wrong (signup A type seminar but choose B type)
+            if s.session_from_config.qualification and \
+                s.session_from_config.qualification != my_seminar_session_type:
                 return_data[index]['valid'] = False
             else:
                 return_data[index]['valid'] = True
+
+            # check if the company is in right zone and the special user
+            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
+                if s.place.zone != my_signup.zone:
+                    return_data[index]['valid'] = False
 
         my_slot = SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
@@ -314,41 +299,42 @@ def seminar_select_control(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
+        _, start_str, end_str, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
+        slot_session_start = datetime.datetime.strptime(start_str, "%H%M").time()
+        slot_session_end = datetime.datetime.strptime(end_str, "%H%M").time()
+
         try:
-            slot = SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
+            slot_session = recruit.models.ConfigSeminarSession.objects.get(
+                session_start=slot_session_start, session_end=slot_session_end
+            )
+            slot = SeminarSlot.objects.get(date=slot_date, session_from_config=slot_session, place=slot_place_id)
             my_signup = RecruitSignup.objects.get(cid=request.user.cid)
-        except:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
+        except Exception as e:
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
 
         if slot.company != None:
             return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
 
         if slot and my_signup:
-            # 不在公司時段，且該時段未滿
-            if my_signup.seminar not in slot.session and \
-                    SeminarSlot.objects.filter(session=my_signup.seminar, company=None):
-                return JsonResponse({"success": False, "msg": "選位失敗，時段錯誤"})
-
             slot.company = my_signup
             slot.save()
-            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
+            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session_from_config))
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加實體說明會'})
+            return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
 
     # end of action select
     elif action == "cancel":
-
         my_slot = SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
             logger.info('{} cancel seminar slot {} {}'.format(
-                my_slot.company.get_company_name(), my_slot.date, my_slot.session))
+                my_slot.company.get_company_name(), my_slot.date, my_slot.session_from_config))
             my_slot.company = None
             my_slot.save()
             return JsonResponse({"success": True})
         else:
+            logger.error(f'Cancel seminar slot failed. Cannot find slot for company {request.user.cid}')
             return JsonResponse({"success": False, "msg": "刪除實體說明會選位失敗"})
 
     else:
@@ -548,6 +534,9 @@ def jobfair_info(request):
 
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
+        if company.jobfair == 0:
+            error_msg = "貴公司已報名本次活動，但並未勾選參加實體就博會選項。"
+            return render(request, 'recruit/error.html', locals())
         booth_num = company.jobfair
         lunch_box_quantity = booth_num * 3
         parking_tickets_max = 2 + (booth_num - 1) if booth_num > 0 else 0
@@ -642,6 +631,10 @@ def seminar_info(request):
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    if company.seminar == "none":
+        error_msg = "貴公司已報名本次活動，但並未勾選參加說明會選項。"
         return render(request, 'recruit/error.html', locals())
 
     try:
@@ -1099,9 +1092,10 @@ def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]
     Args:
         student_obj: Student object
     Returns:
-        bool: Whether the student has reached the daily threshold.
-        str: The date of the redeemed prize.
-        bool: Whether the student has redeemed.
+        tuple[bool, str, bool]
+            bool: Whether the student has reached the daily threshold.
+            str: The date of the redeemed prize.
+            bool: Whether the student has redeemed.
     """
     today = datetime.datetime.now().date()
     attended_seminar = recruit.models.StuAttendance.objects.filter(student=student_obj,
@@ -1148,7 +1142,7 @@ def redeem_seminar_daily_prize(request, card_num, date):
     try:
         student_obj = recruit.models.Student.objects.filter(card_num=card_num).first()
     except Exception as e:
-        messages.error(request, f"學號錯誤: {e}，請註冊學生證")
+        messages.error(request, f"學生證卡號不存在: {e}，請註冊學生證")
         return redirect(referer)
 
     try:
@@ -1206,30 +1200,16 @@ def CollectPoints(request):
     if seminar_place_id:
         seminar_list = seminar_list.filter(place=seminar_place_id)
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
-        
-        # Find the suitable session
-        if (now - timedelta(minutes=40)).time() < configs.session_5_end < (now + timedelta(minutes=20)).time():
-            current_session = 'add1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_1_end < (now + timedelta(minutes=20)).time():
-            current_session = 'morning1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_2_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_3_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon2'
-        elif (now - timedelta(minutes=40)).time() < configs.session_4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon3'
-        elif (now - timedelta(minutes=40)).time() < configs.session_6_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening1'
-        elif (now - timedelta(minutes=40)).time() < configs.session_7_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening2'
-        elif (now - timedelta(minutes=40)).time() < configs.session_8_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening3'
-        elif (now - timedelta(minutes=40)).time() < configs.session_9_end < (now + timedelta(minutes=20)).time():
-            current_session = 'evening4'
-        else:
-            current_session = ''
 
-        current_seminar = seminar_list.filter(session=current_session).first()
+        lower_bound = (now - timedelta(minutes=40)).time()
+        upper_bound = (now + timedelta(minutes=20)).time()
+
+        matching_session = recruit.models.ConfigSeminarSession.objects.filter(
+            session_end__gt=lower_bound,
+            session_end__lt=upper_bound
+        ).first()
+
+        current_seminar = seminar_list.filter(session_from_config=matching_session).first()
         if seminar_list and current_seminar in seminar_list:
             # put current seminar to the default
             seminar_list = list(seminar_list)
@@ -1249,7 +1229,7 @@ def CollectPoints(request):
         )
         student_obj = Student.objects.filter(card_num=idcard_no).annotate(
             points=Sum('attendance__points')).first()
-        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
         # check if the student can get the daily seminar prize
         is_redeem, redeem_date, already_redeemed = _reach_seminar_daily_threshold(student_obj)
@@ -1323,21 +1303,9 @@ def SeminarAttendedStudent(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
-    seminar_session_display = {
-        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
-        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-    }
-    
     for ele in seminars:
         student_count = recruit.models.StuAttendance.objects.filter(seminar=ele).count()
-        ele.time = seminar_session_display[ele.session]
+        ele.time = ele.session_from_config.get_display_name()
         ele.student_count = student_count
 
     return render(request, 'recruit/admin/seminar_attended_student.html', locals())
@@ -1457,17 +1425,6 @@ def Status(request):
         "seminar_slot": "-",
         "jobfair_slot": "-",
     }
-    seminar_session_display = {
-        "morning1": "{}~{}".format(configs.session_1_start, configs.session_1_end),
-        "noon1": "{}~{}".format(configs.session_2_start, configs.session_2_end),
-        "noon2": "{}~{}".format(configs.session_3_start, configs.session_3_end),
-        "noon3": "{}~{}".format(configs.session_4_start, configs.session_4_end),
-        "add1": "{}~{}".format(configs.session_5_start, configs.session_5_end),
-        "evening1": "{}~{}".format(configs.session_6_start, configs.session_6_end),
-        "evening2": "{}~{}".format(configs.session_7_start, configs.session_7_end),
-        "evening3": "{}~{}".format(configs.session_8_start, configs.session_8_end),
-        "evening4": "{}~{}".format(configs.session_9_start, configs.session_9_end),
-    }
 
     # 問卷狀況
     try:
@@ -1490,7 +1447,8 @@ def Status(request):
         slot_info['seminar_slot'] = "請依時段於左方選單選位"
     else:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
-                                                   seminar_session_display[seminar_slot.session])
+                                                   seminar_slot.session_from_config.get_display_name()
+                                                   )
     if not jobfair_slot:
         slot_info['jobfair_slot'] = "請依時段於左方選單選位"
     else:
@@ -1504,12 +1462,8 @@ def Status(request):
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            seminar_fee = configs.session_fee
+            seminar_fee = signup_data.seminar_type.session_fee
             seminar_fee_text = f"說明會 ({seminar_fee} 元)"
-            fee += seminar_fee
-        elif signup_data.seminar == 'attend_noon':
-            seminar_fee = configs.session_fee_noon
-            seminar_fee_text = f"說明會中午場 ({seminar_fee} 元)"
             fee += seminar_fee
 
         # ece fee calculation

@@ -4,6 +4,29 @@
 {% block 'custom_head' %}
     <title>活動報名 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/rdss/signup_form.js" %}></script>
+    <script>
+        function init() {
+            var selectedValue = $('#id_seminar').val();
+            if (selectedValue === 'attend') {
+                    $('#seminar_choice_field').show();
+            }
+        }
+
+         $(document).ready(function () {
+            init();
+
+            $('#id_seminar').change(function () {
+                $('#seminar_choice_field').hide();
+        
+                var selectedValue = $(this).val();
+                console.log(selectedValue);
+        
+                if (selectedValue === 'attend') {
+                    $('#seminar_choice_field').show();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block 'content' %}
@@ -180,11 +203,14 @@
             <div class="ui segment">
                 <h3 class="ui header">選取欲報名說明會時段</h3>
                 <p>活動費用：</p>
-                <ul>
-                    <li>說明會: {{ configs.session_fee }} 元</li>
-                    <li>說明會中午場 (12:20-13:10): {{ configs.session_fee_noon }} 元</li>
-                </ul>
+                {% for choice in session_choices %}
+                    <li>{{ choice.name }}: {{ choice.session_fee }} 元</li>
+                {% endfor %}
+
                 {{ form.seminar }}
+                <div id="seminar_choice_field" style="display: none;">
+                    選擇說明會類型：{{ form.seminar_type }}
+                </div>
             </div>
         </div>
 

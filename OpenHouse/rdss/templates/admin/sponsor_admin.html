@@ -3,8 +3,16 @@
 {% block content %}
 <input type ="button" onclick="javascript:location.href='/admin/rdss/sponsorship/add/'" value="新增企業贊助" style="float: right;" ></input>
 <div id="content-main">
+	<form method="get" class="ui form" style="margin-bottom: 20px;">
+        <div class="field">
+            <input type="text" name="q" placeholder="搜尋公司統編或名稱" value="{{ search_term }}">
+			<button type="submit" class="ui button primary">搜尋</button>
+        </div>
+    </form>
+
 	<table class="ui celled table">
 		<thead>
+			<th>更新時間</th>
 			<th> CID </th>
 			<th> Company Name </th>
 			{% for item in sponsor_items %}
@@ -24,6 +32,7 @@
 
 			{% for company in sponsorships_list %}
 			<tr>
+				<td>{{ company.update_time }}</td>
                 <td><a href="{{company.change_url}}#sponsorship_set-group">{{company.cid}}</a></td>
 				<td>{{company.shortname}}</td>
 				{% for item_num in company.counts%}

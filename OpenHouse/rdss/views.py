@@ -1,3 +1,4 @@
+import typing
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, Http404, HttpResponse
 from django.contrib import messages
@@ -5,8 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 import rdss.forms
-from django.forms import inlineformset_factory
-from django import forms
 import company.models
 import rdss.models
 import datetime, json
@@ -70,15 +69,7 @@ def Status(request):
         "seminar_slot": "-",
         "jobfair_slot": "-",
     }
-    seminar_session_display = {
-        "forenoon": "{}~{}".format(configs.session0_start, configs.session0_end),
-        "noon": "{}~{}".format(configs.session1_start, configs.session1_end),
-        "night1": "{}~{}".format(configs.session2_start, configs.session2_end),
-        "night2": "{}~{}".format(configs.session3_start, configs.session3_end),
-        "night3": "{}~{}".format(configs.session4_start, configs.session4_end),
-        "extra": "補場",
-        "jobfair": "就博會",
-    }
+
     # 問卷狀況
     try:
         rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
@@ -100,7 +91,8 @@ def Status(request):
 
     if seminar_slot:
         slot_info['seminar_slot'] = "{} {}".format(seminar_slot.date,
-                                                   seminar_session_display[seminar_slot.session])
+                                                   seminar_slot.session_from_config.get_display_name()
+                                                   )
     if jobfair_slot:
         slot_info['jobfair_slot'] = [int(s.serial_no) for s in jobfair_slot]
 
@@ -112,14 +104,10 @@ def Status(request):
     try:
         # session fee calculation
         if signup_data.seminar == 'attend':
-            seminar_fee = configs.session_fee
-            seminar_fee_text = f"({seminar_fee} 元)"
+            seminar_fee = signup_data.seminar_type.session_fee
+            seminar_fee_text = f"說明會 ({seminar_fee} 元)"
             fee += seminar_fee
-        elif signup_data.seminar == 'attend_noon':
-            seminar_fee = configs.session_fee_noon
-            seminar_fee_text = f"({seminar_fee} 元)"
-            fee += configs.session_fee_noon
-        
+
         # ece seminar fee
         if mycompany.ece_member:
             discount_num_of_ece = 0
@@ -189,6 +177,14 @@ def Status(request):
 
     return render(request, 'company/status.html', locals())
 
+def _check_category_in_right_zone(zone: rdss.models.ZoneCategories, mycompany: Company) -> bool:
+    if zone.name != "一般企業":
+        my_company_category = rdss.models.CompanyCategories.objects.get(
+            name=mycompany.categories.name
+        )
+        if my_company_category not in zone.category.all():
+            return False
+    return True
 
 @login_required(login_url='/company/login/')
 def SignupRdss(request):
@@ -201,6 +197,7 @@ def SignupRdss(request):
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
+        session_choices = rdss.models.ConfigSeminarChoice.objects.all()
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
@@ -217,6 +214,14 @@ def SignupRdss(request):
             return render(request, 'error.html', locals())
 
     plan_file = rdss.models.Files.objects.filter(category="企畫書").first()
+    # Check if the company has filled the survey. If not, disable the signup button
+    try:
+        rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
+        fill_survey = True
+    except ObjectDoesNotExist:
+        fill_survey = False
+        messages.error(request, '尚未填寫問卷，請先填寫問卷才能送出/儲存報名資料')
+
     try:
         signup_info = rdss.models.Signup.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
@@ -227,20 +232,20 @@ def SignupRdss(request):
         data = request.POST.copy()
         # decide cid in the form
         data['cid'] = request.user.cid
+        filtered_zone = data.get('zone', None)
+        try:
+            filtered_zone_obj = rdss.models.ZoneCategories.objects.get(id=filtered_zone)
+        except ObjectDoesNotExist:
+            filtered_zone_obj = None
 
         # check if the company is right zone
-        if data.get('zone'):
-            filtered_zone = data.get('zone')
-            zone = rdss.models.ZoneCategories.objects.filter(id=filtered_zone).first()
-            if zone.name != '一般企業':
-                my_company_category = rdss.models.CompanyCategories.objects.get(
-                    name=mycompany.categories.name
-                )
-                if my_company_category not in zone.category.all():
-                    messages.error(request, f'貴公司不屬於{zone.name}專區指定類別，請重新選擇')
-                    form = rdss.forms.SignupCreationForm(data, instance=signup_info)
-                    return render(request, 'company/signup_form.html', locals())
-        form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+        if not _check_category_in_right_zone(filtered_zone_obj, mycompany):
+            messages.error(request, f'貴公司不屬於{filtered_zone_obj.name}專區指定類別，請重新選擇')
+            form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+            return render(request, 'company/signup_form.html', locals())
+        else:
+            form = rdss.forms.SignupCreationForm(data, instance=signup_info)
+
         if form.is_valid():
             form.save()
             form.save_m2m()
@@ -264,6 +269,8 @@ def SeminarInfo(request):
     except Exception as e:
         error_msg = "貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request, 'error.html', locals())
+    if company.seminar == "none":
+        return render(request, 'error.html', {'error_msg' : "貴公司已報名本次秋季招募活動，但並末勾選參加說明會選項。"})
 
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
@@ -272,20 +279,21 @@ def SeminarInfo(request):
         seminar_info = rdss.models.SeminarInfo.objects.get(company=company)
     except ObjectDoesNotExist:
         seminar_info = None
+    
+    try:
+        deadline = rdss.models.RdssConfigs.objects.values('seminar_info_deadline')[0]['seminar_info_deadline']
+    except IndexError:
+        return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
 
-    # parking_form_set = inlineformset_factory(rdss.models.SeminarInfo, rdss.models.SeminarParking, max_num=2, extra=2,
-    #                                          fields=('id', 'license_plate_number', 'info'),
-    #                                          widgets={'license_plate_number': forms.TextInput(
-    #                                              attrs={'placeholder': '例AA-1234、4321-BB'})})
+    if timezone.now() > deadline:
+        error_msg = "企業說明會資訊填寫時間已截止!若有更改需求，請來信或來電。"
+        return render(request, 'error.html', locals())
+
+
     if request.POST:
         data = request.POST.copy()
         data['company'] = company.cid
         form = rdss.forms.SeminarInfoCreationForm(data=data, instance=seminar_info)
-        # formset = parking_form_set(data=data, instance=seminar_info)
-        # if form.is_valid() and formset.is_valid():
-        #     form.save()
-        #     formset.save()
-        #     return redirect(SeminarInfo)
         if form.is_valid():
             form.save()
             return redirect(SeminarInfo)
@@ -293,7 +301,6 @@ def SeminarInfo(request):
             print(form.errors)
     else:
         form = rdss.forms.SeminarInfoCreationForm(instance=seminar_info)
-        # formset = parking_form_set(instance=seminar_info)
 
     # semantic ui
     sidebar_ui = {'seminar_info': "active"}
@@ -321,6 +328,9 @@ def JobfairInfo(request):
     
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
+        if company.jobfair == 0:
+            error_msg = "貴公司已報名本次秋季招募活動，但並末填寫就博會攤位。"
+            return render(request, 'error.html', locals())
         booth_num = company.jobfair
         booth_quantity = booth_num * 3
         booth_parking_tickets = booth_num * 2
@@ -371,7 +381,7 @@ def SeminarSelectFormGen(request):
     try:
         my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         # check the company have signup seminar
-        if my_signup.seminar == "":
+        if my_signup.seminar == "none":
             error_msg = "貴公司已報名本次秋季招募活動，但並末勾選參加說明會選項。"
             return render(request, 'error.html', locals())
     except Exception as e:
@@ -384,7 +394,7 @@ def SeminarSelectFormGen(request):
     except Exception as e:
         seminar_select_time = "選位時間及順序尚未排定，您可以先參考下方說明會時間表"
 
-    seminar_session = my_signup.get_seminar_display()
+    seminar_type = my_signup.seminar_type
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
@@ -394,6 +404,8 @@ def SeminarSelectFormGen(request):
     seminar_end_date = configs.seminar_end_date
     seminar_days = (seminar_end_date - seminar_start_date).days
     table_start_date = seminar_start_date
+    enable_time = configs.seminar_btn_enable_time
+    disable_time = configs.seminar_btn_disable_time
     # find the nearest Monday
     while table_start_date.weekday() != 0:
         table_start_date -= datetime.timedelta(days=1)
@@ -408,20 +420,8 @@ def SeminarSelectFormGen(request):
 
     slot_colors = rdss.models.SlotColor.objects.all()
 
-    session_list = [
-        {"name": "forenoon", "start_time": configs.session0_start, "end_time": configs.session0_end},
-        {"name": "noon", "start_time": configs.session1_start, "end_time": configs.session1_end},
-        {"name": "night1", "start_time": configs.session2_start, "end_time": configs.session2_end},
-        {"name": "night2", "start_time": configs.session3_start, "end_time": configs.session3_end},
-        {"name": "night3", "start_time": configs.session4_start, "end_time": configs.session4_end},
-    ]
-    for session in session_list:
-        delta = datetime.datetime.combine(datetime.date.today(), session["end_time"]) - \
-                datetime.datetime.combine(datetime.date.today(), session["start_time"])
-        if delta > timedelta(minutes=30) and datetime.time(6, 0, 0) < session["start_time"] < datetime.time(21, 0, 0):
-            session["valid"] = True
-        else:
-            session["valid"] = False
+    config_session_list = rdss.models.ConfigSeminarSession.objects \
+        .all().order_by('session_start')
     return render(request, 'company/seminar_select.html', locals())
 
 
@@ -439,10 +439,15 @@ def SeminarSelectControl(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     if action == "query":
+        try:
+            my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
+        except rdss.models.Signup.DoesNotExist:
+            return JsonResponse({"success": False, "msg": "貴公司尚未報名本次活動"})
+
         slots = rdss.models.SeminarSlot.objects.all()
         return_data = {}
         for s in slots:
-            index = "{}_{}_{}".format(s.session, s.date.strftime("%Y%m%d"), s.place.id if s.place else 1)
+            index = "{}_{}_{}".format(s.session_from_config, s.date.strftime("%Y%m%d"), s.place.id if s.place else 0)
             return_data[index] = {}
 
             return_data[index]['place_color'] = None if not s.place else \
@@ -450,9 +455,19 @@ def SeminarSelectControl(request):
             return_data[index]["cid"] = "None" if not s.company else \
                 s.company.get_company_name()
 
-            my_seminar_session = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar
+            my_seminar_session_type = rdss.models.Signup.objects.filter(cid=request.user.cid).first().seminar_type
 
-            return_data[index]['valid'] = True if len(my_seminar_session) > 0 else False
+            # session wrong (signup A type seminar but choose B type)
+            if s.session_from_config.qualification and \
+                s.session_from_config.qualification != my_seminar_session_type:
+                return_data[index]['valid'] = False
+            else:
+                return_data[index]['valid'] = True
+
+            # check if the company is in right zone and the special user
+            if s.place and s.place.zone.name != "一般企業" and request.user.cid != '77777777':
+                if s.place.zone != my_signup.zone:
+                    return_data[index]['valid'] = False
 
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
@@ -467,19 +482,23 @@ def SeminarSelectControl(request):
 
         # Open button for 77777777
         if (not my_select_time or timezone.now() < my_select_time) and request.user.username != '77777777':
-            select_ctrl = dict()
+            select_ctrl = {}
             select_ctrl['display'] = True
             select_ctrl['msg'] = '目前非貴公司選位時間，可先參考說明會時間表，並待選位時間內選位'
             select_ctrl['select_btn'] = False
         else:
-            select_ctrl = dict()
+            select_ctrl = {}
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
-            today = timezone.now().date()
-            if (configs.seminar_btn_start <= today <= configs.seminar_btn_end) or request.user.username == "77777777":
-                select_ctrl['btn_display'] = True
-            else:
-                select_ctrl['btn_display'] = False
+            now_time = datetime.datetime.now()
+            in_date_range = configs.seminar_btn_start <= now_time.date() <= configs.seminar_btn_end
+            in_time_range = (
+                configs.seminar_btn_enable_time <= now_time.time() <= configs.seminar_btn_disable_time
+            )
+            is_special_user = request.user.username == '77777777'
+            print(now_time, configs.seminar_btn_enable_time, configs.seminar_btn_disable_time)
+            print(in_date_range, in_time_range)
+            select_ctrl['btn_display'] = (in_date_range and in_time_range) or is_special_user
 
         return JsonResponse({"success": True, "data": return_data, "select_ctrl": select_ctrl})
 
@@ -492,10 +511,16 @@ def SeminarSelectControl(request):
             if not my_select_time or timezone.now() < my_select_time:
                 return JsonResponse({"success": False, 'msg': '選位失敗，目前非貴公司選位時間'})
 
-        slot_session, slot_date_str, slot_place_id = post_data.get("slot").split('_')
+        _, start_str, end_str, slot_date_str, slot_place_id = post_data.get("slot").split('_')
         slot_date = datetime.datetime.strptime(slot_date_str, "%Y%m%d")
+        slot_session_start = datetime.datetime.strptime(start_str, "%H%M").time()
+        slot_session_end = datetime.datetime.strptime(end_str, "%H%M").time()
+
         try:
-            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session=slot_session, place=slot_place_id)
+            slot_session = rdss.models.ConfigSeminarSession.objects.get(
+                session_start=slot_session_start, session_end=slot_session_end
+            )
+            slot = rdss.models.SeminarSlot.objects.get(date=slot_date, session_from_config=slot_session, place=slot_place_id)
             my_signup = rdss.models.Signup.objects.get(cid=request.user.cid)
         except:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
@@ -504,14 +529,9 @@ def SeminarSelectControl(request):
             return JsonResponse({"success": False, 'msg': '選位失敗，該時段已被選定'})
 
         if slot and my_signup:
-            # 不在公司時段，且該時段未滿
-            if my_signup.seminar not in slot.session and \
-                    rdss.models.SeminarSlot.objects.filter(session=my_signup.seminar, company=None):
-                return JsonResponse({"success": False, "msg": "選位失敗，時段錯誤"})
-
             slot.company = my_signup
             slot.save()
-            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session))
+            logger.info('{} select seminar slot {} {}'.format(my_signup.get_company_name(), slot.date, slot.session_from_config))
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False, 'msg': '選位失敗，時段錯誤或貴公司未勾選參加說明會'})
@@ -522,11 +542,12 @@ def SeminarSelectControl(request):
         my_slot = rdss.models.SeminarSlot.objects.filter(company__cid=request.user.cid).first()
         if my_slot:
             logger.info('{} cancel seminar slot {} {}'.format(
-                my_slot.company.get_company_name(), my_slot.date, my_slot.session))
+                my_slot.company.get_company_name(), my_slot.date, my_slot.session_from_config))
             my_slot.company = None
             my_slot.save()
             return JsonResponse({"success": True})
         else:
+            logger.error(f'Cancel seminar slot failed. Cannot find slot for company {request.user.cid}')
             return JsonResponse({"success": False, "msg": "刪除說明會選位失敗"})
 
     else:
@@ -563,7 +584,8 @@ def JobfairSelectFormGen(request):
 
     slots = rdss.models.JobfairSlot.objects.all()
     place_map = rdss.models.Files.objects.filter(category='就博會攤位圖').first()
-
+    enable_time = rdss.models.RdssConfigs.objects.all()[0].jobfair_btn_enable_time
+    disable_time = rdss.models.RdssConfigs.objects.all()[0].jobfair_btn_disable_time
     return render(request, 'company/jobfair_select.html', locals())
 
 
@@ -635,11 +657,14 @@ def JobfairSelectControl(request):
             select_ctrl['display'] = False
             select_ctrl['select_btn'] = True
             select_ctrl['select_enable'] = True
-            today = timezone.now().date()
-            if (configs.jobfair_btn_start <= today <= configs.jobfair_btn_end) or request.user.username == '77777777':
-                select_ctrl['btn_display'] = True
-            else:
-                select_ctrl['btn_display'] = False
+            now_time = datetime.datetime.now()
+            in_date_range = configs.jobfair_btn_start <= now_time.date() <= configs.jobfair_btn_end
+            in_time_range = (
+                configs.jobfair_btn_enable_time <= now_time.time() <= configs.jobfair_btn_disable_time
+            )
+            is_special_user = request.user.username == '77777777'
+
+            select_ctrl['btn_display'] = (in_date_range and in_time_range) or is_special_user
 
         return JsonResponse({"success": True,
                              "data": slot_group,
@@ -773,15 +798,28 @@ def Sponsor(request):
 def SponsorAdmin(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
+
+    # get sponsor and company object
     sponsor_items = rdss.models.SponsorItems.objects.all() \
         .annotate(num_sponsor=Count('sponsorship'))
     companies = rdss.models.Signup.objects.all()
+
+    # handle search item
+    search_term = request.GET.get('q', '').strip()
+    if search_term:
+        companies = list(companies.filter(cid__icontains=search_term)) + [
+                c for c in companies if search_term in c.get_company_name()
+            ]
+
+    # Make sponsorship info
     sponsorships_list = list()
     for c in companies:
         shortname = company.models.Company.objects.filter(cid=c.cid).first().shortname
         sponsorships = rdss.models.Sponsorship.objects.filter(company=c)
         counts = [rdss.models.Sponsorship.objects.filter(company=c, item=item).count() for item in sponsor_items]
         amount = 0
+        latest_sponsorship = rdss.models.Sponsorship.objects.filter(company=c).order_by('-updated').first()
+
         for s in sponsorships:
             amount += s.item.price
         sponsorships_list.append({
@@ -789,6 +827,7 @@ def SponsorAdmin(request):
             "counts": counts,
             "amount": amount,
             "shortname": shortname,
+            "update_time": latest_sponsorship.updated if latest_sponsorship else None,
             "id": c.id,
             "change_url": reverse('admin:rdss_signup_change',
                                                args=(c.id,))
@@ -822,6 +861,12 @@ def CompanySurvey(request):
         my_survey = rdss.models.CompanySurvey.objects.get(cid=request.user.cid)
     except ObjectDoesNotExist:
         my_survey = None
+
+    try:
+        is_sign_up = rdss.models.Signup.objects.get(cid=request.user.cid)
+    except ObjectDoesNotExist:
+        is_sign_up = None
+
     if request.POST:
         data = request.POST.copy()
         # decide cid in the form
@@ -830,6 +875,9 @@ def CompanySurvey(request):
         if form.is_valid():
             form.save()
             (msg_display, msg_type, msg_content) = (True, "green", "問卷填寫完成，感謝您")
+            if not is_sign_up:
+                messages.success(request, '滿意度問卷填答成功，可以進行報名')
+                return redirect(Status)
         else:
             (msg_display, msg_type, msg_content) = (True, "error", "儲存失敗，有未完成欄位")
             print(form.errors)
@@ -840,45 +888,75 @@ def CompanySurvey(request):
     return render(request, 'company/survey_form.html', locals())
 
 # ========================RDSS admin view for seminar points=================
-def _2024_rdss_seminar_check_get_meal_tickets(student_obj):
-    # 2024 rdss: check whether the student has attended all seminars a day
+def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]:
+    """
+    Check whether the student has attended all/specific number of seminars a day.
+
+    Args:
+        student_obj: Student object
+    Returns:
+        tuple[bool, str, bool]
+            bool: Whether the student has reached the daily threshold.
+            str: The date of the redeemed prize.
+            bool: Whether the student has redeemed.
+    """
     today = datetime.datetime.now().date()
     attended_seminar = rdss.models.StuAttendance.objects.filter(student=student_obj,
                                                                 seminar__date=today).count()
     total_seminar = rdss.models.SeminarSlot.objects.filter(date=today).count()
 
-    # if attendance is full, the student can redeem the meal ticket
-    if attended_seminar == total_seminar:
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+        daily_threshold = configs.seminar_prize_threshold
+        is_all_attendance_has_prize = configs.seminar_prize_all
+    except IndexError:
+        daily_threshold = 10
+        is_all_attendance_has_prize = False
+
+    if (is_all_attendance_has_prize and attended_seminar == total_seminar) or \
+        (attended_seminar >= daily_threshold):
         redeem_date = str(today)
-        redeem_obj, _ = rdss.models.redeem_prize_2024_3_points_per_day.objects.get_or_create(student=student_obj, date=redeem_date)
+        redeem_obj, _ = rdss.models.RedeemDailyPrize.objects.get_or_create(
+            student=student_obj,
+            date=redeem_date
+        )
         return True, redeem_date, redeem_obj.redeem
-    else:
-        return False, None, None
+    return False, None, None
 
 @staff_member_required
-def show_3_seminar_attendance_student_2024(request):
+def show_student_with_daily_seminar_prize(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
-    title = "2024餐券兌換名單(每日聽滿說明會)"
-    # 2024 rdss: query the student who has attended all seminars a day
-    attended_students = rdss.models.redeem_prize_2024_3_points_per_day.objects.all()
-    return render(request, 'admin/seminar_show_redeem_3_attendance.html', locals())
+    title = "每日說明會參與達成＆兌換名單"
+    try:
+        configs = rdss.models.RdssConfigs.objects.all()[0]
+        daily_threshold = configs.seminar_prize_threshold
+        is_all_attendance_has_prize = configs.seminar_prize_all
+    except IndexError:
+        daily_threshold = 10
+        is_all_attendance_has_prize = False
+    attended_students = rdss.models.RedeemDailyPrize.objects.all()
+    return render(request, 'admin/seminar_show_student_with_daily_seminar_prize.html', locals())
 
 @staff_member_required
-def redeem_seminar_meal_ticket_2024(request, student_id, date):
+def redeem_seminar_daily_prize(request, card_num, date):
     referer = request.META.get('HTTP_REFERER')
 
     try:
-        student_obj = rdss.models.Student.objects.filter(student_id=student_id).first()
+        student_obj = rdss.models.Student.objects.filter(idcard_no=card_num).first()
     except Exception as e:
-        messages.error(request, f"學號錯誤: {e}")        
+        messages.error(request, f"學生證卡號不存在: {e}，請註冊學生證")
         return redirect(referer)
 
     try:
-        rdss.models.RedeemPrize.objects.get_or_create(student=student_obj, prize=f"餐券-{date}")
-        rdss.models.redeem_prize_2024_3_points_per_day.objects.filter(student=student_obj, date=date).update(redeem=True)
-        messages.success(request, f"學生 {student_obj.student_id} 兌換餐券成功，日期: {date}")
-        collect_pts_logger.info('student %s succeeded to get meal ticket, date: %s', student_obj.student_id, date)
+        rdss.models.RedeemPrize.objects.get_or_create(
+            student=student_obj, prize=f"每日獎品-{date}"
+        )
+        rdss.models.RedeemDailyPrize.objects.filter(
+            student=student_obj, date=date
+        ).update(redeem=True)
+        messages.success(request, f"學生 {student_obj.student_id} 兌換每日獎品成功，日期: {date}")
+        collect_pts_logger.info('student %s succeeded to get daily seminar prize, date: %s', student_obj.student_id, date)
     except Exception as e:
         messages.error(request, f"兌換失敗: {e}")
     return redirect(referer)
@@ -904,22 +982,15 @@ def CollectPoints(request):
     if seminar_place_id:
         seminar_list = seminar_list.filter(place=seminar_place_id)
         seminar_place_name = seminar_places.filter(id=seminar_place_id).first()
-        
-        # Find the suitable session
-        if (now - timedelta(minutes=40)).time() < configs.session0_end < (now + timedelta(minutes=20)).time():
-            current_session = 'forenoon'
-        elif (now - timedelta(minutes=40)).time() < configs.session1_end < (now + timedelta(minutes=20)).time():
-            current_session = 'noon'
-        elif (now - timedelta(minutes=40)).time() < configs.session2_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night1'
-        elif (now - timedelta(minutes=40)).time() < configs.session3_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night2'
-        elif (now - timedelta(minutes=40)).time() < configs.session4_end < (now + timedelta(minutes=20)).time():
-            current_session = 'night3'
-        else:
-            current_session = ''
+        lower_bound = (now - timedelta(minutes=40)).time()
+        upper_bound = (now + timedelta(minutes=20)).time()
 
-        current_seminar = seminar_list.filter(session=current_session).first()
+        matching_session = rdss.models.ConfigSeminarSession.objects.filter(
+            session_end__gt=lower_bound,
+            session_end__lt=upper_bound
+        ).first()
+
+        current_seminar = seminar_list.filter(session_from_config=matching_session).first()
         if seminar_list and current_seminar in seminar_list:
             # put current seminar to the default
             seminar_list = list(seminar_list)
@@ -939,17 +1010,17 @@ def CollectPoints(request):
         )
         student_obj = rdss.models.Student.objects.filter(idcard_no=idcard_no).annotate(
             points=Sum('attendance__points')).first()
-        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session))
+        collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
-        # 2024 rdss: check whether the student has attended all seminars a day
-        check_get_ticket, redeem_date, already_redeem = _2024_rdss_seminar_check_get_meal_tickets(student_obj)
-        redeem_target = f"{today} 說明會"
-
-        if check_get_ticket:
-            if already_redeem:
-                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 餐券"}
+        # check if the student can get the daily seminar prize
+        is_redeem, redeem_date, already_redeemed = _reach_seminar_daily_threshold(student_obj)
+        redeem_target = f"{redeem_date} 說明會"
+        if is_redeem:
+            if already_redeemed:
+                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 每日獎品"}
             else:
-                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換餐券"}
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換每日獎品"}
+
         # maintain current seminar from post
         current_seminar = seminar_obj
 
@@ -1305,7 +1376,12 @@ def ListJobs(request):
                 })
             except:
                 pass
-
+    # if cid = 66666666, 77777777 exists, move these 2 companies to the head of the list
+    for i, com in enumerate(companies):
+        if com['cid'] == '66666666':
+            companies.insert(0, companies.pop(i))
+        if com['cid'] == '77777777':
+            companies.insert(0, companies.pop(i))
     return render(request, 'public/rdss_jobs.html', locals())
 
 

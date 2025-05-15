@@ -354,8 +354,8 @@ def ExportAll(request):
                 "id": c.id,
             })
         spon_worksheet = workbook.add_worksheet("贊助")
-        spon_worksheet.write(0, 0, "廠商/贊助品")
-        spon_worksheet.write(0, 1, "統編")
+        spon_worksheet.write(0, 0, "統編/贊助品")
+        spon_worksheet.write(0, 1, "廠商")
         spon_worksheet.write(1, 0, "目前數量/上限")
         row_offset = 2
         col_offset = 2
@@ -365,8 +365,8 @@ def ExportAll(request):
             spon_worksheet.write(1, index + col_offset, "{}/{}".format(item.num_sponsor, item.limit))
 
         for row_count, com in enumerate(sponsorships_list):
-            spon_worksheet.write(row_count + row_offset, 0, com['shortname'])
-            spon_worksheet.write(row_count + row_offset, 1, com['cid'])
+            spon_worksheet.write(row_count + row_offset, 0, com['cid'])
+            spon_worksheet.write(row_count + row_offset, 1, com['shortname'])
             for col_count, count in enumerate(com['counts']):
                 spon_worksheet.write(row_count + row_offset, col_count + col_offset, count)
             spon_worksheet.write(row_count + row_offset, len(com['counts']) + col_offset, com['amount'])
@@ -517,21 +517,26 @@ def ExportSurvey(request):
     response['Content-Disposition'] = 'attachment; filename=' + filename  # set "attachment" filename
     with xlsxwriter.Workbook(response) as workbook:
         survey_worksheet = workbook.add_worksheet("廠商滿意度問卷")  # set the excel sheet
-        survey_worksheet.write(0, 0, "廠商")  # The excel at(0,0) name is "廠商"
-        survey_worksheet.write(0, 1, "統編")
+        survey_worksheet.write(0, 0, "公司簡稱")  # The excel at(0,0) name is "廠商"
+        survey_worksheet.write(0, 1, "公司統一編號")
         col_offset = 1
         fields = rdss.models.CompanySurvey._meta.get_fields()[1:]
-        # print(fields)
         for index, field in enumerate(fields, 1):
             survey_worksheet.write(0, index + col_offset, field.verbose_name)  # set the title for each colume
         survey_list = rdss.models.CompanySurvey.objects.all()
-        # print(survey_list)
         for row_count, survey in enumerate(survey_list, 1):
             survey_worksheet.write(row_count, 0, survey.company)
             survey_worksheet.write(row_count, 1, survey.cid)
             for col_count, field in enumerate(fields, 1):
                 try:
-                    survey_worksheet.write(row_count, col_count + col_offset, getattr(survey, field.name))
+                    if field.name == 'categories':
+                        survey_worksheet.write(
+                            row_count,
+                            col_count + col_offset,
+                            survey.categories.name if survey.categories else ""
+                        )
+                    else:
+                        survey_worksheet.write(row_count, col_count + col_offset, getattr(survey, field.name))
                 except TypeError as e:
                     # xlsxwriter do not accept django timzeone aware time, so use
                     # except, to write string
