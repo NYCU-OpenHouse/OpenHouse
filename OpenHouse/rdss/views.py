@@ -269,6 +269,8 @@ def SeminarInfo(request):
     except Exception as e:
         error_msg = "貴公司尚未報名本次「秋季招募」活動，請於左方點選「填寫報名資料」"
         return render(request, 'error.html', locals())
+    if company.seminar == "none":
+        return render(request, 'error.html', {'error_msg' : "貴公司已報名本次秋季招募活動，但並末勾選參加說明會選項。"})
 
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
@@ -326,6 +328,9 @@ def JobfairInfo(request):
     
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
+        if company.jobfair == 0:
+            error_msg = "貴公司已報名本次秋季招募活動，但並末填寫就博會攤位。"
+            return render(request, 'error.html', locals())
         booth_num = company.jobfair
         booth_quantity = booth_num * 3
         booth_parking_tickets = booth_num * 2

@@ -534,6 +534,9 @@ def jobfair_info(request):
 
     try:
         company = RecruitSignup.objects.get(cid=request.user.cid)
+        if company.jobfair == 0:
+            error_msg = "貴公司已報名本次活動，但並未勾選參加實體就博會選項。"
+            return render(request, 'recruit/error.html', locals())
         booth_num = company.jobfair
         lunch_box_quantity = booth_num * 3
         parking_tickets_max = 2 + (booth_num - 1) if booth_num > 0 else 0
@@ -628,6 +631,10 @@ def seminar_info(request):
         company = RecruitSignup.objects.get(cid=request.user.cid)
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於左方點選「填寫報名資料」"
+        return render(request, 'recruit/error.html', locals())
+
+    if company.seminar == "none":
+        error_msg = "貴公司已報名本次活動，但並未勾選參加說明會選項。"
         return render(request, 'recruit/error.html', locals())
 
     try:
