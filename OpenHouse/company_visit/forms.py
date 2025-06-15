@@ -10,4 +10,7 @@ class StudentApplyForm(forms.ModelForm):
     class Meta:
         model = StudentApply
         fields = '__all__'
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
         exclude = ['id']
