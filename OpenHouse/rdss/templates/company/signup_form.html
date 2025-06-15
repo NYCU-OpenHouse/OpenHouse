@@ -225,20 +225,14 @@
                 <tr>
                     <td>會員確認聯絡資訊</td>
                     <td>
-                        <ol class="ui list">
+                        <ul class="ui list">
                             <li>
                                 電機資源產學聯盟
                                 聯絡人：
-                                電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072
+                                電機系 黃瀞葳小姐 badada@nycu.edu.tw (03)5712121#54074
                                 <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
                             </li>
-                            <li>
-                                國際產學聯盟總中心 (GLORIA)
-                                聯絡人： 
-                                Peggy陸長欣小姐 peggylu@nycu.edu.tw (03)5712121#71108 (手機)0905-939-103
-                                <p>★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
-                            </li>
-                        </ol>
+                        </ul>
                     </td>
                 </tr>
             </table>
@@ -248,7 +242,9 @@
                 <ol class="ui list">
                     <li>活動費用：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。</li>
                     <li>同集團數量上限為4攤，<span style="color: #0070c0;">集團可先自行合併攤位數後派某公司做集團代表，並完成報名。</span></li>
-                    <li> 欲參加之「多元職涯專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】之「所營事業資料」進行覆核。</li>
+                    <li>欲參加之「多元職涯專區」企業，請先確認網站上的自身類別，本組將參考【經濟部商工登記公示資料查詢服務】
+                        之「所營事業資料」、經濟部〈具創新能力之新創事業認定原則、國家發展委員會〈國營事業一覽表〉進行覆核。
+                    </li>
                 </ol>
                 <div class="ui labeled input">
                     <div class="ui label">
@@ -262,46 +258,6 @@
             </div>
         </div>
 
-        {# <div class="ui divider"></div> #}
-
-        {# <div class="ui pantone inverted segment"> #}
-        {#     <h1 class="ui header"> #}
-        {#         <i class="laptop icon"></i> #}
-        {#         線上就業博覽會 #}
-        {#     </h1> #}
-        {#  #}
-        {#     <table class="ui celled table"> #}
-        {#         <tr> #}
-        {#             <td style="width:8em">活動日期</td> #}
-        {#             <td> #}
-        {#                 <p>開放服務時段： {{ configs.jobfair_online_start }} ~ {{ configs.jobfair_online_end }}</p> #}
-        {#                 <p>系統宣傳抽獎日期： {{ configs.jobfair_drawing_start }} ~ {{ configs.jobfair_drawing_end }}</p> #}
-        {#             </td> #}
-        {#         </tr> #}
-        {#         <tr> #}
-        {#             <td>活動內容</td> #}
-        {#             <td> #}
-        {#                 透過本校線上徵才平台辦理就業博覽會，徵才企業可透過平台與學生面談、即時訊息或文字交流。學生在系統平台以遊戲方式闖關，並可留下歷程。 #}
-        {#             </td> #}
-        {#         </tr> #}
-        {#         <tr> #}
-        {#             <td>提供服務</td> #}
-        {#             <td> #}
-        {#                 線上徵才系統平台，非單向傳播，可與學生互動。 #}
-        {#             </td> #}
-        {#         </tr> #}
-        {#     </table> #}
-        {#  #}
-        {#     <div class="ui segment"> #}
-        {#         <h3 class="ui header">報名線上就業博覽會</h3> #}
-        {#         <p>活動費用： {{ configs.jobfair_online_fee }} 元，線上+實體就業博覽會：攤位每單位 {{ configs.jobfair_booth_fee }} 元，額滿為止。(同時報名實體就博會之企業，線上就博會：免費)</p> #}
-        {#         <div class="ui checkbox"> #}
-        {#                 {{ form.jobfair_online }} #}
-        {#                 <label style="color:black">{{ form.jobfair_online.label }}</label> #}
-        {#             </div> #}
-        {#     </div> #}
-        {# </div> #}
-
         <div class="ui divider"></div>
 
         <div class="ui black inverted segment">
@@ -312,9 +268,8 @@
             <table class="ui celled table">
                 <tr>
                     <td style="width:6em">活動日期</td>
-                    <td>9月~隔年1月</td>
+                    <td>9月~12月</td>
                 </tr>
-
                 <tr>
                     <td>活動內容</td>
                     <td>
@@ -324,7 +279,7 @@
                     <td>活動說明</td>
                     <td>
                         <ol class="ui list">
-                            <li>業師單次駐點至少2小時，企業可於報名系統上勾選「諮詢服務」意願，擔任諮詢導師者可為人資或是各部門技術及行政主管。</li>
+                            <li>業師單次駐點至少3小時，企業可於報名系統上勾選「諮詢服務」意願，擔任諮詢導師者可為人資或是各部門技術及行政主管。</li>
                             <li>同學可透過活動網頁瀏覽業師所屬專業領域來選定業師並進行預約；主辦單位保留最終邀請企業職涯導師名單之權利，將擇期再連絡後續事宜。</li>
                         </ol>
                     </td>
@@ -332,7 +287,7 @@
                 <tr>
                     <td>回饋方案</td>
                     <td>
-                        企業若勾選本次活動，並在8/14(三)前來信說明欲辦理日期，即可增加選位積分4000分。
+                        企業若勾選本次活動，並在7/30(三)前來信說明欲辦理日期，即可增加選位積分4000分。
                     </td>
                 </tr>
             </table>
@@ -342,6 +297,49 @@
                 <div class="ui checkbox">
                     {{ form.career_tutor }}
                     <label style="color:black">{{ form.career_tutor.label }}</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui brown inverted segment">
+            <h1 class="ui header">
+                <i class="briefcase icon" style="color:white"></i>
+                企業參訪
+            </h1>
+            <table class="ui celled table">
+                <tr>
+                    <td style="width:6em">活動日期</td>
+                    <td>2025年9月~12月</td>
+                </tr>
+                <tr>
+                    <td >活動內容</td>
+                    <td>藉由參觀企業來提升本校同學對企業的實際瞭解，對同學籌劃未來就業藍圖有所助益；參訪學生以應屆畢業碩博士生與大四學生優先。</td>
+                </tr>
+                <tr>
+                    <td>活動說明</td>
+                    <td>
+                        <ol class="ui list">
+                            <li>
+                                企業於報名系統上勾選「企業參訪」意願，參訪內容可由企業自行規劃，以公司內部參觀為主，希望能讓本校學生多了解企業實際運行狀況。
+                            </li>
+                            <li>參訪活動以接待至少 30 名以上學生為原則，且建議單程車程時間不超過 1.5 小時，以確保活動流程順暢。
+                                本項活動之來回交通費用須由企業自行負擔，主辦單位僅負責協助學生投保參訪期間之保險事宜。
+                            </li>
+                            <li>參訪學生名單將由主辦單位最終確認，並於確認後通知企業後續相關事宜。</li>
+                            <li><strong>主辦單位保留最終邀請參訪名單之權利，將擇期再連絡後續事宜。</strong></li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>回饋方案</td>
+                    <td>企業若勾選本次活動，並在7/30(三)前來信說明欲辦理日期，即可增加選位積分4000分。</td>
+                </tr>
+            </table>
+            <div class="ui segment">
+                <h3 class="ui header">願意提供</h3>
+                <div class="ui checked checkbox">
+                    {{ form.visit }}
+                    <label style="color:black">{{ form.visit.label }}</label>
                 </div>
             </div>
         </div>
