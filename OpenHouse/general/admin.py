@@ -16,6 +16,7 @@ class NewsFileAdmin(admin.ModelAdmin):
 class NewsAdmin(admin.ModelAdmin):
         list_display=('title','category','expiration_time','created_time','updated_time')
         search_fields=('title','content')
+        list_filter=('pinned', 'category')
         inlines = [NewsFileInline]
 
 @admin.register(models.PhotoSlide)
