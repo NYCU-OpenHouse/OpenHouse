@@ -120,7 +120,7 @@
                     <td>會員確認聯絡資訊</td>
                     <td>
                         <ul class="ui list">
-                            <li>電機資源產學聯盟聯絡人：電機系 馬駿亞小姐 ethel@nycu.edu.tw (03)5712121#54072</li>
+                            <li>電機資源產學聯盟聯絡人：電機系 黃瀞葳小姐 badada@nycu.edu.tw (03)5712121#54074</li>
                             <li>電子所活動聯絡人：電子所 翁珮婷小姐 heyrebecca@nycu.edu.tw (03)5712121#54103</li>
                         </ul>
                         <p> ★ 加入聯盟或查詢會員狀況，請逕洽聯絡人</p>
@@ -161,8 +161,12 @@
                 <tr>
                     <td>舉辦時段</td>
                     <td>
-                        9/30(一)至10/9(三) 於交映樓1樓國際會議廳進行，每場次50分鐘。時段：
-                        12:20-13:10、13:20-14:10、14:20-15:10
+                        {% for qual_name, sessions in grouped_sessions.items %}
+                            <strong>{{ qual_name }}：</strong>
+                            {% for session in sessions %}
+                                <li>{{ session.session_start }}-{{ session.session_end }}</li>
+                            {% endfor %}
+                        {% endfor %}
                     </td>
                 </tr>
             </table>
@@ -170,7 +174,7 @@
             <div class="ui segment">
                 <h3 class="ui header">選取欲報名企業說明會時段</h3>
                 <p>活動費用：</p>
-                {% for choice in session_choices %}
+                {% for choice in seminar_choices %}
                     <li>{{ choice.name }}: {{ choice.session_fee }} 元</li>
                 {% endfor %}
 

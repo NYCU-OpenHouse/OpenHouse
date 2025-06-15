@@ -164,15 +164,15 @@
 
                 </tr>
                 <tr>
-                    <td>活動時間</td>
+                    <td>舉辦時段</td>
                     <td>
-                        (每場 50 分鐘) 12:20-13:10、13:20-14:10、14:20-15:10、15:30-16:20
+                        {% for qual_name, sessions in grouped_sessions.items %}
+                            <strong>{{ qual_name }}：</strong>
+                            {% for session in sessions %}
+                                <li>{{ session.session_start }}-{{ session.session_end }}</li>
+                            {% endfor %}
+                        {% endfor %}
                     </td>
-
-                </tr>
-                <tr>
-                    <td>活動地點</td>
-                    <td>交映樓國際會議廳</td>
                 </tr>
                 <tr>
                     <td>活動內容</td>
@@ -203,7 +203,7 @@
             <div class="ui segment">
                 <h3 class="ui header">選取欲報名說明會時段</h3>
                 <p>活動費用：</p>
-                {% for choice in session_choices %}
+                {% for choice in seminar_choices %}
                     <li>{{ choice.name }}: {{ choice.session_fee }} 元</li>
                 {% endfor %}
 

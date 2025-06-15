@@ -96,9 +96,17 @@ def recruit_signup(request):
 
     try:
         configs = RecruitConfigs.objects.all()[0]
-        session_choices = recruit.models.ConfigSeminarChoice.objects.all()
+        seminar_choices = recruit.models.ConfigSeminarChoice.objects.all()
+        seminar_sessions = recruit.models.ConfigSeminarSession.objects.all().order_by('session_start')
     except IndexError:
         return render(request, 'recruit/error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
+
+    grouped_sessions = {}
+    for session in seminar_sessions:
+        key = session.qualification.name if session.qualification else "none"
+        if key not in grouped_sessions:
+            grouped_sessions[key] = []
+        grouped_sessions[key].append(session)
 
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
