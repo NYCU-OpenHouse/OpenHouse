@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block 'custom_head' %}
-    <title>就博會選位 | OpenHouse 企業校園徵才</title>
+    <title>就業博覽會選位 | OpenHouse 企業校園徵才</title>
     <script src={% static "js/recruit/Controller.js" %}></script>
     <script>
         ctrl.controller('jobfair_select', function ($scope, $window, $http, $timeout, $interval, $log) {
@@ -50,7 +50,7 @@
 {% endblock %}
 
 {% block 'content' %}
-    <h1 class="ui dividing header">Open House 春季徵才 - 實體就博會選位</h1>
+    <h1 class="ui dividing header">Open House 春季徵才 - 就業博覽會選位</h1>
     <h2 class="ui dividing header">選位注意事項</h2>
     <div class="ui message">
         <div class="ui bulleted list">
@@ -75,15 +75,15 @@
         </div>
     </div>
 
-    <h2 class="ui dividing header">就博會攤位圖</h2>
+    <h2 class="ui dividing header">就業博覽會攤位圖</h2>
     {% for place_map in place_maps %}
         <h3 class="ui dividing header">{{ place_map.title }}</h3>
-        <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就博會攤位圖">
+        <img class="ui image" src="{{ place_map.upload_file.url }}" alt="就業博覽會攤位圖">
     {% endfor %}
 
     <div ng-app="oh" ng-controller="jobfair_select as ctrl">
         <br/>
-        <h2 class="ui dividing header">就博會選位</h2>
+        <h2 class="ui dividing header">就業博覽會選位</h2>
         <div ng-if="ctrl.select_ctrl.display" class="ui compact warning message">{$ ctrl.select_ctrl.msg$}</div>
         <div class="ui list">
             <div class="item">

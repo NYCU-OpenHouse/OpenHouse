@@ -45,7 +45,7 @@
 {% block 'content' %}
     <form class="ui info form error" method="POST" action="{% url 'rdss_jobfair_info' %}">
         {% csrf_token %}
-        <h1 class="ui dividing header">Open House 秋季招募 - 就博會資訊</h1>
+        <h1 class="ui dividing header">Open House 秋季招募 - 就業博覽會資訊</h1>
         {% if form.errors or formset.errors %}
             <div class="ui error message">
                 <div class="header">請修正以下錯誤</div>
