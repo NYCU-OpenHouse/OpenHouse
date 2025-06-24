@@ -644,6 +644,7 @@ class CompanySurvey(models.Model):
     YES_NO_CHOICES = [
         ('yes', '是'),
         ('no', '否'),
+        ('na', '不適用')
     ]
 
     id = models.AutoField(primary_key=True)
