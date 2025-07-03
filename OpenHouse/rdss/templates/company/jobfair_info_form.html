@@ -166,7 +166,11 @@
             <li>如有需要紙本停車抵用券，請務必於活動當日索取。</li>
             <li>企業自家撤展廠商，請務必依規劃時間配合分流離場，降低交通堵塞。</li>
         </ol>
-        <button class="ui blue button" style="float: right;" type="submit">送出</button>
+        {% if reach_deadline %}
+            <div class="ui red button" style="float: right;" >填寫截止</div>
+        {% else%}
+            <button class="ui blue button" style="float: right;" type="submit">送出</button>
+        {% endif %}
     </form>
 
 {% endblock %}

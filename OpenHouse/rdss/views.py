@@ -332,11 +332,13 @@ def JobfairInfo(request):
 
     try:
         configs = rdss.models.RdssConfigs.objects.all()[0]
-        food_type = rdss.models.RdssConfigs.objects.values('jobfair_food')[0]['jobfair_food']
-        food_info = rdss.models.RdssConfigs.objects.values('jobfair_food_info')[0]['jobfair_food_info']
+        food_type = configs.jobfair_food
+        food_info = configs.jobfair_food_info
+        deadline = configs.jobfair_info_deadline
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
-    
+    reach_deadline =timezone.now() > deadline
+
     try:
         company = rdss.models.Signup.objects.get(cid=request.user.cid)
         if company.jobfair == 0:
