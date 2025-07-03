@@ -156,25 +156,16 @@
 
         </div>
 
-        <h3 class="ui dividing header">入校之汽車車號提供或需要(紙本)汽車停車抵用券</h3>
-        <p>說明(1)：參加 {{ configs.jobfair_date }} 就業博覽會之企業，每攤提供2部汽車入校停車費抵免；企業可選擇需要索取多少紙本停車抵用券，活動當日發放。</p>
-        <ul>
-            <li>
-                <span style="color:red; background-color: yellow;">每攤至多提供2張</span>紙本停車抵用券</span>
+        <h3 class="ui dividing header">入校之汽車交通說明</h3>
+        <ol>
+            <li>參加 {{ configs.jobfair_date }} 就業博覽會之企業，
+                <span style="color:red; background-color: yellow;">請同仁優先安排共乘、節省寶貴時間</span>
+                ，降低「一直找空位」、「排隊等候入/離校」情況。
             </li>
-            <li>
-                <span style="color:red; background-color: yellow;">當日索取紙本停車抵用券</span>: 本組當日發放紙本停車證，可免費抵用一台汽車的停車費。
-            </li>
-        </ul>
-        <p>說明(2)：如超過基本提供數量，須自付每部每時30元之計時停車(備註：停車費用逕向出入口收費亭繳費即可)。</p>
-        <!-- <p style="color: red">★如要刪除已新增的車牌號碼，請勾選相應欄位右方的"刪除"選項</p> -->
-        <div class="two fields">
-            <div class="field">
-                <label>{{ form.parking_tickets.label }}</label>
-                {{ form.parking_tickets }}
-                <p>每攤位免費提供2張停車證。<span style="color:red;">貴公司至多 {{ booth_parking_tickets }} 張。</span></p>
-            </div>
-        </div>
+            <li>就業博覽會當日車輛離場門口將不進行管制，企業可直接離場。</li>
+            <li>如有需要紙本停車抵用券，請務必於活動當日索取。</li>
+            <li>企業自家撤展廠商，請務必依規劃時間配合分流離場，降低交通堵塞。</li>
+        </ol>
         <button class="ui blue button" style="float: right;" type="submit">送出</button>
     </form>
 

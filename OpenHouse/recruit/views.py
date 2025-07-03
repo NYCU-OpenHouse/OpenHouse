@@ -547,6 +547,8 @@ def jobfair_info(request):
             return render(request, 'recruit/error.html', locals())
         booth_num = company.jobfair
         lunch_box_quantity = booth_num * 3
+        # (2025 rdss) Not distribute parking tickets anymore.
+        # Temporary left this variable and hide the field in the frontend form.
         parking_tickets_max = 2 + (booth_num - 1) if booth_num > 0 else 0
     except Exception as e:
         error_msg = "貴公司尚未報名本次活動，請於上方點選「填寫報名資料」"
