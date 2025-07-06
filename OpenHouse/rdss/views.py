@@ -209,9 +209,6 @@ def SignupRdss(request):
             grouped_sessions[key] = []
         grouped_sessions[key].append(session)
 
-    print(grouped_sessions)
-
-
     mycompany = Company.objects.filter(cid=request.user.cid).first()
     if mycompany.chinese_funded:
         return render(request, 'error.html', {'error_msg' : "本企業被政府判定為陸資企業，因此無法使用，請見諒"})

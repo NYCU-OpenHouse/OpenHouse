@@ -94,3 +94,35 @@ class HistoryImg(models.Model):
     class Meta:
         verbose_name = u"歷史沿革圖片上傳"
         verbose_name_plural = u"歷史沿革圖片上傳"
+
+class Member(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=20)
+    title = models.CharField(max_length=20)
+    start_term = models.PositiveIntegerField(
+        verbose_name="起始屆",
+        help_text="起始屆數從1988年秋季開始算起，第一屆為1988年秋季-1989年春季"
+    )
+    end_term = models.PositiveIntegerField(
+        verbose_name="結束屆",
+        help_text="若此幹部只任職一屆，起始屆和結束屆數相同(38-38)；若任職多屆，則起始屆小於結束屆(35-38)"
+    )
+    message = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = u"各屆幹部"
+        verbose_name_plural = u"各屆幹部"
+
+    def __str__(self):
+        if self.start_term == self.end_term:
+            return f"第{self.start_term}屆 {self.title} {self.name}"
+        return f"第{self.start_term}~{self.end_term}屆 {self.title} {self.name}"
+
+    def get_all_terms(self):
+        """回傳這個幹部所任職的所有屆數（list）"""
+        return list(range(self.start_term, self.end_term + 1))
+
+    def get_term_range_str(self):
+        start_year = 1988 + (self.start_term - 1)
+        end_year = 1988 + self.end_term
+        return f"{start_year} 秋季 - {end_year} 春季"

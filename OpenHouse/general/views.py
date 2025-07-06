@@ -122,3 +122,26 @@ def History(request):
         error_msg = '歷史沿革尚未建立，敬請等待!'
         return render(request, 'general/error.html', locals())
     return render(request, 'general/history.html', locals())
+
+def Member(request):
+    try:
+        members = models.Member.objects.order_by('start_term')
+        if not members:
+            error_msg = '各屆幹部尚未建立，敬請等待!'
+            return render(request, 'general/error.html', locals())
+    except models.Member.DoesNotExist:
+        error_msg = '各屆幹部尚未建立，敬請等待!'
+        return render(request, 'general/error.html', locals())
+
+    # Group members by term
+    members_by_term = {}
+    for member in members:
+        terms = member.get_all_terms()
+        for term in terms:
+            if term not in members_by_term:
+                members_by_term[term] = []
+            members_by_term[term].append(member)
+    # Sort members in each term by title and name
+    for term, members in members_by_term.items():
+        members_by_term[term] = sorted(members, key=lambda x: (x.title, x.name))
+    return render(request, 'general/member.html', locals())

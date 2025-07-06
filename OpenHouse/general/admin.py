@@ -34,3 +34,7 @@ admin.site.register(models.FAQ_new)
 @admin.register(models.HistoryImg)
 class HistoryImgAdmin(admin.ModelAdmin):
     list_display=('order','upload_img', 'updated')
+
+@admin.register(models.Member)
+class MemberAdmin(admin.ModelAdmin):
+    list_display=('name', 'start_term', 'end_term', 'title')

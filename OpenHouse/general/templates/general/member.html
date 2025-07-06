@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'body' %}
+
+<div id="content" class="ui segment">
+    <link href={% static "css/general/read_news.css" %} rel="stylesheet">
+    <title>Open House 各屆幹部</title>
+
+    <div style="text-align:center">
+        <h2 class="ui header">各屆幹部</h2>
+    </div>
+
+    <div class="ui divider"></div>
+
+    {% for term, members in members_by_term.items %}
+        <div class="ui blue segment">
+            <h3 class="ui header">
+                第 {{ term }} 屆
+                <div class="sub header" style="font-size: 0.9em; color: grey;">
+                    {{ 1988|add:term|add:"-1" }} 秋季 - {{ 1988|add:term }} 春季
+                </div>
+            </h3>
+            <div class="ui stackable cards">
+                {% for member in members %}
+                    <div class="card">
+                        <div class="content">
+                            <div class="header">{{ member.name }}</div>
+                            <div class="meta">{{ member.title }}</div>
+                            {% if member.message %}
+                                <div class="description" style="margin-top: 0.5em;">
+                                    {{ member.message }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div id="button_group">
+    <a class="ui button" href="/">回首頁</a>
+</div>
+
+{% endblock %}
