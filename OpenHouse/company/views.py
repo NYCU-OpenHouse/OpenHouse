@@ -11,17 +11,17 @@ from .models import Company, ChineseFundedCompany, Job
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.forms import SetPasswordForm
 from company.forms import CompanyCreationForm, CompanyEditForm, ItemModelFormSet
-import rdss.models
-import recruit.models
-import company.models
-import general.models
 from oauth2_provider.decorators import protected_resource
 from oauth.models import CustomAccessToken
 from django.http import Http404
 from openpyxl import load_workbook
 
+import rdss.models
+import recruit.models
+import company.models
+import general.models
+import recruitment_common.views as views_helper
 
-# Create your views here.
 
 @login_required(login_url='/company/login/')
 def CompanyIndex(request):
@@ -265,6 +265,7 @@ def CompanyDetail(request, companyId):
     Function displaying specific company info to public
     """
     company_info = Company.objects.get(cid=companyId)
+    company_info.website = views_helper.change_website_start_with_http(company_info.website)
     id = company_info.id
     jobs = company.models.Job.objects.filter(cid=id)
 
