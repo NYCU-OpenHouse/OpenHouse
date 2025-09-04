@@ -957,7 +957,7 @@ def show_student_with_onsite_seminar_prize(request):
     title = "說明會參與達標現場領獎兌換名單"
 
     attended_students = rdss.models.RedeemOnsitePrize.objects.all()
-    return render(request, 'admin/seminar_show_student_with_daily_seminar_prize.html', locals())
+    return render(request, 'admin/seminar_show_student_with_onsite_seminar_prize.html', locals())
 
 @staff_member_required
 def redeem_seminar_onsite_prize(request, idcard_no, date):
