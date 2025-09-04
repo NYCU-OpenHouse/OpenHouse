@@ -232,8 +232,8 @@ class CustomDashboard(Dashboard):
                     'external': False,
                 },
                 {
-                    'title': _('兌獎-每日參與說明會獎品'),
-                    'url': '/admin/rdss/show_student_with_daily_seminar_prize/',
+                    'title': _('兌獎-說明會參與達標現場領獎'),
+                    'url': '/admin/rdss/show_student_with_onsite_seminar_prize/',
                     'external': False,
                 },
                 {
@@ -276,7 +276,7 @@ class CustomAppDashboard(AppIndexDashboard):
             'StuAttendance',
             # rdss
             'RedeemPrize',
-            'redeem_prize_2024_3_points_per_day',
+            'RedeemOnsitePrize',
             # recruit
             'ExchangePrize',
             'RedeemDailyPrize',

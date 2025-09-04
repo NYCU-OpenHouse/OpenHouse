@@ -316,6 +316,6 @@ class JobfairSlotAdmin(admin.ModelAdmin):
     zones = models.ZoneCategories.objects.all()
 
 
-@admin.register(models.RedeemDailyPrize)
-class RedeemDailyPrizeAdmin(admin.ModelAdmin):
+@admin.register(models.RedeemOnsitePrize)
+class RedeemOnsitePrizeAdmin(admin.ModelAdmin):
     list_display = ('date', 'redeem', 'updated')

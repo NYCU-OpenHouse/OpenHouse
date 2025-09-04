@@ -44,7 +44,7 @@
 					<td>{{ attended_student.date }}</td>
 					{% if not attended_student.redeem%}
 						<td><i class="close red icon"></i></td>
-						<td><a class="button" href="/admin/recruit/redeem_seminar_daily_prize/{{attended_student.student.card_num}}/{{attended_student.date}}">兌獎</a></td>
+						<td><a class="button" href="/admin/rdss/redeem_seminar_onsite_prize/{{attended_student.student.idcard_no}}/{{attended_student.date}}">兌獎</a></td>
 					{% else %}
 						<td><i class="check green icon"></i></td>
 						<td>已兌換</td>

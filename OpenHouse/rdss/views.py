@@ -900,35 +900,50 @@ def CompanySurvey(request):
     return render(request, 'company/survey_form.html', locals())
 
 # ========================RDSS admin view for seminar points=================
-def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]:
+def _reach_seminar_redeem_threshold(student_obj) -> typing.Tuple[bool, str, bool]:
     """
-    Check whether the student has attended all/specific number of seminars a day.
+    Check whether the student has attended specific number of seminars 
+    within the last `day` days (including today).
+    The default value of `day` is 1 (i.e., check today's attendance).
+    The default threshold is 10. Both values can be changed in the config admin panel.
 
     Args:
         student_obj: Student object
     Returns:
         tuple[bool, str, bool]
-            bool: Whether the student has reached the daily threshold.
-            str: The date of the redeemed prize.
+            bool: Whether the student has reached the threshold.
+            str: The date range of the redeemed prize (e.g., '2025-09-02~2025-09-04').
             bool: Whether the student has redeemed.
     """
-    today = datetime.datetime.now().date()
-    attended_seminar = rdss.models.StuAttendance.objects.filter(student=student_obj,
-                                                                seminar__date=today).count()
-    total_seminar = rdss.models.SeminarSlot.objects.filter(date=today).count()
-
     try:
-        configs = rdss.models.RdssConfigs.objects.all()[0]
-        daily_threshold = configs.seminar_prize_threshold
+        configs = rdss.models.RdssConfigs.objects.first()
+        interval_threshold = configs.seminar_prize_threshold
+        interval_days = configs.seminar_prize_interval_days
         is_all_attendance_has_prize = configs.seminar_prize_all
-    except IndexError:
-        daily_threshold = 10
+    except AttributeError:
+        interval_threshold = 10
+        interval_days = 1
         is_all_attendance_has_prize = False
+    today = datetime.datetime.now().date()
+    start_date = today - datetime.timedelta(days=interval_days - 1)
+
+    attended_seminar = rdss.models.StuAttendance.objects.filter(
+        student=student_obj,
+        seminar__date__range=(start_date, today)
+    ).count()
+    total_seminar = rdss.models.SeminarSlot.objects.filter(
+        date__range=(start_date, today)
+    ).count()
 
     if (is_all_attendance_has_prize and attended_seminar == total_seminar) or \
-        (attended_seminar >= daily_threshold):
-        redeem_date = str(today)
-        redeem_obj, _ = rdss.models.RedeemDailyPrize.objects.get_or_create(
+       (attended_seminar >= interval_threshold):
+
+        if interval_days > 1:
+            redeem_date = f"{start_date}~{today}"
+        else:
+            redeem_date = str(today)
+
+        redeem_obj, _ = rdss.models.RedeemOnsitePrize.objects.get_or_create(
             student=student_obj,
             date=redeem_date
         )
@@ -936,39 +951,33 @@ def _reach_seminar_daily_threshold(student_obj) -> typing.Tuple[bool, str, bool]
     return False, None, None
 
 @staff_member_required
-def show_student_with_daily_seminar_prize(request):
+def show_student_with_onsite_seminar_prize(request):
     site_header = "OpenHouse 管理後台"
     site_title = "OpenHouse"
-    title = "每日說明會參與達成＆兌換名單"
-    try:
-        configs = rdss.models.RdssConfigs.objects.all()[0]
-        daily_threshold = configs.seminar_prize_threshold
-        is_all_attendance_has_prize = configs.seminar_prize_all
-    except IndexError:
-        daily_threshold = 10
-        is_all_attendance_has_prize = False
-    attended_students = rdss.models.RedeemDailyPrize.objects.all()
+    title = "說明會參與達標現場領獎兌換名單"
+
+    attended_students = rdss.models.RedeemOnsitePrize.objects.all()
     return render(request, 'admin/seminar_show_student_with_daily_seminar_prize.html', locals())
 
 @staff_member_required
-def redeem_seminar_daily_prize(request, card_num, date):
+def redeem_seminar_onsite_prize(request, idcard_no, date):
     referer = request.META.get('HTTP_REFERER')
 
     try:
-        student_obj = rdss.models.Student.objects.filter(idcard_no=card_num).first()
+        student_obj = rdss.models.Student.objects.filter(idcard_no=idcard_no).first()
     except Exception as e:
         messages.error(request, f"學生證卡號不存在: {e}，請註冊學生證")
         return redirect(referer)
 
     try:
         rdss.models.RedeemPrize.objects.get_or_create(
-            student=student_obj, prize=f"每日獎品-{date}"
+            student=student_obj, prize=f"現場獎品-{date}"
         )
-        rdss.models.RedeemDailyPrize.objects.filter(
+        rdss.models.RedeemOnsitePrize.objects.filter(
             student=student_obj, date=date
         ).update(redeem=True)
-        messages.success(request, f"學生 {student_obj.student_id} 兌換每日獎品成功，日期: {date}")
-        collect_pts_logger.info('student %s succeeded to get daily seminar prize, date: %s', student_obj.student_id, date)
+        messages.success(request, f"學生 {student_obj.student_id} 兌換現場獎品成功，日期: {date}")
+        collect_pts_logger.info('student %s succeeded to get seminar onsite prize, date: %s', student_obj.student_id, date)
     except Exception as e:
         messages.error(request, f"兌換失敗: {e}")
     return redirect(referer)
@@ -1025,13 +1034,13 @@ def CollectPoints(request):
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
         # check if the student can get the daily seminar prize
-        is_redeem, redeem_date, already_redeemed = _reach_seminar_daily_threshold(student_obj)
+        is_redeem, redeem_date, already_redeemed = _reach_seminar_redeem_threshold(student_obj)
         redeem_target = f"{redeem_date} 說明會"
         if is_redeem:
             if already_redeemed:
-                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 每日獎品"}
+                ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 現場獎品"}
             else:
-                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換每日獎品"}
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換現場獎品"}
 
         # maintain current seminar from post
         current_seminar = seminar_obj
