@@ -939,8 +939,12 @@ def _reach_seminar_redeem_threshold(student_obj) -> typing.Tuple[bool, str, bool
        (attended_seminar >= interval_threshold):
 
         if interval_days > 1:
-            redeem_date = f"{start_date}~{today}"
+            # If interval_days > 1, redeem_date would be `${year}rdss`. Thus, student can
+            # only redeem the onsite prize once during wwhole rdss.
+            redeem_date = f"{start_date.year}秋招"
         else:
+            # If interval_days = 1, redeem_date should be today's date. Thus, student can get
+            # onsite prize each day he reach the threshold.
             redeem_date = str(today)
 
         redeem_obj, _ = rdss.models.RedeemOnsitePrize.objects.get_or_create(

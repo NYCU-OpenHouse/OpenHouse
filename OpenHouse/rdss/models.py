@@ -104,22 +104,28 @@ class RdssConfigs(models.Model):
     seminar_start_date = models.DateField(u'說明會開始日期')
     seminar_end_date = models.DateField(u'說明會結束日期')
     seminar_info_deadline = models.DateTimeField(u'說明會資訊截止填寫時間', default=timezone.now)
-    ### 每日參與領獎門檻 （當日參與多少場說明會以上才可兌獎）
-    seminar_prize_threshold = models.IntegerField(
-        u'每日參與領獎門檻',
-        default=10,
-        help_text="當日參與多少場說明會以上才可兌獎，與“每日說明會全數參加者領獎”設定為或的關係"
-    )
-    ### 是否開放每日說明會全數參加者領獎
-    seminar_prize_all = models.BooleanField(
-        u'每日說明會全數參加者領獎',
-        default=False,
-        help_text="是否開放每日說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
-    )
     seminar_btn_start = models.DateField(u'說明會按鈕開啟日期', null=True)
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
     seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
     seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
+    ## 說明會參與達標現場領獎：當學生在一定天數範圍內（seminar_prize_day）參加說明會的
+    ## 點數達標（seminar_prize_threshold）後，可於參加完說明會集點當下領獎，與集點抽獎為兩個不同機制
+    seminar_prize_interval_days = models.IntegerField(
+        u'說明會點數累積天數',
+        default=1,
+        help_text="累積幾天參加說明會的點數達標後可現場領獎"
+    )
+    seminar_prize_threshold = models.IntegerField(
+        u'現場領獎門檻',
+        default=10,
+        help_text="期間內參與多少場說明會以上才可兌獎，與“期間內說明會全數參加者領獎”設定為或的關係"
+    )
+    ### 是否開放期間內說明會全數參加者領獎
+    seminar_prize_all = models.BooleanField(
+        u'期間內說明會全數參加者領獎',
+        default=False,
+        help_text="是否開放期間內說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+    )
 
     # ECE說明會相關
     seminar_ece_start_date = models.DateField(u'實體ECE說明會開始日期', default=datetime.date.today)
@@ -1028,10 +1034,10 @@ class RdssOnlineJobfairInfo(models.Model):
         verbose_name_plural = u"線上就博會資訊編輯頁面"
 
 
-class RedeemDailyPrize(models.Model):
+class RedeemOnsitePrize(models.Model):
     """
-    Record the student who listens to seminars and reach the
-    threshold set in the config in a day.
+    Record the student who attends to seminars and reach the
+    threshold set in the config in an interval.
     """
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, to_field='idcard_no', verbose_name=u'學生證卡號', on_delete=models.CASCADE)
@@ -1040,5 +1046,5 @@ class RedeemDailyPrize(models.Model):
     updated = models.DateTimeField(u'更新時間', auto_now=True)
 
     class Meta:
-        verbose_name = u"達成說明會參與次數紀錄&兌獎"
-        verbose_name_plural = u"達成說明會參與次數紀錄&兌獎"
+        verbose_name = u"說明會參與達標現場領獎"
+        verbose_name_plural = u"說明會參與達標現場領獎"
