@@ -9,9 +9,19 @@ from django.conf import settings
 import xlsxwriter
 import json
 import datetime
+import re
 import rdss.models
 import company.models
 
+def _refactor_invalid_sheet_name(name: str) -> str:
+    """
+    Invalid Excel character '[]:*?/\\' cannot be in sheetname.
+    Also, the name cannot exceeds 31 words.
+    Check and refactor the sheetname.
+    """
+    name = re.sub(r'[\[\]\:\*\?\/\\]', '_', name)
+    name = name.strip()
+    return name[:31]
 
 @staff_member_required
 def Export_Signup(request):
@@ -139,7 +149,7 @@ def ExportJobs(request):
     workbook = xlsxwriter.Workbook(response)
     
     for company_obj in company_list:
-        worksheet = workbook.add_worksheet(company_obj.shortname)
+        worksheet = workbook.add_worksheet(_refactor_invalid_sheet_name(company_obj.shortname))
 
         for index, fieldname in enumerate(fieldname_list):
             worksheet.write(0, index, title_pairs[fieldname])
