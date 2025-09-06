@@ -108,23 +108,24 @@ class RdssConfigs(models.Model):
     seminar_btn_end = models.DateField(u'說明會按鈕關閉日期', null=True)
     seminar_btn_enable_time = models.TimeField(u'說明會按鈕每日開啟時間', default="8:00", help_text="按鈕將於每日此時間開啟")
     seminar_btn_disable_time = models.TimeField(u'說明會按鈕每日關閉時間', default="18:00", help_text="按鈕將於每日此時間關閉")
-    ## 說明會參與達標現場領獎：當學生在一定天數範圍內（seminar_prize_day）參加說明會的
-    ## 點數達標（seminar_prize_threshold）後，可於參加完說明會集點當下領獎，與集點抽獎為兩個不同機制
-    seminar_prize_interval_days = models.IntegerField(
-        u'說明會點數累積天數',
-        default=1,
-        help_text="累積幾天參加說明會的點數達標後可現場領獎"
+    ## 說明會現場領獎：當學生每天（seminar_prize_is_daily）或是在說明會期間內
+    ## 點數達成設定門檻（seminar_prize_threshold）的倍數後，可於參加完說明會集點當下領獎，
+    ## 並不會扣點數，與集點抽獎為兩個不同機制
+    seminar_prize_is_daily = models.BooleanField(
+        u'(說明會現場領獎)是否以每天為單位',
+        default=False,
+        help_text="是否以每天為單位發放獎勵，若否則會計算整個說明會期間內累積的點數"
     )
     seminar_prize_threshold = models.IntegerField(
-        u'現場領獎門檻',
+        u'(說明會現場領獎)領獎門檻',
         default=10,
-        help_text="期間內參與多少場說明會以上才可兌獎，與“期間內說明會全數參加者領獎”設定為或的關係"
+        help_text="期間內參與多少場說明會（及其倍數）以上才可兌獎，與“期間內說明會全數參加者領獎”設定為或的關係"
     )
     ### 是否開放期間內說明會全數參加者領獎
     seminar_prize_all = models.BooleanField(
-        u'期間內說明會全數參加者領獎',
+        u'(說明會現場領獎)說明會全數參加者是否領獎',
         default=False,
-        help_text="是否開放期間內說明會全數參加者領獎，與“每日參與領獎門檻”為或的關係"
+        help_text="是否開放期間內說明會全數參加者領獎，與“領獎門檻”為或的關係"
     )
 
     # ECE說明會相關

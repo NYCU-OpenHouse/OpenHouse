@@ -903,8 +903,7 @@ def CompanySurvey(request):
 def _reach_seminar_redeem_threshold(student_obj) -> typing.Tuple[bool, str, bool]:
     """
     Check whether the student has attended specific number of seminars 
-    within the last `day` days (including today).
-    The default value of `day` is 1 (i.e., check today's attendance).
+    within today or during the seminar interval.
     The default threshold is 10. Both values can be changed in the config admin panel.
 
     Args:
@@ -912,47 +911,63 @@ def _reach_seminar_redeem_threshold(student_obj) -> typing.Tuple[bool, str, bool
     Returns:
         tuple[bool, str, bool]
             bool: Whether the student has reached the threshold.
-            str: The date range of the redeemed prize (e.g., '2025-09-02~2025-09-04').
+            str: The redeem target.
             bool: Whether the student has redeemed.
     """
     try:
         configs = rdss.models.RdssConfigs.objects.first()
-        interval_threshold = configs.seminar_prize_threshold
-        interval_days = configs.seminar_prize_interval_days
+        threshold = configs.seminar_prize_threshold
+        is_daily = configs.seminar_prize_is_daily
         is_all_attendance_has_prize = configs.seminar_prize_all
     except AttributeError:
-        interval_threshold = 10
-        interval_days = 1
+        threshold = 10
+        is_daily = False
         is_all_attendance_has_prize = False
     today = datetime.datetime.now().date()
-    start_date = today - datetime.timedelta(days=interval_days - 1)
 
-    attended_seminar = rdss.models.StuAttendance.objects.filter(
-        student=student_obj,
-        seminar__date__range=(start_date, today)
-    ).count()
-    total_seminar = rdss.models.SeminarSlot.objects.filter(
-        date__range=(start_date, today)
-    ).count()
+    if is_daily:
+        redeem_target = today.strftime("%Y-%m-%d")
+        attended_seminar = rdss.models.StuAttendance.objects.filter(student=student_obj,
+                                                                seminar__date=today).count()
+        total_seminar = rdss.models.SeminarSlot.objects.filter(date=today).count()
+    else:
+        start_date = configs.seminar_start_date
+        end_date = configs.seminar_end_date
+        redeem_target = f"{start_date.year}秋招"
+        attended_seminar = rdss.models.StuAttendance.objects.filter(
+            student=student_obj,
+            seminar__date__range=(start_date, end_date)
+        ).count()
+        total_seminar = rdss.models.SeminarSlot.objects.filter(
+            date__range=(start_date, end_date)
+        ).count()
 
-    if (is_all_attendance_has_prize and attended_seminar == total_seminar) or \
-       (attended_seminar >= interval_threshold):
-
-        if interval_days > 1:
-            # If interval_days > 1, redeem_date would be `${year}rdss`. Thus, student can
-            # only redeem the onsite prize once during wwhole rdss.
-            redeem_date = f"{start_date.year}秋招"
-        else:
-            # If interval_days = 1, redeem_date should be today's date. Thus, student can get
-            # onsite prize each day he reach the threshold.
-            redeem_date = str(today)
-
+    if (attended_seminar % threshold) == 0:
+        redeem_target = f"{redeem_target}({attended_seminar} points)"
         redeem_obj, _ = rdss.models.RedeemOnsitePrize.objects.get_or_create(
             student=student_obj,
-            date=redeem_date
+            date=redeem_target
         )
-        return True, redeem_date, redeem_obj.redeem
+        return True, redeem_target, redeem_obj.redeem
+    if is_all_attendance_has_prize and attended_seminar == total_seminar:
+        redeem_target = f"{redeem_target}(Full Attendance)"
+        redeem_obj, _ = rdss.models.RedeemOnsitePrize.objects.get_or_create(
+            student=student_obj,
+            date=redeem_target
+        )
+        return True, redeem_target, redeem_obj.redeem
     return False, None, None
+
+def _query_onsite_prize_number(student_obj) -> int:
+    """
+    Query the number of onsite prizes the student has redeemed.
+
+    Args:
+        student_obj: Student object
+    Returns:
+        int: The number of onsite prizes the student has redeemed.
+    """
+    return rdss.models.RedeemOnsitePrize.objects.filter(student=student_obj, redeem=True).count()
 
 @staff_member_required
 def show_student_with_onsite_seminar_prize(request):
@@ -1038,14 +1053,13 @@ def CollectPoints(request):
         collect_pts_logger.info('{} attend {} {}'.format(idcard_no, seminar_obj.date, seminar_obj.session_from_config))
 
         # check if the student can get the daily seminar prize
-        is_redeem, redeem_date, already_redeemed = _reach_seminar_redeem_threshold(student_obj)
-        redeem_target = f"{redeem_date} 說明會"
+        is_redeem, redeem_target, already_redeemed = _reach_seminar_redeem_threshold(student_obj)
         if is_redeem:
             if already_redeemed:
                 ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 現場獎品"}
             else:
-                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 參加 {redeem_target}，可兌換現場獎品"}
-
+                ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 可兌換 {redeem_target} 現場獎品"}
+        redeemed_onsite_prize_number = _query_onsite_prize_number(student_obj)
         # maintain current seminar from post
         current_seminar = seminar_obj
 
