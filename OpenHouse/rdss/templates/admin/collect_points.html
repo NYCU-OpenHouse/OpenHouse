@@ -86,7 +86,7 @@
                     <h1 class="info">已兌換: {{ student_obj.get_redeemed }} 點</h1>
                     <h1 class="info">已兌換現場獎品數量: {{ redeemed_onsite_prize_number }}</h1>
                     {% if is_redeem and not already_redeemed %}
-                        <a class="ui red button" href="/admin/rdss/redeem_seminar_onsite_prize/{{student_obj.student_id}}/{{redeem_target}}">兌換 {{redeem_target}}餐券 </a>
+                        <a class="ui red button" href="/admin/rdss/redeem_seminar_onsite_prize/{{student_obj.idcard_no}}/{{redeem_target}}">兌換 {{redeem_target}}餐券 </a>
                     {% endif %}
                     <div class="ui info message">
                         <p>
