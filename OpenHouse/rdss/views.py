@@ -958,17 +958,6 @@ def _reach_seminar_redeem_threshold(student_obj) -> typing.Tuple[bool, str, bool
         return True, redeem_target, redeem_obj.redeem
     return False, None, None
 
-def _query_onsite_prize_number(student_obj) -> int:
-    """
-    Query the number of onsite prizes the student has redeemed.
-
-    Args:
-        student_obj: Student object
-    Returns:
-        int: The number of onsite prizes the student has redeemed.
-    """
-    return rdss.models.RedeemOnsitePrize.objects.filter(student=student_obj, redeem=True).count()
-
 @staff_member_required
 def show_student_with_onsite_seminar_prize(request):
     site_header = "OpenHouse 管理後台"
@@ -1059,7 +1048,7 @@ def CollectPoints(request):
                 ui_message = {"type": "yellow", "msg": f"學號{student_obj.student_id} 已兌換 {redeem_target} 現場獎品"}
             else:
                 ui_message = {"type": "green", "msg": f"學號{student_obj.student_id} 可兌換 {redeem_target} 現場獎品"}
-        redeemed_onsite_prize_number = _query_onsite_prize_number(student_obj)
+        onsite_prizes = rdss.models.RedeemOnsitePrize.objects.filter(student=student_obj)
         # maintain current seminar from post
         current_seminar = seminar_obj
 

@@ -84,9 +84,23 @@
                     <h1 class="info">學號: {{ student_obj.student_id | default:"未註冊" }}</h1>
                     <h1 class="info">目前點數: {{ student_obj.get_points }} 點</h1>
                     <h1 class="info">已兌換: {{ student_obj.get_redeemed }} 點</h1>
-                    <h1 class="info">已兌換現場獎品數量: {{ redeemed_onsite_prize_number }}</h1>
                     {% if is_redeem and not already_redeemed %}
                         <a class="ui red button" href="/admin/rdss/redeem_seminar_onsite_prize/{{student_obj.idcard_no}}/{{redeem_target}}">兌換 {{redeem_target}}餐券 </a>
+                    {% endif %}
+                    {% if onsite_prizes %}
+                    <div class="ui yellow message">
+                        {% for prize in onsite_prizes %}
+                        <ul>
+                            <li>{{ prize.date }} : 
+                                {% if prize.redeem %}
+                                    <i class="check green icon"></i> 已兌換
+                                {% else %}
+                                    <i class="close red icon"></i> 未兌換
+                                {% endif %}
+                            </li>
+                        </ul>
+                        {% endfor %}
+                    </div>
                     {% endif %}
                     <div class="ui info message">
                         <p>
