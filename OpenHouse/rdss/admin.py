@@ -318,4 +318,4 @@ class JobfairSlotAdmin(admin.ModelAdmin):
 
 @admin.register(models.RedeemOnsitePrize)
 class RedeemOnsitePrizeAdmin(admin.ModelAdmin):
-    list_display = ('date', 'redeem', 'updated')
+    list_display = ('student', 'date', 'redeem', 'updated')
