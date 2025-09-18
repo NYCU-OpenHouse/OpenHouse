@@ -1167,7 +1167,7 @@ def ImportStudentCardInfo(request):
             except IntegrityError as e:
                 if e.args[0] == 1062:
                     success = False
-                    error_message = "請確認是否有相同卡號，但是姓名或學號不同的資料"
+                    error_message = f"請確認是否有相同卡號，但是姓名或學號不同的資料 {e}"
             except Exception as ee:
                 success = False
                 error_message = f"{ee}"

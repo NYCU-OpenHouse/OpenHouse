@@ -8,11 +8,13 @@ def ImportStudentCardID(file):
     sheet = wb.worksheets[0]
 
     for i in range(2, sheet.max_row+1):
-        Student.objects.get_or_create(
+        Student.objects.update_or_create(
             idcard_no= sheet.cell(row=i, column=2).value,
-            student_id=sheet.cell(row=i, column=1).value,
-            name=sheet.cell(row=i, column=3).value,
-            email=sheet.cell(row=i, column=4).value or '',
-            phone=sheet.cell(row=i, column=5).value or '',
-            dep=sheet.cell(row=i, column=6).value or '',
-            )
+            defaults={
+                'student_id': sheet.cell(row=i, column=1).value or '',
+                'name': sheet.cell(row=i, column=3).value or '',
+                'email': sheet.cell(row=i, column=4).value or '',
+                'phone': sheet.cell(row=i, column=5).value or '',
+                'dep': sheet.cell(row=i, column=6).value or '',
+            }
+        )
