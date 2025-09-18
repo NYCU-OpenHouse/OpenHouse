@@ -1128,19 +1128,9 @@ def SeminarAttendedStudent(request):
     except IndexError:
         return render(request, 'error.html', {'error_msg' : "活動設定尚未完成，請聯絡行政人員設定"})
     
-    seminar_session_display = {
-        "forenoon": "{}~{}".format(configs.session0_start, configs.session0_end),
-        "noon": "{}~{}".format(configs.session1_start, configs.session1_end),
-        "night1": "{}~{}".format(configs.session2_start, configs.session2_end),
-        "night2": "{}~{}".format(configs.session3_start, configs.session3_end),
-        "night3": "{}~{}".format(configs.session4_start, configs.session4_end),
-        "extra": "補場",
-        "jobfair": "就博會",
-    }
-    
     for ele in seminars:
         student_count = rdss.models.StuAttendance.objects.filter(seminar=ele).count()
-        ele.time = seminar_session_display[ele.session]
+        ele.time = ele.session_from_config.get_display_name()
         ele.student_count = student_count
 
     return render(request, 'admin/seminar_attended_student.html', locals())
