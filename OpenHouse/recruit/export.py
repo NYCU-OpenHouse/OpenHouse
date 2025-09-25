@@ -595,20 +595,20 @@ def ExportPointsInfo(request):
     student_list = recruit.models.Student.objects.annotate(
                 points=Sum('attendance__points')).order_by('-points')
     
-    fields = recruit.models.Student._meta.get_fields()[3:8]
+    fields = recruit.models.Student._meta.get_fields()[3:10]
     
     for index, field in enumerate(fields):
         worksheet.write(0, index, field.verbose_name)
-    worksheet.write(0, index, "累積點數")
+    worksheet.write(0, index + 1, "累積點數")
     
     for row_count, info in enumerate(student_list):
         col_count = 0
         for col_count, field in enumerate(fields):
             worksheet.write(row_count + 1, col_count , getattr(info, field.name))
         if getattr(info, "points") is None:
-            worksheet.write(row_count + 1, col_count, 0)
+            worksheet.write(row_count + 1, col_count + 1, 0)
         else:
-            worksheet.write(row_count + 1, col_count, getattr(info, "points"))
+            worksheet.write(row_count + 1, col_count + 1, getattr(info, "points"))
             
 
     workbook.close()
