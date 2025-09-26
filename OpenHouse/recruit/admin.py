@@ -78,7 +78,7 @@ class CompanyCategoriesAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    change_list_template = "admin/companycategories_change_list.html"
+    change_list_template = "recruit/admin/companycategories_change_list.html"
 
 @admin.register(models.ZoneCategories)
 class ZoneCategoriesAdmin(admin.ModelAdmin):
