@@ -93,8 +93,8 @@ class Company(AbstractBaseUser):
     other_ps = models.TextField(u'其他備註', default="", blank=True)
 
     # recruit info
-    recruit_info = models.CharField(u'職缺內容簡介', max_length=260, help_text='為了印刷效果，限260字內')
-    recruit_url = models.CharField(u'應徵方式', max_length=260, help_text='報名網站或詳細職缺說明, 限260字內', blank=True)
+    recruit_info = models.CharField(u'職缺內容簡介', max_length=2600, help_text='為了印刷效果，限2600字內')
+    recruit_url = models.CharField(u'應徵方式', max_length=2600, help_text='報名網站或詳細職缺說明, 限2600字內', blank=True)
 
     # discount for special member
     ece_member_normal = models.BooleanField(u'電機資源產學聯盟_一般會員', default=False)
@@ -200,13 +200,13 @@ class Job(models.Model):
     title = models.CharField(u'職缺名稱', max_length=50)
     is_liberal = models.BooleanField(u'是否為文組職缺', default=False)
     is_foreign = models.BooleanField(u'是否開放外籍生投遞', default=False)
-    description = models.TextField(u'職缺內容', max_length=260)
+    description = models.TextField(u'職缺內容', max_length=2600)
     quantity = models.PositiveIntegerField(u'職缺數量', default=1)
-    note = models.TextField(u'備註', blank=True, max_length=260)
+    note = models.TextField(u'備註', blank=True, max_length=2600)
 
     english_title = models.CharField(u'職缺名稱(英文)', max_length=50, blank=True)
-    english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=260)
-    english_note = models.TextField(u'備註(英文)', blank=True, max_length=260)
+    english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=2600)
+    english_note = models.TextField(u'備註(英文)', blank=True, max_length=2600)
 
     class Meta:
         managed = True
