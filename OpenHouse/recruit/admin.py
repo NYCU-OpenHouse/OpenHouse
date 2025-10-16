@@ -210,7 +210,7 @@ class JobfairOrderAdmin(admin.ModelAdmin):
 class JobfairSlotAdmin(admin.ModelAdmin):
     list_display = ('serial_no', 'zone', 'company', 'updated')
     zones = models.ZoneCategories.objects.all()
-    change_list_template = "admin/jobfairslot_change_list.html"
+    change_list_template = "recruit/admin/jobfairslot_change_list.html"
 
 
 
