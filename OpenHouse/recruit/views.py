@@ -1388,7 +1388,7 @@ def bulk_add_jobfairslot(request):
         messages.success(request, f'Successfully added {number} new JobfairSlots of {zone}.')
         return redirect('/admin/recruit/jobfairslot/')
 
-    return render(request, 'admin/bulk_add_jobfairslot.html', locals())
+    return render(request, 'recruit/admin/bulk_add_jobfairslot.html', locals())
 
 
 @staff_member_required
