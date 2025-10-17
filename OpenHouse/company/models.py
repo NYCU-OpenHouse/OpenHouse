@@ -20,6 +20,20 @@ def validate_mobile(string):
 def validate_phone(string):
     RegexValidator(regex='^\d+-\d+(#\d+)?$', message='電話/傳真格式為：區碼-號碼#分機')(string)
 
+def validate_words_length(max_len, lang='TW'):
+    error_message = f"English characters * 3 + Chinese characters * 1 up to {max_len} in length"
+    if lang == 'TW':
+        error_message = f"中文*3+英文*1 總共限制 {max_len} 字以內"
+    elif lang == 'EN':
+        error_message = f"English characters * 3 + Chinese characters * 1 up to {max_len} in length"
+    def validator(string):
+        if len(string.encode('utf-8')) > max_len:
+            raise ValidationError(
+                message=error_message,
+                params={'value': string},
+            )
+    return validator
+
 
 class CompanyCategories(models.Model):
     id = models.AutoField(primary_key=True)
@@ -69,7 +83,7 @@ class Company(AbstractBaseUser):
     postal_code = models.CharField(u'郵遞區號(3+3)', max_length=6,help_text='ex:300123', validators=[validate_all_num])
     address = models.CharField(u'公司地址', max_length=128)
     website = models.CharField(u'公司網站', max_length=64)
-    brief = models.CharField(u'公司簡介', max_length=200, help_text='為了印刷效果，限200字內')
+    brief = models.CharField(u'公司簡介', max_length=780, help_text='為了印刷效果，限260中文字或780英文字內', validators=[validate_words_length(780)])
     business_project = models.CharField(u'營業項目', max_length=100, default="", blank=True, help_text='公司主要營業項目, 若無可免填')
     relation_business = models.CharField(u'關係企業', max_length=64, help_text='若無, 可免填', blank=True, default="")
     subsidiary = models.CharField(u'分公司', max_length=64, help_text='若無, 可免填', blank=True, default="")
@@ -93,8 +107,8 @@ class Company(AbstractBaseUser):
     other_ps = models.TextField(u'其他備註', default="", blank=True)
 
     # recruit info
-    recruit_info = models.CharField(u'職缺內容簡介', max_length=2600, help_text='為了印刷效果，限2600字內')
-    recruit_url = models.CharField(u'應徵方式', max_length=2600, help_text='報名網站或詳細職缺說明, 限2600字內', blank=True)
+    recruit_info = models.CharField(u'職缺內容簡介', max_length=780, help_text='為了印刷效果，限260中文字或780英文字內', validators=[validate_words_length(780)])
+    recruit_url = models.CharField(u'應徵方式', max_length=780, help_text='報名網站或詳細職缺說明, 限260中文字或780英文字內', blank=True, validators=[validate_words_length(780)])
 
     # discount for special member
     ece_member_normal = models.BooleanField(u'電機資源產學聯盟_一般會員', default=False)
@@ -200,13 +214,13 @@ class Job(models.Model):
     title = models.CharField(u'職缺名稱', max_length=50)
     is_liberal = models.BooleanField(u'是否為文組職缺', default=False)
     is_foreign = models.BooleanField(u'是否開放外籍生投遞', default=False)
-    description = models.TextField(u'職缺內容', max_length=2600)
+    description = models.TextField(u'職缺內容', max_length=780, validators=[validate_words_length(780)])
     quantity = models.PositiveIntegerField(u'職缺數量', default=1)
-    note = models.TextField(u'備註', blank=True, max_length=2600)
+    note = models.TextField(u'備註', blank=True, max_length=780, validators=[validate_words_length(780)])
 
     english_title = models.CharField(u'職缺名稱(英文)', max_length=50, blank=True)
-    english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=2600)
-    english_note = models.TextField(u'備註(英文)', blank=True, max_length=2600)
+    english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=780, validators=[validate_words_length(780, lang='EN')])
+    english_note = models.TextField(u'備註(英文)', blank=True, max_length=780, validators=[validate_words_length(780, lang='EN')])
 
     class Meta:
         managed = True

@@ -70,9 +70,22 @@ def CompanyCreation(request):
     form = CompanyCreationForm()
     return render(request, 'company_create_form.html', locals())
 
+def _truncate_unicode_by_bytes(input_string, max_bytes):
+    encoded_string = input_string.encode('utf-8')
+    if len(encoded_string) <= max_bytes:
+        return input_string
+
+    truncated_bytes = encoded_string[:max_bytes]
+    while True:
+        try:
+            truncated_string = truncated_bytes.decode('utf-8')
+            return truncated_string
+        except UnicodeDecodeError:
+            truncated_bytes = truncated_bytes[:-1]
+
 
 def _update_job_position_with_excel_file(excel_file, company: Company):
-    MAX_DESCRIPTION_LENGTH = 260
+    MAX_DESCRIPTION_BYTES = 780
     wb = load_workbook(excel_file)
     ws = wb.active
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -81,12 +94,12 @@ def _update_job_position_with_excel_file(excel_file, company: Company):
             continue
         title, quantity, is_liberal, is_foreign, description, note, english_title, english_description, english_note = row
         
-        description = description[:MAX_DESCRIPTION_LENGTH]
-        note = note[:MAX_DESCRIPTION_LENGTH] if note is not None else ""
+        description = _truncate_unicode_by_bytes(description, MAX_DESCRIPTION_BYTES) if description is not None else ""
+        note = _truncate_unicode_by_bytes(note, MAX_DESCRIPTION_BYTES) if note is not None else ""
         english_title = english_title if english_title is not None else ""
-        english_description = english_description[:MAX_DESCRIPTION_LENGTH] if english_description is not None else ""
-        english_note = english_note[:MAX_DESCRIPTION_LENGTH] if english_note is not None else ""
-        
+        english_description = _truncate_unicode_by_bytes(english_description, MAX_DESCRIPTION_BYTES) if english_description is not None else ""
+        english_note = _truncate_unicode_by_bytes(english_note, MAX_DESCRIPTION_BYTES) if english_note is not None else ""
+
         Job.objects.create(
             cid=company,
             title=title,
