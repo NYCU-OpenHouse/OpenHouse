@@ -1497,7 +1497,7 @@ def Status(request):
                 discount += ece_discount
             elif mycompany.ece_member or mycompany.ece_member_normal:
                 ece_discount = min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
-                discount_text.append(f"貴公司為電機研究所聯盟會員，2026 年最多可使用兩次免費優惠，自動使用 {signup_data.jobfair} 次 -{ece_discount}元")
+                discount_text.append(f"貴公司為電機研究所聯盟會員，2026 年最多可使用兩次免費優惠，自動使用 {min(signup_data.jobfair, 2)} 次 -{ece_discount}元")
                 discount += ece_discount
             elif mycompany.gloria_startup:
                 startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
