@@ -1491,9 +1491,13 @@ def Status(request):
 
         # jobfair fee calculation
         if signup_data.jobfair:
-            if mycompany.ece_member or mycompany.gloria_normal:
+            if mycompany.gloria_normal:
                 ece_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
-                discount_text.append(f"貴公司為電機研究所聯盟永久會員或Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount_text.append(f"貴公司為Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
+                discount += ece_discount
+            elif mycompany.ece_member or mycompany.ece_member_normal:
+                ece_discount = min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
+                discount_text.append(f"貴公司為電機研究所聯盟會員，2026 年最多可使用兩次免費優惠，自動使用 {signup_data.jobfair} 次 -{ece_discount}元")
                 discount += ece_discount
             elif mycompany.gloria_startup:
                 startup_discount = min(signup_data.jobfair, 1) * configs.jobfair_booth_fee
