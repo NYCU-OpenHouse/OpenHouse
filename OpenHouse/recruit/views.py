@@ -209,7 +209,7 @@ def seminar_select_form_gen(request):
     for week in range(0, weeks):
         # separate into 4 in each list (there are 4 days in a week for seminar)
         dates_in_week.append([(table_start_date + datetime.timedelta(days=day + week * 7)) \
-                              for day in range(0, 4)])
+                              for day in range(0, 5)])
 
     slot_colors = SlotColor.objects.all()
 
