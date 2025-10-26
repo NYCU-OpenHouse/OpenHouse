@@ -126,6 +126,9 @@ class Company(AbstractBaseUser):
     objects = UserManager()
     USERNAME_FIELD = 'cid'
 
+    # Data for spring 2026 and will be used in fall 2026, can be removed later.
+    jobfair_spring_2026 = models.IntegerField(u'2026春季攤位數量', default=0)
+
     class Meta:
         managed = True
         db_table = 'company'

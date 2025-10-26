@@ -152,6 +152,12 @@ def recruit_signup(request):
         if form.is_valid():
             form.save()
             form.save_m2m()
+
+            # Save the jobfair count for spring 2026 and this will be used in fall 2026.
+            # The code below should be removed in fall 2026 or it will overwrite the data and calculate wrong discount.
+            if mycompany and mycompany.jobfair_spring_2026 == 0:
+                mycompany.jobfair_spring_2026 += form.cleaned_data.get('jobfair', 0)
+                mycompany.save()
         else:
             # Debug
             print(form.errors.items())
@@ -1496,6 +1502,7 @@ def Status(request):
                 discount_text.append(f"貴公司為Gloria會員，可享有第一攤免費優惠 -{ece_discount}元")
                 discount += ece_discount
             elif mycompany.ece_member or mycompany.ece_member_normal:
+                # The code below should be updaed in fall 2026 because the limit "2 times" is for whole 2026 year.
                 ece_discount = min(signup_data.jobfair, 2) * configs.jobfair_booth_fee
                 discount_text.append(f"貴公司為電機研究所聯盟會員，2026 年最多可使用兩次免費優惠，自動使用 {min(signup_data.jobfair, 2)} 次 -{ece_discount}元")
                 discount += ece_discount
