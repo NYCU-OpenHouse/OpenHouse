@@ -426,6 +426,11 @@ class UserAdmin(BaseUserAdmin):
     
     jobs_summary.short_description = '職缺概覽'
 
+    class Media:
+        css = {
+            'all': ('css/admin/scroll.css',)
+        }
+
 # Now register the new UserAdmin...
 admin.site.register(Company, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,

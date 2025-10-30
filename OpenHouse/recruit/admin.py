@@ -97,8 +97,8 @@ class HistoryParticipationAdmin(admin.ModelAdmin):
 class RecruitSignupAdmin(admin.ModelAdmin):
     search_fields = ('cid', 'seminar', 'jobfair')
     list_display = ('cid', 'company_name', 'company_join_date', 'seminar', 'jobfair',
-                    'company_visit', 'lecture', 'payment', 'company_other_ps')
-    list_filter = ('seminar', 'jobfair', 'payment', 'first_participation', 'zone')
+                    'company_visit', 'career_tutor', 'company_other_ps')
+    list_filter = ('seminar_type', 'seminar', 'career_tutor', 'jobfair', 'first_participation', 'zone')
     inlines = (SponsorshipInline,)
 
     def get_search_results(self, request, queryset, search_term):
