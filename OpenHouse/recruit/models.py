@@ -214,6 +214,11 @@ class RecruitSignup(models.Model):
         com = company.models.Company.objects.filter(cid=self.cid).first()
         return "資料庫不同步，請連絡資訊組" if com is None else com
 
+    def get_seminar_display(self):
+        if self.seminar == 'attend':
+            return getattr(self.seminar_type, 'name', u'參加說明會')
+        return dict(self.SEMINAR_CHOICES).get(self.seminar, self.seminar)
+
     class Meta:
         managed = True
         verbose_name = u'4. 活動報名情況'
