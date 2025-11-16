@@ -213,6 +213,10 @@ class Signup(models.Model):
             return com.other_ps
         else:
             return None
+    def get_seminar_display(self):
+        if self.seminar == 'attend':
+            return getattr(self.seminar_type, 'name', u'參加說明會')
+        return dict(self.SEMINAR_CHOICES).get(self.seminar, self.seminar)
 
 
 class ConfigSeminarChoice(models.Model):

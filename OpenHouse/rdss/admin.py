@@ -97,10 +97,10 @@ class SponsorItemsAdmin(admin.ModelAdmin):
 @admin.register(models.Signup)
 class SignupAdmin(admin.ModelAdmin):
     list_display = ('cid', 'company_name', 'seminar', 'jobfair',
-                    'career_tutor', 'visit', 'lecture', 'payment', 'company_other_ps')
+                    'career_tutor', 'visit', 'company_other_ps')
     inlines = (SponsorshipInline,)
     search_fields = ('cid',)
-    list_filter = ('seminar', 'jobfair', 'payment', 'zone')
+    list_filter = ('seminar_type', 'seminar', 'career_tutor', 'jobfair', 'zone')
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
