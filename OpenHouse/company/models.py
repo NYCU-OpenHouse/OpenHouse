@@ -227,3 +227,32 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+
+class JobfairRecord(models.Model):
+    id = models.AutoField(primary_key=True)
+    cid = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='jobfair_record', unique=True)
+    fall_2020 = models.BooleanField(u'2020 秋季', default=False)
+    spring_2021 = models.BooleanField(u'2021 春季', default=False)
+    fall_2021 = models.BooleanField(u'2021 秋季', default=False)
+    spring_2022 = models.BooleanField(u'2022 春季', default=False)
+    fall_2022 = models.BooleanField(u'2022 秋季', default=False)
+    spring_2023 = models.BooleanField(u'2023 春季', default=False)
+    fall_2023 = models.BooleanField(u'2023 秋季', default=False)
+    spring_2024 = models.BooleanField(u'2024 春季', default=False)
+    fall_2024 = models.BooleanField(u'2024 秋季', default=False)
+    spring_2025 = models.BooleanField(u'2025 春季', default=False)
+    fall_2025 = models.BooleanField(u'2025 秋季', default=False)
+    spring_2026 = models.BooleanField(u'2026 春季', default=False)
+    fall_2026 = models.BooleanField(u'2026 秋季', default=False)
+    spring_2027 = models.BooleanField(u'2027 春季', default=False)
+    fall_2027 = models.BooleanField(u'2027 秋季', default=False)
+    spring_2028 = models.BooleanField(u'2028 春季', default=False)
+    fall_2028 = models.BooleanField(u'2028 秋季', default=False)
+    spring_2029 = models.BooleanField(u'2029 春季', default=False)
+
+    class Meta:
+        managed = True
+        db_table = 'jobfair_record'
+
+        verbose_name = u"歷年攤位記錄"
+        verbose_name_plural = u"歷年攤位記錄"

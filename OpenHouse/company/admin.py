@@ -1,5 +1,5 @@
 from django.contrib import admin
-from company.models import Company, ChineseFundedCompany, Job, CompanyCategories
+from company.models import Company, ChineseFundedCompany, Job, JobfairRecord, CompanyCategories
 from recruit import models as recruit_model
 from careermentor.models import Mentor
 from rdss import models as rdss_model
@@ -276,6 +276,18 @@ class JobInline(admin.StackedInline):
     fields = ('title', 'quantity', 'is_liberal', 'is_foreign', 'description', 'note', 'english_title', 'english_description', 'english_note')
     extra = 0
 
+class JobfairRecordInline(admin.StackedInline):
+    model = JobfairRecord
+    fk_name = 'cid'             # 指向 Company 的 FK 欄位
+    can_delete = False
+    verbose_name = '歷年攤位紀錄'
+    verbose_name_plural = '歷年攤位紀錄'
+    fields = ('fall_2020', 'spring_2021', 'fall_2021', 'spring_2022', 'fall_2022', 'spring_2023',
+                'fall_2023', 'spring_2024', 'fall_2024', 'spring_2025', 'fall_2025', 'spring_2026',
+                'fall_2026', 'spring_2027', 'fall_2027', 'spring_2028', 'fall_2028', 'spring_2029')  # 視需要列出欄位
+    max_num = 1
+    extra = 0
+
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
@@ -371,7 +383,7 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('cid', 'name', 'english_name', 'shortname')
     ordering = ('cid',)
     filter_horizontal = ()
-    inlines = [JobInline]
+    inlines = [JobInline, JobfairRecordInline]
 
     # upadet category action
     categories = CompanyCategories.objects.all()
