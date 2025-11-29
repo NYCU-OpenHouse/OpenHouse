@@ -322,8 +322,8 @@ def ExportJobs(request):
             company.models.Company.objects.filter(cid=cid).first())
 
     fieldname_list = ['title', 'is_liberal', 'is_foreign', 
-                    'description', 'quantity', 'note', 
-                    'english_title', 'english_description','english_note']
+                    'description', 'quantity', 'education', 'salary', 'welfare', 'vacation', 'note', 
+                    'english_title', 'english_description','english_education', 'english_salary', 'english_welfare', 'english_vacation', 'english_note']
 
     title_pairs = dict()
     for fieldname in fieldname_list:

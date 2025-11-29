@@ -208,6 +208,10 @@ class Job(models.Model):
     # This id is company id not cid
     cid = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_job_set')
     title = models.CharField(u'職缺名稱', max_length=50)
+    education = models.TextField(u'學歷條件', max_length=780, validators=[validate_words_length], default='', blank=True)
+    salary = models.TextField(u'薪資待遇', max_length=780, validators=[validate_words_length], default='', blank=True)
+    welfare = models.TextField(u'福利制度', max_length=780, validators=[validate_words_length], default='', blank=True)
+    vacation = models.TextField(u'休假制度', max_length=780, validators=[validate_words_length], default='', blank=True)
     is_liberal = models.BooleanField(u'是否為文組職缺', default=False)
     is_foreign = models.BooleanField(u'是否開放外籍生投遞', default=False)
     description = models.TextField(u'職缺內容', max_length=780, validators=[validate_words_length])
@@ -215,6 +219,10 @@ class Job(models.Model):
     note = models.TextField(u'備註', blank=True, max_length=780, validators=[validate_words_length])
 
     english_title = models.CharField(u'職缺名稱(英文)', max_length=50, blank=True)
+    english_education = models.TextField(u'學歷條件(英文)', max_length=780, validators=[validate_words_length], default='', blank=True)
+    english_salary = models.TextField(u'薪資待遇(英文)', max_length=780, validators=[validate_words_length], default='', blank=True)
+    english_welfare = models.TextField(u'福利制度(英文)', max_length=780, validators=[validate_words_length], default='', blank=True)
+    english_vacation = models.TextField(u'休假制度(英文)', max_length=780, validators=[validate_words_length], default='', blank=True)
     english_description = models.TextField(u'職缺內容(英文)', blank=True, max_length=780, validators=[validate_words_length])
     english_note = models.TextField(u'備註(英文)', blank=True, max_length=780, validators=[validate_words_length])
 

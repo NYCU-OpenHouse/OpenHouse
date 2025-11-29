@@ -92,12 +92,23 @@ def _update_job_position_with_excel_file(excel_file, company: Company):
 
         if not any(row):
             continue
-        title, quantity, is_liberal, is_foreign, description, note, english_title, english_description, english_note = row
+        (title, quantity, is_liberal, is_foreign, description, 
+        education, salary, welfare, vacation, note, 
+        english_title, english_description,
+        english_education, english_salary, english_welfare, english_vacation, english_note) = row
         
         description = _truncate_unicode_by_bytes(description, MAX_DESCRIPTION_BYTES) if description is not None else ""
+        education = _truncate_unicode_by_bytes(education, MAX_DESCRIPTION_BYTES) if education is not None else ""
+        salary = _truncate_unicode_by_bytes(salary, MAX_DESCRIPTION_BYTES) if salary is not None else ""
+        welfare = _truncate_unicode_by_bytes(welfare, MAX_DESCRIPTION_BYTES) if welfare is not None else ""
+        vacation = _truncate_unicode_by_bytes(vacation, MAX_DESCRIPTION_BYTES) if vacation is not None else ""
         note = _truncate_unicode_by_bytes(note, MAX_DESCRIPTION_BYTES) if note is not None else ""
         english_title = english_title if english_title is not None else ""
         english_description = _truncate_unicode_by_bytes(english_description, MAX_DESCRIPTION_BYTES) if english_description is not None else ""
+        english_education = _truncate_unicode_by_bytes(english_education, MAX_DESCRIPTION_BYTES) if english_education is not None else ""
+        english_salary = _truncate_unicode_by_bytes(english_salary, MAX_DESCRIPTION_BYTES) if english_salary is not None else ""
+        english_welfare = _truncate_unicode_by_bytes(english_welfare, MAX_DESCRIPTION_BYTES) if english_welfare is not None else ""
+        english_vacation = _truncate_unicode_by_bytes(english_vacation, MAX_DESCRIPTION_BYTES) if english_vacation is not None else ""
         english_note = _truncate_unicode_by_bytes(english_note, MAX_DESCRIPTION_BYTES) if english_note is not None else ""
 
         Job.objects.create(
@@ -106,10 +117,18 @@ def _update_job_position_with_excel_file(excel_file, company: Company):
             is_liberal=is_liberal,
             is_foreign=is_foreign,
             description=description,
+            education=education,
+            salary=salary,
+            welfare=welfare,
+            vacation=vacation,
             quantity=quantity,
             note=note,
             english_title=english_title,
             english_description=english_description,
+            english_education=english_education,
+            english_salary=english_salary,
+            english_welfare=english_welfare,
+            english_vacation=english_vacation,
             english_note=english_note
         )
 

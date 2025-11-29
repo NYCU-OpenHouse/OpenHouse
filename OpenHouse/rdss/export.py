@@ -139,8 +139,8 @@ def ExportJobs(request):
     company_list = [company_obj for company_obj in company.models.Company.objects.filter(cid__in=[s.cid for s in rdss.models.Signup.objects.all()])]
 
     fieldname_list = ['title', 'is_liberal', 'is_foreign', 
-                    'description', 'quantity', 'note', 
-                    'english_title', 'english_description','english_note']
+                    'description', 'quantity', 'education', 'salary', 'welfare', 'vacation', 'note', 
+                    'english_title', 'english_description','english_education', 'english_salary', 'english_welfare', 'english_vacation', 'english_note']
 
     title_pairs = dict()
     for fieldname in fieldname_list:

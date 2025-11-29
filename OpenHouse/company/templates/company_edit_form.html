@@ -399,6 +399,26 @@
                                 {{ form.description.errors }}
                                 {{ form.description }}
                             </div>
+                            {{ form.education.label_tag }}
+                            限制260中文字或780英文字以內
+                            {{ form.education.errors}}
+                            {{ form.education }}
+                            
+                            {{ form.salary.label_tag }}
+                            限制260中文字或780英文字以內
+                            {{ form.salary.errors}}
+                            {{ form.salary }}
+
+                            {{ form.welfare.label_tag }}
+                            限制260中文字或780英文字以內
+                            {{ form.welfare.errors}}
+                            {{ form.welfare }}
+
+                            {{ form.vacation.label_tag }}
+                            限制260中文字或780英文字以內
+                            {{ form.vacation.errors}}
+                            {{ form.vacation }}
+
                             {{ form.note.label_tag }}
                             限制260中文字或780英文字以內
                             {{ form.note.errors}}
@@ -407,10 +427,32 @@
 
                         <div class="column" id="english-fields">
                             {{ form.english_title.label_tag }} {{ form.english_title }}
+
                             {{ form.english_description.label_tag }}
                             Up to 780 English characters or 260 Chinese characters
                             {{ form.english_description.errors }}
                             {{ form.english_description }}
+
+                            {{ form.english_education.label_tag }}
+                            Up to 780 English characters or 260 Chinese characters
+                            {{ form.english_education.errors }}
+                            {{ form.english_education }}
+
+                            {{ form.english_salary.label_tag }}
+                            Up to 780 English characters or 260 Chinese characters
+                            {{ form.english_salary.errors }}
+                            {{ form.english_salary }}
+
+                            {{ form.english_welfare.label_tag }}
+                            Up to 780 English characters or 260 Chinese characters
+                            {{ form.english_welfare.errors }}
+                            {{ form.english_welfare }}
+
+                            {{ form.english_vacation.label_tag }}
+                            Up to 780 English characters or 260 Chinese characters
+                            {{ form.english_vacation.errors }}
+                            {{ form.english_vacation }}
+
                             {{ form.english_note.label_tag }}
                             Up to 780 English characters or 260 Chinese characters
                             {{ form.english_note.errors }}

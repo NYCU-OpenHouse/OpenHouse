@@ -70,6 +70,10 @@
                         <th>名稱</th>
                         <th>數量</th>
                         <th>內容</th>
+                        <th>學歷條件</th>
+                        <th>薪資待遇</th>
+                        <th>福利制度</th>
+                        <th>休假制度</th>
                         <th>備註</th>
                         </tr>
                     </thead>
@@ -88,6 +92,30 @@
                                 {{ job.description }}
                                 {% if job.english_description %}
                                     {{ job.english_description }}
+                                {% endif %}
+                            </td>
+                            <td data-label="學歷條件">
+                                {{ job.education }}
+                                {% if job.english_education %}
+                                    {{ job.english_education }}
+                                {% endif %}
+                            </td>
+                            <td data-label="薪資待遇">
+                                {{ job.salary }}
+                                {% if job.english_salary %}
+                                    {{ job.english_salary }}
+                                {% endif %}
+                            </td>
+                            <td data-label="福利制度">
+                                {{ job.welfare }}
+                                {% if job.english_welfare %}
+                                    {{ job.english_welfare }}
+                                {% endif %}
+                            </td>
+                            <td data-label="休假制度">
+                                {{ job.vacation }}
+                                {% if job.english_vacation %}
+                                    {{ job.english_vacation }}
                                 {% endif %}
                             </td>
                             <td data-label="備註">

@@ -273,7 +273,8 @@ class InvalidCategoryFilter(admin.SimpleListFilter):
 
 class JobInline(admin.StackedInline):
     model = Job
-    fields = ('title', 'quantity', 'is_liberal', 'is_foreign', 'description', 'note', 'english_title', 'english_description', 'english_note')
+    fields = ('title', 'quantity', 'is_liberal', 'is_foreign', 'description', 'education', 'salary', 'welfare', 'vacation', 'note', 
+            'english_title', 'english_description', 'english_education', 'english_salary', 'english_welfare', 'english_vacation', 'english_note')
     extra = 0
 
 class JobfairRecordInline(admin.StackedInline):
