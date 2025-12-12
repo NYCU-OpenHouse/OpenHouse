@@ -13,6 +13,7 @@ import datetime
 import recruit.models
 import company.models
 import re
+from recruitment_common.export import sanitize_sheet_name
 
 
 @staff_member_required
@@ -332,7 +333,7 @@ def ExportJobs(request):
     workbook = xlsxwriter.Workbook(response)
     
     for company_obj in company_list:
-        worksheet = workbook.add_worksheet(company_obj.shortname)
+        worksheet = workbook.add_worksheet(sanitize_sheet_name(company_obj.shortname))
 
         for index, fieldname in enumerate(fieldname_list):
             worksheet.write(0, index, title_pairs[fieldname])
