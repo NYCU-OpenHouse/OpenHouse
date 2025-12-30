@@ -296,7 +296,10 @@ def CompanyDetail(request, companyId):
     """
     Function displaying specific company info to public
     """
-    company_info = Company.objects.get(cid=companyId)
+    try:
+        company_info = Company.objects.get(cid=companyId)
+    except Company.DoesNotExist:
+        raise Http404("Company not found")
     company_info.website = views_helper.change_website_start_with_http(company_info.website)
     id = company_info.id
     jobs = company.models.Job.objects.filter(cid=id)
